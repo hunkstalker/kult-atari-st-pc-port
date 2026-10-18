@@ -35,6 +35,12 @@ static void present_cb(uint8_t *img) {
     if (!platform_sdl_pump()) { kult_request_stop(); return; }
     platform_sdl_present(img);
 }
+/* Bombeo durante una espera bloqueante (Cnecin en menús/prompts): presenta y, si
+ * se cierra la ventana, sale del programa. */
+static void idle_cb(uint8_t *img) {
+    if (!platform_sdl_pump()) { platform_sdl_close(); exit(0); }
+    platform_sdl_present(img);
+}
 #endif
 
 int main(void) {
@@ -64,6 +70,13 @@ int main(void) {
         if (platform_sdl_open("Kult: The Temple of Flying Saucers", scale) == 0) {
             g_sdl = 1;
             kult_set_frame_cb(present_cb);
+            platform_set_idle(idle_cb);
+            /* Ritmo del original (50 Hz); KULT_REALTIME=0 lo desactiva. */
+            const char *rt = getenv("KULT_REALTIME");
+            platform_set_realtime(!(rt && rt[0] == '0'));
+            /* Entrada real por defecto; KULT_AUTOINPUT=1 fuerza el modo auto
+             * (útil sin display/para pruebas). */
+            platform_input_set_auto(getenv("KULT_AUTOINPUT") ? 1 : 0);
         } else {
             fprintf(stderr, "no se pudo abrir la ventana; sigo headless\n");
         }

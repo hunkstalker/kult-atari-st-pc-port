@@ -42,8 +42,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | id | tarea | estado |
 |---|---|---|
 | T-030 | Ventana SDL3 + `SDL_Renderer`; planar→RGBA; paleta de 16 words; escalado entero | ✅ `make port-sdl` (`platform/video_sdl.c`): ventana, textura RGBA, `SDL_LOGICAL_PRESENTATION_INTEGER_SCALE`, ESC para salir |
-| T-031 | Entrada real: teclado y ratón → paquete IKBD / `A_CURSOR_X/Y` | ⬜ |
-| T-032 | Ritmo: simulación a cadencia fija + presentación al refresco | ⬜ (ahora se presenta cada iteración; `SDL_SetRenderVSync` ya limita) |
+| T-031 | Entrada real: teclado y ratón → paquete IKBD / `A_CURSOR_X/Y` | ✅ SDL→`platform_key_push`/`platform_mouse_set`; `Cnecin` bloqueante con bombeo (`idle`); prueba en `make test-port` |
+| T-032 | Ritmo: simulación a cadencia fija + presentación al refresco | ✅ `platform_set_realtime` (1 VBL = 20 ms / 50 Hz) en modo ventana; `KULT_REALTIME=0` lo desactiva |
 
 ## M4 — Audio
 | id | tarea | estado |

@@ -14,7 +14,9 @@
 - **Ventana SDL3 (M3)**: `make port-sdl` → `build/kult-sdl`
   (`platform/video_sdl.c`, `-DHAVE_SDL3`). Requiere `sdl3`/`sdl3-dev`
   (pkg-config `sdl3`). Ejecutar con `KULT_WINDOW=1`; `KULT_SCALE=3`; ESC sale.
-  Sin display: `SDL_VIDEODRIVER=dummy`. (CMake para el ejecutable: pendiente.)
+  Entrada real y ritmo 50 Hz por defecto (`KULT_AUTOINPUT=1` y `KULT_REALTIME=0`
+  los desactivan, p. ej. sin display). Sin display: `SDL_VIDEODRIVER=dummy`.
+  (CMake para el ejecutable: pendiente.)
 
 ## Objetivo
 - **Core** compilable aparte para las pruebas diferenciales (sin SDL).

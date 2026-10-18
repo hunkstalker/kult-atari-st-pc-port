@@ -155,6 +155,23 @@ static void test_vbl(void) {
           "rotacion de paleta 12..15 en el VBL multiplo de 4");
 }
 
+/* --- T-031: entrada real (ratón -> IKBD, teclado -> Cnecin) --- */
+static void test_real_input(void) {
+    platform_input_set_auto(0);
+    platform_mouse_set(200, 150, 1);        /* botón izquierdo pulsado */
+    g_img[A_IKBD_PACKET] = 0xff;
+    sched_poll8(g_img, A_IKBD_PACKET, 0x136b0);
+    CHECK(be16(g_img + A_CURSOR_X) == 200 && be16(g_img + A_CURSOR_Y) == 150,
+          "el ratón real fija el cursor");
+    CHECK(g_img[A_IKBD_PACKET] == 1, "el botón izquierdo viaja en el IKBD");
+
+    platform_key_push('D');
+    uint32_t key = 0;
+    CHECK(os_cnecin(g_img, &key) == 1 && (key & 0xff) == 'D',
+          "Cnecin consume la tecla real encolada");
+    platform_input_set_auto(1);             /* restaurar headless */
+}
+
 /* --- loader del PRG: relocación DRI, en particular el SALTO (byte 1) --- */
 static void put32be(uint8_t *p, uint32_t v) {
     p[0] = (uint8_t)(v >> 24); p[1] = (uint8_t)(v >> 16);
@@ -205,6 +222,7 @@ int main(void) {
     test_fs();
     test_video();
     test_input_tick();
+    test_real_input();
     test_vbl();
     test_prg_loader();
 

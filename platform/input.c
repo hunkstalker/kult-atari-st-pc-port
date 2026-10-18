@@ -24,9 +24,24 @@ static int g_head, g_tail;
 static uint32_t g_auto_key = 'E';
 static uint16_t g_cursor_x = 160;
 static uint16_t g_cursor_y = 100;
-static uint8_t  g_buttons;
+static uint8_t  g_buttons;         /* botón real del ratón (bit0 = izquierdo) */
 static uint32_t g_deliveries;
-static int g_click_toggle = 1;   /* headless: alterna clic para liberar esperas de clic */
+static int g_click_toggle = 1;     /* headless: alterna clic para liberar esperas */
+static int g_auto = 1;             /* 1 = headless (auto-tecla); 0 = entrada real */
+static void (*g_idle)(uint8_t *img);   /* bombeo durante una espera bloqueante */
+
+void platform_set_idle(void (*fn)(uint8_t *img)) { g_idle = fn; }
+void platform_input_set_auto(int on) { g_auto = on ? 1 : 0; }
+
+void platform_mouse_set(int x, int y, int buttons) {
+    if (x < 0) x = 0;
+    if (x > 319) x = 319;
+    if (y < 0) y = 0;
+    if (y > 199) y = 199;
+    g_cursor_x = (uint16_t)x;
+    g_cursor_y = (uint16_t)y;
+    g_buttons = (uint8_t)(buttons & 1);
+}
 
 void platform_input_init(void) {
     g_head = g_tail = 0;
@@ -65,26 +80,35 @@ uint32_t pc_os_crawio(uint8_t *mem, uint16_t w) {
     return k;
 }
 
-/* GEMDOS Cnecin: lectura bloqueante. En headless se sirve la cola o la auto-tecla,
- * de modo que nunca cuelga. Devuelve ascii en el byte bajo (como el original usa). */
+/* GEMDOS Cnecin: lectura bloqueante. En headless se sirve la cola o la auto-tecla
+ * (nunca cuelga). Con entrada real (`platform_input_set_auto(0)`) espera bombeando
+ * `g_idle` (SDL) hasta que llegue una tecla. Devuelve ascii en el byte bajo. */
 int pc_os_cnecin(uint8_t *mem, uint32_t *out) {
-    (void)mem;
-    uint32_t k = g_auto_key;
-    if (g_head != g_tail) {
-        k = g_keys[g_head];
-        g_head = (g_head + 1) % KEYQ;
+    if (g_head == g_tail) {
+        if (!g_auto) {
+            while (g_head == g_tail && g_idle)
+                g_idle(mem);
+        }
+        if (g_head == g_tail) {                   /* sin tecla y sin idle */
+            if (out) *out = g_auto_key;
+            return 1;
+        }
     }
+    uint32_t k = g_keys[g_head];
+    g_head = (g_head + 1) % KEYQ;
     if (out) *out = k;
     return 1;
 }
 
 /* Paquete IKBD: [botones][x_hi][x_lo][y_hi][y_lo] = A_IKBD_PACKET(+1..).
- * El primer paquete va con el botón SOLTADO (0) y luego se alterna, de modo que las
- * esperas "soltar y pulsar" del original (prompt_wait) terminan. */
+ * Headless: el botón va SOLTADO y luego alterna, para que las esperas "soltar y
+ * pulsar" (prompt_wait) terminen. Entrada real: se entrega el ratón tal cual. */
 void platform_ikbd_deliver(uint8_t *img) {
-    g_buttons = (uint8_t)((g_click_toggle && (g_deliveries & 1)) ? 1 : 0);
+    uint8_t b = g_auto
+        ? (uint8_t)((g_click_toggle && (g_deliveries & 1)) ? 1 : 0)
+        : g_buttons;
     g_deliveries++;
-    img[A_IKBD_PACKET] = g_buttons;
+    img[A_IKBD_PACKET] = b;
     wr16(img + A_CURSOR_X, g_cursor_x);
     wr16(img + A_CURSOR_Y, g_cursor_y);
 }

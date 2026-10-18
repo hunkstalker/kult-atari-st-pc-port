@@ -20,12 +20,23 @@ void platform_set_image(uint8_t *img);
 void platform_key_push(uint32_t key);
 void platform_key_push_str(const char *s);
 
+/* Entrada real (M3): posición/botones del ratón (coords de juego 320x200) y
+ * conmutador del modo auto (headless). `platform_set_idle` registra el bombeo que
+ * se usa durante una espera bloqueante (Cnecin) cuando no hay modo auto. */
+void platform_mouse_set(int x, int y, int buttons);
+void platform_input_set_auto(int on);
+void platform_set_idle(void (*fn)(uint8_t *img));
+
 /* Reloj: número de frames (VBL) entregados desde el arranque. */
 uint32_t platform_frame_count(void);
 
 /* Trabajo a ejecutar en cada frame (VBL). El driver registra aquí el tick del
  * juego (boot/vbl.c: 0x160c2); sin hook, el reloj sólo incrementa A_DAT_1ACD4. */
 void platform_set_tick(void (*fn)(uint8_t *img));
+
+/* Ritmo en tiempo real (M3): cada VBL consume 20 ms de reloj (50 Hz). Se activa
+ * en modo ventana; apagado (por defecto) el port va a la máxima velocidad. */
+void platform_set_realtime(int on);
 
 /* Vídeo: base visible actual (la última que fijó os_setscreen, o la de
  * screen_ptr_a si el juego aún no ha llamado a Setscreen). */
@@ -51,6 +62,7 @@ uint32_t platform_fb_nonzero(void);
 int  platform_sdl_open(const char *title, int scale);
 void platform_sdl_present(uint8_t *img);
 int  platform_sdl_pump(void);      /* 1 = seguir, 0 = cerrar */
+int  platform_sdl_should_quit(void);
 void platform_sdl_close(void);
 
 #endif /* KULT_PLATFORM_H */

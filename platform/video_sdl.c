@@ -50,14 +50,36 @@ void platform_sdl_present(uint8_t *img) {
     SDL_RenderPresent(g_ren);
 }
 
-/* Devuelve 1 para seguir, 0 para salir. */
+static int g_quit;
+static int g_mouse_btn;
+
+int platform_sdl_should_quit(void) { return g_quit; }
+
+/* Bombea eventos: teclado -> cola GEMDOS; ratón -> cursor/botones (coords de
+ * juego 320x200, vía la presentación lógica). Devuelve 1 para seguir, 0 si se
+ * cerró la ventana. */
 int platform_sdl_pump(void) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_EVENT_QUIT) return 0;
-        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_ESCAPE) return 0;
+        if (e.type == SDL_EVENT_QUIT) {
+            g_quit = 1;
+        } else if (e.type == SDL_EVENT_KEY_DOWN) {
+            if (e.key.key == SDLK_ESCAPE) g_quit = 1;
+            else platform_key_push((uint32_t)e.key.key & 0xff);
+        } else if (e.type == SDL_EVENT_MOUSE_MOTION) {
+            float gx = 0, gy = 0;
+            SDL_RenderCoordinatesFromWindow(g_ren, e.motion.x, e.motion.y, &gx, &gy);
+            platform_mouse_set((int)gx, (int)gy, g_mouse_btn);
+        } else if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
+                   e.type == SDL_EVENT_MOUSE_BUTTON_UP) {
+            if (e.button.button == SDL_BUTTON_LEFT)
+                g_mouse_btn = e.button.down ? 1 : 0;
+            float gx = 0, gy = 0;
+            SDL_RenderCoordinatesFromWindow(g_ren, e.button.x, e.button.y, &gx, &gy);
+            platform_mouse_set((int)gx, (int)gy, g_mouse_btn);
+        }
     }
-    return 1;
+    return !g_quit;
 }
 
 void platform_sdl_close(void) {

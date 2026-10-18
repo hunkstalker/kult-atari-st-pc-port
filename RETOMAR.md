@@ -5,6 +5,12 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 7 — M3/T-031+T-032 (entrada real y ritmo)**: SDL teclado/ratón →
+  cola GEMDOS e IKBD (`platform_key_push`/`platform_mouse_set`); `Cnecin`
+  bloqueante con bombeo (`idle`, presenta y sale al cerrar la ventana); conmutador
+  auto/real (`KULT_AUTOINPUT`). Ritmo `platform_set_realtime` (1 VBL = 20 ms,
+  50 Hz) con `KULT_REALTIME=0` de escape. Pruebas en `make test-port`.
+  **M3 completa.**
 - **Sesión 6 — M3/T-030 (ventana SDL3)**: `platform/video_sdl.c` (ventana,
   `SDL_Renderer`, textura RGBA del framebuffer planar, `SDL_Renderer` con
   escalado entero y vsync, ESC para salir), `platform_fb_to_rgba`,
@@ -22,15 +28,14 @@ Tareas: `TODO.md`.
 - **Sesión 2 — M0**: core importado; `make test` **499 verde**.
 
 ## Estado actual
-- **M0, M1 y M2 hechas** (T-021 tick, T-024 loader corregido).
-- **El juego arranca y avanza frames**: headless (`make port`) y con **ventana
-  SDL3** (`make port-sdl` + `KULT_WINDOW=1`). Sin bloqueantes conocidos.
+- **M0, M1, M2 y M3 hechas**: el juego arranca y avanza frames, **headless** y con
+  **ventana SDL3 jugable** (render + entrada real + ritmo 50 Hz).
 - `make test` 499 verde; `make test-port` verde.
+- Sin bloqueantes conocidos.
 
 ## Siguiente tarea
-**M3/T-031 — entrada real** (teclado → `os_crawio/cnecin`; ratón → paquete IKBD y
-`A_CURSOR_X/Y`), y **T-032 — ritmo** (simulación a cadencia fija, presentación al
-refresco). Después, T-020 (menú fiel) y M4 (audio). Ver `docs/PLAN.md`.
+**T-020** (validar/cerrar `_start`, en particular el menú de idioma fiel) y luego
+**M4 — audio** (MFP Timer A + PSG/YM2149 + SDL audio). Ver `docs/PLAN.md`.
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
@@ -50,8 +55,9 @@ refresco). Después, T-020 (menú fiel) y M4 (audio). Ver `docs/PLAN.md`.
   `boot/boot.c` (`_start` provisional, corte por `frames` con `hook_loop_top` +
   `longjmp`) + `boot/vbl.c` (tick 0x160c2).
 - `app/main.c`: `KULT_PRG`, `KULT_DATA_DIR` (admite varios con `:`),
-  `KULT_FRAMES`, `KULT_DUMP`, `KULT_PLANAR`, `KULT_KEYS`/`KULT_KEY`,
-  `KULT_SKIP_DRAP`, `KULT_DEBUG`.
+  `KULT_FRAMES` (0 = sin límite), `KULT_DUMP`, `KULT_PLANAR`,
+  `KULT_KEYS`/`KULT_KEY`, `KULT_SKIP_DRAP`, `KULT_DEBUG`; en ventana:
+  `KULT_WINDOW=1`, `KULT_SCALE`, `KULT_REALTIME=0`, `KULT_AUTOINPUT=1`.
 - Datos de prueba: **hay que juntar** `disk_a`+`disk_b` (el juego necesita
   además `FOND.PI1`, `PUZZL.BIN`, `ECHE*.BIN`… que están en `disk_b`). Los
   recursos "empotrados" (CARAC/TEMPL/ICONE/ARPLA…) van **dentro del PRG**.
