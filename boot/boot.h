@@ -19,4 +19,8 @@ int kult_load_prg(uint8_t *img, const char *path);
  * falló antes. */
 int kult_boot(uint8_t *img, uint32_t max_frames);
 
+/* Tick de VBL del original (0x160c2), reconstruido. El driver lo registra con
+ * platform_set_tick() antes de arrancar. */
+void kult_vbl_tick(uint8_t *img);
+
 #endif /* KULT_BOOT_H */

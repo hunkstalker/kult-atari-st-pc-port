@@ -27,14 +27,16 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 > Prueba del backend (sin oráculo): `make test-port` (ficheros, vídeo planar→RGB,
 > entrada/IKBD, reloj). Ejecutable headless: `make port` → `build/kult`.
 > Bloqueo del bucle (observado): `run_command(0xc001)` revienta en `elem_command`
-> (índice de glifo inválido). Hipótesis: falta el tick `0x160c2` (T-021). Con
-> `KULT_RUN_LOOP=1` se reproduce.
+> con índice de glifo inválido (script salta a TEMPL+0x6a20 → elem idx 73 → glifo
+> 17, fuera de la tabla `0x1a252`). Con `KULT_RUN_LOOP=1` se reproduce. **La
+> hipótesis del tick (T-021) quedó falsada**: el tick no lo evita.
 
 ## M2 — Arranque y tick (reconstrucción)
 | id | tarea | estado |
 |---|---|---|
 | T-020 | Portar `_start` (0x10000), incluido el menú de idioma | 🚧 provisional en `boot/boot.c` (camino sin DRAP con `KULT_SKIP_DRAP`); falta validar el menú fiel y el clic |
-| T-021 | Portar el tick de VBL `0x160c2` (paleta + blits MURSM/TEMPL) | ⬜ **bloquea el bucle** |
+| T-021 | Portar el tick de VBL `0x160c2` (paleta + blits GAUSS/MURSM) | ✅ en `boot/vbl.c`, con prueba (`make test-port`); **no desbloquea el bucle por sí solo** |
+| T-024 | **Diagnóstico del bloqueo de `0xc001`**: comparar el estado en el dispatch con el oráculo (Musashi) — el guion salta por `script_expr` a TEMPL+0x6a20; verificar operandos de `script_arg` (`0x1a752`) y contadores de VBL frente al original | ⬜ |
 | T-022 | Portar `0x135ba` y `0x106f2` | ⬜ |
 | T-023 | Omitir la comprobación FDC `0x19316` | ⬜ |
 

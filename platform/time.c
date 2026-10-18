@@ -21,13 +21,19 @@
 #define SITE_CAP 4096
 
 static uint32_t g_frames;
+static void (*g_tick)(uint8_t *img);
 
-void platform_time_init(void) { g_frames = 0; }
+void platform_time_init(void) { g_frames = 0; g_tick = 0; }
+
+void platform_set_tick(void (*fn)(uint8_t *img)) { g_tick = fn; }
 
 uint32_t platform_frame_count(void) { return g_frames; }
 
 void platform_tick(uint8_t *img) {
-    img[A_DAT_1ACD4] = (uint8_t)(img[A_DAT_1ACD4] + 1);
+    if (g_tick)
+        g_tick(img);                             /* tick del juego (0x160c2 en M2) */
+    else
+        img[A_DAT_1ACD4] = (uint8_t)(img[A_DAT_1ACD4] + 1);
     g_frames++;
 }
 

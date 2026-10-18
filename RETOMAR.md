@@ -5,28 +5,38 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
-- **Sesión 3 — M1 (HAL headless)**: implementada `platform/` (los 19 servicios),
-  `boot/` (carga del PRG + `_start` provisional) y `app/` (driver headless).
-  **`make test-port` verde**; **`make port`** genera `build/kult`, que arranca el
-  juego y vuelca la sala cargada (framebuffer coherente, 14 colores).
-- **Sesión 2 — M0**: importado el core; `make test` **499 verde**.
-- **Sesión 1**: repositorio + documentación inicial.
+- **Sesión 4 — M2/T-021 (tick de VBL)**: portado `0x160c2` a `boot/vbl.c`
+  (contador, rotación de paleta, strip GAUSS cada 64 VBLs y blit enmascarado
+  MURSM/TEMPL en VBLs impares), conectado con `platform_set_tick` y con prueba en
+  `make test-port`. **No desbloquea el bucle** (hipótesis falsada).
+- **Sesión 3 — M1 (HAL headless)**: `platform/` + `boot/` (loader + `_start`) +
+  `app/`; `make test-port` verde y `build/kult` vuelca la sala cargada.
+- **Sesión 2 — M0**: core importado; `make test` **499 verde**.
 
 ## Estado actual
-- **M0 hecha**. **M1 hecha** (T-010…T-017): HAL headless + arranque + volcado.
-- **Bloqueo del bucle principal (observado)**: `run_command(0xc001)` de `_start`
-  revienta en `elem_command` con un índice de glifo inválido (escribe fuera de la
-  imagen). **Hipótesis a confirmar en T-021**: falta el trabajo por frame del tick
-  de VBL `0x160c2` (rotación de paleta + blits MURSM/TEMPL) que el original sí
-  corre entre medias. El driver M1 se detiene **antes** de 0xc001 por defecto
-  (vuelca la sala cargada). Con `KULT_RUN_LOOP=1` se reproduce el fallo.
+- **M0 y M1 hechas** (HAL, arranque provisional, driver headless).
+- **Bloqueo del bucle principal (observado, sin resolver)**: `run_command(0xc001)`
+  de `_start` revienta en `elem_command`: el guion salta (por `script_expr` a
+  través de `script_jump_zero`) a `TEMPL+0x6a20`, que pide el elem idx 73 → glifo
+  17, **fuera de la tabla `0x1a252`** (que solo tiene ~8-10 entradas). Es una
+  divergencia de **estado** (o del evaluador de expresión) con el original, no del
+  tick: el tick T-021 ya está puesto y no lo evita. El driver M1 se detiene **antes**
+  de 0xc001 por defecto; `KULT_RUN_LOOP=1` reproduce el fallo.
 - Sin otros bloqueantes.
 
 ## Siguiente tarea
-**M2 — T-021: portar el tick `0x160c2`** (callea `0x16210`=core, `0x10768`=rts,
-`0x1618a` masked blit MURSM/TEMPL y la rotación de paleta `$ff8258..`). Con él,
-`kult_boot` debe poder seguir a 0xc001 y al `game_loop`. Después, T-020 (validar
-`_start`, menú fiel) y M3 (SDL).
+**T-024 — diagnosticar el bloqueo de `0xc001` con el oráculo**: correr el original
+(Musashi, `tools/recreate_kit`) y comparar, en el dispatch de `0xc001`, la imagen
+(tabla `0x1a252`, operandos de `script_arg` en `0x1a752`, contadores `ACD4/AB60/ACD7/
+1A579`) contra la nuestra. Alternativa: instrumentar `script_expr`/`script_arg`.
+Después, T-020 (validar `_start`, menú fiel) y M3 (SDL).
+
+## Comandos
+- Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
+  `make regscan` (`ids_reg=0`), `make core`.
+- Port: `make port` (→ `build/kult`), `make test-port` (HAL + tick, sin oráculo).
+- Ejecutar headless: `KULT_DATA_DIR=/tmp/kult_data ./build/kult`
+  (junta `disk_a`+`disk_b` del usuario en `/tmp/kult_data`).
 
 ## M1: qué hay y cómo se prueba
 - `platform/include/{os,hw,psg,sched}.h` **sombrean** al kit en el build del
@@ -40,14 +50,6 @@ Tareas: `TODO.md`.
 - Datos de prueba: **hay que juntar** `disk_a`+`disk_b` (el juego necesita
   además `FOND.PI1`, `PUZZL.BIN`, `ECHE*.BIN`… que están en `disk_b`). Los
   recursos "empotrados" (CARAC/TEMPL/ICONE/ARPLA…) van **dentro del PRG**.
-
-## Comandos
-- Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
-  `make regscan` (`ids_reg=0`), `make core`.
-- Port: `make port` (→ `build/kult`), `make test-port` (HAL sin oráculo).
-- Ejecutar headless (ejemplo con datos de prueba):
-  `KULT_DATA_DIR=/tmp/kult_data ./build/kult`
-  (crea `/tmp/kult_data` copiando `disk_a`+`disk_b` del usuario).
 
 ## Decisiones cerradas (no re-litigar; ver `docs/adr/`)
 - **SDL3** para ventana/entrada/audio/GPU.

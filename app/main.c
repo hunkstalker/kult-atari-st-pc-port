@@ -45,6 +45,7 @@ int main(void) {
 
     platform_set_image(img);
     platform_init();
+    platform_set_tick(kult_vbl_tick);
 
     if (kult_boot(img, frames) != 0) {
         fprintf(stderr, "el arranque falló\n");

@@ -53,7 +53,7 @@ PLATFORM_TEST := build/test_platform
 .PHONY: test-port
 test-port: $(PLATFORM_TEST)
 	$(PLATFORM_TEST)
-$(PLATFORM_TEST): platform/test/test_platform.c $(PLATFORM_SRC) \
+$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c $(PLATFORM_SRC) \
                   $(wildcard platform/include/*.h) $(wildcard platform/*.h) $(wildcard include/*.h)
 	@mkdir -p build
-	$(CC) $(PORT_CFLAGS) platform/test/test_platform.c $(PLATFORM_SRC) -o $@
+	$(CC) $(PORT_CFLAGS) platform/test/test_platform.c boot/vbl.c $(PLATFORM_SRC) -o $@

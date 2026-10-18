@@ -23,6 +23,10 @@ void platform_key_push_str(const char *s);
 /* Reloj: número de frames (VBL) entregados desde el arranque. */
 uint32_t platform_frame_count(void);
 
+/* Trabajo a ejecutar en cada frame (VBL). El driver registra aquí el tick del
+ * juego (boot/vbl.c: 0x160c2); sin hook, el reloj sólo incrementa A_DAT_1ACD4. */
+void platform_set_tick(void (*fn)(uint8_t *img));
+
 /* Vídeo: base visible actual (la última que fijó os_setscreen, o la de
  * screen_ptr_a si el juego aún no ha llamado a Setscreen). */
 uint32_t platform_visible_base(void);

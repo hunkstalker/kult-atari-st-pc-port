@@ -17,6 +17,10 @@
 #include "sched.h"
 #include "platform.h"
 #include "platform_internal.h"
+#include "boot.h"
+
+/* Stub del core para poder probar el tick de VBL aislado (boot/vbl.c). */
+uint32_t pal_next_byte(uint8_t *img) { (void)img; return 0; }
 
 #define IMG_SIZE 0x100000u
 #define DIR      "/tmp/kult_hal_test"
@@ -122,6 +126,29 @@ static void test_input_tick(void) {
     CHECK(os_crawio(g_img, 0x00ff) == 0, "Crawio sin teclas encoladas devuelve 0");
 }
 
+/* --- T-021: tick de VBL 0x160c2 --- */
+static void test_vbl(void) {
+    g_img[A_DAT_1AD0D] = 0;
+    g_img[A_DAT_1ACD4] = 0;
+    wr16(g_img + A_DAT_1AB60, 0);
+    kult_vbl_tick(g_img);
+    CHECK(g_img[A_DAT_1ACD4] == 1, "el tick incrementa el contador de VBL");
+
+    /* 64 VBLs: el contador pasa a 0x40 (&0x3f == 0) -> avanza A_DAT_1AB60 */
+    wr16(g_img + A_DAT_1AB60, 5);
+    g_img[A_DAT_1ACD4] = 0x3f;
+    kult_vbl_tick(g_img);
+    CHECK(be16(g_img + A_DAT_1AB60) == 6, "el 64.o VBL avanza A_DAT_1AB60");
+
+    /* A_DAT_1AD0D == 5: rotacion de paleta en los VBLs multiplo de 4 */
+    g_img[A_DAT_1AD0D] = 5;
+    os_setcolor(12, 0x001); os_setcolor(13, 0x002);
+    os_setcolor(14, 0x003); os_setcolor(15, 0x004);
+    for (int i = 0; i < 4; i++) kult_vbl_tick(g_img);
+    CHECK(platform_palette()[12] == 0x002 && platform_palette()[15] == 0x001,
+          "rotacion de paleta 12..15 en el VBL multiplo de 4");
+}
+
 int main(void) {
     make_fixture();
     setenv("KULT_DATA_DIR", DIR, 1);
@@ -133,8 +160,9 @@ int main(void) {
     test_fs();
     test_video();
     test_input_tick();
+    test_vbl();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, video, entrada, reloj)\n");
+    printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL)\n");
     return 0;
 }
