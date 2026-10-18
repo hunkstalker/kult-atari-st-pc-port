@@ -32,13 +32,17 @@ core: $(CORE)
 test: $(CORE)
 
 # ---------------------------------------------------------------------------
-# Port PC (M1): core + boot/ + platform/ + app/, HAL headless (sin SDL todavia).
-# Este build NO usa el modelo del kit: `-Iplatform/include` sombrea os.h/hw.h/
-# psg.h/sched.h con la HAL de PC. El diferencial (`make test`) sigue intacto.
-PORT_SRC    := $(wildcard src/*.c) $(wildcard platform/*.c) $(wildcard boot/*.c) $(wildcard app/*.c)
-PORT_INC    := -Iplatform -Iplatform/include -Iboot -Iinclude -I$(KIT)/include
-PORT_CFLAGS := -std=c11 -O2 -Wall -Wextra $(PORT_INC)
-PORT_BIN    := build/kult
+# Port PC: core + boot/ + platform/ + app/. Este build NO usa el modelo del kit:
+# `-Iplatform/include` sombrea os.h/hw.h/psg.h/sched.h con la HAL de PC. El
+# diferencial (`make test`) sigue intacto.
+#   make port       -> build/kult      headless (PPM), sin SDL
+#   make port-sdl   -> build/kult-sdl  con ventana SDL3 (-DHAVE_SDL3)
+#   make test-port  -> pruebas de la HAL (sin oráculo)
+PLATFORM_SRC := $(filter-out platform/video_sdl.c,$(wildcard platform/*.c))
+PORT_SRC     := $(wildcard src/*.c) $(PLATFORM_SRC) $(wildcard boot/*.c) $(wildcard app/*.c)
+PORT_INC     := -Iplatform -Iplatform/include -Iboot -Iinclude -I$(KIT)/include
+PORT_CFLAGS  := -std=c11 -O2 -Wall -Wextra $(PORT_INC)
+PORT_BIN     := build/kult
 
 .PHONY: port
 port: $(PORT_BIN)
@@ -47,8 +51,18 @@ $(PORT_BIN): $(PORT_SRC) $(wildcard platform/include/*.h) $(wildcard platform/*.
 	@mkdir -p build
 	$(CC) $(PORT_CFLAGS) $(PORT_SRC) -o $(PORT_BIN)
 
+# Ventana SDL3 (M3). Requiere `sdl3` (pkg-config).
+SDL3_CFLAGS := $(shell pkg-config --cflags sdl3)
+SDL3_LIBS   := $(shell pkg-config --libs sdl3)
+PORT_SDL_BIN := build/kult-sdl
+.PHONY: port-sdl
+port-sdl: $(PORT_SDL_BIN)
+$(PORT_SDL_BIN): $(PORT_SRC) platform/video_sdl.c $(wildcard include/*.h) $(wildcard boot/*.h)
+	@mkdir -p build
+	$(CC) $(PORT_CFLAGS) -DHAVE_SDL3 $(SDL3_CFLAGS) \
+	  $(PORT_SRC) platform/video_sdl.c $(SDL3_LIBS) -o $(PORT_SDL_BIN)
+
 # Pruebas funcionales de la HAL (sin oráculo): ficheros, vídeo, entrada, reloj.
-PLATFORM_SRC  := $(wildcard platform/*.c)
 PLATFORM_TEST := build/test_platform
 .PHONY: test-port
 test-port: $(PLATFORM_TEST)

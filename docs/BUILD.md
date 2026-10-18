@@ -10,7 +10,11 @@
   `core(src/) + platform/ + boot/ + app/` con `-Iplatform/include` (que sombrea
   `os.h`/`hw.h`/`psg.h`/`sched.h` con la HAL de PC) → `build/kult`.
   `make test-port` compila y corre las pruebas funcionales de la HAL (sin
-  oráculo). **Aún sin SDL** (la ventana llega en M3, con CMake; BUILD objetivo).
+  oráculo).
+- **Ventana SDL3 (M3)**: `make port-sdl` → `build/kult-sdl`
+  (`platform/video_sdl.c`, `-DHAVE_SDL3`). Requiere `sdl3`/`sdl3-dev`
+  (pkg-config `sdl3`). Ejecutar con `KULT_WINDOW=1`; `KULT_SCALE=3`; ESC sale.
+  Sin display: `SDL_VIDEODRIVER=dummy`. (CMake para el ejecutable: pendiente.)
 
 ## Objetivo
 - **Core** compilable aparte para las pruebas diferenciales (sin SDL).

@@ -103,6 +103,12 @@ static void test_video(void) {
         CHECK(px[0] == 0 && px[2] > 200 && px[1] == 0, "pixel(0,0) debe ser azul");
         CHECK(py[1] > 200 && py[0] == 0, "pixel(1,0) debe ser verde");
     }
+
+    /* La misma conversión usada por el renderizador SDL (RGBA8888). */
+    static uint8_t rgba[320 * 200 * 4];
+    platform_fb_to_rgba(rgba);
+    CHECK(rgba[2] > 200 && rgba[0] == 0 && rgba[3] == 0xff, "RGBA(0,0) azul opaco");
+    CHECK(rgba[4 + 1] > 200 && rgba[4] == 0, "RGBA(1,0) verde");
 }
 
 /* --- T-014/T-015: entrada y reloj --- */

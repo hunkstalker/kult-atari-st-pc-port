@@ -23,4 +23,12 @@ int kult_boot(uint8_t *img, uint32_t max_frames);
  * platform_set_tick() antes de arrancar. */
 void kult_vbl_tick(uint8_t *img);
 
+/* Callback llamado al inicio de cada iteración del bucle (para presentar/pulsar
+ * eventos desde `app/`). Se registra antes de kult_boot. */
+void kult_set_frame_cb(void (*fn)(uint8_t *img));
+
+/* Pide detener el bucle principal (lo usa el callback de presentación al cerrar
+ * la ventana). */
+void kult_request_stop(void);
+
 #endif /* KULT_BOOT_H */

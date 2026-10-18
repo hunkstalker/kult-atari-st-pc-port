@@ -69,6 +69,21 @@ static unsigned chan8(unsigned v3) {               /* 3 bits -> 8 bits */
     return (v3 << 5) | (v3 << 2) | (v3 >> 1);
 }
 
+/* Convierte el framebuffer visible a RGBA8888 (320*200*4 bytes). Lo usa el
+ * renderizador SDL (M3); comparte la misma lectura planar y paleta que el PPM. */
+void platform_fb_to_rgba(uint8_t *dst) {
+    uint32_t base = platform_visible_base();
+    for (int y = 0; y < FB_H; y++) {
+        for (int x = 0; x < FB_W; x++) {
+            uint16_t w = g_palette[fb_pixel(base, x, y) & 15];
+            *dst++ = (uint8_t)chan8((w >> 8) & 7);
+            *dst++ = (uint8_t)chan8((w >> 4) & 7);
+            *dst++ = (uint8_t)chan8(w & 7);
+            *dst++ = 0xff;
+        }
+    }
+}
+
 uint32_t platform_fb_nonzero(void) {
     if (!g_kult_img) return 0;
     uint32_t base = platform_visible_base();

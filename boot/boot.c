@@ -24,6 +24,11 @@ extern void (*hook_loop_top)(uint8_t *img);
 
 static jmp_buf g_jmp;
 static uint32_t g_frame, g_max;
+static void (*g_frame_cb)(uint8_t *img);
+static int g_stop;
+
+void kult_set_frame_cb(void (*fn)(uint8_t *img)) { g_frame_cb = fn; }
+void kult_request_stop(void) { g_stop = 1; }
 
 static int boot_dbg(void) {
     static int d = -1;
@@ -33,7 +38,10 @@ static int boot_dbg(void) {
 #define BOOT_TRACE(step) do { if (boot_dbg()) fprintf(stderr, "[boot] %s\n", step); } while (0)
 
 static void frame_hook(uint8_t *img) {
-    (void)img;
+    if (g_frame_cb)
+        g_frame_cb(img);
+    if (g_stop)
+        longjmp(g_jmp, 1);
     if (g_max && ++g_frame >= g_max)
         longjmp(g_jmp, 1);
 }
@@ -149,6 +157,7 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     /* Bucle principal, con corte por número de frames. */
     g_frame = 0;
     g_max = max_frames;
+    g_stop = 0;
     hook_loop_top = frame_hook;
     if (setjmp(g_jmp) == 0)
         game_loop(img, 0);

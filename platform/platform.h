@@ -41,7 +41,16 @@ int platform_dump_planar(const char *path);
 /* Paleta actual (16 words formato ST 0x0RGB), sólo lectura. */
 const uint16_t *platform_palette(void);
 
+/* Convierte el framebuffer visible (320x200) a RGBA8888 (256000 B). */
+void platform_fb_to_rgba(uint8_t *dst);
+
 /* Cuenta de píxeles no-negro del framebuffer visible (para comprobaciones). */
 uint32_t platform_fb_nonzero(void);
+
+/* Ventana SDL3 (sólo se enlaza en el build `make port-sdl`, -DHAVE_SDL3). */
+int  platform_sdl_open(const char *title, int scale);
+void platform_sdl_present(uint8_t *img);
+int  platform_sdl_pump(void);      /* 1 = seguir, 0 = cerrar */
+void platform_sdl_close(void);
 
 #endif /* KULT_PLATFORM_H */

@@ -88,9 +88,9 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | fase | contenido | estado |
 |---|---|---|
 | **M0** | repo y documentación; importar `src/include/test/tools` | ✅ hecho |
-| **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ HAL; bucle real tras M2/T-021 |
-| **M2** | portar `_start` y `0x160c2` | pendiente |
-| **M3** | render SDL3 + entrada real (primera ventana jugable) | pendiente |
+| **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ hecho |
+| **M2** | portar `_start` y `0x160c2` | ✅ `_start` provisional + tick `0x160c2` (validar menú en T-020) |
+| **M3** | render SDL3 + entrada real (primera ventana jugable) | en curso (T-030 ✅ ventana; T-031/T-032 pendientes) |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | pendiente |
 | **M5** | filtros CRT (SDL_GPU + shaders) | pendiente |
 | **M6** | pulido y validación | pendiente |
@@ -114,7 +114,9 @@ Recogidas como ADR en `docs/adr/`:
 - **T-024 resuelta**: el loader C (`boot/prg.c`) aplicaba mal la relocación DRI
   (relocalizaba tras un `RELOC_SKIP`); corregido y con prueba. **El port ejecuta
   el arranque y `game_loop`** (avanza frames en headless).
-- **Siguiente:** T-020 (validar `_start`/menú fiel) y M3 (ventana SDL). Sin otros
-  bloqueantes.
+- **M3/T-030 hecha**: ventana SDL3 + `SDL_Renderer` (textura RGBA del framebuffer
+  planar, paleta, escalado entero); `make port-sdl` → `build/kult-sdl`.
+- **Siguiente:** T-031 (entrada real: teclado/ratón → IKBD) y T-032 (ritmo
+  simulación/presentación); T-020 (validar `_start`/menú). Sin bloqueantes.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.
