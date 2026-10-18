@@ -1,0 +1,28 @@
+# Build
+build/
+*.o
+*.so
+*.a
+*.exe
+*.dll
+
+# Entorno / herramientas de test
+.venv/
+__pycache__/
+*.pyc
+
+# Datos del juego (aportados por el usuario; nunca se versionan)
+work/
+data/
+disks/
+roms/
+*.PRG
+*.STX
+*.ADF
+*.ST
+*.PI1
+*.BIN
+
+# Oráculo (clon gitignored + tablas generadas)
+tools/recreate_kit/oracle/musashi/
+tools/recreate_kit/oracle/build/
