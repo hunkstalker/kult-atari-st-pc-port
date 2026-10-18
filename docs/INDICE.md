@@ -10,6 +10,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`PORTING.md`](PORTING.md) | **frontera de port**: los 19 servicios y sus equivalentes PC; piezas que faltan |
 | [`VERIFICACION.md`](VERIFICACION.md) | pruebas del core y del backend |
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
+| [`PROMPT_SESION.md`](PROMPT_SESION.md) | prompt listo para pegar en una sesión nueva |
 | [`adr/`](adr/README.md) | decisiones de arquitectura (ADR) |
 
 ## ADRs
