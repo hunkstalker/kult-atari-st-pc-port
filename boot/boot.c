@@ -136,16 +136,6 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     wait_frame(img);
     BOOT_TRACE("wait_frame l_010158");
 
-    /* M1: el camino hasta aquí ya carga sala/fond/hints y deja un framebuffer
-     * coherente. El comando 0xc001 y el bucle principal dependen del tick de VBL
-     * 0x160c2 (M2: addq + rotación de paleta + blits MURSM/TEMPL), sin el cual la
-     * plantilla despacha a un índice de glifo inválido. Con KULT_RUN_LOOP=1 se
-     * intenta igualmente. */
-    if (!getenv("KULT_RUN_LOOP")) {
-        BOOT_TRACE("stop antes de c001 (M1; el tick 0x160c2 es M2)");
-        return 0;
-    }
-
     img[A_MODE_FLAG] = 7;
     img[A_DAT_1AD0D] = 0;
     wr16(img + A_THE_COMMAND, 0xc001);

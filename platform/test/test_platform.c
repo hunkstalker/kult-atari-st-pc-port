@@ -149,6 +149,45 @@ static void test_vbl(void) {
           "rotacion de paleta 12..15 en el VBL multiplo de 4");
 }
 
+/* --- loader del PRG: relocación DRI, en particular el SALTO (byte 1) --- */
+static void put32be(uint8_t *p, uint32_t v) {
+    p[0] = (uint8_t)(v >> 24); p[1] = (uint8_t)(v >> 16);
+    p[2] = (uint8_t)(v >> 8);  p[3] = (uint8_t)v;
+}
+
+static void test_prg_loader(void) {
+    /* PRG sintético: text=512 B. Fixups en text+0x10 y text+0x11E, con un SALTO
+     * de 254 SIN fixup entre medias; text+0x10E (la posición saltada) lleva un
+     * valor centinela que NO debe tocarse. */
+    enum { TLEN = 512 };
+    const uint32_t o1 = 0x10, o2 = 0x11E, osent = o1 + 254;
+    uint8_t prg[28 + TLEN + 4 + 3];
+    memset(prg, 0, sizeof prg);
+    prg[0] = 0x60; prg[1] = 0x1A;                 /* 0x601A */
+    put32be(prg + 2, TLEN);                       /* tlen */
+    put32be(prg + 26, 0);                         /* absf = 0 (hay tabla) */
+    put32be(prg + 28 + o1, o1);                   /* -> 0x00010010 relocalizado */
+    put32be(prg + 28 + osent, 0xDEADBEEFu);       /* centinela (no se relocaliza) */
+    put32be(prg + 28 + o2, 0x20);                 /* -> 0x00010020 relocalizado */
+    uint8_t *rt = prg + 28 + TLEN;                /* sin symbols */
+    put32be(rt, o1); rt[4] = 1; rt[5] = (uint8_t)(o2 - osent); rt[6] = 0;
+
+    const char *path = DIR "/RELOC_TEST.PRG";
+    FILE *f = fopen(path, "wb");
+    CHECK(f != NULL, "crear PRG de prueba");
+    if (!f) return;
+    fwrite(prg, 1, sizeof prg, f);
+    fclose(f);
+
+    uint8_t *im = calloc(1, IMG_SIZE);
+    CHECK(kult_load_prg(im, path) == 0, "cargar PRG de prueba");
+    CHECK(be32(im + 0x10000 + o1) == 0x00010010u, "fixup 1 (+LOAD_BASE)");
+    CHECK(be32(im + 0x10000 + o2) == 0x00010020u, "fixup 2 (+LOAD_BASE)");
+    CHECK(be32(im + 0x10000 + osent) == 0xDEADBEEFu,
+          "el SALTO (byte 1) NO relocaliza la posicion saltada");
+    free(im);
+}
+
 int main(void) {
     make_fixture();
     setenv("KULT_DATA_DIR", DIR, 1);
@@ -161,8 +200,9 @@ int main(void) {
     test_video();
     test_input_tick();
     test_vbl();
+    test_prg_loader();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL)\n");
+    printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL, loader PRG)\n");
     return 0;
 }

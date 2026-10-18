@@ -50,15 +50,22 @@ int kult_load_prg(uint8_t *img, const char *path) {
             uint8_t b4[4];
             if (fread(b4, 1, 4, f) == 4) {
                 uint32_t cur = rd32(b4);
-                int done = (cur == 0);
-                while (!done) {
+                if (cur != 0) {
+                    /* El primer longword es el offset de la 1.a reloc. */
                     uint32_t a = PRG_LOAD_BASE + cur;
                     if (a + 4 <= PRG_IMAGE_SIZE)
                         wr32be(img + a, rd32(img + a) + PRG_LOAD_BASE);
-                    int c = fgetc(f);
-                    if (c == EOF || c == 0) break;
-                    if (c == 1) { cur += 254; continue; }
-                    cur += (uint32_t)c;
+                    /* Luego, un byte por paso: 0 = fin; 1 = SALTO de 254 SIN
+                     * relocalizar; cualquier otro = delta a la siguiente. */
+                    for (;;) {
+                        int c = fgetc(f);
+                        if (c == EOF || c == 0) break;
+                        if (c == 1) { cur += 254; continue; }   /* skip: no aplica */
+                        cur += (uint32_t)c;
+                        a = PRG_LOAD_BASE + cur;
+                        if (a + 4 <= PRG_IMAGE_SIZE)
+                            wr32be(img + a, rd32(img + a) + PRG_LOAD_BASE);
+                    }
                 }
             }
         }

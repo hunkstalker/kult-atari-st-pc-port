@@ -3,6 +3,8 @@
 - **Sesión 4 (M2/T-021).** Se porta el tick de VBL del original a `boot/vbl.c` y
   se conecta al reloj de la HAL. **No desbloquea el bucle**: la hipótesis de la
   sesión anterior (que el tick era lo que faltaba para `0xc001`) queda **falsada**.
+  > **RESUELTO en la nota 0005**: el bloqueo era un bug de relocación DRI en
+  > `boot/prg.c`, no del tick.
 
 ## Qué se hizo
 - `boot/vbl.c` — reconstrucción de `0x160c2`:

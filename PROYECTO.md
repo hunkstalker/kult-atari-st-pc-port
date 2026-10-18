@@ -110,10 +110,11 @@ Recogidas como ADR en `docs/adr/`:
 - **Fase M1 hecha**: HAL PC (`platform/`), loader + `_start` provisional (`boot/`)
   y driver headless (`app/`). **`make test-port` verde**; `make port` arranca el
   juego y vuelca la sala cargada.
-- **M2/T-021 hecha**: tick de VBL `0x160c2` en `boot/vbl.c` (con prueba), pero
-  **no desbloquea el bucle**: `0xc001` diverge por estado (`elem_command` con
-  índice de glifo inválido).
-- **Siguiente:** **T-024** — diagnosticar `0xc001` contra el oráculo; después
-  T-020 (validar `_start`) y M3 (SDL). Sin otros bloqueantes.
+- **M2/T-021 hecha**: tick de VBL `0x160c2` en `boot/vbl.c` (con prueba).
+- **T-024 resuelta**: el loader C (`boot/prg.c`) aplicaba mal la relocación DRI
+  (relocalizaba tras un `RELOC_SKIP`); corregido y con prueba. **El port ejecuta
+  el arranque y `game_loop`** (avanza frames en headless).
+- **Siguiente:** T-020 (validar `_start`/menú fiel) y M3 (ventana SDL). Sin otros
+  bloqueantes.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

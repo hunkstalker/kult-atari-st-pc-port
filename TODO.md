@@ -25,18 +25,16 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-017 | `app/main`: init → `_start` → `game_loop` (headless) | ✅ bring-up (carga sala + volcado); bucle real tras T-021 |
 
 > Prueba del backend (sin oráculo): `make test-port` (ficheros, vídeo planar→RGB,
-> entrada/IKBD, reloj). Ejecutable headless: `make port` → `build/kult`.
-> Bloqueo del bucle (observado): `run_command(0xc001)` revienta en `elem_command`
-> con índice de glifo inválido (script salta a TEMPL+0x6a20 → elem idx 73 → glifo
-> 17, fuera de la tabla `0x1a252`). Con `KULT_RUN_LOOP=1` se reproduce. **La
-> hipótesis del tick (T-021) quedó falsada**: el tick no lo evita.
+> entrada/IKBD, reloj, tick, loader). Ejecutable headless: `make port` → `build/kult`,
+> que ejecuta el arranque y **avanza N frames de `game_loop`** volcando el
+> framebuffer. Aceptación de M1 cumplida.
 
 ## M2 — Arranque y tick (reconstrucción)
 | id | tarea | estado |
 |---|---|---|
 | T-020 | Portar `_start` (0x10000), incluido el menú de idioma | 🚧 provisional en `boot/boot.c` (camino sin DRAP con `KULT_SKIP_DRAP`); falta validar el menú fiel y el clic |
-| T-021 | Portar el tick de VBL `0x160c2` (paleta + blits GAUSS/MURSM) | ✅ en `boot/vbl.c`, con prueba (`make test-port`); **no desbloquea el bucle por sí solo** |
-| T-024 | **Diagnóstico del bloqueo de `0xc001`**: 🚧 iniciado — el primer `script_jump_zero` de la plantilla lee `0x1acd8` (`A_DAT_1ACD8`); con 0 va a los scripts de reveal (crash en elem idx 73) y con 2 a `scene_mode` (crash en `icon_table`). Falta comparar la rama correcta contra el original (Musashi) | ⬜ |
+| T-021 | Portar el tick de VBL `0x160c2` (paleta + blits GAUSS/MURSM) | ✅ en `boot/vbl.c`, con prueba (`make test-port`) |
+| T-024 | **Diagnóstico del bloqueo de `0xc001`** | ✅ **causa raíz: el loader C `boot/prg.c` aplicaba una relocación de más tras cada `RELOC_SKIP` (byte 1)**, corrompiendo 544 bytes de la imagen (entre ellos un largo de ICONE) → el guion tomaba otra rama. Corregido; el loader coincide byte a byte con el oráculo y tiene prueba de regresión |
 | T-022 | Portar `0x135ba` y `0x106f2` | ⬜ |
 | T-023 | Omitir la comprobación FDC `0x19316` | ⬜ |
 

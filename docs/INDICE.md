@@ -28,3 +28,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0002-importacion-core.md`](../notes/0002-importacion-core.md)
 - [`notes/0003-m1-hal-headless.md`](../notes/0003-m1-hal-headless.md)
 - [`notes/0004-tick-vbl-y-bloqueo.md`](../notes/0004-tick-vbl-y-bloqueo.md)
+- [`notes/0005-loader-reloc-fix.md`](../notes/0005-loader-reloc-fix.md)
