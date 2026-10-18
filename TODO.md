@@ -8,27 +8,33 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | id | tarea | estado |
 |---|---|---|
 | T-000 | Documentación inicial del repo (`README`, `PROYECTO`, `TODO`, `RETOMAR`, `AGENTS`, `docs/`, `notes/`) | ✅ |
-| T-001 | Importar el core desde `/app/kult-atari-st-c`: `src/`, `include/`, `test/`, `tools/` | ⬜ |
-| T-002 | Build propio: `CMake` + kit diferencial; verificar `make test` (499) en este repo | ⬜ |
-| T-003 | `project.toml` + `work/disk_a/KULT.PRG` (gitignored) para el oráculo | ⬜ |
+| T-001 | Importar el core desde `/app/kult-atari-st-c`: `src/`, `include/`, `test/`, `tools/` | ✅ |
+| T-002 | Build propio: `CMake` + kit diferencial; verificar `make test` (499) en este repo | ✅ (kit/Makefile; CMake del ejecutable → M1) |
+| T-003 | `project.toml` + `work/disk_a/KULT.PRG` (gitignored) para el oráculo | ✅ |
 
 ## M1 — HAL mínima (headless)
 | id | tarea | estado |
 |---|---|---|
-| T-010 | `platform/`: cabeceras con el contrato de los 19 servicios | ⬜ |
-| T-011 | Ficheros: `os_fopen/close/create/read/write/fsfirst/fsetdta` (mapeo `A:` → `data/`) | ⬜ |
-| T-012 | Sistema: `os_super` (no-op) | ⬜ |
-| T-013 | Vídeo a memoria: `os_setscreen/setpalette/setcolor` + volcado del framebuffer | ⬜ |
-| T-014 | Entrada: `os_crawio`, `os_cnecin` + alimentar el paquete IKBD (`A_IKBD_PACKET`) | ⬜ |
-| T-015 | Tiempo/tick: `sched_poll8` + reloj que avanza `A_DAT_1ACD4` | ⬜ |
-| T-016 | Audio: stub no-op | ⬜ |
-| T-017 | `app/main`: init → `_start` → `game_loop` (headless) | ⬜ |
+| T-010 | `platform/`: cabeceras con el contrato de los 19 servicios | ✅ |
+| T-011 | Ficheros: `os_fopen/close/create/read/write/fsfirst/fsetdta` (mapeo `A:` → `data/`) | ✅ |
+| T-012 | Sistema: `os_super` (no-op) | ✅ |
+| T-013 | Vídeo a memoria: `os_setscreen/setpalette/setcolor` + volcado del framebuffer | ✅ |
+| T-014 | Entrada: `os_crawio`, `os_cnecin` + alimentar el paquete IKBD (`A_IKBD_PACKET`) | ✅ |
+| T-015 | Tiempo/tick: `sched_poll8` + reloj que avanza `A_DAT_1ACD4` | ✅ (reloj; el trabajo por frame `0x160c2` es T-021) |
+| T-016 | Audio: stub no-op | ✅ |
+| T-017 | `app/main`: init → `_start` → `game_loop` (headless) | ✅ bring-up (carga sala + volcado); bucle real tras T-021 |
+
+> Prueba del backend (sin oráculo): `make test-port` (ficheros, vídeo planar→RGB,
+> entrada/IKBD, reloj). Ejecutable headless: `make port` → `build/kult`.
+> Bloqueo del bucle (observado): `run_command(0xc001)` revienta en `elem_command`
+> (índice de glifo inválido). Hipótesis: falta el tick `0x160c2` (T-021). Con
+> `KULT_RUN_LOOP=1` se reproduce.
 
 ## M2 — Arranque y tick (reconstrucción)
 | id | tarea | estado |
 |---|---|---|
-| T-020 | Portar `_start` (0x10000), incluido el menú de idioma | ⬜ |
-| T-021 | Portar el tick de VBL `0x160c2` | ⬜ |
+| T-020 | Portar `_start` (0x10000), incluido el menú de idioma | 🚧 provisional en `boot/boot.c` (camino sin DRAP con `KULT_SKIP_DRAP`); falta validar el menú fiel y el clic |
+| T-021 | Portar el tick de VBL `0x160c2` (paleta + blits MURSM/TEMPL) | ⬜ **bloquea el bucle** |
 | T-022 | Portar `0x135ba` y `0x106f2` | ⬜ |
 | T-023 | Omitir la comprobación FDC `0x19316` | ⬜ |
 

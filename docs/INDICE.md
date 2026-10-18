@@ -25,3 +25,5 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 
 ## Notas de sesión
 - [`notes/0001-inicio.md`](../notes/0001-inicio.md)
+- [`notes/0002-importacion-core.md`](../notes/0002-importacion-core.md)
+- [`notes/0003-m1-hal-headless.md`](../notes/0003-m1-hal-headless.md)

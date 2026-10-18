@@ -87,8 +87,8 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 
 | fase | contenido | estado |
 |---|---|---|
-| **M0** | repo y documentación; importar `src/include/test/tools` | en curso |
-| **M1** | HAL mínima **headless** + driver (sin ventana) | pendiente |
+| **M0** | repo y documentación; importar `src/include/test/tools` | ✅ hecho |
+| **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ HAL; bucle real tras M2/T-021 |
 | **M2** | portar `_start` y `0x160c2` | pendiente |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | pendiente |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | pendiente |
@@ -106,7 +106,11 @@ Recogidas como ADR en `docs/adr/`:
   `src/` (`0005`), headless primero (`0006`).
 
 ## 8. Estado (punto de control)
-- **Fase:** M0 (documentación hecha; falta importar el C).
-- Sin código todavía en este repo. Sin bloqueantes.
+- **Fase M0 cerrada**: core importado y **499 diferenciales verdes** (`make test`).
+- **Fase M1 hecha**: HAL PC (`platform/`), loader + `_start` provisional (`boot/`)
+  y driver headless (`app/`). **`make test-port` verde**; `make port` arranca el
+  juego y vuelca la sala cargada.
+- **Siguiente:** **M2/T-021** (tick VBL `0x160c2`), que **desbloquea el bucle
+  principal**; después M3 (SDL). Sin otros bloqueantes.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

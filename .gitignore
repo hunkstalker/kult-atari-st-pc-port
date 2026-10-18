@@ -1,5 +1,6 @@
 # Build
 build/
+out/
 *.o
 *.so
 *.a
@@ -7,9 +8,10 @@ build/
 *.dll
 
 # Entorno / herramientas de test
-.venv/
+.venv
 __pycache__/
 *.pyc
+.pytest_cache/
 
 # Datos del juego (aportados por el usuario; nunca se versionan)
 work/
