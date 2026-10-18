@@ -29,7 +29,26 @@ Es una **divergencia de estado/evaluación** con el original, no del tick: el
 original no toma ese camino (o la tabla tiene más entradas en runtime). El tick
 ya está puesto y el fallo persiste.
 
+## Diagnóstico añadido (T-024, inicio)
+Trazado con gdb: la plantilla de `0xc001` (`0x1d403`) empieza con byte 60
+(`script_jump_zero`) y su expresión lee **`img[0x1acd8]`** (`A_DAT_1ACD8`, "flag
+puesto por `0x1682a` tras cargar CLEAR.BIN"):
+
+- con `0x1acd8 == 0` (valor del PRG, lo nuestro): `cond != 0` → avanza y por la
+  pila de guion acaba en los scripts de reveal `0x23df5…0x23e22`, y `0x23e22`
+  (byte 7) pide el elem idx 73 → **crash**;
+- con `0x1acd8 == 2` (experimento, revertido): `cond == 0` → `script_push` a
+  `TEMPL+0xd00` → `scene_mode_apply` → `icon_table` → `save_rect_body` con
+  `cols=0` → **crash distinto**.
+
+Es decir, el punto de bifurcación depende de estado que el arranque original fija
+de otra forma (`reset_clear`/`prepare_room` no se llaman en `_start`). `0x1acd8` es
+sólo el primero; la rama correcta necesita el estado de sala/guion completo. No se
+ha dejado ningún cambio de código (experimento revertido).
+
 ## Siguiente (T-024)
-Comparar con el **oráculo** (Musashi) el estado en el dispatch de `0xc001`:
-tabla `0x1a252`, operandos de `script_arg` (`0x1a752`), contadores
-`ACD4/AB60/ACD7/1A579`. Alternativa: instrumentar `script_expr`/`script_arg`.
+Correr el **original** (Musashi / `kult_engine` del predecesor, o el oráculo del
+kit) desde `0x10000` con los ficheros *staged* y capturar la imagen en el dispatch
+de `0xc001`, para comparar `0x1acd8`, la pila de guion (`0x1a7d6`=`0x1a802`),
+`0x1a752`, `0x1a252` y los contadores `ACD4/AB60/ACD7/1A579`. Alternativa:
+instrumentar `script_expr`/`script_arg` y comparar el árbol de decisiones.

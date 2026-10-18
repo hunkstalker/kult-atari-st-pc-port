@@ -25,11 +25,13 @@ Tareas: `TODO.md`.
 - Sin otros bloqueantes.
 
 ## Siguiente tarea
-**T-024 — diagnosticar el bloqueo de `0xc001` con el oráculo**: correr el original
-(Musashi, `tools/recreate_kit`) y comparar, en el dispatch de `0xc001`, la imagen
-(tabla `0x1a252`, operandos de `script_arg` en `0x1a752`, contadores `ACD4/AB60/ACD7/
-1A579`) contra la nuestra. Alternativa: instrumentar `script_expr`/`script_arg`.
-Después, T-020 (validar `_start`, menú fiel) y M3 (SDL).
+**T-024 — diagnosticar el bloqueo de `0xc001` con el oráculo** (iniciado): el
+primer `script_jump_zero` de la plantilla lee `0x1acd8` (`A_DAT_1ACD8`); la rama
+`==0` va a los scripts de reveal (crash en elem idx 73) y la `!=0` a `scene_mode`
+(crash en `icon_table`). Falta correr el original (Musashi) desde `0x10000` con
+ficheros *staged* y comparar el estado en el dispatch (incluido `0x1acd8`).
+Alternativa: instrumentar `script_expr`/`script_arg`. Después, T-020 (validar
+`_start`) y M3 (SDL).
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,

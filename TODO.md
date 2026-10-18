@@ -36,7 +36,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 |---|---|---|
 | T-020 | Portar `_start` (0x10000), incluido el menú de idioma | 🚧 provisional en `boot/boot.c` (camino sin DRAP con `KULT_SKIP_DRAP`); falta validar el menú fiel y el clic |
 | T-021 | Portar el tick de VBL `0x160c2` (paleta + blits GAUSS/MURSM) | ✅ en `boot/vbl.c`, con prueba (`make test-port`); **no desbloquea el bucle por sí solo** |
-| T-024 | **Diagnóstico del bloqueo de `0xc001`**: comparar el estado en el dispatch con el oráculo (Musashi) — el guion salta por `script_expr` a TEMPL+0x6a20; verificar operandos de `script_arg` (`0x1a752`) y contadores de VBL frente al original | ⬜ |
+| T-024 | **Diagnóstico del bloqueo de `0xc001`**: 🚧 iniciado — el primer `script_jump_zero` de la plantilla lee `0x1acd8` (`A_DAT_1ACD8`); con 0 va a los scripts de reveal (crash en elem idx 73) y con 2 a `scene_mode` (crash en `icon_table`). Falta comparar la rama correcta contra el original (Musashi) | ⬜ |
 | T-022 | Portar `0x135ba` y `0x106f2` | ⬜ |
 | T-023 | Omitir la comprobación FDC `0x19316` | ⬜ |
 
