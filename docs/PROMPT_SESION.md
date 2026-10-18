@@ -18,27 +18,39 @@ implementa esos servicios (la HAL o "nuestro TOS").
 4. `docs/INDICE.md` y el doc del área (`PLAN`, `ARQUITECTURA`, `PORTING`,
    `VERIFICACION`, `BUILD`, `adr/`).
 
-**Estado:** fase **M0**. La documentación está hecha; **no hay código aún**.
+**Estado:** **M0–M3 hechas.** El juego arranca y **es jugable en ventana SDL3**
+(render + entrada real + ritmo 50 Hz) y corre headless. `make test` **499 verde**,
+`make test-port` verde. Sin bloqueantes.
 
-**Tarea inmediata:**
-- **T-001** — importar el core desde `/app/kult-atari-st-c`: copiar `src/`,
-  `include/`, `test/`, `tools/`.
-- **T-002** — dejar `make test` en **499 verde** en este repo (kit diferencial;
-  `project.toml` y `work/disk_a/KULT.PRG` para el oráculo).
-- Después, M1 (HAL mínima headless) según `docs/PLAN.md`.
+**Tarea inmediata: M4 — audio** (hito propio, ADR 0003):
+- **T-040** — modelo del **MFP Timer A** (`$fffa13/07/19/1f`) que dispare las ISR
+  C ya reconstruidas (`0x1910e` PCM; vector `$134`) y los traps `#3/#4` de música;
+- **T-041** — emulación **PSG/YM2149** desde `psg_port_write/read` (hoy guarda los
+  16 registros en `platform/psg.c`; falta el chip y el sonido);
+- **T-042** — salida por **SDL audio** (`platform/audio.c`).
+- **Verificación objetiva** (docs/VERIFICACION.md): comparar el **stream de
+  registros PSG con el oráculo** (ledger del kit) y comprobar **RMS/energía** del
+  PCM (que no sea silencio). La **escucha final** ("suena bien / sin petardeo") la
+  hace el usuario.
 
 **Reglas:**
 - **`src/` (el juego) no se modifica**; lo específico de máquina va en
   `platform/`, `boot/` y `app/`.
 - **Decisiones cerradas como ADR** (no re-litigar; ver `docs/adr/`): SDL3;
-  `SDL_Renderer` base y `SDL_GPU` para CRT; audio en hito propio; menú de idioma
-  fiel; `boot/` fuera de `src/`; headless primero.
+  `SDL_Renderer` base y `SDL_GPU` para CRT; **audio en hito propio**; menú de
+  idioma fiel; `boot/` fuera de `src/`; headless primero.
 - Reproducir/medir antes de tocar; una hipótesis un cambio; toda corrección deja
   prueba.
 - **No tocar** `/app/kult-port-legacy` ni `/app/kult-atari-st-decomp`.
 - Todo en **español**. Mantén `TODO.md` y `RETOMAR.md` al día al cerrar.
 
-**Comandos** (tras importar el core): `make test` (499), `make test
-PYTEST_ARGS=-n0`, `make regscan` (`ids_reg=0`), `make core`. El oráculo necesita
-`work/disk_a/KULT.PRG` (gitignored; si falta, cópialo de
-`/app/kult-port-legacy/work/disk_a/KULT.PRG`).
+**Comandos:**
+- Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
+  `make regscan` (`ids_reg=0`), `make core`.
+- Port: `make port` (headless → `build/kult`), `make port-sdl` (ventana →
+  `build/kult-sdl`), `make test-port` (HAL sin oráculo).
+- Ejecutar: `KULT_DATA_DIR=/tmp/kult_data ./build/kult` (headless) o
+  `KULT_WINDOW=1 KULT_DATA_DIR=/tmp/kult_data ./build/kult-sdl`.
+  El directorio de datos junta `disk_a`+`disk_b` del usuario (p. ej.
+  `/tmp/kult_data`); el oráculo necesita `work/disk_a/KULT.PRG` (gitignored).
+- SDL3 ya instalado (`apk add sdl3-dev`; pkg-config `sdl3` 3.4.10).
