@@ -5,6 +5,16 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 10 — T-020/T-022/T-023 + M6**: **menú de idioma fiel** de `_start`
+  (`boot/language.c`: drena teclas pendientes con Crawio y espera D/E/F;
+  `kult_boot_apply_language` escribe las 4 entradas de la lista A). Se quita el
+  atajo `MODE_FLAG=0x87`: `prompt_wait` espera el **clic real** del título y
+  `l_010158` espera a **soltarlo**. `0x135ba` → `os_setscreen(-1,-1,0)`.
+  `0x106f2` (reinicio) **diferido** (solo por puntero relocalizado; ver notas).
+  **M6**: T-060 (menú fiel) ✅; T-061 (validación) checklist en
+  `docs/VERIFICACION.md` y `docs/LIMITACIONES.md`, **la ejecuta el usuario**.
+  Prueba nueva: `test_boot_language` en `make test-port`.
+- **Sesión 9 (docs)**: M5 (CRT) pasa a **extra opcional** (ver `notes/0009`).
 - **Sesión 8 — M4/T-040+T-041+T-042 (audio)**: **Timer A del MFP**
   (`platform/mfp.c`): periodo de `TACR`/`TADR` (2.4576 MHz), resuelve el vector
   `$134` a la ISR C (PCM `0x1910e`/`0x190f6`) o al **reproductor de música
@@ -38,18 +48,22 @@ Tareas: `TODO.md`.
 - **Sesión 2 — M0**: core importado; `make test` **499 verde**.
 
 ## Estado actual
-- **M0–M4 hechas**: el juego arranca y avanza frames, **headless**, con **ventana
-  SDL3 jugable** (render + entrada real + ritmo 50 Hz) y **audio** (Timer A del
-  MFP + PSG/YM2149 + SDL).
+- **M0–M4 hechas** y **M2 cerrada salvo `0x106f2`** (diferido): el juego arranca
+  con el **menú de idioma fiel**, avanza frames, **headless**, con **ventana SDL3
+  jugable** (render + entrada real + ritmo 50 Hz) y **audio** (Timer A del MFP +
+  PSG/YM2149 + SDL).
+- **M6 en curso**: T-060 ✅ (menú fiel); **T-061 pendiente de la validación del
+  usuario** (checklist en `docs/VERIFICACION.md`, limitaciones en
+  `docs/LIMITACIONES.md`).
 - `make test` 499 verde; `make test-port` verde.
 - Sin bloqueantes conocidos.
 
 ## Siguiente tarea
-**T-020** (validar/cerrar `_start`, en particular el menú de idioma fiel) y luego
-**M6 — pulido y validación** y **M7 — empaquetado**. Ver `docs/PLAN.md`.
-**M5 (filtros CRT) queda como extra opcional, no prioritario** (se anota para
-desarrollarlo en algún momento, tras validar). La **escucha final del audio** la
-hace el usuario (`KULT_AUDIO=0` lo apaga; `KULT_MUSIC_GAIN` ajusta la música).
+**Validación del usuario (M6/T-061)**: jugar y escuchar con su copia de datos
+(`docs/VERIFICACION.md`). Después **M7 — empaquetado** (CMake + builds
+Windows/Linux). **M5 (filtros CRT) queda como extra opcional, no prioritario.**
+La **escucha del audio** se hace en ventana con entrada real (`KULT_AUDIO=0` lo
+apaga; `KULT_MUSIC_GAIN` ajusta la música).
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,

@@ -89,7 +89,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 |---|---|---|
 | **M0** | repo y documentación; importar `src/include/test/tools` | ✅ hecho |
 | **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ hecho |
-| **M2** | portar `_start` y `0x160c2` | ✅ `_start` provisional + tick `0x160c2` (validar menú en T-020) |
+| **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` diferido) + tick `0x160c2` |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | pendiente |
@@ -128,8 +128,12 @@ Recogidas como ADR en `docs/adr/`:
   `0x3a872`/0x936** reconstruido en `boot/music_player.c`. Verificación: ledger
   PSG del reproductor contra el **oráculo** (23 eventos) y RMS/energía del YM en
   `make test-port`; la escucha final la valida el usuario.
-- **Siguiente:** T-020 (validar `_start`/menú fiel) → **M6 (pulido/validación)** →
-  **M7 (empaquetado)** → Amiga. **M5 (CRT) queda como extra opcional, no
-  prioritario.** Sin bloqueantes.
+- **M6 en curso (T-060 ✅ / T-061 🚧)**: se cierra el **menú de idioma fiel** de
+  `_start` (T-020: clic de título, drenado de teclas, D/E/F; `0x135ba` como
+  `os_setscreen` no-op) y se documenta la **validación** (checklist en
+  `docs/VERIFICACION.md`, limitaciones en `docs/LIMITACIONES.md`), que **ejecuta
+  el usuario**. `0x106f2` (reinicio) queda diferido.
+- **Siguiente:** validación del usuario (M6/T-061) → **M7 (empaquetado)** → Amiga.
+  **M5 (CRT) como extra opcional.** Sin bloqueantes.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

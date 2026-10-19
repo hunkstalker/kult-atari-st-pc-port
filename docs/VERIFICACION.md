@@ -29,6 +29,26 @@ Pruebas propias de la HAL, sin oráculo:
 - **M2:** las esperas no cuelgan (el tick avanza el contador).
 - **M3:** primera ventana jugable y controlable, sin artefactos.
 - **M4:** la intro/música suena (RMS/energía como comprobación básica).
+- **M6:** el menú de idioma fiel (drenado + D/E/F) tiene prueba en `make test-port`
+  (`test_boot_language`); el resto es la **validación del usuario** (abajo).
+
+## Checklist de validación (M6, la ejecuta el usuario)
+Requiere la copia de datos del usuario (recursos de `disk_a`+`disk_b`) y, para
+ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
+
+1. **Automático:** `make test` (499 verde) y `make test-port` (verde).
+2. **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
+   → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
+3. **Ventana + entrada:** `make port-sdl` y
+   `KULT_WINDOW=1 KULT_DATA_DIR=<datos> ./build/kult-sdl`
+   - título con **clic** (botón izquierdo) → menú de **idioma D/E/F** → carga;
+   - se ve y se controla la partida (ratón/teclado), sin artefactos.
+4. **Audio:** con entrada real, en el título/menú debe sonar la **música de intro**
+   (el port bombea el Timer A durante las esperas); en partida, voz/efectos.
+   `KULT_AUDIO=0` la apaga; `KULT_MUSIC_GAIN` ajusta la música.
+5. **Guardado/partida:** comprobar el guardado/recarga del juego (servicios de
+   fichero reales) según el uso del original.
+6. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
 
 ## Regla
 Toda corrección o feature nueva deja su prueba. Si algo es inobservable, se

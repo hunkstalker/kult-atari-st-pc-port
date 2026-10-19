@@ -32,11 +32,11 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M2 — Arranque y tick (reconstrucción)
 | id | tarea | estado |
 |---|---|---|
-| T-020 | Portar `_start` (0x10000), incluido el menú de idioma | 🚧 provisional en `boot/boot.c` (camino sin DRAP con `KULT_SKIP_DRAP`); falta validar el menú fiel y el clic |
+| T-020 | Portar `_start` (0x10000), incluido el menú de idioma | ✅ menú **fiel** en `boot/language.c` (drena teclas pendientes + espera D/E/F), clic de título por `prompt_wait` (sin el atajo `MODE_FLAG=0x87`) y suelta del clic en `l_010158`; pruebas en `make test-port` |
 | T-021 | Portar el tick de VBL `0x160c2` (paleta + blits GAUSS/MURSM) | ✅ en `boot/vbl.c`, con prueba (`make test-port`) |
 | T-024 | **Diagnóstico del bloqueo de `0xc001`** | ✅ **causa raíz: el loader C `boot/prg.c` aplicaba una relocación de más tras cada `RELOC_SKIP` (byte 1)**, corrompiendo 544 bytes de la imagen (entre ellos un largo de ICONE) → el guion tomaba otra rama. Corregido; el loader coincide byte a byte con el oráculo y tiene prueba de regresión |
-| T-022 | Portar `0x135ba` y `0x106f2` | ⬜ |
-| T-023 | Omitir la comprobación FDC `0x19316` | ⬜ |
+| T-022 | Portar `0x135ba` y `0x106f2` | 🚧 `0x135ba` ✅ (`os_setscreen(-1,-1,0)` en `_start`); `0x106f2` (`l_0101a8`, reinicio) **diferido**: solo se alcanza por un puntero relocalizado (+0x101a8) y no es observable en el flujo actual (ver `notes/0010`) |
+| T-023 | Omitir la comprobación FDC `0x19316` | ✅ se omite; se siembra el patrón FDC (`0xd8e8`) para que el modo de escena (`0x14496`) no espere |
 
 ## M3 — Render y entrada reales (primera ventana)
 | id | tarea | estado |
@@ -55,8 +55,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M6 — Pulido y validación
 | id | tarea | estado |
 |---|---|---|
-| T-060 | Menú de idioma (validar el fiel; valorar menú nativo) | ⬜ |
-| T-061 | Validación: arranque, partida, guardado, audio | ⬜ |
+| T-060 | Menú de idioma (validar el fiel; valorar menú nativo) | ✅ fiel (ADR 0004): validado en T-020; se mantiene el menú del original |
+| T-061 | Validación: arranque, partida, guardado, audio | 🚧 checklist y comandos en `docs/VERIFICACION.md` y `docs/LIMITACIONES.md`; **la ejecuta el usuario** (requiere su copia de datos, y audio/ventana) |
 
 ## A — Workstream Amiga
 | id | tarea | estado |

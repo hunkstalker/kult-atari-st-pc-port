@@ -9,6 +9,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`ARQUITECTURA.md`](ARQUITECTURA.md) | capas (core/boot/platform/app), contrato, flujo |
 | [`PORTING.md`](PORTING.md) | **frontera de port**: los 19 servicios y sus equivalentes PC; piezas que faltan |
 | [`VERIFICACION.md`](VERIFICACION.md) | pruebas del core y del backend |
+| [`LIMITACIONES.md`](LIMITACIONES.md) | limitaciones conocidas y checklist de validación (M6) |
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
 | [`PROMPT_SESION.md`](PROMPT_SESION.md) | prompt listo para pegar en una sesión nueva |
 | [`adr/`](adr/README.md) | decisiones de arquitectura (ADR) |
@@ -33,3 +34,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0007-m3-entrada-y-ritmo.md`](../notes/0007-m3-entrada-y-ritmo.md)
 - [`notes/0008-m4-audio.md`](../notes/0008-m4-audio.md)
 - [`notes/0009-m5-como-extra-opcional.md`](../notes/0009-m5-como-extra-opcional.md)
+- [`notes/0010-t020-menu-fiel.md`](../notes/0010-t020-menu-fiel.md)

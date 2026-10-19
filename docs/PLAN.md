@@ -49,6 +49,10 @@ ledger PSG con el oráculo y mide RMS/energía. La escucha final la valida el us
 **Objetivo:** dejarlo jugable de principio a fin.
 **Contenido:** menú de idioma (fiel o nativo), guardado, ajustes; validación.
 **Aceptación:** partida completa jugable; lista de limitaciones documentada.
+**Estado:** en curso. **T-060 ✅** (menú de idioma **fiel**, ADR 0004, validado en
+T-020). **T-061 🚧**: checklist de validación en `docs/VERIFICACION.md` y
+limitaciones en `docs/LIMITACIONES.md`; **la ejecución la hace el usuario** (jugar
+y escuchar con su copia de datos).
 
 ## A — Workstream Amiga
 **Objetivo:** poder ofrecer también la experiencia **Amiga**.
