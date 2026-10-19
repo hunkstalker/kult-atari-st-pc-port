@@ -22,6 +22,7 @@
 
 #define SITE_CAP 4096
 #define VBL_NS   20000000ull     /* 50 Hz (PAL): un VBL cada 20 ms */
+#define VBL_US   20000u          /* el mismo VBL en microsegundos (audio) */
 
 static uint32_t g_frames;
 static void (*g_tick)(uint8_t *img);
@@ -51,6 +52,11 @@ static uint64_t now_ns(void) {
     return (uint64_t)ts.tv_sec * 1000000000ull + (uint64_t)ts.tv_nsec;
 }
 
+/* Reloj de pared para el audio: en modo tiempo real el Timer A del MFP avanza con
+ * el tiempo transcurrido de verdad (también durante las esperas bloqueantes). */
+int platform_time_realtime(void) { return g_rt; }
+uint64_t platform_now_ns(void) { return now_ns(); }
+
 uint32_t platform_frame_count(void) { return g_frames; }
 
 void platform_tick(uint8_t *img) {
@@ -59,6 +65,10 @@ void platform_tick(uint8_t *img) {
     else
         img[A_DAT_1ACD4] = (uint8_t)(img[A_DAT_1ACD4] + 1);
     g_frames++;
+
+    /* Audio emulado: un VBL son 20 ms del reloj del original. El Timer A del MFP
+     * dispara sus ISR a su propia frecuencia (música ~289 Hz, PCM ~5 kHz). */
+    platform_audio_tick(img, VBL_US);
 
     if (g_rt) {
         g_rt_count++;

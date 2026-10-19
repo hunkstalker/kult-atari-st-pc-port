@@ -65,4 +65,33 @@ int  platform_sdl_pump(void);      /* 1 = seguir, 0 = cerrar */
 int  platform_sdl_should_quit(void);
 void platform_sdl_close(void);
 
+/* ---- audio (M4) ---------------------------------------------------------- */
+/* La emulación YM + Timer A siempre corre (headless incluido) salvo KULT_AUDIO=0.
+ * La salida a dispositivo SDL es opcional (sólo build port-sdl). */
+int  platform_audio_enabled(void);
+void platform_audio_set_enabled(int on);
+
+/* Drena el anillo de muestras mono S16 (lo usa el callback de SDL y las pruebas). */
+int  platform_audio_pull(int16_t *out, int maxframes);
+
+/* Avanza el audio desde una espera bloqueante (bombeo de idle en modo ventana):
+ * en tiempo real hace sonar la música mientras `Cnecin` espera. */
+void platform_audio_pump(uint8_t *img);
+
+/* Verificación objetiva: energía/RMS de todo lo renderizado desde el reset. */
+void     platform_audio_rms_reset(void);
+uint32_t platform_audio_rms(void);       /* RMS entero de la señal renderizada */
+uint32_t platform_audio_peak(void);      /* pico absoluto */
+uint32_t platform_audio_samples(void);
+
+/* Modelo del MFP Timer A (T-040), expuesto para pruebas y diagnóstico. */
+uint32_t platform_mfp_timer_a_period_us(void);
+int      platform_mfp_timer_a_enabled(void);
+uint32_t platform_mfp_isr_count(void);
+uint32_t platform_mfp_music_isr_count(void);
+
+/* Salida de audio SDL3 (sólo `make port-sdl`, -DHAVE_SDL3). */
+void platform_audio_sdl_open(void);
+void platform_audio_sdl_close(void);
+
 #endif /* KULT_PLATFORM_H */

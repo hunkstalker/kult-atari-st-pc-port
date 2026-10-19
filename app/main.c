@@ -39,6 +39,9 @@ static void present_cb(uint8_t *img) {
  * se cierra la ventana, sale del programa. */
 static void idle_cb(uint8_t *img) {
     if (!platform_sdl_pump()) { platform_sdl_close(); exit(0); }
+    /* El Timer A del MFP sigue interrumpiendo mientras se espera una tecla: la
+     * música de intro/efectos no se detiene en los menús. */
+    platform_audio_pump(img);
     platform_sdl_present(img);
 }
 #endif
@@ -77,6 +80,8 @@ int main(void) {
             /* Entrada real por defecto; KULT_AUTOINPUT=1 fuerza el modo auto
              * (útil sin display/para pruebas). */
             platform_input_set_auto(getenv("KULT_AUTOINPUT") ? 1 : 0);
+            /* Audio SDL3 (KULT_AUDIO=0 lo desactiva). */
+            platform_audio_sdl_open();
         } else {
             fprintf(stderr, "no se pudo abrir la ventana; sigo headless\n");
         }
@@ -91,7 +96,7 @@ int main(void) {
     }
 
 #ifdef HAVE_SDL3
-    if (g_sdl) platform_sdl_close();
+    if (g_sdl) { platform_audio_sdl_close(); platform_sdl_close(); }
 #endif
 
     if (platform_dump_ppm(dump) != 0)
@@ -102,6 +107,10 @@ int main(void) {
     printf("prg=%s frames=%u visible=0x%05x fb_nonzero=%u ppm=%s\n",
            prg, platform_frame_count(), platform_visible_base(),
            platform_fb_nonzero(), dump);
+    printf("audio: rms=%u peak=%u samples=%u isr=%u music_isr=%u\n",
+           platform_audio_rms(), platform_audio_peak(),
+           platform_audio_samples(), platform_mfp_isr_count(),
+           platform_mfp_music_isr_count());
     free(img);
     return 0;
 }

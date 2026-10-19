@@ -38,7 +38,7 @@ test: $(CORE)
 #   make port       -> build/kult      headless (PPM), sin SDL
 #   make port-sdl   -> build/kult-sdl  con ventana SDL3 (-DHAVE_SDL3)
 #   make test-port  -> pruebas de la HAL (sin oráculo)
-PLATFORM_SRC := $(filter-out platform/video_sdl.c,$(wildcard platform/*.c))
+PLATFORM_SRC := $(filter-out platform/video_sdl.c platform/audio_sdl.c,$(wildcard platform/*.c))
 PORT_SRC     := $(wildcard src/*.c) $(PLATFORM_SRC) $(wildcard boot/*.c) $(wildcard app/*.c)
 PORT_INC     := -Iplatform -Iplatform/include -Iboot -Iinclude -I$(KIT)/include
 PORT_CFLAGS  := -std=c11 -O2 -Wall -Wextra $(PORT_INC)
@@ -57,17 +57,17 @@ SDL3_LIBS   := $(shell pkg-config --libs sdl3)
 PORT_SDL_BIN := build/kult-sdl
 .PHONY: port-sdl
 port-sdl: $(PORT_SDL_BIN)
-$(PORT_SDL_BIN): $(PORT_SRC) platform/video_sdl.c $(wildcard include/*.h) $(wildcard boot/*.h)
+$(PORT_SDL_BIN): $(PORT_SRC) platform/video_sdl.c platform/audio_sdl.c $(wildcard include/*.h) $(wildcard boot/*.h)
 	@mkdir -p build
 	$(CC) $(PORT_CFLAGS) -DHAVE_SDL3 $(SDL3_CFLAGS) \
-	  $(PORT_SRC) platform/video_sdl.c $(SDL3_LIBS) -o $(PORT_SDL_BIN)
+	  $(PORT_SRC) platform/video_sdl.c platform/audio_sdl.c $(SDL3_LIBS) -o $(PORT_SDL_BIN)
 
 # Pruebas funcionales de la HAL (sin oráculo): ficheros, vídeo, entrada, reloj.
 PLATFORM_TEST := build/test_platform
 .PHONY: test-port
 test-port: $(PLATFORM_TEST)
 	$(PLATFORM_TEST)
-$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c $(PLATFORM_SRC) \
+$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c src/music.c $(PLATFORM_SRC) \
                   $(wildcard platform/include/*.h) $(wildcard platform/*.h) $(wildcard include/*.h)
 	@mkdir -p build
-	$(CC) $(PORT_CFLAGS) platform/test/test_platform.c boot/vbl.c boot/prg.c $(PLATFORM_SRC) -o $@
+	$(CC) $(PORT_CFLAGS) platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c src/music.c $(PLATFORM_SRC) -o $@

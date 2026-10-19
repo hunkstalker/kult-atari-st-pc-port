@@ -10,17 +10,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <time.h>
 
 #include "machine.h"
 #include "addrs.h"
 #include "os.h"
 #include "sched.h"
+#include "psg.h"
+#include "hw.h"
+#include "kult_api.h"
 #include "platform.h"
 #include "platform_internal.h"
 #include "boot.h"
 
 /* Stub del core para poder probar el tick de VBL aislado (boot/vbl.c). */
 uint32_t pal_next_byte(uint8_t *img) { (void)img; return 0; }
+
+/* Las ISR PCM (src/sound.c) las cubre el diferencial del core; aquí no se enlazan
+ * (arrastrarían el resto del core). Se sustituyen por stubs para el enlazado. */
+void sound_isr_fwd(uint8_t *img)  { (void)img; }
+void sound_isr_back(uint8_t *img) { (void)img; }
 
 #define IMG_SIZE 0x100000u
 #define DIR      "/tmp/kult_hal_test"
@@ -211,6 +220,179 @@ static void test_prg_loader(void) {
     free(im);
 }
 
+/* --- M4/T-040..T-042: música (reproductor 0x3a872), Timer A del MFP y YM --- */
+
+/* Escena de música controlada: los tres canales "mudos" (bit 0x40 de [0x27]), de
+ * modo que `music_tick` retorna sin tocar los punteros y el único trabajo del
+ * reproductor son las tablas sombra + la envolvente. Deja el estado (armado), las
+ * tablas de periodo/volumen y la estructura de envolvente con valores conocidos. */
+static void music_scenario(void) {
+    memset(g_img, 0, IMG_SIZE);
+    g_img[0x3ae8c + 0x1a] = 0xff;             /* armado */
+    g_img[0x3ae8c + 0x1b] = 0x10;             /* contador */
+    g_img[0x3ae8c + 0x1c] = 0x08;             /* recarga */
+    wr16(g_img + 0x3ae7c, 0x1234);            /* sombra de periodos */
+    wr16(g_img + 0x3ae7e, 0x5678);
+    wr16(g_img + 0x3ae80, 0x9abc);
+    g_img[0x3ae84] = 0x0a;                    /* sombra de volúmenes */
+    g_img[0x3ae85] = 0x0b;
+    g_img[0x3ae86] = 0x0c;
+    g_img[0x3b19c + 0] = 0x00;                /* envolvente [0..6] */
+    g_img[0x3b19c + 1] = 0x02;
+    g_img[0x3b19c + 2] = 0x02;
+    g_img[0x3b19c + 3] = 0x10;
+    g_img[0x3b19c + 4] = 0x20;
+    g_img[0x3b19c + 5] = 0x02;
+    g_img[0x3b19c + 6] = 0x3f;
+    g_img[0x3b1a2] = 0x3f;                    /* máscara de mixer */
+    for (int i = 0; i < 3; i++)
+        g_img[0x3afbc + i * 0x50 + 0x27] = 0x40;
+}
+
+/* Golden del oráculo (Musashi) para `music_scenario()` + un tick del reproductor
+ * 0x3a872, capturado con el harness del kit (psg_seed={7:0x3f}). Cada fila es
+ * (kind, reg, val): kind 0 = WRITE, 1 = READ. Comparar el ledger del port con
+ * esta tabla es la comparación de stream PSG con el oráculo (docs/VERIFICACION.md). */
+static const uint8_t GOLD_KIND[23] = {0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,0,1};
+static const uint8_t GOLD_REG[23]  = {0,0,1,1,2,2,3,3,4,4,5,5,8,8,9,9,10,10,6,6,7,7,7};
+static const uint8_t GOLD_VAL[23]  = {
+    0x34,0x34,0x12,0x12,0x78,0x78,0x56,0x56,0xbc,0xbc,0x9a,0x9a,
+    0x0a,0x0a,0x0b,0x0b,0x0c,0x0c,0x00,0x00,0x3f,0x3f,0x3f
+};
+
+static void test_music_player_golden(void) {
+    music_scenario();
+    psg_reset(NULL, 0);
+    psg_seed_reg(7, 0x3f);                    /* mixer conocido (RMW) */
+    psg_log_reset();
+
+    kult_music_player(g_img);
+
+    CHECK(psg_log_count() == 23, "el reproductor debe emitir 23 accesos PSG");
+    uint32_t n = psg_log_count() < 23 ? psg_log_count() : 23;
+    for (uint32_t i = 0; i < n; i++) {
+        if (psg_log_kinds()[i] != GOLD_KIND[i] ||
+            psg_log_regs()[i]  != GOLD_REG[i]  ||
+            psg_log_vals()[i]  != GOLD_VAL[i]) {
+            fprintf(stderr, "FALLO: ledger PSG[%u] = (%u,%u,%u), oraculo (%u,%u,%u)\n",
+                    i, psg_log_kinds()[i], psg_log_regs()[i], psg_log_vals()[i],
+                    GOLD_KIND[i], GOLD_REG[i], GOLD_VAL[i]);
+            g_fail = 1;
+            break;
+        }
+    }
+}
+
+static void test_mfp_timer_a(void) {
+    music_scenario();
+    wr32(g_img + 0x134, 0x3a872);             /* vector Timer A -> reproductor */
+    hw_write8(0xfffa13, 0x20);                /* IMRA: Timer A */
+    hw_write8(0xfffa07, 0x20);                /* IERA: Timer A */
+    hw_write8(0xfffa19, 4);                   /* TACR: /50 */
+    hw_write8(0xfffa1f, 0xaa);                /* TADR = 0xaa */
+
+    CHECK(platform_mfp_timer_a_enabled(), "Timer A debe estar habilitado");
+    /* 2.4576 MHz / (50 * 0xaa) = 289 Hz -> ~3458 us */
+    CHECK(platform_mfp_timer_a_period_us() == 3458, "periodo del Timer A = 3458 us");
+
+    platform_audio_init();
+    platform_mfp_audio_reset();
+    psg_reset(NULL, 0);
+    psg_seed_reg(7, 0x3f);
+
+    platform_audio_tick(g_img, 20000);        /* un VBL de tiempo emulado */
+    CHECK(platform_mfp_isr_count() == 5, "20 ms a 3458 us -> 5 ISR del Timer A");
+    CHECK(platform_audio_samples() > 0, "el Timer A debe renderizar audio");
+    CHECK(platform_audio_rms() > 0, "la musica del reproductor debe tener energia");
+
+    hw_write8(0xfffa19, 0);                   /* TACR = 0: parado */
+    CHECK(!platform_mfp_timer_a_enabled(), "con TACR=0 el Timer A está parado");
+    CHECK(platform_mfp_timer_a_period_us() == 0, "periodo 0 si está parado");
+}
+
+/* En modo tiempo real el audio se avanza con el reloj de pared: es lo que hace
+ * sonar la música de intro mientras `Cnecin` espera una tecla en el menú. */
+static void test_audio_pump(void) {
+    music_scenario();
+    wr32(g_img + 0x134, 0x3a872);
+    hw_write8(0xfffa13, 0x20);
+    hw_write8(0xfffa07, 0x20);
+    hw_write8(0xfffa19, 4);
+    hw_write8(0xfffa1f, 0xaa);
+
+    platform_audio_init();
+    platform_mfp_audio_reset();
+    psg_reset(NULL, 0);
+    psg_seed_reg(7, 0x3f);
+
+    platform_set_realtime(1);
+    platform_audio_pump(g_img);               /* fija la base del reloj */
+    struct timespec ts = { 0, 30000000L };    /* 30 ms */
+    nanosleep(&ts, NULL);
+    platform_audio_pump(g_img);
+    platform_set_realtime(0);
+
+    CHECK(platform_mfp_isr_count() >= 3, "30 ms a 3458 us -> ~8 ISR (>=3)");
+    CHECK(platform_audio_samples() > 0, "el bombeo en espera debe renderizar audio");
+}
+
+static void test_audio_rms(void) {
+    platform_audio_init();
+    psg_reset(NULL, 0);
+    psg_seed_reg(0, 0x80);                    /* periodo del canal A */
+    psg_seed_reg(8, 0x0f);                    /* volumen A máximo */
+    psg_seed_reg(7, 0x3e);                    /* mixer: solo tono A activo */
+
+    platform_audio_rms_reset();
+    platform_audio_advance(psg_regs(), 100000, 100);   /* 100 ms */
+    uint32_t tone = platform_audio_rms();
+    CHECK(platform_audio_samples() >= 4000, "100 ms a 48 kHz -> ~4800 muestras");
+    CHECK(tone > 100, "un tono con volumen debe producir energía");
+    CHECK(platform_audio_peak() > 200, "el pico del tono debe ser apreciable");
+
+    psg_seed_reg(7, 0x3f);                    /* mixer: todo desactivado */
+    platform_audio_rms_reset();
+    platform_audio_advance(psg_regs(), 100000, 100);
+    CHECK(platform_audio_rms() < tone / 4 + 1,
+          "sin tono ni ruido el RMS debe caer (queda el transitorio del filtro)");
+}
+
+/* Integración real (si el PRG del oráculo está disponible): `init_hardware` arma
+ * el Timer A con el vector $134 = 0x3a872 y el bombeo de espera (menús/prompts)
+ * hace sonar la música de intro. Sin la imagen del juego, se omite. */
+static void test_integration_music(void) {
+    const char *prg = getenv("KULT_PRG");
+    if (!prg || !*prg) prg = "work/disk_a/KULT.PRG";
+    FILE *f = fopen(prg, "rb");
+    if (!f) {
+        fprintf(stderr, "nota: sin %s; se omite la integracion de audio\n", prg);
+        return;
+    }
+    fclose(f);
+
+    uint8_t *im = calloc(1, IMG_SIZE);
+    if (!im || kult_load_prg(im, prg) != 0) { free(im); return; }
+
+    (void)init_hardware(im, 0);
+    CHECK(be32(im + 0x134) == 0x3a872, "init_hardware instala el reproductor en $134");
+    CHECK(platform_mfp_timer_a_enabled(), "init_hardware arma el Timer A");
+
+    platform_audio_init();
+    platform_mfp_audio_reset();
+    psg_reset(NULL, 0);
+    psg_seed_reg(7, 0x3f);
+    platform_set_realtime(1);
+    platform_audio_pump(im);
+    struct timespec ts = { 0, 30000000L };
+    nanosleep(&ts, NULL);
+    platform_audio_pump(im);
+    platform_set_realtime(0);
+
+    CHECK(platform_mfp_music_isr_count() >= 3, "la musica de intro debe sonar en la espera");
+    CHECK(platform_audio_samples() > 0, "la musica de intro debe renderizar audio");
+    free(im);
+}
+
 int main(void) {
     make_fixture();
     setenv("KULT_DATA_DIR", DIR, 1);
@@ -225,8 +407,14 @@ int main(void) {
     test_real_input();
     test_vbl();
     test_prg_loader();
+    test_music_player_golden();
+    test_mfp_timer_a();
+    test_audio_pump();
+    test_audio_rms();
+    test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL, loader PRG)\n");
+    printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL, loader PRG, "
+           "musica PSG, Timer A, RMS)\n");
     return 0;
 }

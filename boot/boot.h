@@ -23,6 +23,11 @@ int kult_boot(uint8_t *img, uint32_t max_frames);
  * platform_set_tick() antes de arrancar. */
 void kult_vbl_tick(uint8_t *img);
 
+/* Reproductor del Timer A de música (0x3a872 + envolvente 0x3a936), reconstruido.
+ * Lo dispara el modelo del MFP (platform/mfp.c) cuando el vector $134 apunta a
+ * 0x3a872. */
+void kult_music_player(uint8_t *img);
+
 /* Callback llamado al inicio de cada iteración del bucle (para presentar/pulsar
  * eventos desde `app/`). Se registra antes de kult_boot. */
 void kult_set_frame_cb(void (*fn)(uint8_t *img));
