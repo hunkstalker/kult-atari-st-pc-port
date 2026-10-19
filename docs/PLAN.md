@@ -41,11 +41,9 @@ presentación al refresco.
 **Contenido:** modelo del **MFP Timer A** (dispara las ISR C ya existentes),
 emulación **PSG/YM2149**, salida **SDL audio**.
 **Aceptación:** suena la intro/música y los efectos, sin petardeo.
-
-## M5 — Filtros CRT (opcional)
-**Objetivo:** escalado con shaders.
-**Contenido:** `SDL_GPU` + shaders (CRT/scanlines/…).
-**Aceptación:** filtros conmutables; perfil sin filtro intacto.
+**Estado:** ✅ hecho (T-040/041/042; ver `notes/0008-m4-audio.md`). El reproductor
+de música `0x3a872` se reconstruyó en `boot/`; la verificación objetiva compara su
+ledger PSG con el oráculo y mide RMS/energía. La escucha final la valida el usuario.
 
 ## M6 — Pulido y validación
 **Objetivo:** dejarlo jugable de principio a fin.
@@ -62,3 +60,13 @@ emulación **PSG/YM2149**, salida **SDL audio**.
 **Objetivo:** distribuir sin assets (el usuario aporta su copia).
 **Contenido:** builds Windows/Linux; ingesta de datos; paquete.
 **Aceptación:** doble clic + copia del usuario → funciona.
+
+## M5 — Filtros CRT (nota: extra opcional, no prioritario)
+**Nota:** fuera del camino crítico. La prioridad es **terminar el juego** (M6
+validación → M7 empaquetado → Amiga); esto es una **mejora de presentación** que
+se desarrollará **en algún momento**, tras validar. Se conserva el id **M5/T-050**
+como referencia en el plan.
+**Objetivo:** escalado con shaders.
+**Contenido:** `SDL_GPU` + shaders (CRT/scanlines/…); `SDL_Renderer` se mantiene
+como base (ADR 0002).
+**Aceptación:** filtros conmutables; perfil sin filtro intacto.

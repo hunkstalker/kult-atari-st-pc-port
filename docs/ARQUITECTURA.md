@@ -57,6 +57,9 @@ alimenta el paquete IKBD en `A_IKBD_PACKET` para que se actualicen
   `hw_write8`/`psg_port_write`.
 - La HAL **emula el MFP Timer A** (dispara las ISR ya reconstruidas en C) y el
   **PSG/YM2149**, y saca audio por SDL.
+- Implementado (M4): `platform/mfp.c` (Timer A → vector `$134`),
+  `platform/psg.c` (registros + ledger), `platform/audio.c` (YM + RMS),
+  `platform/audio_sdl.c` (SDL3) y `boot/music_player.c` (reproductor `0x3a872`).
 
 ## Separación de builds
 - El **core** (juego) puede compilarse aparte (ya lo hace `kult-atari-st-c` como

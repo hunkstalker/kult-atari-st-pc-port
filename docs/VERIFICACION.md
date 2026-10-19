@@ -17,8 +17,12 @@ Pruebas propias de la HAL, sin oráculo:
   `A_CURSOR_X/Y` se actualizan.
 - **Tiempo/tick:** el contador de VBL avanza; las esperas retornan; el número de
   pasos por segundo es el esperado (simulación a cadencia fija).
-- **Audio:** comparación **A/B** de la emulación PSG (golden) y del disparo de
-  las ISR por el Timer A.
+- **Audio:** comparación del **stream de registros PSG** del reproductor de música
+  (`0x3a872`) con el **oráculo** (ledger del kit, 23 eventos en una escena
+  controlada), y **RMS/energía** de la emulación PSG/YM2149. Además: periodo/ISR
+  del **Timer A** del MFP y el bombeo en modo tiempo real. Todo en `make test-port`
+  (`test_music_player_golden`, `test_mfp_timer_a`, `test_audio_pump`,
+  `test_audio_rms`, `test_integration_music`).
 
 ## Integración (hitos)
 - **M1:** el arranque headless avanza N frames y el framebuffer es coherente.

@@ -48,14 +48,9 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M4 — Audio
 | id | tarea | estado |
 |---|---|---|
-| T-040 | Modelo del **MFP Timer A** que dispara las ISR C ya reconstruidas | ⬜ |
-| T-041 | Emulación **PSG/YM2149** desde `psg_port_write/read` | ⬜ |
-| T-042 | Salida por **SDL audio** | ⬜ |
-
-## M5 — Filtros CRT
-| id | tarea | estado |
-|---|---|---|
-| T-050 | `SDL_GPU` + shaders (escalado/CRT), opcional | ⬜ |
+| T-040 | Modelo del **MFP Timer A** que dispara las ISR C ya reconstruidas | ✅ `platform/mfp.c`: periodo de `TACR`/`TADR` (2.4576 MHz), vector `$134` → ISR PCM (`0x1910e`/`0x190f6`) o reproductor de música (`0x3a872`, reconstruido en `boot/music_player.c`); ISRA bit 5 |
+| T-041 | Emulación **PSG/YM2149** desde `psg_port_write/read` | ✅ `platform/psg.c` (fichero + **ledger** + seed) y `platform/audio.c` (3 ondas + ruido + mixer + volúmenes + envolvente + filtro DC) |
+| T-042 | Salida por **SDL audio** | ✅ `platform/audio_sdl.c` (mono S16 48 kHz, callback drena el anillo); `KULT_AUDIO=0` lo apaga |
 
 ## M6 — Pulido y validación
 | id | tarea | estado |
@@ -81,3 +76,11 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 |---|---|---|
 | T-D00 | Índice y ADRs (`docs/INDICE.md`, `docs/adr/`) | ✅ |
 | T-D01 | Mantener `RETOMAR.md` y este `TODO.md` al cerrar cada sesión | 🚧 |
+
+## M5 — Filtros CRT (nota: extra opcional, no prioritario)
+> **Nota.** Fuera del camino crítico: la prioridad es **terminar el juego**
+> (M6 validación → M7 empaquetado → Amiga). Se desarrollará **en algún momento**,
+> tras validar; se conserva el id **M5/T-050** como referencia en el plan.
+| id | tarea | estado |
+|---|---|---|
+| T-050 | `SDL_GPU` + shaders (escalado/CRT), opcional | ⬜ |

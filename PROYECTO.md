@@ -91,13 +91,18 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ hecho |
 | **M2** | portar `_start` y `0x160c2` | ✅ `_start` provisional + tick `0x160c2` (validar menú en T-020) |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
-| **M4** | audio (MFP Timer A + PSG + SDL audio) | pendiente |
-| **M5** | filtros CRT (SDL_GPU + shaders) | pendiente |
+| **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | pendiente |
 | **A** | workstream **Amiga**: spec (decomp) + core | pendiente |
 | **M7** | empaquetado/release (Windows/Linux) | pendiente |
+| **M5** | filtros CRT (SDL_GPU + shaders) — **nota: extra opcional, no prioritario** | ⬜ nota (desarrollar en algún momento, tras validar) |
 
 Detalle por fase: **`docs/PLAN.md`**.
+
+> **Nota (M5).** La prioridad es **terminar el juego** (M6 validación → M7
+> empaquetado → Amiga); los filtros CRT son una **mejora de presentación
+> opcional** que se desarrollará en algún momento, fuera del camino crítico. Se
+> conserva el id **M5/T-050** como referencia en el plan.
 
 ## 7. Decisiones cerradas
 Recogidas como ADR en `docs/adr/`:
@@ -117,6 +122,14 @@ Recogidas como ADR en `docs/adr/`:
 - **M3 hecha**: ventana SDL3 + `SDL_Renderer` (RGBA del framebuffer planar,
   paleta, escalado entero), **entrada real** (teclado/ratón → IKBD) y **ritmo**
   50 Hz. `make port-sdl` → `build/kult-sdl`; `KULT_WINDOW=1`.
-- **Siguiente:** T-020 (validar `_start`/menú fiel) y M4 (audio). Sin bloqueantes.
+- **M4 hecha (T-040/041/042)**: **MFP Timer A** (`platform/mfp.c`, dispara el
+  vector `$134`), **PSG/YM2149** (`platform/psg.c` + `platform/audio.c`, con
+  ledger), **salida SDL3** (`platform/audio_sdl.c`) y el **reproductor de música
+  `0x3a872`/0x936** reconstruido en `boot/music_player.c`. Verificación: ledger
+  PSG del reproductor contra el **oráculo** (23 eventos) y RMS/energía del YM en
+  `make test-port`; la escucha final la valida el usuario.
+- **Siguiente:** T-020 (validar `_start`/menú fiel) → **M6 (pulido/validación)** →
+  **M7 (empaquetado)** → Amiga. **M5 (CRT) queda como extra opcional, no
+  prioritario.** Sin bloqueantes.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

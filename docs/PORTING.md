@@ -47,6 +47,9 @@ backend de PC es todo el porte. El core **no se toca**.
   YM2149** para producir sonido; salida por **SDL audio**.
 - La **lógica** musical (notas, tracker, PCM) ya está en C; falta el **chip** y
   el **temporizador**.
+- **Implementado (M4)**: `platform/mfp.c` (Timer A + despacho del vector `$134`),
+  `platform/psg.c` (+ledger), `platform/audio.c` (YM2149), `platform/audio_sdl.c`
+  (SDL3) y `boot/music_player.c` (reproductor `0x3a872`/envolvente `0x3a936`).
 
 ## Cursor y ritmo (fluidez)
 - El cursor **se repinta una vez por tick**; la posición viene del paquete IKBD.

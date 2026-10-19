@@ -31,3 +31,5 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0005-loader-reloc-fix.md`](../notes/0005-loader-reloc-fix.md)
 - [`notes/0006-m3-ventana-sdl3.md`](../notes/0006-m3-ventana-sdl3.md)
 - [`notes/0007-m3-entrada-y-ritmo.md`](../notes/0007-m3-entrada-y-ritmo.md)
+- [`notes/0008-m4-audio.md`](../notes/0008-m4-audio.md)
+- [`notes/0009-m5-como-extra-opcional.md`](../notes/0009-m5-como-extra-opcional.md)
