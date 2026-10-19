@@ -23,7 +23,13 @@
 #include "machine.h"   /* be16/be32/wr16/wr32 (del kit, portables) */
 
 /* ---- constantes que `src/` usa de os.h ---- */
-#define OS_SCREEN_BASE   0x80000u   /* base de pantalla (Physbase); ver comentario en el kit */
+/* Base de pantalla (Physbase). El kit usa 0x80000, pero en el port esa zona la
+ * ocupa el juego: los bancos ECHE se cargan contiguos desde 0x64c8e y llegan
+ * hasta ~0x88b84, pisando la pantalla B (0x78000) y su paleta (0x77fe0) -> ruido
+ * y colores mal. Se usa 0x98000 como en el predecesor (pantallas 0x90000/0x98000,
+ * por encima de ECHE y por debajo de 0xA0000). El diferencial (`make test`) sigue
+ * con el valor del kit (no incluye esta cabecera). */
+#define OS_SCREEN_BASE   0x98000u
 #define OS_KBDVBASE      0x500u     /* resultado de XBIOS Kbdvbase() (struct in-image) */
 #define OS_SUPER_ENTER   0u         /* Super(0) */
 #define OS_PSG_DATA_READ 0xffu      /* lectura abierta de $ff8802 (no la usa el port) */

@@ -7,11 +7,27 @@
 #ifndef KULT_PLATFORM_H
 #define KULT_PLATFORM_H
 
+#include <stddef.h>
 #include <stdint.h>
 
-/* Inicia la HAL: directorio de datos (KULT_DATA_DIR o `data/`), entrada
- * (KULT_KEYS o auto-tecla 'E') y estado de vídeo. `img` no se toca aquí. */
+/* Inicia la HAL: directorio de datos (KULT_DATA_DIR o `data/` junto al
+ * ejecutable), entrada (KULT_KEYS o auto-tecla 'E') y estado de vídeo. `img` no
+ * se toca aquí. */
 void platform_init(void);
+
+/* Busca un fichero de datos (p. ej. "KULT.PRG") en los directorios de datos y
+ * copia su ruta a `out`. Devuelve 0 si existe. (M7/T-070) */
+int platform_data_resolve(const char *name, char *out, size_t out_size);
+
+/* ---- diagnóstico (M7) ---------------------------------------------------- */
+/* Log a fichero y a stderr. Por defecto escribe `kult.log` junto al ejecutable
+ * (fallback a %LOCALAPPDATA% en Windows o /tmp en POSIX). KULT_LOG=<ruta> lo
+ * redirige y KULT_LOG=0 lo apaga. `platform_fatal` además muestra un MessageBox
+ * en la build GUI de Windows (KULT_GUI). Iniciar antes de resolver los datos. */
+void platform_log_init(void);
+void platform_log(const char *fmt, ...);
+void platform_fatal(const char *fmt, ...);
+void platform_log_close(void);
 
 /* Fija la imagen plana (1 MiB) que comparten los servicios. */
 void platform_set_image(uint8_t *img);
@@ -24,15 +40,52 @@ void platform_key_push_str(const char *s);
  * conmutador del modo auto (headless). `platform_set_idle` registra el bombeo que
  * se usa durante una espera bloqueante (Cnecin) cuando no hay modo auto. */
 void platform_mouse_set(int x, int y, int buttons);
+/* Botón derecho: pide saltar transiciones/reveal ($1a570); el izquierdo solo
+ * interactúa (bit2 de A_INPUT_BUTTONS), como en el original. */
 void platform_input_set_auto(int on);
 void platform_set_idle(void (*fn)(uint8_t *img));
 
 /* Reloj: número de frames (VBL) entregados desde el arranque. */
 uint32_t platform_frame_count(void);
 
+/* Reloj monótono en ns (para diagnósticos, p. ej. FPS del bucle). */
+uint64_t platform_now_ns(void);
+
 /* Trabajo a ejecutar en cada frame (VBL). El driver registra aquí el tick del
  * juego (boot/vbl.c: 0x160c2); sin hook, el reloj sólo incrementa A_DAT_1ACD4. */
 void platform_set_tick(void (*fn)(uint8_t *img));
+
+/* Presentación durante el ARRANQUE (modo ventana): si se registra, `platform_tick`
+ * llama a `fn` en cada VBL *mientras no se haya entrado en el bucle del juego*.
+ * Así las esperas de `wait_frame` (0x13698) presentan y bombean SDL (ratón), en
+ * vez de dejar la ventana congelada/negra. En el bucle presenta el frame hook del
+ * driver (frame_hook), por eso `boot/` marca `platform_set_loop(1)` al entrar. */
+void platform_set_present(void (*fn)(uint8_t *img));
+void platform_set_loop(int on);
+
+/* Retardo de CPU del original (`dbf` que solo consumen tiempo: motor de
+ * elementos, reveal/retrato...). Convierte "unidades" (~ciclos/10) a tiempo con
+ * KULT_CPU_HZ (def. 8 MHz) y, en modo tiempo real, duerme cediendo VBLs y
+ * presentando. En headless es un no-op. KULT_CPU=0 lo desactiva. */
+void platform_cpu_delay(uint32_t units);
+
+/* Cobra `cycles` ciclos de CPU del original (modelo medido por función,
+ * `-finstrument-functions`). Misma puerta/reloj que `platform_cpu_delay`. */
+void platform_cpu_charge_cycles(uint64_t cycles);
+
+/* Marca manual en el log de KULT_MARKS (p. ej. F12 en el momento exacto). */
+void platform_marks_event(const char *tag, int a, int b);
+
+/* Traza de bytes de guion de la VM (build de diagnostico T-073c). */
+void platform_marks_byte(uint32_t vbl, uint32_t b, uint32_t script);
+
+/* Estado de seleccion/animacion en cada byte de guion (T-073c). */
+void platform_marks_state(uint32_t vbl, uint32_t b, uint32_t script,
+                          uint32_t acc9, uint32_t acd2, uint32_t aaf9,
+                          uint32_t ad1d, uint32_t acc6, uint32_t skip,
+                          uint32_t a572, uint32_t a0f, uint32_t cx,
+                          uint32_t cy, uint32_t btn, uint32_t cmd,
+                          uint32_t selobj);
 
 /* Ritmo en tiempo real (M3): cada VBL consume 20 ms de reloj (50 Hz). Se activa
  * en modo ventana; apagado (por defecto) el port va a la máxima velocidad. */

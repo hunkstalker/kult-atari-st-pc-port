@@ -44,6 +44,8 @@ test/       499 pruebas diferenciales              — INTACTO
 boot/       _start (0x10000) y tick VBL (0x160c2)  — NUEVO (reconstrucción)
 platform/   HAL PC: os_* / hw_* / psg_* / sched_* + render + audio — NUEVO
 app/        main + driver + presentación           — NUEVO
+assets/     icono de la app (`kult_icon.ico`), recurso del .exe — NUEVO
+docs/       documentación · notes/ · adr/
 ```
 
 `src/` **no se modifica**: si algo hubiera que cambiarlo, sería señal de que la
@@ -74,7 +76,8 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 |---|---|
 | `_start` (0x10000) | arranque + **menú de idioma** (único nombre sin C) |
 | `0x160c2` | tick de VBL: contador `A_DAT_1ACD4` + trabajo por frame |
-| `0x135ba`, `0x106f2` | rutinas pequeñas del arranque |
+| `0x135ba` | XBIOS `Setscreen(-1,-1,0)` → `os_setscreen` no-op (✅) |
+| `0x106f2` | reinicio suave `l_0101a8` (**abierto**; parece inobservable). **No** es el reinicio tras morir (ese es `0x1842c`→`reset_clear`, ya en el core) |
 | `0x19316` | comprobación FDC → **se omite** en PC |
 
 ### 5.3 Se implementa (capa de PC)
@@ -89,20 +92,23 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 |---|---|---|
 | **M0** | repo y documentación; importar `src/include/test/tools` | ✅ hecho |
 | **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ hecho |
-| **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` diferido) + tick `0x160c2` |
+| **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` **abierto**) + tick `0x160c2` |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
-| **M6** | pulido y validación | pendiente |
-| **A** | workstream **Amiga**: spec (decomp) + core | pendiente |
-| **M7** | empaquetado/release (Windows/Linux) | pendiente |
-| **M5** | filtros CRT (SDL_GPU + shaders) — **nota: extra opcional, no prioritario** | ⬜ nota (desarrollar en algún momento, tras validar) |
+| **M6** | pulido y validación | 🚧 T-060 ✅ (menú fiel); **T-061** = validación del usuario |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta | 🚧 **build ✅** (T-070) y **ZIP/TGZ interino ✅** (T-071); **ingesta `.STX` adelantada** tras T-061 (T-072) |
+| **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
+| **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
+| **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
+| **M5** | filtros CRT (SDL_GPU + shaders) — **nota: extra opcional, no prioritario** | ⬜ nota (al final) |
 
-Detalle por fase: **`docs/PLAN.md`**.
+Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 
-> **Nota (M5).** La prioridad es **terminar el juego** (M6 validación → M7
-> empaquetado → Amiga); los filtros CRT son una **mejora de presentación
-> opcional** que se desarrollará en algún momento, fuera del camino crítico. Se
-> conserva el id **M5/T-050** como referencia en el plan.
+> **Orden acordado:** `arreglos (portabilidad Windows + docs) → M7 build → T-061
+> (validación del usuario) → M7-c (empaquetado + ingesta) → A1 → N3 → A2 → M5`.
+> **M5** es un extra de presentación independiente (no se junta con A). **A1** es
+> **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
+> **T-022/`0x106f2`** se deja **abierto** (posible futuro). Detalle: `notes/0011`.
 
 ## 7. Decisiones cerradas
 Recogidas como ADR en `docs/adr/`:
@@ -112,9 +118,9 @@ Recogidas como ADR en `docs/adr/`:
 
 ## 8. Estado (punto de control)
 - **Fase M0 cerrada**: core importado y **499 diferenciales verdes** (`make test`).
-- **Fase M1 hecha**: HAL PC (`platform/`), loader + `_start` provisional (`boot/`)
-  y driver headless (`app/`). **`make test-port` verde**; `make port` arranca el
-  juego y vuelca la sala cargada.
+- **Fase M1 hecha**: HAL PC (`platform/`), loader + `_start` (provisional en M1;
+  **fiel** en M2) (`boot/`) y driver headless (`app/`). **`make test-port` verde**;
+  `make port` arranca el juego y vuelca la sala cargada.
 - **M2/T-021 hecha**: tick de VBL `0x160c2` en `boot/vbl.c` (con prueba).
 - **T-024 resuelta**: el loader C (`boot/prg.c`) aplicaba mal la relocación DRI
   (relocalizaba tras un `RELOC_SKIP`); corregido y con prueba. **El port ejecuta
@@ -132,8 +138,56 @@ Recogidas como ADR en `docs/adr/`:
   `_start` (T-020: clic de título, drenado de teclas, D/E/F; `0x135ba` como
   `os_setscreen` no-op) y se documenta la **validación** (checklist en
   `docs/VERIFICACION.md`, limitaciones en `docs/LIMITACIONES.md`), que **ejecuta
-  el usuario**. `0x106f2` (reinicio) queda diferido.
-- **Siguiente:** validación del usuario (M6/T-061) → **M7 (empaquetado)** → Amiga.
-  **M5 (CRT) como extra opcional.** Sin bloqueantes.
+  el usuario**. `0x106f2` (reinicio suave) queda **abierto/pendiente**.
+- **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
+  docs) → M7 build → T-061 validación → M7-c (empaquetado + ingesta) → A1
+  (investigación Amiga, prerrequisito duro de N3) → N3 (motor nativo + assets
+  nativos, ADR + rama) → A2 (Amiga) → M5 (opcional)`. Detalle: **`notes/0011`**.
+- **M7 build hecho (sesión 12, T-070)**: portabilidad Windows (`platform/time.c`
+  reloj/espera, `platform/fs.c` `;` + `data/` junto al exe, `KULT_PRG` del dir de
+  datos), **CMake** nativo (`kult`, `kult-sdl`) y **cross MinGW**
+  (`kult.exe` GUI con icono + `kult-headless.exe`), `cmake/mingw-w64.cmake`,
+  SDL3 **3.4.10** MinGW en `third_party/` (gitignored) e icono (`.rc` + RGBA +
+  `SDL_SetWindowIcon`). Detalle: **`notes/0012`**.
+- **Empaquetado interino hecho (T-071)**: CPack → ZIP Windows
+  (`build-win/kult-0.1.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`LEEME.txt`)
+  y TGZ Linux; sin assets. `make test` 499 y `make test-port` siguen verdes.
+- **Datos + diagnóstico (sesión 13)**: el `.exe` "no hacía nada" porque en
+  `data/` solo había imágenes `.STX` (el paquete interino necesita ficheros
+  extraídos). Los `.STX` del usuario (idénticos a los discos del proyecto) se
+  extrajeron y se dejaron los 28 ficheros en `data/`. Se añadió **`kult.log`**
+  junto al `.exe` (+stderr, `MessageBox` sin consola), **fallo de ventana =
+  fatal** (antes bucle invisible) y **preflight de los 26 ficheros** del juego
+  con lista clara. ZIP con `kult-headless.exe` + `DIAGNOSTICO.txt`. Detalle:
+  **`notes/0013`**.
+- **Colores del juego (sesión 14)**: corregidos cambiando la **base de pantalla
+  del HAL** (`OS_SCREEN_BASE = 0x98000` en `platform/include/os.h`). Con el valor
+  del kit (`0x80000`), pantalla B y su paleta caían dentro de los datos del juego
+  (ECHE + heap) → ruido/colores mal. Paleta de `FOND.PI1` correcta y frame
+  validado; `src/` intacto; **499 + test-port verdes**. Detalle: `notes/0014`.
+- **Primera pantalla (sesión 14)**: corregida; es el **título (PRES)** visible
+  con música y espera **tecla o clic**. El negro era un fallo del estado inicial
+  del HAL (faltaba aplicar la paleta del PI1 antes de la espera); ahora
+  `boot/boot.c` la aplica. Verificado: frame del título idéntico a `PRES.PI1`.
+- **Ritmo (T-073a/b, sesión 15)**: implementado el modelo de CPU: `cpu_delay`
+  real para los `dbf` transcritos + **coste medido por función** del oráculo
+  (`-finstrument-functions` solo en el port, `platform/cpuwork_costs.inc`, 79
+  funciones). El port cobra ciclos y cede VBLs; `KULT_CPU=0` lo apaga. Falta
+  **T-073c** (calibración por escenas/casos no medidos, p.ej. `palette_cycle`).
+  Detalle: `notes/0015`.
+- **T-073c — Maestro (sesión 18, corrección)**: se **rechaza** el cambio de la
+  sesión 17 al botón derecho. Se elimina `platform/input_core.c`; el port vuelve
+  a compilar `src/input.c` y el **clic izquierdo** sigue saltando
+  transiciones/reveal; el derecho queda sin función. Se mantiene el fix de click
+  pegado. Hallazgo útil conservado: los brazos del Maestro aparecen **después
+  del primer prompt** (el primer `0x36 1d41b` es el scene draw inicial). El exe
+  `296ce6…` queda invalidado; hay que reconstruir el estándar. T-073c sigue
+  abierto (`15da6`/segundo scene draw). Detalle: `notes/0016`.
+- **Siguiente:** validar en Windows que el clic izquierdo ya no salta el reveal
+  del Maestro y que el derecho sí. Después **T-061** — validación del usuario en
+  Windows con el ZIP final (arranque, partida, **colores**, guardado, audio,
+  morir → reiniciar sala). Después **T-072 (ingesta `.STX`, adelantada)** →
+  **M7-c** → **A1** → **N3** → **A2** → **M5**. Sin bloqueantes, pero con la
+  traza aún en el árbol (fuera del build) a falta de borrarla.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

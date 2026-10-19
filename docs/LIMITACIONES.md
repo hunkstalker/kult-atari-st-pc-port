@@ -11,6 +11,22 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 - **`os_super` es un no-op** (en PC no hay modo supervisor).
 - **Menú de idioma fiel** (ADR 0004): se mantiene el del original (clic de título
   y tecla D/E/F), no un menú nativo.
+- **Cambio de disco omitido.** El original pide "INSERT DISK 2" (`0x918e`) antes
+  de cargar los recursos del disco B (`FOND`/`PUZZL`/`BRUIT`). El port sirve
+  ambos discos desde el mismo directorio, así que el aviso (y su reintento con
+  clic) se **omite**; el arranque continúa directo.
+- **Primera pantalla = título (PRES) visible.** El port aplica la paleta del PI1
+  cargado (`PRES.PI1`) antes de la espera, así que el **título se ve con sus
+  colores** desde el principio y espera **tecla o clic**. En el `_start` original
+  el primer `Setpalette` llega después de la espera y el ST hereda la paleta del
+  escritorio; el HAL arranca a cero, de ahí el negro anterior. Ahora no debe
+  verse negro: si lo estuviera o no avanzara, sería un fallo (criterio en
+  `docs/VERIFICACION.md`).
+- **Physbase = 0x98000** (decisión del HAL, no un fallo): con el valor del kit
+  (`0x80000`) las pantallas (`0x78000/0x80000`) y su paleta (`0x77fe0`) caían
+  dentro de los datos del juego (ECHE `0x64c8e..~0x88b84` + heap) → ruido y
+  colores mal. Es la misma corrección que usó el predecesor. `src/` no se toca;
+  el differential usa el `os.h` del kit.
 - **Audio aproximado.** El YM2149 es un modelo mínimo (no ciclo-exacto): 3 ondas
   cuadradas + ruido + envolvente + volúmenes logarítmicos. La **escucha final** la
   cierra el usuario. Ajustes: `KULT_AUDIO=0` (apaga), `KULT_MUSIC_GAIN` (nivel de
@@ -22,16 +38,39 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   contenedor sin `/dev/snd`/`DISPLAY` no suena (y el ejecutable cae a headless).
 
 ## Pendientes / futuros
-- **M5 — filtros CRT** (`SDL_GPU` + shaders): **extra opcional, no prioritario**
-  (ver `notes/0009`). Sin filtros hoy (se usa `SDL_Renderer` + escalado entero).
-- **Reinicio en caliente (`0x106f2`/`l_0101a8`)**: analizado y **diferido**. Solo
-  se alcanza por un puntero relocalizado (`+0x101a8`) y no es observable en el
-  flujo actual (ver `notes/0010`). Pendiente de conectar si la partida lo ejerce.
-- **M7 — empaquetado**: CMake y builds Windows pendientes; hoy solo `make` en
-  Linux (`build/kult`, `build/kult-sdl`).
-- **Workstream Amiga (A)**: no iniciado.
+- **M5 — filtros CRT** (`SDL_GPU` + shaders): **extra opcional, no prioritario**,
+  al final (ver `notes/0009`). Sin filtros hoy (`SDL_Renderer` + escalado entero).
+- **Reinicio `0x106f2` (`l_0101a8`)**: **abierto/pendiente** (no portado). Es un
+  "reinicio suave" de `_start`; el análisis estático lo ve **inobservable** (solo
+  aparece como constante base de relocalización, sin llamante) pero **se deja
+  abierto** por si se necesita (`notes/0010`, `notes/0011`). **No confundir** con
+  el reinicio tras morir (`0x1842c`→`reset_clear`, ya en el core).
+- **M7 — build/empaquetado**: **build hecho** (T-070): CMake nativo y cross
+  MinGW; el ZIP/TGZ interino (T-071) lleva `kult.exe`, `kult-headless.exe`,
+  `SDL3.dll` y `data/` vacía (**hay que copiar ahí los ficheros del juego**). El
+  `.exe` no se ha ejecutado en el entorno de desarrollo (sin wine): lo valida el
+  usuario (**T-061**). Requiere **Windows 10+** (UCRT).
+- **Ingesta de discos pendiente (T-072)**: este paquete **no lee** `.STX/.MSA/.ST`;
+  `data/` debe contener los ficheros **extraídos**. Es la siguiente tarea tras
+  T-061 (no se le debe pedir al usuario un `.PRG` como solución final). El
+  contenedor `kult.data` puede ir después con N3.
+- **Windows: sin consola.** `kult.exe` es subsistema GUI (sin ventana de
+  consola); los errores van a **`kult.log`** (junto al exe) y a un **MessageBox**.
+  `kult-headless.exe` (incluido en el ZIP) muestra el diagnóstico por consola.
+- **Amiga**: **A1** (investigación/censo/decomp) es **prerrequisito duro de N3**;
+  **A2** (implementación) va después de N3.
+- **N3 — motor nativo + assets nativos**: hito futuro (ADR + rama) para que el
+  runtime no dependa del binario original; formatos nativos (PNG/WAV/OGG/UTF-8 +
+  binario propio documentado). Ver `notes/0011`.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
   Fwrite); falta la validación de una partida completa por el usuario.
+- **Ritmo / aceleración (T-073)**: implementado el **modelo de CPU medido**
+  (T-073a `cpu_delay` + T-073b coste por función con `-finstrument-functions` y
+  tabla del oráculo). El port cobra ciclos del original a cada función y los
+  duerme cediendo VBLs. Queda **calibración por escenas** (T-073c) con
+  `KULT_CPU_HZ`/`KULT_ANIM_GATE`/`KULT_REVEAL_GATE`; `KULT_CPU=0` lo apaga. Los
+  casos **no** medidos en la referencia (p.ej. `palette_cycle`, cuyo `dbra 0xffff`
+  se omitió en el core) pueden seguir rápidos.
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
 1. `make test` (499) y `make test-port` en verde.

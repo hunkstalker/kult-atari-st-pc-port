@@ -52,24 +52,60 @@ ledger PSG con el oráculo y mide RMS/energía. La escucha final la valida el us
 **Estado:** en curso. **T-060 ✅** (menú de idioma **fiel**, ADR 0004, validado en
 T-020). **T-061 🚧**: checklist de validación en `docs/VERIFICACION.md` y
 limitaciones en `docs/LIMITACIONES.md`; **la ejecución la hace el usuario** (jugar
-y escuchar con su copia de datos).
-
-## A — Workstream Amiga
-**Objetivo:** poder ofrecer también la experiencia **Amiga**.
-**Contenido:** censo por rutina Amiga↔ST → decomp Amiga (spec) → core Amiga
-(lógica compartida + capa Amiga) → arte/audio/textos.
-**Aceptación:** modo Amiga verificado contra el binario Amiga.
+y escuchar con su copia de datos). Incluye **morir → reiniciar sala** (usa
+`reset_clear`, ya en el core; **no** depende de `0x106f2`). **Colores** del juego
+corregidos en la HAL (`OS_SCREEN_BASE=0x98000`) y **primera pantalla = título
+visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
+**T-073 🚧**: ritmo real: **T-073a ✅** (`cpu_delay` real) y **T-073b ✅**
+(coste medido por función con `-finstrument-functions` + tabla del oráculo);
+falta **T-073c** (calibración por escenas/casos no medidos, p.ej.
+`palette_cycle`). Ver `notes/0015`.
 
 ## M7 — Empaquetado/release
-**Objetivo:** distribuir sin assets (el usuario aporta su copia).
-**Contenido:** builds Windows/Linux; ingesta de datos; paquete.
+**Objetivo:** distribuir sin assets (el usuario aporta su copia); **build Windows**
+para que el usuario valide.
+**Contenido:** portabilidad Windows (`platform/time.c`, `platform/fs.c`); **CMake**
++ `cmake/mingw-w64.cmake`; **SDL3 3.4.10** para MinGW (`third_party/`, gitignored);
+**icono** (`assets/`); ZIP Windows + TGZ Linux; **ingesta** (`kult.data`) — esta
+última va de la mano de N3.
 **Aceptación:** doble clic + copia del usuario → funciona.
+**Nota:** el **primer build** (validación) empaqueta con carpeta `data/` interina
+(sin ingesta); el empaquetado completo (TGZ/CPack/ingesta) es M7-c.
+**Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
+icono + log/diagnóstico `kult.log`) y **empaquetado interino hecho** (T-071: ZIP
+Windows con `kult.exe`+`kult-headless.exe`+`SDL3.dll`+`data/`+`LEEME.txt`+
+`DIAGNOSTICO.txt`; TGZ Linux). El `.exe` se valida en **T-061** (el usuario).
+**Siguiente a T-061: T-072 — ingesta `.STX`** (el usuario solo aporta imágenes
+de disquete). Detalle: `notes/0012`, `notes/0013`.
+
+## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
+**Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a
+dos versiones**, sin rehacer nada luego.
+**Contenido:** `T-A00` censo Amiga↔ST por rutina; `T-A01` decomp ASM Amiga (spec
+byte a byte). **No toca el motor.**
+**Aceptación:** mapa de *lógica compartida vs específica* + diferencias de
+hardware (Paula/audio, paleta/planos) y de assets.
+
+## N3 — Motor nativo y assets nativos (hito futuro: ADR + rama)
+**Objetivo:** runtime **100 % independiente** del binario original (ni `KULT.PRG`
+ni blobs originales); motor propio + **assets nativos**.
+**Contenido:** **ADR** que lo fija; formato de assets + cargador; conversores por
+subsistema. Formatos: **PNG** (gráficos), **WAV/OGG** (audio), **UTF-8** (textos),
+**formato tracker propio** (música) y **binario propio documentado** (datos de
+sala/guion/tablas; **no** habrá mods). La **ingesta** pasa a ser un **conversor de
+un solo uso** (tu copia → assets). Modelo preparado para **ST/Amiga**.
+**Aceptación:** validación funcional por subsistema; sin dependencia del original.
+
+## A2 — Implementación Amiga (después de N3)
+**Objetivo:** ofrecer la experiencia **Amiga**.
+**Contenido:** `T-A02` core Amiga (lógica compartida + capa Amiga) sobre el motor
+de N3; `T-A03` arte/audio/textos Amiga.
+**Aceptación:** modo Amiga verificado contra el binario Amiga.
 
 ## M5 — Filtros CRT (nota: extra opcional, no prioritario)
-**Nota:** fuera del camino crítico. La prioridad es **terminar el juego** (M6
-validación → M7 empaquetado → Amiga); esto es una **mejora de presentación** que
-se desarrollará **en algún momento**, tras validar. Se conserva el id **M5/T-050**
-como referencia en el plan.
+**Nota:** fuera del camino crítico y **al final**; independiente de A. Es una
+**mejora de presentación**, no afecta a la HAL ni a la lógica. Se conserva el id
+**M5/T-050**.
 **Objetivo:** escalado con shaders.
 **Contenido:** `SDL_GPU` + shaders (CRT/scanlines/…); `SDL_Renderer` se mantiene
 como base (ADR 0002).

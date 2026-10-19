@@ -1,0 +1,5 @@
+/* Icono de la app (K de Kult): windres lo incrusta como recurso del .exe, que es
+ * el que muestra el Explorador y la barra de tareas de Windows. El .ico vive en
+ * assets/kult_icon.ico; la version RGBA para SDL_SetWindowIcon la genera
+ * tools/make_icon_rgba.py (assets/kult_icon_rgba.h). */
+101 ICON "kult_icon.ico"

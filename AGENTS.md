@@ -11,7 +11,15 @@ habla con el Atari: llama a **19 servicios**; el port implementa esos servicios
 para PC (SDL3). Ver `docs/PORTING.md`.
 
 ## Estado
-Fase **M0**: documentación creada, **código aún no importado**. Sin bloqueantes.
+**M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 = validación del usuario) y
+**M7 build + empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
+`kult.exe` + ZIP sin assets, `kult.log` de diagnóstico). El juego arranca con el
+**menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
+corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
+visible** (paleta del PI1 antes de la espera). Pendiente: **T-061** (validación en
+Windows) → **T-072** (ingesta `.STX`) y **T-073** (ritmo: trabajo de CPU no
+modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5**
+(opcional). Sin bloqueantes. Ver `notes/0011`–`notes/0014`.
 
 ## Reglas de trabajo
 1. **Reproducir/medir antes de tocar.** Una hipótesis, un cambio.
@@ -36,6 +44,7 @@ test/       499 diferenciales          (intacto)
 boot/       _start (0x10000), tick 0x160c2      [nuevo]
 platform/   HAL PC (os_*/hw_*/psg_*/sched_*) + render + audio  [nuevo]
 app/        main + driver + presentación         [nuevo]
+assets/     icono (kult_icon.ico)                [nuevo]
 docs/  adr/  notes/
 ```
 

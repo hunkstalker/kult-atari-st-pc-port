@@ -1,0 +1,87 @@
+MEDIR EL RITMO (T-073c) — port vs Atari ST / Hatari
+===================================================
+
+Objetivo: comparar los FPS de la MISMA escena (idealmente el retrato con el
+personaje) en el port y en el original. Los FPS miden iteraciones del bucle
+(= wait_frame / Ikbdws), así que son comparables.
+
+A) EN EL PORT (Windows)
+-----------------------
+1. Este paquete incluye `kult-fps.bat`. Doble clic: activa KULT_FPSLOG=1 y
+   arranca kult.exe.
+2. Llega a la animación del retrato. Déjala correr unos segundos (el log mide
+   ventanas de ~3 s).
+3. Cierra el juego y abre `kult.log` (junto a kult.exe). Anota las líneas:
+      fps juego: 25.0
+   que correspondan al momento de la animación (las últimas suelen ser de la
+   escena donde cerraste).
+
+   Alternativa por consola:
+      set KULT_FPSLOG=1
+      kult.exe
+   (y mirar kult.log)
+
+   Para A/B: `kult-cpu-off.bat` arranca con KULT_CPU=0 (sin modelo de CPU).
+
+B) EN HATARI (referencia)
+-------------------------
+El arnés está en la carpeta `hatari_fps/` de este paquete (ficheros .ini).
+Cuenta llamadas XBIOS Ikbdws y saca FPS cada ~3 s por consola.
+
+1. Copia `fps1.ini`, `fps_count.ini` y `fps_report.ini` a la carpeta de
+   Hatari (o ejecuta desde ahí).
+2. Arranca con TOS y el disquete del juego, por ejemplo:
+      hatari.exe -W --bios-intercept on --tos tos.img --parse fps1.ini --disk-a "Kult.STX"
+   (usa tu tos.img y tus imágenes .STX; si tu copia del legacy está montada en
+   Windows, suelen estar en
+      ...\kult-port-legacy\tos\tos.img
+      ...\kult-port-legacy\disks\kult_a.stx  y  kult_b.stx )
+3. Juega hasta la MISMA animación del retrato. En la consola de Hatari irán
+   saliendo:
+      FPS:
+      25
+   Anota el valor estable DURANTE la animación.
+   - Mejor con CPU cycle-exact (si tu Hatari lo permite) y el TOS real.
+   - Si el juego pide el disco 2, cámbialo como en el original.
+
+C) QUÉ HACER CON LOS NÚMEROS
+----------------------------
+- Si FPS_port > FPS_Hatari en esa escena: el port va rápido. Bajamos la CPU
+  efectiva con KULT_ST_CONTEND (o KULT_CPU_HZ) hasta igualar.
+- Si coinciden: el port es fiel, aunque a ti te parezca rápido (sería la
+  velocidad real del ST).
+
+Variables útiles del port:
+   KULT_CPU=0            apaga el modelo de CPU (A/B)
+   KULT_CPU_HZ=8000000   CPU nominal
+   KULT_ST_CONTEND=100   % de CPU efectiva (contención de bus)
+   KULT_ANIM_GATE=100    % retardo del motor de elementos
+   KULT_REVEAL_GATE=100  % retardo del reveal/retrato
+   KULT_FPSLOG=1         imprime FPS del bucle cada ~3 s
+
+D) ANIMACIONES CORTAS (<3 s): MARCAS, no FPS
+--------------------------------------------
+Para el retrato/lift (que dura <2 s), el FPS medio no sirve. Usa
+`kult-marcas.bat`: activa KULT_MARKS y escribe `kult-marcas.log` con la entrada
+de las funciones clave y su VBL:
+
+    F 15da6 <vbl>    motor de elementos / personaje del retrato
+    F 12e2e <vbl>    reveal pixelado
+    F 12f28 <vbl>    reveal de elemento
+    F 123c0 <vbl>    blit de transicion/lift
+    F 12b40 <vbl>    permuta de bits (transicion)
+    F 15a90 <vbl>    seleccion de banco de animacion
+
+1. Doble clic en `kult-marcas.bat`.
+2. Juega hasta el retrato y deja que ocurra la animacion.
+3. Pulsa F12 **despues** (o durante): guarda los ~3 s anteriores y sigue
+   trazando ~1,5 s. No hay que cronometrar nada.
+4. Cierra con ESC/X (no cierres la consola del .bat).
+4. Pasa `kult-marcas.log` (o lo leemos en su carpeta). El log es acumulativo:
+   busca la ultima linea `# RUN`; las marcas de esa run van despues.
+
+La duracion del efecto = ultimo VBL - primer VBL de la funcion. Se compara con
+la referencia del oraculo (p. ej. reveal ~102 VBL; Vort ~379; transicion ~539).
+
+Pásanos: escena concreta + FPS de Hatari + FPS del port (o marcas). Con eso
+calibramos.

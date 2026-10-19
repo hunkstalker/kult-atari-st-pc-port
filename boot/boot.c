@@ -17,6 +17,7 @@
 #include "machine.h"
 #include "addrs.h"
 #include "os.h"
+#include "platform.h"
 #include "kult_api.h"
 #include "boot.h"
 
@@ -72,15 +73,26 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
          * cambia resolución); en PC `os_setscreen` lo trata como no-op. */
         os_setscreen(0xffffffffu, 0xffffffffu, 0);
         copy_screen(img);
-        BOOT_TRACE("pres");
+        /* El original solo llama a `set_palette` tras la espera del título (y en
+         * el ST se hereda la paleta del escritorio). El HAL arranca en negro, así
+         * que el título (PRES, ya copiado a A) se veía negro. Se aplica la paleta
+         * del PI1 recién cargado (cabecera en screen_ptr_b-0x20 = A_PALETTE_PTR):
+         * el título se ve con sus colores mientras espera tecla/clic. */
+        set_palette(img);
+        BOOT_TRACE("pres/palette");
 
-        /* DRAP.PI1 -> pantalla B; espera; paleta; swap (queda delante) */
+        /* DRAP.PI1 -> pantalla B (su paleta es la misma que la de PRES) */
         wr32(img + A_CUR_FILENAME, 0x1a430);
         load_named_screen(img);
-        /* _start f_012292: espera un clic real en la pantalla de título (bit 2 de
-         * A_INPUT_BUTTONS). En headless el clic alterno de la HAL lo libera; con
-         * entrada real lo libera el botón izquierdo del ratón. */
+        /* Volcado opcional del título para validación visual (sin ventana). */
+        if (getenv("KULT_DUMP_TITLE"))
+            platform_dump_ppm(getenv("KULT_DUMP_TITLE"));
+        /* _start f_012292: espera tecla o clic en la pantalla de título (bit 2 de
+         * A_INPUT_BUTTONS; wait_frame trata una tecla de Crawio como clic). En
+         * headless el clic alterno de la HAL lo libera; con entrada real lo
+         * libera el botón izquierdo del ratón o una tecla. */
         prompt_wait(img);
+        platform_log("titulo: clic");
         BOOT_TRACE("pres/drap/menu");
         set_palette(img);
         swap_screens(img);
@@ -89,6 +101,7 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
         lang = 'E';
     }
 
+    platform_log("idioma: %c", lang);
     /* Menú de idioma: escribe la letra en las 4 entradas de la lista A */
     kult_boot_apply_language(img, lang);
     copy_screen(img);
@@ -96,18 +109,24 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
 
     (void)load_resource_list_a(img);
     BOOT_TRACE("lista_a");
-    wr16(img + A_THE_COMMAND, 0x918e);
-    run_command_keep_sp(img, 0);
 
-    /* Bucle de carga original (l_0100ec) */
-    (void)load_fond(img);
-    BOOT_TRACE("fond");
-    for (int i = 0; i < 8; i++) {
-        if (load_resource_list_b(img) >= 0)
-            break;
-        wr16(img + A_THE_COMMAND, 0x918e);
-        run_command_keep_sp(img, 0);
+    /* l_0100e0 del original: pide cambiar al disco 2 (`cmd 0x918e`,
+     * "INSERT DISK 2... PRESS ANY KEY") porque FOND/PUZZL/BRUIT viven en el
+     * disco B, y espera. El port sirve ambos discos desde el mismo directorio
+     * de datos, así que el cambio físico no existe: se omite el aviso (y el
+     * bucle de reintento con 0x918e). Si faltara algún fichero, el preflight de
+     * `app/main.c` ya lo lista con claridad. */
+    load_fond(img);
+    if ((int16_t)be16(img + A_FILE_HANDLE) < 0) {
+        BOOT_TRACE("fond falló");
+        return -1;
     }
+    BOOT_TRACE("fond");
+    if (load_resource_list_b(img) < 0) {
+        BOOT_TRACE("lista_b falló");
+        return -1;
+    }
+    BOOT_TRACE("lista_b");
 
     /* Bancos ECHE 0..7 contiguos desde 0x64c8e (l_01011a): carga cada banco y
      * guarda su puntero en la tabla 0x1a4e8. */
@@ -151,8 +170,12 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     g_max = max_frames;
     g_stop = 0;
     hook_loop_top = frame_hook;
+    /* Ya presentará el hook del bucle; el tick deja de presentar en arranque. */
+    platform_log("game_loop: inicio");
+    platform_set_loop(1);
     if (setjmp(g_jmp) == 0)
         game_loop(img, 0);
+    platform_set_loop(0);
     hook_loop_top = 0;
     return 0;
 }

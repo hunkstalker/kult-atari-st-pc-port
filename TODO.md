@@ -35,7 +35,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-020 | Portar `_start` (0x10000), incluido el menú de idioma | ✅ menú **fiel** en `boot/language.c` (drena teclas pendientes + espera D/E/F), clic de título por `prompt_wait` (sin el atajo `MODE_FLAG=0x87`) y suelta del clic en `l_010158`; pruebas en `make test-port` |
 | T-021 | Portar el tick de VBL `0x160c2` (paleta + blits GAUSS/MURSM) | ✅ en `boot/vbl.c`, con prueba (`make test-port`) |
 | T-024 | **Diagnóstico del bloqueo de `0xc001`** | ✅ **causa raíz: el loader C `boot/prg.c` aplicaba una relocación de más tras cada `RELOC_SKIP` (byte 1)**, corrompiendo 544 bytes de la imagen (entre ellos un largo de ICONE) → el guion tomaba otra rama. Corregido; el loader coincide byte a byte con el oráculo y tiene prueba de regresión |
-| T-022 | Portar `0x135ba` y `0x106f2` | 🚧 `0x135ba` ✅ (`os_setscreen(-1,-1,0)` en `_start`); `0x106f2` (`l_0101a8`, reinicio) **diferido**: solo se alcanza por un puntero relocalizado (+0x101a8) y no es observable en el flujo actual (ver `notes/0010`) |
+| T-022 | Portar `0x135ba` y `0x106f2` | 🚧 `0x135ba` ✅ (`os_setscreen(-1,-1,0)` en `_start`). `0x106f2` (`l_0101a8`, reinicio suave) **pendiente/no portado y ABIERTO**. Análisis estático: `0x101a8` solo es **constante base de relocalización** de la tabla de pistas/iconos (`0x16f90`/`0x16fb4`) y no hay `jsr`/`jmp`/`pea` hacia `l_0101a8` → **parece inobservable**, pero puede necesitarse. **No confundir** con el reinicio tras morir (`0x1842c`→`reset_clear`, ya en el core). Ver `notes/0010`, `notes/0011` |
 | T-023 | Omitir la comprobación FDC `0x19316` | ✅ se omite; se siembra el patrón FDC (`0xd8e8`) para que el modo de escena (`0x14496`) no espere |
 
 ## M3 — Render y entrada reales (primera ventana)
@@ -56,20 +56,44 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | id | tarea | estado |
 |---|---|---|
 | T-060 | Menú de idioma (validar el fiel; valorar menú nativo) | ✅ fiel (ADR 0004): validado en T-020; se mantiene el menú del original |
-| T-061 | Validación: arranque, partida, guardado, audio | 🚧 checklist y comandos en `docs/VERIFICACION.md` y `docs/LIMITACIONES.md`; **la ejecuta el usuario** (requiere su copia de datos, y audio/ventana) |
+| T-061 | Validación: arranque, partida, guardado, audio | 🚧 checklist y comandos en `docs/VERIFICACION.md` y `docs/LIMITACIONES.md`; **la ejecuta el usuario** con el paquete Windows (`build-win/kult-0.1.0-win64.zip`). Sus `.STX` ya se extrajeron a `data/` (sesión 13); **colores validados por el usuario** (sesión 14). **Primera pantalla validada por el usuario** (título visible, sin negro; espera tecla o clic) → idioma D/E/F. Falta confirmar ritmo/guardado/audio y **morir → reiniciar sala** (`reset_clear`, core) |
+| T-073 | **Ritmo del original (trabajo de CPU)**: medir ciclos por función con el oráculo y aplicar un reloj virtual de CPU (~8 MHz); **no** ajustar animaciones a mano | 🚧 **T-073a ✅** hook `cpu_delay`; **T-073b ✅** coste medido por función (`-finstrument-functions` + `platform/cpuwork_costs.inc`, 79 funciones). **T-073c 🚧 (sesión 16)**: el Maestro no usa `reveal_pixel` sino `scene_mode_draw` (`0x36`, modo `0x07`); los 4 bancos son 4 objetos/partes (ASM) y `KULT_FRAME_GATE` está **descartado** (solo back buffer). Estado `V`: `acc9=0x0a`, `acd2=0x02`, `aaf9=0x63`, `ad1d=0`, sin `15da6`; falta el segundo scene draw/camino tras la selección. Bug extra: click fantasma `A_INPUT_BUTTONS` bit2 (`0x04`) → **fix aplicado** en `platform/input.c`/`video_sdl.c`, pendiente de probar (exe traza `3fc2f940…`). La traza `Y`/`V` es diagnóstica (`platform/dispatch_trace.c` + filtros Makefile/CMake) y **hay que revertirla** antes del ZIP final. Detalle completo: **`notes/0016-maestro-handoff.md`**. Queda también calibrar FPS (`KULT_FPSLOG`/`KULT_ST_CONTEND`/`KULT_CPU_HZ`) y casos no medidos (`palette_cycle`). **Sesión 17 RECHAZADA (sesión 18)**: se revirtió el mapeo al botón derecho; el **clic izquierdo** sigue saltando y el derecho queda sin función (decisión del usuario). Se mantiene el fix de click pegado. El Maestro sigue abierto: el primer `0x36 1d41b` es el scene draw inicial; los brazos aparecen **después del primer prompt**; falta el `15da6`/segundo scene draw. La traza `Y`/`V` es diagnóstica y se revierte antes del ZIP final. Detalle: `notes/0016`. |
 
-## A — Workstream Amiga
+## M7 — Empaquetado/release
+> Primero el **build** (para validar en Windows); la **ingesta `.STX`** se
+> adelanta tras T-061 (el usuario tiene imágenes de disquete, no `.PRG`). El
+> contenedor `kult.data` puede ir con N3.
+| id | tarea | estado |
+|---|---|---|
+| T-070 | **Build**: portabilidad Windows (`platform/time.c` `_WIN32`, `platform/fs.c` `;`/data junto al exe) + CMake (`kult` headless, `kult-sdl`; en Windows → `kult.exe` GUI + `kult-headless.exe`) + `cmake/mingw-w64.cmake` + SDL3 **3.4.10** MinGW (`third_party/`, gitignored) + icono (`.rc`, RGBA, `SDL_SetWindowIcon`) + **log/diagnóstico** (`kult.log`, MessageBox, preflight de datos) | ✅ build nativo CMake verificado; cross Windows enlaza (sin ejecutar aquí) |
+| T-071 | **Empaquetado interino**: CPack ZIP Windows (`kult.exe`+`kult-headless.exe`+`SDL3.dll`+`data/`+`LEEME.txt`+`DIAGNOSTICO.txt`) y TGZ Linux; **sin assets** | ✅ interino (la ingesta va con T-072) |
+| T-072 | **Ingesta + `kult.data`**: primero extracción automática `.STX`/`.ST`/`.MSA` → `data/` (o `--ingest`); después contenedor `kult.data` (puede ir con N3) | ⬜ **siguiente tras T-061** |
+
+## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
+> Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para
+> diseñar el modelo de datos de N3 a dos versiones. **No toca el motor.**
 | id | tarea | estado |
 |---|---|---|
 | T-A00 | Determinación y censo: comparar el binario Amiga por rutina con el ST | ⬜ |
 | T-A01 | Decomp ASM del Amiga (spec byte a byte) | ⬜ |
-| T-A02 | Core Amiga (lógica compartida + capa Amiga) + verificación | ⬜ |
-| T-A03 | Arte/audio/textos Amiga | ⬜ |
 
-## M7 — Empaquetado/release
+## N3 — Motor nativo y assets nativos (hito futuro: ADR + rama)
+> Runtime 100% independiente del binario original: motor propio + assets nativos
+> (**PNG/WAV/OGG/UTF-8** + **binario propio documentado**; sin mods). La ingesta
+> pasa a ser un **conversor de un solo uso**. Modelo de datos preparado para
+> **dos versiones (ST/Amiga)**. Detalle del plan en `notes/0011`.
 | id | tarea | estado |
 |---|---|---|
-| T-070 | Builds Windows y Linux; paquete con ingesta | ⬜ |
+| T-N00 | Redactar el **ADR** de N3 (motor nativo + assets nativos + ingesta) | ⬜ |
+| T-N01 | Formato de assets + cargador (PNG/WAV/OGG/UTF-8 + binario propio) | ⬜ |
+| T-N02 | Conversores por subsistema: gráficos → PNG; audio → WAV/OGG/tracker; textos → UTF-8; datos de sala/guion → binario propio | ⬜ |
+| T-N03 | Verificación por conversor + validación funcional | ⬜ |
+
+## A2 — Implementación Amiga (después de N3, sobre el motor nuevo)
+| id | tarea | estado |
+|---|---|---|
+| T-A02 | Core Amiga (lógica compartida + capa Amiga) + verificación | ⬜ |
+| T-A03 | Arte/audio/textos Amiga | ⬜ |
 
 ## Documentación
 | id | tarea | estado |
@@ -78,9 +102,9 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-D01 | Mantener `RETOMAR.md` y este `TODO.md` al cerrar cada sesión | 🚧 |
 
 ## M5 — Filtros CRT (nota: extra opcional, no prioritario)
-> **Nota.** Fuera del camino crítico: la prioridad es **terminar el juego**
-> (M6 validación → M7 empaquetado → Amiga). Se desarrollará **en algún momento**,
-> tras validar; se conserva el id **M5/T-050** como referencia en el plan.
+> **Nota.** Fuera del camino crítico y **al final** (independiente de A). Es una
+> **mejora de presentación**; se desarrollará en algún momento, tras completar el
+> plan (`M7 → A1 → N3 → A2`). Se conserva el id **M5/T-050**. Detalle: `notes/0011`.
 | id | tarea | estado |
 |---|---|---|
 | T-050 | `SDL_GPU` + shaders (escalado/CRT), opcional | ⬜ |

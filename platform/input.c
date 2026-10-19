@@ -24,7 +24,7 @@ static int g_head, g_tail;
 static uint32_t g_auto_key = 'E';
 static uint16_t g_cursor_x = 160;
 static uint16_t g_cursor_y = 100;
-static uint8_t  g_buttons;         /* botón real del ratón (bit0 = izquierdo) */
+static uint8_t  g_buttons;         /* botón real: bit0 = izquierdo */
 static uint32_t g_deliveries;
 static int g_click_toggle = 1;     /* headless: alterna clic para liberar esperas */
 static int g_auto = 1;             /* 1 = headless (auto-tecla); 0 = entrada real */
@@ -46,6 +46,7 @@ void platform_mouse_set(int x, int y, int buttons) {
 void platform_input_init(void) {
     g_head = g_tail = 0;
     g_deliveries = 0;
+    g_buttons = 0;
     const char *click = getenv("KULT_CLICK");
     if (click && click[0] == '0') g_click_toggle = 0;
     const char *autoenv = getenv("KULT_KEY");
@@ -109,6 +110,10 @@ void platform_ikbd_deliver(uint8_t *img) {
         : g_buttons;
     g_deliveries++;
     img[A_IKBD_PACKET] = b;
+    if (b & 1)
+        img[A_INPUT_BUTTONS] |= 0x04;
+    else
+        img[A_INPUT_BUTTONS] &= (uint8_t)~0x04;
     wr16(img + A_CURSOR_X, g_cursor_x);
     wr16(img + A_CURSOR_Y, g_cursor_y);
 }

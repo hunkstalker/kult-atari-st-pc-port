@@ -39,6 +39,7 @@ void platform_audio_sdl_open(void) {
 
     if (!SDL_InitSubSystem(SDL_INIT_AUDIO)) {
         SDL_Log("SDL_InitSubSystem(AUDIO): %s", SDL_GetError());
+        platform_log("SDL_InitSubSystem(AUDIO): %s", SDL_GetError());
         return;
     }
 
@@ -52,9 +53,11 @@ void platform_audio_sdl_open(void) {
                                          &spec, audio_get, NULL);
     if (!g_stream) {
         SDL_Log("SDL_OpenAudioDeviceStream: %s", SDL_GetError());
+        platform_log("SDL_OpenAudioDeviceStream: %s", SDL_GetError());
         return;
     }
     SDL_ResumeAudioStreamDevice(g_stream);
+    platform_log("audio SDL: abierto (48 kHz mono S16)");
 }
 
 void platform_audio_sdl_close(void) {

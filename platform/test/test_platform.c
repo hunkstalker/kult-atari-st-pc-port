@@ -81,7 +81,67 @@ static void test_fs(void) {
     CHECK(os_fopen(g_img, 0x2000) < 0, "Fopen de un fichero ausente debe fallar");
 }
 
-/* --- T-013: vídeo planar -> RGB --- */
+/* Log de diagnóstico (M7): KULT_LOG fija la ruta y el mensaje llega al fichero. */
+static void test_log(void) {
+    const char *path = DIR "/kult.log";
+    setenv("KULT_LOG", path, 1);
+    platform_log_init();
+    platform_log("prueba de log %d", 42);
+    platform_log_close();
+
+    FILE *f = fopen(path, "rb");
+    CHECK(f != NULL, "el log debe crearse en la ruta de KULT_LOG");
+    if (f) {
+        char buf[1024] = {0};
+        size_t n = fread(buf, 1, sizeof buf - 1, f);
+        buf[n] = '\0';
+        fclose(f);
+        CHECK(strstr(buf, "prueba de log 42") != NULL,
+              "el log debe contener el mensaje");
+        CHECK(strstr(buf, "Kult ") != NULL, "el log debe incluir la cabecera");
+    }
+    remove(path);
+    unsetenv("KULT_LOG");
+}
+
+/* Presentación en arranque (M7): el tick presenta mientras no se ha entrado en
+ * el bucle; al entrar (platform_set_loop) deja de presentar (lo hace el hook del
+ * frame), y el ratón/teclado de las esperas de `wait_frame` se bombean vía SDL. */
+static int g_present_n;
+static void present_counter(uint8_t *img) { (void)img; g_present_n++; }
+static void test_present_hook(void) {
+    platform_set_present(present_counter);
+    platform_set_loop(0);
+    g_present_n = 0;
+    platform_tick(g_img);
+    CHECK(g_present_n == 1, "en arranque se presenta en cada tick");
+
+    platform_set_loop(1);
+    g_present_n = 0;
+    platform_tick(g_img);
+    CHECK(g_present_n == 0, "en el bucle no presenta (lo hace el frame hook)");
+
+    platform_set_loop(0);
+    platform_set_present(NULL);
+}
+
+/* Retardo de CPU (cpu_delay de los bucles dbf): no-op sin tiempo real; con
+ * tiempo real duerme el equivalente (~10 ciclos/unidad a 8 MHz) y cede VBLs. */
+static void test_cpu_delay(void) {
+    platform_set_realtime(0);
+    uint32_t f0 = platform_frame_count();
+    platform_cpu_delay(40000);
+    CHECK(platform_frame_count() == f0,
+          "sin tiempo real cpu_delay no avanza frames");
+
+    platform_set_realtime(1);
+    f0 = platform_frame_count();
+    platform_cpu_delay(36000);                  /* ~45 ms a 8 MHz */
+    CHECK(platform_frame_count() - f0 >= 2,
+          "cpu_delay en tiempo real cede >= 2 VBLs en ~45 ms");
+    platform_set_realtime(0);
+}
+
 static void test_video(void) {
     const uint32_t base = 0x80000;
     os_setscreen(base, base, -1);
@@ -179,6 +239,24 @@ static void test_real_input(void) {
     CHECK(os_cnecin(g_img, &key) == 1 && (key & 0xff) == 'D',
           "Cnecin consume la tecla real encolada");
     platform_input_set_auto(1);             /* restaurar headless */
+}
+
+/* --- T-073c: el estado del clic sigue al botón izquierdo real (sin quedarse pegado) --- */
+static void test_mouse_click_state(void) {
+    platform_input_set_auto(0);
+
+    platform_mouse_set(160, 100, 1);
+    g_img[A_INPUT_BUTTONS] = 0;
+    platform_ikbd_deliver(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
+          "el botón izquierdo marca el clic mientras está pulsado");
+
+    platform_mouse_set(160, 100, 0);
+    platform_ikbd_deliver(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
+          "al soltar el botón izquierdo el clic se limpia");
+
+    platform_input_set_auto(1);
 }
 
 /* --- loader del PRG: relocación DRI, en particular el SALTO (byte 1) --- */
@@ -438,9 +516,13 @@ int main(void) {
     platform_init();
 
     test_fs();
+    test_log();
+    test_present_hook();
+    test_cpu_delay();
     test_video();
     test_input_tick();
     test_real_input();
+    test_mouse_click_state();
     test_vbl();
     test_prg_loader();
     test_boot_language();
@@ -451,7 +533,7 @@ int main(void) {
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL, loader PRG, "
-           "idioma, musica PSG, Timer A, RMS)\n");
+    printf("RESULTADO: OK (fs, log, present, cpu_delay, video, entrada, reloj, "
+           "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }

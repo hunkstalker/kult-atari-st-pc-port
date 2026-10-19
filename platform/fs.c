@@ -2,7 +2,8 @@
  *
  * Mapea los nombres Atari del juego (con o sin prefijo de unidad `A:`) a ficheros
  * de un directorio de datos del PC. El directorio se toma de `KULT_DATA_DIR`
- * (admite varios separados por `:`); si no, `data/`.
+ * (admite varios separados por `;` en Windows y `:` en POSIX); si no, `data/`
+ * junto al ejecutable (M7/T-070) y, en su defecto, `data/` del directorio actual.
  *
  * Es el equivalente PC de los `os_fopen/os_fread/...` del kit, pero sobre el
  * sistema de ficheros real: el core no cambia, sólo cambia quién responde.
@@ -14,18 +15,36 @@
 
 #include "os.h"
 #include "platform.h"
+#include "platform_internal.h"
 
 #define FS_MAX_HANDLES 32
 #define FS_FIRST_HANDLE 6          /* GEMDOS reserva 0..5 */
 
+#ifdef _WIN32
+#define DATA_SEP ';'
+#else
+#define DATA_SEP ':'
+#endif
+
 static FILE *g_files[FS_MAX_HANDLES];
-static char *g_dirstr;            /* copia de KULT_DATA_DIR (o "data") */
+static char *g_dirstr;            /* copia de KULT_DATA_DIR (o del directorio por defecto) */
 static const char *g_dirs[16];
 static int g_ndirs;
 
 void platform_fs_init(void) {
     const char *env = getenv("KULT_DATA_DIR");
-    if (!env || !*env) env = "data";
+    char def[1024];
+    if (!env || !*env) {
+        /* Por defecto, `data/` junto al ejecutable (Windows/Linux); si la ruta del
+         * ejecutable no se puede resolver, `data/` relativo al directorio actual. */
+        if (platform_exe_dir(def, sizeof def) == 0) {
+            size_t l = strlen(def);
+            snprintf(def + l, sizeof def - l, "/data");
+        } else {
+            snprintf(def, sizeof def, "data");
+        }
+        env = def;
+    }
     g_dirstr = malloc(strlen(env) + 1);
     if (g_dirstr) strcpy(g_dirstr, env);
     g_ndirs = 0;
@@ -33,11 +52,14 @@ void platform_fs_init(void) {
     char *p = g_dirstr;
     while (p && *p && g_ndirs < 16) {
         g_dirs[g_ndirs++] = p;
-        char *sep = strchr(p, ':');
+        char *sep = strchr(p, DATA_SEP);
         if (!sep) break;
         *sep = '\0';
         p = sep + 1;
     }
+
+    for (int i = 0; i < g_ndirs; i++)
+        platform_log("datos[%d]: %s", i, g_dirs[i]);
 }
 
 /* Basura de unidad/ruta: de `A:CLEAR.BIN` deja `CLEAR.BIN`. */
@@ -58,6 +80,18 @@ static FILE *open_data(const char *name, const char *mode) {
         if (f) return f;
     }
     return NULL;
+}
+
+/* Resuelve `name` en los directorios de datos y copia su ruta a `out`; 0 si
+ * existe. Lo usa `app/` (p. ej. para localizar KULT.PRG en `data/`). */
+int platform_data_resolve(const char *name, char *out, size_t out_size) {
+    const char *base = base_name(name);
+    for (int i = 0; i < g_ndirs; i++) {
+        snprintf(out, out_size, "%s/%s", g_dirs[i], base);
+        FILE *f = fopen(out, "rb");
+        if (f) { fclose(f); return 0; }
+    }
+    return -1;
 }
 
 /* Tamaño de un fichero de datos, o -1 si no existe. */

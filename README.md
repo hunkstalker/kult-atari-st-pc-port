@@ -7,10 +7,13 @@ No parte de cero: parte del **C verificado** del Atari ST
 (`/app/kult-atari-st-c`, 415 funciones, 499 pruebas diferenciales) y añade un
 **backend de PC** (SDL3) para que ese mismo C corra en Windows/Linux.
 
-> **Proyecto en fase inicial (M0).** Este repositorio nace **documentado**; el
-> código todavía no se ha importado. El estado vivo está en **`PROYECTO.md`** y
-> las tareas en **`TODO.md`**; el punto de retorno entre sesiones, en
-> **`RETOMAR.md`**. Aquí no se duplica: `README` solo orienta.
+> **Estado:** **M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 = validación del
+> usuario) y **M7 build/empaquetado interino hechos** (T-070/T-071: CMake
+> Linux/Windows, `kult.exe` + ZIP, `kult.log` de diagnóstico). El juego arranca
+> (menú de idioma fiel), se ve y suena (ventana SDL3 + audio); `make test` (499)
+> y `make test-port` verdes. El estado vivo está en **`PROYECTO.md`** y las tareas
+> en **`TODO.md`**; el punto de retorno entre sesiones, en **`RETOMAR.md`**. Aquí
+> no se duplica: `README` solo orienta.
 
 ## Documentación
 - **`PROYECTO.md`** — contexto maestro, arquitectura y estado.
@@ -26,6 +29,17 @@ No parte de cero: parte del **C verificado** del Atari ST
 - **Dos experiencias**: Atari ST y Amiga; perfil libre (arte/audio/ritmos).
 - **Todos los idiomas**.
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
+
+## Datos y diagnóstico
+- El usuario aporta su copia en `data/` (junto al ejecutable). En el paquete
+  interino (T-071) deben ser los ficheros **extraídos** de los disquetes
+  (`KULT.PRG`, `*.PI1`, `*.BIN`); las imágenes `.STX/.MSA/.ST` aún no se leen.
+  La **ingesta automática** es T-072 (siguiente tras la validación T-061).
+- **`kult.log`** se escribe junto al ejecutable (y a stderr) con directorios de
+  datos, ruta de `KULT.PRG`, resultado de SDL/ventana/audio y exit code. En GUI,
+  los errores fatales salen también en un `MessageBox`. `kult-headless.exe`
+  (en el ZIP) da el mismo diagnóstico por consola. `KULT_LOG=<ruta>` lo redirige
+  y `KULT_LOG=0` lo apaga.
 
 ## Origen y repos
 - **`/app/kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).

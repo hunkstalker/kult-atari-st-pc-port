@@ -1,0 +1,41 @@
+Kult: The Temple of Flying Saucers (Exxos/ERE, 1989)
+Port nativo a PC — paquete de validación (M7/T-071)
+===================================================
+
+Este paquete NO incluye ningún fichero del juego: aporta tu copia.
+
+1) Copia dentro de la carpeta `data/` (junto a kult.exe) el contenido de tus
+   disquetes Atari ST del juego, de las unidades A y B juntas:
+   KULT.PRG, *.PI1, *.BIN, ... (los ficheros de disk_a y disk_b).
+
+   IMPORTANTE (paquete interino): deben ser los ficheros YA EXTRAIDOS. Las
+   imágenes de disquete .STX / .MSA / .ST todavía NO se leen directamente; la
+   ingesta automática de discos está planificada (T-072). Si en `data/` solo
+   hay .STX, el juego no arrancará (ver kult.log).
+
+2) Ejecuta `kult.exe`.
+
+3) Al arrancar la pantalla puede verse NEGRA (es fiel al original: PRES se
+   muestra antes de fijar la paleta). Haz **clic con el botón izquierdo**; entonces
+   aparece el título con el menú de idioma. Elige idioma: D (alemán), E (inglés),
+   F (francés). El port NO pide cambiar de disco (usa los dos discos juntos).
+
+4) ESC cierra la ventana en cualquier momento.
+
+Notas
+-----
+- El juego guarda/parchea ficheros (CLEAR.BIN, SCENA.BIN) en la carpeta `data/`.
+- **Para medir el ritmo** (FPS) y compararlo con el Atari ST/Hatari, usa
+  `kult-fps.bat` y sigue `MEDIR_FPS.txt` (incluye el arnés de Hatari en
+  `hatari_fps/`). `kult-cpu-off.bat` arranca sin el modelo de CPU (A/B).
+  Para animaciones cortas (<3 s), `kult-marcas.bat` genera `kult-marcas.log`
+  con inicio/fin en VBLs (ver `MEDIR_FPS.txt`).
+- **Si algo falla, mira `kult.log`** (se crea junto a kult.exe); ahí están los
+  directorios de datos buscados, la ruta de KULT.PRG y el error exacto. También
+  puedes ejecutar `kult-headless.exe` en una consola para ver el diagnóstico
+  (ver `DIAGNOSTICO.txt`).
+- Ajustes por variables de entorno (opcional): KULT_SCALE (escala, def. 3),
+  KULT_AUDIO=0 (apaga el sonido), KULT_MUSIC_GAIN (volumen música en %),
+  KULT_DATA_DIR (ruta de datos alternativa; en Windows varios con ';'),
+  KULT_LOG=<ruta> (log alternativo; KULT_LOG=0 lo apaga),
+  KULT_WINDOW=0 (arranca sin ventana, para diagnóstico).

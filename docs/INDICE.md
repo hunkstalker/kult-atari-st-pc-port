@@ -35,3 +35,8 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0008-m4-audio.md`](../notes/0008-m4-audio.md)
 - [`notes/0009-m5-como-extra-opcional.md`](../notes/0009-m5-como-extra-opcional.md)
 - [`notes/0010-t020-menu-fiel.md`](../notes/0010-t020-menu-fiel.md)
+- [`notes/0011-plan-hitos-m7-ingesta-n3.md`](../notes/0011-plan-hitos-m7-ingesta-n3.md)
+- [`notes/0012-m7-build-windows.md`](../notes/0012-m7-build-windows.md)
+- [`notes/0013-datos-y-log.md`](../notes/0013-datos-y-log.md)
+- [`notes/0014-physbase-y-ritmo.md`](../notes/0014-physbase-y-ritmo.md)
+- [`notes/0015-ritmo-cpu.md`](../notes/0015-ritmo-cpu.md)

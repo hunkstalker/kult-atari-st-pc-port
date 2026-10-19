@@ -7,8 +7,11 @@
  */
 #include <SDL3/SDL.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "platform.h"
+#include "kult_icon_rgba.h"      /* icono de la app (assets/, generado) */
 
 #define FB_W 320
 #define FB_H 200
@@ -22,16 +25,38 @@ int platform_sdl_open(const char *title, int scale) {
     if (scale < 1) scale = 1;
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("SDL_Init: %s", SDL_GetError());
+        platform_log("SDL_Init(VIDEO): %s", SDL_GetError());
         return -1;
     }
     g_win = SDL_CreateWindow(title, FB_W * scale, FB_H * scale,
                              SDL_WINDOW_RESIZABLE);
-    if (!g_win) { SDL_Log("CreateWindow: %s", SDL_GetError()); return -1; }
+    if (!g_win) {
+        SDL_Log("CreateWindow: %s", SDL_GetError());
+        platform_log("CreateWindow: %s", SDL_GetError());
+        return -1;
+    }
+    /* Icono de la ventana (el recurso del .exe lo pone windres en Windows). */
+    SDL_Surface *icon = SDL_CreateSurfaceFrom(KULT_ICON_W, KULT_ICON_H,
+                                              SDL_PIXELFORMAT_RGBA32,
+                                              (void *)kult_icon_rgba,
+                                              KULT_ICON_W * 4);
+    if (icon) {
+        SDL_SetWindowIcon(g_win, icon);
+        SDL_DestroySurface(icon);
+    }
     g_ren = SDL_CreateRenderer(g_win, NULL);
-    if (!g_ren) { SDL_Log("CreateRenderer: %s", SDL_GetError()); return -1; }
+    if (!g_ren) {
+        SDL_Log("CreateRenderer: %s", SDL_GetError());
+        platform_log("CreateRenderer: %s", SDL_GetError());
+        return -1;
+    }
     g_tex = SDL_CreateTexture(g_ren, SDL_PIXELFORMAT_RGBA32,
                               SDL_TEXTUREACCESS_STREAMING, FB_W, FB_H);
-    if (!g_tex) { SDL_Log("CreateTexture: %s", SDL_GetError()); return -1; }
+    if (!g_tex) {
+        SDL_Log("CreateTexture: %s", SDL_GetError());
+        platform_log("CreateTexture: %s", SDL_GetError());
+        return -1;
+    }
     SDL_SetTextureScaleMode(g_tex, SDL_SCALEMODE_NEAREST);
     SDL_SetRenderLogicalPresentation(g_ren, FB_W, FB_H,
                                      SDL_LOGICAL_PRESENTATION_INTEGER_SCALE);
@@ -42,6 +67,19 @@ int platform_sdl_open(const char *title, int scale) {
 void platform_sdl_present(uint8_t *img) {
     (void)img;
     if (!g_tex) return;
+    /* KULT_VBL_TITLE=1: muestra el VBL actual en la barra de titulo (marcas). */
+    {
+        static int en = -1;
+        static uint32_t last;
+        if (en < 0) en = getenv("KULT_VBL_TITLE") != NULL;
+        uint32_t v = platform_frame_count();
+        if (en && (v - last >= 10 || v < last)) {
+            char t[64];
+            snprintf(t, sizeof t, "Kult — VBL %u", v);
+            SDL_SetWindowTitle(g_win, t);
+            last = v;
+        }
+    }
     platform_fb_to_rgba(g_rgba);
     SDL_UpdateTexture(g_tex, NULL, g_rgba, FB_W * 4);
     SDL_SetRenderDrawColor(g_ren, 0, 0, 0, 255);
@@ -64,8 +102,18 @@ int platform_sdl_pump(void) {
         if (e.type == SDL_EVENT_QUIT) {
             g_quit = 1;
         } else if (e.type == SDL_EVENT_KEY_DOWN) {
-            if (e.key.key == SDLK_ESCAPE) g_quit = 1;
-            else platform_key_push((uint32_t)e.key.key & 0xff);
+            if (e.key.key == SDLK_ESCAPE) {
+                g_quit = 1;
+            } else if (e.key.key == SDLK_F12) {
+                /* Marca manual para T-073c (no va al juego). */
+                platform_marks_event("f12", 0, 0);
+                platform_log("F12: inicio de animacion");
+            } else if (e.key.key == SDLK_F11) {
+                platform_marks_event("f11", 0, 0);
+                platform_log("F11: fin de animacion");
+            } else {
+                platform_key_push((uint32_t)e.key.key & 0xff);
+            }
         } else if (e.type == SDL_EVENT_MOUSE_MOTION) {
             float gx = 0, gy = 0;
             SDL_RenderCoordinatesFromWindow(g_ren, e.motion.x, e.motion.y, &gx, &gy);
@@ -78,6 +126,10 @@ int platform_sdl_pump(void) {
             SDL_RenderCoordinatesFromWindow(g_ren, e.button.x, e.button.y, &gx, &gy);
             platform_mouse_set((int)gx, (int)gy, g_mouse_btn);
         }
+    }
+    {
+        SDL_MouseButtonFlags mb = SDL_GetMouseState(NULL, NULL);
+        g_mouse_btn = (mb & SDL_BUTTON_LMASK) ? 1 : 0;
     }
     return !g_quit;
 }

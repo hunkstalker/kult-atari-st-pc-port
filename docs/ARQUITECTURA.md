@@ -65,3 +65,8 @@ alimenta el paquete IKBD en `A_IKBD_PACKET` para que se actualicen
 - El **core** (juego) puede compilarse aparte (ya lo hace `kult-atari-st-c` como
   librería) para las **pruebas diferenciales** sin SDL.
 - El **ejecutable** enlaza core + boot + platform + app.
+- **Dos rutas de build equivalentes (M7)**: el **Makefile** (`make port`,
+  `make port-sdl`, `make test-port`) y **CMake** (`CMakeLists.txt`; targets
+  `kult` headless y `kult-sdl`; en Windows → `kult.exe` GUI + `kult-headless.exe`).
+  Ambas usan las mismas fuentes y el mismo orden de includes (`platform/include`
+  el primero, sombreando los headers del kit), y dan el mismo resultado.

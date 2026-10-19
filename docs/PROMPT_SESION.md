@@ -18,20 +18,26 @@ implementa esos servicios (la HAL o "nuestro TOS").
 4. `docs/INDICE.md` y el doc del área (`PLAN`, `ARQUITECTURA`, `PORTING`,
    `VERIFICACION`, `BUILD`, `adr/`).
 
-**Estado:** **M0–M3 hechas.** El juego arranca y **es jugable en ventana SDL3**
-(render + entrada real + ritmo 50 Hz) y corre headless. `make test` **499 verde**,
+**Estado:** **M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 = validación del
+usuario) y **M7 build + empaquetado interino hechos** (T-070/T-071: CMake
+Linux/Windows, `kult.exe` + ZIP sin assets, `kult.log`). El juego arranca con el
+**menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
+corregidos** (Physbase del HAL `0x98000`). `make test` **499 verde**,
 `make test-port` verde. Sin bloqueantes.
 
-**Tarea inmediata: M4 — audio** (hito propio, ADR 0003):
-- **T-040** — modelo del **MFP Timer A** (`$fffa13/07/19/1f`) que dispare las ISR
-  C ya reconstruidas (`0x1910e` PCM; vector `$134`) y los traps `#3/#4` de música;
-- **T-041** — emulación **PSG/YM2149** desde `psg_port_write/read` (hoy guarda los
-  16 registros en `platform/psg.c`; falta el chip y el sonido);
-- **T-042** — salida por **SDL audio** (`platform/audio.c`).
-- **Verificación objetiva** (docs/VERIFICACION.md): comparar el **stream de
-  registros PSG con el oráculo** (ledger del kit) y comprobar **RMS/energía** del
-  PCM (que no sea silencio). La **escucha final** ("suena bien / sin petardeo") la
-  hace el usuario.
+**Tarea inmediata: T-061 — validación del usuario en Windows** con
+`build-win/kult-0.1.0-win64.zip`: descomprimir sobre la carpeta ya usada (los
+`data/` extraídos se conservan), ejecutar `kult.exe` y comprobar arranque/menú,
+partida (**colores**), **guardado**, **audio** y **morir → reiniciar sala**
+(checklist en `docs/VERIFICACION.md`). Si algo falla: **`kult.log`** junto al exe
+y/o `kult-headless.exe` en consola. **Ritmo**: si sigue acelerado, **T-073**
+(medir ciclos con el oráculo + reloj virtual; no hacks por animación).
+
+**Orden de hitos** (detalle en `notes/0011`–`notes/0014`):
+`arreglos → M7 build ✅ → T-061 → T-072 (ingesta .STX) / T-073 (ritmo) →
+M7-c (empaquetado) → A1 (investigación Amiga, prerrequisito duro de N3) →
+N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) → M5 (opcional)`.
+**T-022/`0x106f2`** queda **abierto**.
 
 **Reglas:**
 - **`src/` (el juego) no se modifica**; lo específico de máquina va en
@@ -49,8 +55,13 @@ implementa esos servicios (la HAL o "nuestro TOS").
   `make regscan` (`ids_reg=0`), `make core`.
 - Port: `make port` (headless → `build/kult`), `make port-sdl` (ventana →
   `build/kult-sdl`), `make test-port` (HAL sin oráculo).
+- Build CMake (M7): `make cmake-native` → `build-cmake/{kult,kult-sdl}`;
+  `make cmake-win` → `build-win/{kult.exe,kult-headless.exe}`;
+  `make package-win` → ZIP; `make package-native` → TGZ. El cross usa SDL3
+  MinGW en `third_party/` (gitignored; URLs en `docs/BUILD.md`).
 - Ejecutar: `KULT_DATA_DIR=/tmp/kult_data ./build/kult` (headless) o
-  `KULT_WINDOW=1 KULT_DATA_DIR=/tmp/kult_data ./build/kult-sdl`.
+  `KULT_DATA_DIR=/tmp/kult_data ./build/kult-sdl` (ventana por defecto;
+  `KULT_WINDOW=0` fuerza headless).
   El directorio de datos junta `disk_a`+`disk_b` del usuario (p. ej.
   `/tmp/kult_data`); el oráculo necesita `work/disk_a/KULT.PRG` (gitignored).
 - SDL3 ya instalado (`apk add sdl3-dev`; pkg-config `sdl3` 3.4.10).
