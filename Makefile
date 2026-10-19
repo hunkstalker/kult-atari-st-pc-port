@@ -67,7 +67,7 @@ PLATFORM_TEST := build/test_platform
 .PHONY: test-port
 test-port: $(PLATFORM_TEST)
 	$(PLATFORM_TEST)
-$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c src/music.c $(PLATFORM_SRC) \
+$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c src/music.c $(PLATFORM_SRC) \
                   $(wildcard platform/include/*.h) $(wildcard platform/*.h) $(wildcard include/*.h)
 	@mkdir -p build
-	$(CC) $(PORT_CFLAGS) platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c src/music.c $(PLATFORM_SRC) -o $@
+	$(CC) $(PORT_CFLAGS) platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c src/music.c $(PLATFORM_SRC) -o $@

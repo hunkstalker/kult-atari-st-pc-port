@@ -220,8 +220,44 @@ static void test_prg_loader(void) {
     free(im);
 }
 
-/* --- M4/T-040..T-042: música (reproductor 0x3a872), Timer A del MFP y YM --- */
+/* --- T-020: menú de idioma fiel (_start, boot/language.c) --- */
 
+/* Inyecta una cadena de teclas la primera vez que lo llama Cnecin bloqueante. */
+static const char *g_inject;
+static void inject_idle(uint8_t *img) {
+    (void)img;
+    if (g_inject) { platform_key_push_str(g_inject); g_inject = NULL; }
+}
+
+static void test_boot_language(void) {
+    /* Modo auto (headless): las teclas pendientes se drenan y gana la auto-tecla
+     * ('E' por KULT_KEY). */
+    platform_input_set_auto(1);
+    platform_key_push('z');
+    platform_key_push('q');
+    CHECK(kult_boot_language(g_img) == 'E',
+          "las teclas pendientes se drenan; gana la auto-tecla");
+
+    /* Entrada real (Cnecin bloqueante con idle): minúscula -> mayúscula, y se
+     * ignoran las teclas que no son D/E/F. */
+    platform_input_set_auto(0);
+    platform_set_idle(inject_idle);
+    g_inject = "f";
+    CHECK(kult_boot_language(g_img) == 'F', "acepta 'f' -> 'F'");
+    g_inject = "xd";
+    CHECK(kult_boot_language(g_img) == 'D', "ignora invalidas y acepta 'd' -> 'D'");
+    platform_set_idle(NULL);
+    platform_input_set_auto(1);
+
+    /* La letra va en las 4 entradas de la lista A (0x1a3aa). */
+    memset(g_img, 0, IMG_SIZE);
+    kult_boot_apply_language(g_img, 'F');
+    CHECK(g_img[0x1a3aa + 4] == 'F' && g_img[0x1a3aa + 0x12] == 'F' &&
+          g_img[0x1a3aa + 0x20] == 'F' && g_img[0x1a3aa + 0x2e] == 'F',
+          "la letra de idioma va en las 4 entradas de la lista A");
+}
+
+/* --- M4/T-040..T-042: música (reproductor 0x3a872), Timer A del MFP y YM --- */
 /* Escena de música controlada: los tres canales "mudos" (bit 0x40 de [0x27]), de
  * modo que `music_tick` retorna sin tocar los punteros y el único trabajo del
  * reproductor son las tablas sombra + la envolvente. Deja el estado (armado), las
@@ -407,6 +443,7 @@ int main(void) {
     test_real_input();
     test_vbl();
     test_prg_loader();
+    test_boot_language();
     test_music_player_golden();
     test_mfp_timer_a();
     test_audio_pump();
@@ -415,6 +452,6 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs, video, entrada, reloj, tick VBL, loader PRG, "
-           "musica PSG, Timer A, RMS)\n");
+           "idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }

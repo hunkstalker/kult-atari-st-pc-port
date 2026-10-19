@@ -23,6 +23,15 @@ int kult_boot(uint8_t *img, uint32_t max_frames);
  * platform_set_tick() antes de arrancar. */
 void kult_vbl_tick(uint8_t *img);
 
+/* Menú de idioma fiel (_start l_010088/l_01009e): drena las teclas pendientes
+ * (Cconis+Cnecin en el original) y espera una tecla D/E/F. Devuelve la letra en
+ * mayúsculas. */
+uint8_t kult_boot_language(uint8_t *img);
+
+/* Escribe la letra de idioma en las 4 entradas de la lista A (0x1a3aa+4/12/20/2e),
+ * como _start tras elegir idioma. */
+void kult_boot_apply_language(uint8_t *img, uint8_t lang);
+
 /* Reproductor del Timer A de música (0x3a872 + envolvente 0x3a936), reconstruido.
  * Lo dispara el modelo del MFP (platform/mfp.c) cuando el vector $134 apunta a
  * 0x3a872. */

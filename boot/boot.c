@@ -16,6 +16,7 @@
 
 #include "machine.h"
 #include "addrs.h"
+#include "os.h"
 #include "kult_api.h"
 #include "boot.h"
 
@@ -46,15 +47,6 @@ static void frame_hook(uint8_t *img) {
         longjmp(g_jmp, 1);
 }
 
-/* Lee una tecla válida de idioma (D/E/F) del menú. */
-static uint8_t boot_language(uint8_t *img) {
-    for (;;) {
-        uint32_t key = gemdos_cnecin(img) & 0xff;
-        if (key >= 'a' && key <= 'z') key -= 0x20;
-        if (key >= 'D' && key < 'G') return (uint8_t)key;
-    }
-}
-
 int kult_boot(uint8_t *img, uint32_t max_frames) {
     /* Siembra del patrón del FDC (0x19316 se omite): el modo de escena (0x14496)
      * consulta $d8eb == 0x52 para salir de su bucle; el patrón vive en el PRG en
@@ -76,32 +68,29 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
         /* PRES.PI1 -> pantalla B -> copia a A */
         wr32(img + A_CUR_FILENAME, 0x1a427);
         load_named_screen(img);
-        /* 0x135ba: XBIOS Setscreen(-1,-1,0) — no cambia la base; no-op en PC. */
+        /* _start f_0135ba: XBIOS Setscreen(-1,-1,0) — mantiene la base (solo
+         * cambia resolución); en PC `os_setscreen` lo trata como no-op. */
+        os_setscreen(0xffffffffu, 0xffffffffu, 0);
         copy_screen(img);
         BOOT_TRACE("pres");
 
         /* DRAP.PI1 -> pantalla B; espera; paleta; swap (queda delante) */
         wr32(img + A_CUR_FILENAME, 0x1a430);
         load_named_screen(img);
-        /* Bring-up headless: prompt_wait espera un CLIC en la pantalla de título.
-         * En M1 no hay entrada real; con mode_flag == 0x87 (sin overlay) prompt_wait
-         * sale por Cnecin (auto-tecla) en vez de esperar el clic. M3 lo sustituye por
-         * entrada real. */
-        img[A_MODE_FLAG] = 0x87;
+        /* _start f_012292: espera un clic real en la pantalla de título (bit 2 de
+         * A_INPUT_BUTTONS). En headless el clic alterno de la HAL lo libera; con
+         * entrada real lo libera el botón izquierdo del ratón. */
         prompt_wait(img);
         BOOT_TRACE("pres/drap/menu");
         set_palette(img);
         swap_screens(img);
-        lang = boot_language(img);
+        lang = kult_boot_language(img);
     } else {
         lang = 'E';
     }
 
     /* Menú de idioma: escribe la letra en las 4 entradas de la lista A */
-    img[0x1a3aa + 4]   = lang;
-    img[0x1a3aa + 0x12] = lang;
-    img[0x1a3aa + 0x20] = lang;
-    img[0x1a3aa + 0x2e] = lang;
+    kult_boot_apply_language(img, lang);
     copy_screen(img);
     BOOT_TRACE("lang");
 
@@ -140,8 +129,11 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     sound_stop_supexec(img);
     BOOT_TRACE("clear/music");
 
-    /* l_010158: espera de click; en headless el clic alterno la libera. */
-    wait_frame(img);
+    /* l_010158: espera a que se **suelte** el clic (bit 2 de A_INPUT_BUTTONS) antes
+     * de entrar en la partida. */
+    do {
+        wait_frame(img);
+    } while (img[A_INPUT_BUTTONS] & 0x04);
     BOOT_TRACE("wait_frame l_010158");
 
     img[A_MODE_FLAG] = 7;
