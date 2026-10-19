@@ -10,7 +10,7 @@
 
 ## Desbloqueo de la validación
 - Extraídos con `stx.py` + `fat12.py` (copiados a `/tmp`, sin tocar
-  `kult-port-legacy`): 16 ficheros de A + 12 de B = **28**; `KULT.PRG` con md5
+  los discos originales): 16 ficheros de A + 12 de B = **28**; `KULT.PRG` con md5
   `e4fdc6fa…` (el esperado).
 - Copiados **aplanados** (sin subcarpetas) a
   `build-win/kult-0.1.0-win64/data/`, junto a los `.STX` originales (inofensivos).
@@ -77,7 +77,7 @@
     error claro con la lista y la explicación (ficheros extraídos, no `.STX`).
     Evita el crash opaco con datos incompletos.
 - `platform/video_sdl.c` y `platform/audio_sdl.c`: errores de SDL al log.
-- CMake: `KULT_VERSION` público; `user32` en Windows para el diálogo. ZIP:
+- CMake: `KULT_VERSION` público; `user32` en Windows para el cuadro de diálogo de Windows. ZIP:
   `kult-headless.exe` + `DIAGNOSTICO.txt`; `LEEME.txt` actualizado.
 - Prueba nueva `test_log` en `make test-port`.
 

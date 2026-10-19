@@ -81,7 +81,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   frames, volcados y **exit code**.
 - `KULT_LOG=<ruta>` redirige el log; `KULT_LOG=0` lo apaga.
 - `platform_fatal` muestra un **MessageBox** si el proceso no tiene consola
-  (build GUI); en `kult-headless.exe` (consola) no interpone diálogo.
+  (build GUI); en `kult-headless.exe` (consola) no interpone cuadro de diálogo de Windows.
 - Si en modo ventana falla SDL/ventana se sale con **error visible** (ya no se
   continúa en un bucle headless invisible).
 - **Preflight**: antes de arrancar se comprueban los 26 ficheros del juego
@@ -116,7 +116,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 - Ajustes: `KULT_CPU=0` desactiva todo el modelo; `KULT_CPU_HZ` (def. 8 MHz),
   `KULT_ST_CONTEND` (% de CPU efectiva por contención de bus; def. 100),
   `KULT_15DA6_BLIT` (ciclos extra del blit de elementos con delay 0; def. **0 =
-  desactivado**; se probó y afectaba al objeto del inventario, no al Maestro),
+  desactivado**; se probó y afectaba al objeto del inventario, no a la pantalla C del Maestro),
   `KULT_ANIM_GATE` y `KULT_REVEAL_GATE` (%) para calibrar. En headless/diferencial
   es no-op (la imagen no cambia).
 - **Marcas (animaciones cortas)**: `KULT_MARKS=<ruta>` escribe `F <addr> <vbl>`

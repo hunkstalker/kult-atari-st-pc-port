@@ -75,7 +75,7 @@ permuta de bits, `screen_address`…).
   `0x19xxx/0x3axxx`.
 - **Datos del motor de elementos** (2500 frames auto): retardos `$1a470` =
   0 (30×), 10 (10×), 20 (56×), 60 (8×) → cadencia ST 1/3/5/13 VBLs. Con
-  `cpu_delay` real, el retrato animado (15da6) queda paced.
+  `cpu_delay` real, el motor de elementos 15da6 queda paced.
 - **Medido**: 600 frames, CPU off 26,7 s → CPU on 34,6 s (el modelo añade el
   trabajo de blits/reveal). `make test` **499**, `make test-port` verde,
   nativo/cross OK.
@@ -94,24 +94,23 @@ permuta de bits, `screen_address`…).
   menos contención del shifter/wait states). Sin una medida no se toca el valor
   por defecto (100 %).
 
-## Caso Maestro: retardo 0 (el que nunca cuadró en el legacy)
+## Caso 15da6 delay 0 (objeto al inventario, no la pantalla C)
 
-- El retrato del Maestro (último tramo del log) usa `$1a470 = 0`: el `dbf` de
-  `15da6` **se salta** y el único pacer era `wait_vbl` -> **1 VBL/frame**
-  (31 frames seguidos en el log). En el ST el **blit interno** de `15da6` sigue
-  costando CPU y lo frena; ese trabajo no se cobraba porque `15da6` está excluido
-  de la tabla (para no duplicar el `dbf`, que va por `cpu_delay`).
+El tramo de `15da6` con delay 0 que se veía en el log **no era la pantalla C
+del Maestro**: era un **objeto al inventario**. El `dbf` de `15da6` se salta y
+el único pacer era `wait_vbl`; el blit interno seguía costando CPU. El cobro
+extra se desactivó (`KULT_15DA6_BLIT=0`) porque afectaba a todos los elementos
+con delay 0. La pantalla C del Maestro **no usa `15da6`**: usa el camino de
+texto/retrato (`12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`).
 - Los otros retratos usan delay 20/60 -> 5/13 VBL y ya iban bien (fórmula ST
   `1 + delay/5`).
-- **Corrección (usuario)**: el tramo de `15da6` a 1 VBL **no era el Maestro**,
-  sino un **objeto que se mueve al inventario**, y su velocidad era correcta. El
-  cobro extra se ha **desactivado por defecto** (`KULT_15DA6_BLIT = 0`); si se
-  activa, afecta a *todos* los elementos con delay 0 (por eso se revirtió).
-  El Maestro sigue **sin identificar**: se añade una marca manual **F12** que
-  escribe `M f12 <vbl>` en `KULT_MARKS` para señalar el instante exacto de su
-  animación y localizar la función/VBL sin tocar otras animaciones.
-- `KULT_MARKS` ahora escribe también `S <vbl> <delay> <w> <h> <reveal>` por
-  llamada a `15da6`, para calibrar con el tamaño real del retrato.
+- El cobro extra sigue **desactivado por defecto** (`KULT_15DA6_BLIT=0`); si se
+  activa, afecta a todos los elementos con delay 0 (por eso se revirtió).
+- La pantalla C (Maestro) se localiza con F12 y el análisis de logs; ver
+  `notes/0017-retomar-maestro.md`.
+- `KULT_MARKS` escribe también `S <vbl> <delay> <w> <h> <reveal>` por llamada a
+  `15da6`, pero **C no aparece en `S`**: su animación es texto/retrato, no
+  `15da6`.
 
 ## Logs de marcas (F12 y runs múltiples)
 
@@ -139,60 +138,26 @@ permuta de bits, `screen_address`…).
   (no se ejecutó en su escenario): el `dbra 0xffff` omitido sigue sin cobrarse.
   Si los fundidos de color van rápidos, hay que medirlo/cubrirlo aparte.
 
-## Sesión 16 (T-073c): retrato del Maestro — resumen y handoff
+## Sesiones 16–20 (T-073c) — corregido
 
-- Se añadió una copia diagnóstica `platform/dispatch_trace.c` (sustituye a
-  `src/dispatch.c` **solo en el port**) con líneas `Y <vbl> <byte> <script>` y
-  `V <vbl> <byte> <script> <acc9> <acd2> <aaf9> <ad1d> <acc6> <skip> <a572>
-  <a0f> <cx> <cy> <btn> <cmd> <obj>`.
-- Los **3 primeros retratos** usan `reveal_pixel` (`0x0d`/`12f28`): VBL
-  22/119/211 (deltas 97/92) en la run nueva frente a 29/127/219 (98/92) en la
-  anterior; `S 15da6` del intro = 63 en ambas. **No se ha cambiado ningún otro
-  reveal.**
-- El **Maestro** usa `scene_mode_draw` (`0x36`; operando de guion `0x07` en
-  `0x1d41c` de la imagen PRG, base 0x10000) y **no** llama a `12e2e/12e08/
-  12ea2/12fb6`. Los 4 bancos `15ac8` son 4 objetos/partes (ASM `0x16582`/
-  `0x16636`, el C coincide) y los blits `12ad6/12b04` son el dibujo del retrato.
-- **`KULT_FRAME_GATE` descartado**: con 10 los bancos salen a 10 VBL exactos
-  (comprobado en nativo), pero el frame visible sigue acelerado
-  (`kult-frame10.log`, bancos 1365/1375/1385/1395; scene draw de 59→96 VBL). La
-  puerta solo retrasa la construcción en el back buffer.
-- Estado `V` del Maestro: `$1acc9=0x0a` (tras el byte `0x52`), `$1acd2=0x02`,
-  `$1aaf9=0x63`, `$1ad1d=0`, modo `0x07`, skip 0. `anim_mode` (`0x188ce`) exige
-  `0x3b..0x3e` y `$1aaf9==$1acd2`; no entra. `icon_repeat` (`0x18944`) retorna
-  si `$1ad1d==0`; por eso no hay `15da6` en el Maestro. El `$1acc9` se fija
-  después del scene draw y `$1aaf9` solo lo actualiza `icon_repeat` (que no
-  corre): falta el **segundo scene draw/camino** del original tras la selección
-  (hipótesis principal).
-- Bug extra: `A_INPUT_BUTTONS` bit2 = `0x04` **pegado** desde VBL 2 (click
-  fantasma). Fix en `platform/input.c` (sincroniza con el IKBD) y
-  `platform/video_sdl.c` (refresca con `SDL_GetMouseState`); exe de traza
-  `3fc2f940e11db072f1d0ce65785158ee`, **pendiente de probar**.
-- **Build diagnóstico activo**: `platform/dispatch_trace.c` + filtros
-  Makefile/CMake + `platform_marks_state`; **revertir antes del ZIP final**. El
-  ZIP estándar no se ha regenerado. `make test` 499 y `make test-port` verdes.
-- **Handoff completo y evidencia línea a línea: `notes/0016-maestro-handoff.md`.**
-
-## Sesión 17: el Maestro no era (solo) ritmo de CPU — RECHAZADA (ver sesión 18)
-
-- El caso T-073c quedó acotado a **input**: el reveal/lift comprueba
-  `$1a570`; el `wait_frame` del core lo fijaba con el **clic izquierdo**, así
-  que cada clic para avanzar saltaba el reveal. En el original el izquierdo solo
-  interactúa y el **botón derecho** salta las transiciones
-  (`kult-port-legacy/docs/RUNTIME.md`).
-- Fix port-side: `platform/input_core.c` (copia justificada de `src/input.c`) +
-  estado del botón derecho en la HAL (`platform/input.c`, `platform/video_sdl.c`)
-  + filtros Makefile/CMake. `src/` intacto; prueba en `make test-port`.
-- Verificado: izquierdo → `$1a570=0`; derecho → `$1a570=0xff`. El modelo de CPU
-  (`cpu_delay`/`cpuwork`) no se toca; los reveals siguen su curso normal.
-
-## Sesión 18: corrección (se rechaza el cambio de la sesión 17)
-
-- Se revierte el mapeo al botón derecho: se elimina `platform/input_core.c`, el
-  port vuelve a compilar `src/input.c` y el **clic izquierdo** sigue saltando
-  transiciones/reveal. El botón derecho queda **sin función**.
-- Se conserva el fix de click pegado (bit2 de `A_INPUT_BUTTONS` sincronizado con
-  el botón real; refresco con `SDL_GetMouseState`) y el hallazgo de que los
-  brazos del Maestro aparecen **después del primer prompt**.
-- El exe `296ce6…` y la prueba del botón derecho quedan invalidados. T-073c
-  sigue abierto: `15da6`/segundo scene draw.
+- **Sesión 16**: trazas `Y`/`V`; click pegado (`A_INPUT_BUTTONS` bit2=0x04);
+  reveals de A (`0x0d`/`12f28` en 22/119/211); pantalla **B** con `0x36` y los
+  4 bancos `15ac8`. La asociación inicial “4 bancos = Maestro” era **errónea**:
+  esos 4 bancos son **B**.
+- **Modelo correcto**:
+  - **A**: 3 retratos + descripciones (pixel-reveal), quietos, sin diálogo.
+  - **B**: 4 retratos + descripciones (lift-reveal), quietos, sin diálogo.
+  - **C**: 1 retrato del Maestro + lift + **diálogo** (único diálogo y único
+    retrato que se mueve), **después de B**.
+- **C en los logs**: 1219–1249 / 1513–1543; ~8 frames/16 blits
+  (`12ad6/12b04` 16, `124da/12510` 8, `12950/1296c/129c8` 8, `12b40` ~4665) a
+  1–3 VBL/frame; texto `0x37`/`0x29`/`0x03`/`0x18`/`0x2e`; sin `15ac8`/`15da6`.
+- **Causa de la aceleración (a confirmar)**: el bucle de frames de C va a 1–3
+  VBL/frame; probablemente falta la espera/reveal del camino texto/icono
+  (`f_0124da` espera VBL; `f_012510` no; modo C `0x07`). No usar
+  `KULT_FRAME_GATE` ni `15da6` como fix.
+- **Sesión 17**: intento de cambiar el input, **rechazado**. **Sesión 18**:
+  revertido; clic izquierdo salta; derecho sin función; fix de click pegado
+  conservado. **Sesión 20**: documentación A/B/C corregida.
+- **Estado**: commit `47e1028`; exe `900fd…`; ZIP; 499/test-port. Handoff:
+  **`notes/0017-retomar-maestro.md`**.

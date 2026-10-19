@@ -29,7 +29,7 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
    seguridad de que no cambiamos la lógica.
 4. **Toda corrección/feature deja prueba** (diferencial si aplica; funcional si es
    del backend).
-5. **No tocar** `/app/kult-port-legacy` ni `/app/kult-atari-st-decomp`.
+5. **No tocar** los repos de referencia (solo lectura).
 6. **Documentar lo que se toca**: `TODO.md`, `RETOMAR.md`, `notes/`.
 7. Todo en **español**.
 

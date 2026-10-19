@@ -30,14 +30,14 @@
 ## Hallazgos
 - Los recursos "empotrados" (CARAC/TEMPL/ICONE/ARPLA/…) **están dentro del PRG**
   en sus direcciones de runtime; no hay que inyectarlos (verificado contra
-  `kult-port-legacy/work/embedded/`). En cambio `disk_b` sí hace falta:
+  el proyecto de referencia (`work/embedded/`)). En cambio `disk_b` sí hace falta:
   FOND.PI1, PUZZL.BIN, ECHE*.BIN.
 - **El bucle principal queda bloqueado por el tick de VBL `0x160c2`** (M2): tras
   `_start`, `run_command(0xc001)` despacha a un índice de glifo inválido. El
   tick (rotación de paleta + blits MURSM/TEMPL) es la pieza que falta; el driver
   M1 se detiene **antes** de 0xc001 por defecto y vuelca la sala (coherente, 14
   colores). `KULT_RUN_LOOP=1` reproduce el fallo.
-- El predecesor (`kult-port-legacy`) tiene un host nativo equivalente que también
+- El proyecto predecesor tiene un host nativo equivalente que también
   se queda en 0xc001, y una HAL Musashi que **parchea `_start`** para saltar el
   DRAP. Se ha añadido `KULT_SKIP_DRAP` como opción (no evita el bloqueo).
 

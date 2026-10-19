@@ -32,10 +32,7 @@ Cuenta llamadas XBIOS Ikbdws y saca FPS cada ~3 s por consola.
    Hatari (o ejecuta desde ahí).
 2. Arranca con TOS y el disquete del juego, por ejemplo:
       hatari.exe -W --bios-intercept on --tos tos.img --parse fps1.ini --disk-a "Kult.STX"
-   (usa tu tos.img y tus imágenes .STX; si tu copia del legacy está montada en
-   Windows, suelen estar en
-      ...\kult-port-legacy\tos\tos.img
-      ...\kult-port-legacy\disks\kult_a.stx  y  kult_b.stx )
+   (usa tu tos.img y tus imágenes .STX del juego)
 3. Juega hasta la MISMA animación del retrato. En la consola de Hatari irán
    saliendo:
       FPS:
@@ -65,7 +62,7 @@ Para el retrato/lift (que dura <2 s), el FPS medio no sirve. Usa
 `kult-marcas.bat`: activa KULT_MARKS y escribe `kult-marcas.log` con la entrada
 de las funciones clave y su VBL:
 
-    F 15da6 <vbl>    motor de elementos / personaje del retrato
+    F 15da6 <vbl>    motor de elementos (no la pantalla C del Maestro)
     F 12e2e <vbl>    reveal pixelado
     F 12f28 <vbl>    reveal de elemento
     F 123c0 <vbl>    blit de transicion/lift

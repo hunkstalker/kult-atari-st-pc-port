@@ -83,7 +83,10 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    el **clic izquierdo** interactúa y **salta** las transiciones/reveal (como se
    decidió para el port); el botón derecho no tiene función. **Ritmo**: el port va a
    50 VBL/s; si una animación va acelerada **sin clicar**, es **T-073** (trabajo
-   de CPU no modelado), no un fallo de esta validación.
+   de CPU no modelado), no un fallo de esta validación. En la intro: **A** son
+   3 retratos con descripciones, **B** son 4 retratos con descripciones y **C**
+   es el retrato del Maestro con **diálogo** (el único); solo C se mueve. Si C
+   va acelerado, es T-073c.
 5. **Si algo falla**: mirar **`kult.log`** (junto al `.exe`) y/o ejecutar
    **`kult-headless.exe`** desde una consola (imprime el diagnóstico).
    Códigos: `0` ok, `2` PRG/datos ausentes, `3` fallo de arranque, `4` fallo de

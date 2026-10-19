@@ -11,8 +11,8 @@
   `kult_core.map` y `work/names.txt` (el Makefile hace
   `include tools/recreate_kit/kit.mk`).
 - `work/disk_a/KULT.PRG` (gitignored) copiado de
-  `/app/kult-port-legacy/work/disk_a/KULT.PRG`.
-- `.venv` enlazado a `/app/kult-port-legacy/projects/kult/recreate/.venv`.
+  `work/disk_a/KULT.PRG` del proyecto de referencia.
+- `.venv` enlazado al proyecto de referencia.
 - `docs/mapa/` regenerado con `make mapa`: `test/test_mapa.py` exige que las
   fichas estén sincronizadas con `src/`+`names.txt`+`test/`.
 - `.gitignore`: `.venv` (sin barra final, para enlazar también un symlink) y

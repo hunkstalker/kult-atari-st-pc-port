@@ -33,7 +33,6 @@ App/driver → │  juego (src/, C verificado)   │  ← 415 funciones, 499 tes
 | `/app/kult-atari-st-decomp` | decomp ASM del ST, byte a byte | spec congelada; no se toca |
 | `/app/kult-atari-st-c` | C verificado del ST | **base**; se copia aquí (M0) |
 | **este repo** | la compilación (ST+Amiga, PC) | el trabajo |
-| `/app/kult-port-legacy` | predecesor de modding | solo referencia; no se toca |
 
 ## 3. Arquitectura de capas (objetivo)
 
@@ -175,19 +174,19 @@ Recogidas como ADR en `docs/adr/`:
   funciones). El port cobra ciclos y cede VBLs; `KULT_CPU=0` lo apaga. Falta
   **T-073c** (calibración por escenas/casos no medidos, p.ej. `palette_cycle`).
   Detalle: `notes/0015`.
-- **T-073c — Maestro (sesión 18, corrección)**: se **rechaza** el cambio de la
-  sesión 17 al botón derecho. Se elimina `platform/input_core.c`; el port vuelve
-  a compilar `src/input.c` y el **clic izquierdo** sigue saltando
-  transiciones/reveal; el derecho queda sin función. Se mantiene el fix de click
-  pegado. Hallazgo útil conservado: los brazos del Maestro aparecen **después
-  del primer prompt** (el primer `0x36 1d41b` es el scene draw inicial). El exe
-  `296ce6…` queda invalidado; hay que reconstruir el estándar. T-073c sigue
-  abierto (`15da6`/segundo scene draw). Detalle: `notes/0016`.
-- **Siguiente:** validar en Windows que el clic izquierdo ya no salta el reveal
-  del Maestro y que el derecho sí. Después **T-061** — validación del usuario en
-  Windows con el ZIP final (arranque, partida, **colores**, guardado, audio,
-  morir → reiniciar sala). Después **T-072 (ingesta `.STX`, adelantada)** →
-  **M7-c** → **A1** → **N3** → **A2** → **M5**. Sin bloqueantes, pero con la
-  traza aún en el árbol (fuera del build) a falta de borrarla.
+- **T-073c — Maestro (pantalla C, abierto)**: **A** 3 retratos pixel +
+  descripciones; **B** 4 retratos lift + descripciones (4 bancos `15ac8`/`0x36`);
+  **C** 1 retrato del Maestro + lift + **diálogo** (único diálogo y único
+  retrato que se mueve), después de B. C en los logs: 1219–1249 / 1513–1543;
+  ~8 frames/16 blits a 1–3 VBL; sin `15ac8`/`15da6`. Exe estándar `900fd993…`
+  (commit `47e1028`), sin traza; ZIP regenerado. Falta analizar el bucle de
+  frames de C y la espera/reveal que falta. Handoff autoritativo:
+  **`notes/0017-retomar-maestro.md`**. No cambiar el input.
+- **Siguiente:** analizar el bucle de frames de C y la espera/reveal que falta
+  (`12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`, texto;
+  `f_0124da` espera VBL, `f_012510` no; modo C `0x07`). Sin capturar frames;
+  sin tocar input; sin `KULT_FRAME_GATE`/`15da6`. Después **T-061** (validación
+  Windows: título/idioma, partida/colores, guardado, audio, morir → reiniciar)
+  → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

@@ -15,7 +15,7 @@ Si kult.exe no hace nada o falla, sigue estos pasos.
 2) Abre kult.log (se crea junto a kult.exe)
    Contiene: version, directorios de datos buscados, ruta de KULT.PRG,
    resultado de SDL/ventana/audio, frames y codigo de salida. Los errores
-   fatales tambien se muestran en un cuadro de dialogo.
+   fatales tambien se muestran en un cuadro de dialogo de Windows.
 
 3) Prueba el binario de consola (diagnostico)
    Abre cmd en la carpeta del juego y ejecuta:

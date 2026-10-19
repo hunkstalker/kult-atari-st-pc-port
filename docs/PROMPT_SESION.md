@@ -47,7 +47,7 @@ N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) → M5 (opcional)`
   idioma fiel; `boot/` fuera de `src/`; headless primero.
 - Reproducir/medir antes de tocar; una hipótesis un cambio; toda corrección deja
   prueba.
-- **No tocar** `/app/kult-port-legacy` ni `/app/kult-atari-st-decomp`.
+- **No tocar** los repos de referencia (solo lectura).
 - Todo en **español**. Mantén `TODO.md` y `RETOMAR.md` al día al cerrar.
 
 **Comandos:**

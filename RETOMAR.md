@@ -5,43 +5,27 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
-- **Sesión 18 — corrección: se rechaza el cambio de botón de la sesión 17**: se
-  elimina `platform/input_core.c`; el port vuelve a compilar `src/input.c` y el
-  **clic izquierdo** sigue saltando transiciones/reveal; el **botón derecho
-  queda sin función** (decisión del usuario). Se conserva el fix de click pegado
-  (bit2 de `A_INPUT_BUTTONS` sincronizado con el botón real) y el hallazgo útil
-  de la sesión 17: los brazos del Maestro aparecen **después del primer prompt**
-  (el primer `0x36 1d41b` es el scene draw inicial). El exe `296ce6…` y los docs
-  que daban el botón derecho por bueno quedan **invalidados**; se reconstruye el
-  exe estándar y el ZIP. T-073c sigue abierto: `15da6`/segundo scene draw.
-- **Sesión 17 — T-073c (Maestro): causa raíz y fix del skip del reveal (RECHAZADA; ver sesión 18)**: el
-  reveal/lift del retrato comprueba `$1a570`; el `wait_frame` del core lo fijaba
-  con el **clic izquierdo**, así que cada clic para avanzar saltaba el reveal.
-  En el original `$1a570` sigue al **botón derecho** y el izquierdo solo
-  interactúa (referencia: `kult-port-legacy/docs/RUNTIME.md` §"flag de saltar
-  transición"). **Fix port-side** (`src/` intacto):
-  - `platform/input_core.c` (copia justificada de `src/input.c`): izquierdo →
-    bit2/interacción; `$1a570` → `platform_input_skip_requested()` (derecho).
-  - `platform/input.c` + `platform/video_sdl.c`: estado del botón derecho de SDL
-    (`SDL_BUTTON_RMASK`), refresco al final del bombeo.
-  - `Makefile`/`CMakeLists.txt`: `src/input.c` excluido **solo del port**;
-    entra `platform/input_core.c`. `make test` sigue con `src/input.c`.
-  - Prueba nueva en `make test-port`: izquierdo → `skip=0`; derecho → `skip=0xff`.
-  - Verificado: **499**, `test-port`, `port`, `port-sdl`, `cmake-native`,
-    `cmake-win`. En headless con clic izquierdo el Maestro entra con `skip=00`
-    y hace scene draw **53 VBL** + lift `0x06` **61 VBL**; con el derecho
-    mantenido en SDL (Xvfb) el `skip` es `ff`.
-  - **Build estándar sin traza** regenerado en `build-win/`: `kult.exe` md5
-    **`296ce6c689c9237097cfb5f454eaf787`**. El ZIP aún no se ha regenerado.
-    **Pendiente: validación visual del usuario** (izquierdo no salta, derecho
-    sí); después borrar `platform/dispatch_trace.c`/marcas y empaquetar.
-- **Sesión 16 — T-073c (Maestro): trazas Y/V, puerta descartada, estado y click fantasma**: se hizo una **copia diagnóstica** `platform/dispatch_trace.c` (sustituye a `src/dispatch.c` solo en el port) que escribe `Y <vbl> <byte> <script>` y `V <vbl> <byte> <script> <acc9> <acd2> <aaf9> <ad1d> <acc6> <skip> <a572> <a0f> <cx> <cy> <btn> <cmd> <obj>`.
-  - Los **3 primeros retratos** usan `0x0d` → `12f28`: VBL **22/119/211** (deltas 97/92) en la run nueva frente a **29/127/219** (98/92) en la anterior; `S 15da6` del intro = **63** en ambas. **No se ha cambiado ningún otro reveal.**
-  - El **Maestro** entra por `0x36 scene_mode_draw`; el operando del guion en `0x1d41c` es **0x07** (base PRG 0x10000). No llama a los reveals de tipo 4 (`12e2e/12e08/12ea2/12fb6`); los bancos `15ac8` son 4 objetos/partes (ASM `0x16582`/`0x16636`, el C coincide) y los blits `12ad6/12b04` son el dibujo del retrato, no el reveal.
-  - **`KULT_FRAME_GATE` descartado**: con 10 los 4 bancos salen a 10 VBL exactos (prueba nativa), pero el frame visible sigue acelerado (run `kult-frame10.log`: 1365/1375/1385/1395; scene draw 96 VBL). La puerta solo espacia la construcción en el back buffer. El bat normal vuelve a `KULT_FRAME_GATE=0`.
-  - **Estado V del Maestro**: `$1acc9=0x0a` (tras `0x52`), `$1acd2=0x02`, `$1aaf9=0x63`, `$1ad1d=0`, modo `0x07`, skip 0. `anim_mode` (`0x188ce`) exige `0x3b..0x3e` y `aaf9==acd2`; no entra. `icon_repeat` (`0x18944`) retorna si `ad1d==0`; por eso **no hay `15da6`** en el Maestro. El `$1acc9` se fija **después** del scene draw y `aaf9` no se actualiza: falta el **segundo scene draw/camino** del original tras la selección (hipótesis principal; ver `notes/0016`).
-  - **Bug extra**: `A_INPUT_BUTTONS` bit2 = `0x04` **pegado** desde VBL 2 (click fantasma). Corregido en `platform/input.c` (sincroniza con el IKBD) y `platform/video_sdl.c` (refresca con `SDL_GetMouseState`); exe de traza nuevo **`3fc2f940e11db072f1d0ce65785158ee`**. **Pendiente de probar por el usuario** (run con `kult-marcas.bat`, sin mantener el botón; ver si `btn=00` y si el retrato mejora).
-  - **Estado del build**: la traza sigue activa (`platform/dispatch_trace.c` + filtros Makefile/CMake); **hay que revertirla** antes del ZIP final. El ZIP estándar `build-win/kult-0.1.0-win64.zip` **no se ha regenerado**; la carpeta del usuario tiene el exe de traza. `make test` **499** y `make test-port` verdes. **Handoff completo: `notes/0016-maestro-handoff.md`.**
+- **Sesión 20 — documentación corregida (T-073c, pantallas A/B/C)**: se
+  reescribieron el handoff (`notes/0017-retomar-maestro.md`) y el histórico
+  (`notes/0016-maestro-handoff.md`), y se corrigieron `TODO`, `PROYECTO`,
+  `notes/0015`, `README`, `AGENTS`, `docs/PROMPT_SESION`, `assets/MEDIR_FPS` y
+  `assets/kult-marcas.bat`.
+  - **A**: 3 retratos + descripciones (pixel-reveal), quietos, **sin diálogo**.
+  - **B**: 4 retratos + descripciones (lift-reveal), quietos, **sin diálogo**;
+    aquí están los 4 bancos `15ac8` y el `0x36` (~1095/1352).
+  - **C**: 1 retrato del Maestro + lift-reveal + **diálogo**; único diálogo y
+    único retrato que se mueve; después de B. Logs: 1219–1249 / 1513–1543;
+    ~8 frames/16 blits a 1–3 VBL/frame; **sin** `15ac8`/`15da6`.
+  - Las capturas de las pantallas A/B/C quedan en `temp/screenshots/` (local,
+    gitignored; **no se versionan**).
+  - Eliminadas referencias externas obsoletas y `assets/kult-frame10.bat`.
+  - Estado: commit `47e1028`; exe `900fd…`; ZIP; 499/test-port; input izquierdo;
+    traza fuera del estándar. **T-073c sigue abierto**: analizar el bucle de
+    frames de C y la espera/reveal que falta; ver `notes/0017`.
+- **Sesiones 16–19 (histórico corregido)**: 16: trazas Y/V y click pegado;
+  17: intento de cambiar el input, **rechazado**; 18: revertido y build estándar;
+  19: corrección del handoff. La asociación inicial “4 bancos = Maestro” era
+  errónea: esos 4 bancos son **B**; el Maestro es **C**.
 - **Sesión 15 — T-073 ritmo: `cpu_delay` + coste medido por función**: se
   verificó en el ASM que las animaciones aceleradas son **CPU-bound** (`dbra`
   en `0x15da6` motor de elementos/retrato, `0x12e2e`/`0x12f28` reveal, y trabajo
@@ -88,7 +72,7 @@ Tareas: `TODO.md`.
   "no hacía nada" porque en `data/` solo había **imágenes `.STX`**; el paquete
   interino necesita los ficheros **extraídos** y el `.exe` GUI no mostraba el
   error. Los `.STX` del usuario son **idénticos** (`md5`) a los discos del
-  proyecto: se extrajeron (`stx.py`+`fat12.py`, sin tocar legacy) y se copiaron
+  proyecto: se extrajeron (`stx.py`+`fat12.py`, sin tocar repos de referencia) y se copiaron
   los **28 ficheros aplanados** a `build-win/kult-0.1.0-win64/data/`
   (`KULT.PRG` md5 `e4fdc6fa…`; `CLEAR.BIN` restaurado del disco). Nuevo
   **`platform/log.c`** (+`paths.c`): **`kult.log` junto al exe** y stderr,
@@ -181,27 +165,23 @@ Tareas: `TODO.md`.
 - **M6 en curso**: T-060 ✅ (menú fiel); **T-061 pendiente de la validación del
   usuario** (checklist en `docs/VERIFICACION.md`, limitaciones en
   `docs/LIMITACIONES.md`). Incluye **morir → reiniciar sala** (`reset_clear`, core).
-- **T-073c (Maestro) EN DIAGNÓSTICO** (sesión 16): los 3 primeros reveals siguen
-  igual (`0x0d`/`12f28`); el Maestro entra por `scene_mode_draw` (`0x36`, modo
-  `0x07`) y **no** llama a los reveals de tipo 4. Los 4 bancos son 4
-  objetos/partes (ASM `0x16582`/`0x16636`); `KULT_FRAME_GATE` **descartado**
-  (solo retrasa el back buffer). Estado `V`: `$1acc9=0x0a`, `$1acd2=0x02`,
-  `$1aaf9=0x63`, `$1ad1d=0`, modo 0x07; `anim_mode`/`icon_repeat` no disparan
-  `15da6`. Hipótesis principal: falta el **segundo scene draw/camino** tras la
-  selección. Bug extra: click fantasma `A_INPUT_BUTTONS` bit2=0x04; **fix
-  aplicado** (`platform/input.c`, `platform/video_sdl.c`), exe de traza
-  `3fc2f940e11db072f1d0ce65785158ee`, **pendiente de probar**. Handoff completo:
-  `notes/0016-maestro-handoff.md`.
+- **T-073c (Maestro C) abierto**: A/B/C corregidas. A: 3 retratos pixel +
+  descripciones; B: 4 retratos lift + descripciones; C: 1 retrato del Maestro +
+  lift + diálogo (único diálogo y único retrato que se mueve), después de B.
+  C en los logs: 1219–1249 / 1513–1543; ~8 frames/16 blits a 1–3 VBL/frame;
+  sin `15ac8`/`15da6`. El siguiente paso es analizar el bucle de frames de C y
+  la espera/reveal que falta; no hace falta capturar. Detalle:
+  **`notes/0017-retomar-maestro.md`**.
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build de diagnóstico T-073c activo** (sesión 16): `platform/dispatch_trace.c`
-  sustituye a `src/dispatch.c` en el port (Makefile/CMake) y escribe `Y`/`V`;
-  **hay que revertirlo** antes del ZIP final. El ZIP estándar **no se ha
-  regenerado**; la carpeta del usuario tiene el exe de traza. `src/` intacto;
-  `make test` 499 y `make test-port` verdes.
+- **Build estándar actual**: exe `900fd…`, sin traza `Y`/`V`; la traza
+  (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` intacto;
+  `make test` 499 y `make test-port` verdes. La documentación está corregida;
+  las capturas de A/B/C quedan en `temp/screenshots/` (no versionadas); no se
+  requiere capturar más.
 - **Colores del juego corregidos** (sesión 14): `OS_SCREEN_BASE = 0x98000` en
   `platform/include/os.h` (Physbase es HAL); con `0x80000` las pantallas y su
   paleta caían dentro de ECHE/heap del juego. **Ritmo en observación**: el port
@@ -213,27 +193,22 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-073c — corrección hecha; Maestro aún abierto.** Se revirtió el cambio de la
-sesión 17: el **clic izquierdo** interactúa y **salta** las transiciones/reveal;
-el **botón derecho queda sin función**. Se conserva el fix de click pegado. El
-exe `296ce6…` de la sesión 17 queda **invalidado**; reconstruir el estándar
-izquierdo (`build-win/`) y regenerar el ZIP. El primer `0x36 1d41b` es el scene
-draw inicial; los brazos aparecen **después del primer prompt**: la próxima run
-debe avanzar el diálogo y pulsar F12 después. Si se necesita la traza,
-reactivar `Y`/`V` en una build de diagnóstico. Después: **T-061** (validación
-del usuario en Windows: título/idioma, partida/colores, guardado, audio, morir →
-reiniciar). Si el Maestro sigue: atacar `15da6`/segundo scene draw (ver
-`notes/0016`). No cambiar el mapeo de botones.
-la traza y comparar `skip`/funciones.
-Después, **T-061 — validación del usuario en Windows** con el ZIP final
-(primera pantalla/título, idioma D/E/F, partida/colores, guardado, audio,
-morir → reiniciar; checklist en `docs/VERIFICACION.md`). Si algo falla, adjuntar
-**`kult.log`** (o `kult-headless.exe` en consola). Después **T-072 — ingesta
-`.STX`** (no pedir nunca un `.PRG`) → **M7-c** → **A1** (investigación Amiga) →
-**N3** (motor nativo + assets nativos) → **A2** (Amiga) → **M5** (opcional). La
-**escucha del audio** se hace en ventana con entrada real (`KULT_AUDIO=0` lo
-apaga; `KULT_MUSIC_GAIN` ajusta la música). Detalle:
-`notes/0011`–`notes/0016`.
+**T-073c — C (Maestro) acelerado; documentación ya corregida.**
+
+1. Analizar el **bucle de frames de C** con los logs actuales y el código/ASM:
+   `12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`, texto;
+   localizar el caller y la espera/reveal que falta (`f_0124da` espera VBL,
+   `f_012510` no; modo C `0x07`; camino texto/icono).
+2. Si hace falta, montar la traza `Y`/`V` en una build aparte (`notes/0017` §5);
+   no capturar frames.
+3. Corregir **solo C**, sin tocar A/B ni el input; probar con el estándar
+   `900fd…`; reconstruir/regenerar el ZIP si procede.
+4. Después **T-061** (validación Windows: título/idioma, partida/colores,
+   guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
+   → **A1** → **N3** → **A2** → **M5**.
+
+Detalle autoritativo: **`notes/0017-retomar-maestro.md`**. No cambiar el input;
+no usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
@@ -301,4 +276,4 @@ apaga; `KULT_MUSIC_GAIN` ajusta la música). Detalle:
   core; se reconstruyen aquí.
 - El juego avanza **1 paso por frame**; separar simulación (ritmo del original)
   de presentación (refresh) para no acelerar animaciones.
-- No tocar `/app/kult-port-legacy` ni `/app/kult-atari-st-decomp`.
+- No tocar los repos de referencia (solo lectura).
