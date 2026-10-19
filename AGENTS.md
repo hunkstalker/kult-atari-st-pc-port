@@ -21,6 +21,23 @@ Windows) → **T-072** (ingesta `.STX`) y **T-073** (ritmo: trabajo de CPU no
 modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5**
 (opcional). Sin bloqueantes. Ver `notes/0011`–`notes/0014`.
 
+## T-073c — reglas duras (pantalla C del Maestro)
+- **Input invariante**: el **clic izquierdo** interactúa y salta
+  transiciones/reveal; el **derecho no tiene función**. **No** cambiar el mapeo
+  de botones, no crear copias de `src/input.c`, no tocar `wait_frame` ni el
+  estado de botones de SDL. No usar modelos de botones de otros repositorios.
+- **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
+  B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
+  `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único
+  diálogo y único retrato que se mueve), después de B.
+- C está en los logs: **1219–1249 / 1513–1543**; ~8 frames/16 blits a 1–3
+  VBL/frame; **sin** `15ac8`/`15da6`.
+- **No** usar `KULT_FRAME_GATE` ni `15da6` como fix de C sin evidencia.
+- Medir antes de tocar; una hipótesis, un cambio; si no mejora, revertir.
+- Handoff: `notes/0017-retomar-maestro.md`; plan detallado:
+  `notes/0018-plan-c.md`. Prueba de guardia:
+  `test_left_click_skips` en `make test-port`.
+
 ## Reglas de trabajo
 1. **Reproducir/medir antes de tocar.** Una hipótesis, un cambio.
 2. **`src/` (el juego) no se modifica.** Lo específico de máquina va en

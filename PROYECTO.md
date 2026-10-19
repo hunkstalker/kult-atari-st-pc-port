@@ -181,7 +181,7 @@ Recogidas como ADR en `docs/adr/`:
   ~8 frames/16 blits a 1–3 VBL; sin `15ac8`/`15da6`. Exe estándar `900fd993…`
   (commit `47e1028`), sin traza; ZIP regenerado. Falta analizar el bucle de
   frames de C y la espera/reveal que falta. Handoff autoritativo:
-  **`notes/0017-retomar-maestro.md`**. No cambiar el input.
+  **`notes/0017-retomar-maestro.md`**; plan anti-fallo: **`notes/0018-plan-c.md`**; guardia: **`test_left_click_skips`**. No cambiar el input.
 - **Siguiente:** analizar el bucle de frames de C y la espera/reveal que falta
   (`12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`, texto;
   `f_0124da` espera VBL, `f_012510` no; modo C `0x07`). Sin capturar frames;

@@ -95,10 +95,10 @@ PLATFORM_TEST := build/test_platform
 .PHONY: test-port
 test-port: $(PLATFORM_TEST)
 	$(PLATFORM_TEST)
-$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c src/music.c $(PLATFORM_TEST_SRC) \
+$(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c src/music.c src/input.c $(PLATFORM_TEST_SRC) \
                   $(wildcard platform/include/*.h) $(wildcard platform/*.h) $(wildcard include/*.h)
 	@mkdir -p build
-	$(CC) $(PORT_CFLAGS) -DKULT_NO_CPUWORK platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c src/music.c $(PLATFORM_TEST_SRC) -o $@
+	$(CC) $(PORT_CFLAGS) -DKULT_NO_CPUWORK platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c src/music.c src/input.c $(PLATFORM_TEST_SRC) -o $@
 
 # ---------------------------------------------------------------------------
 # M7/T-070: build CMake (nativo Linux y cross Windows MinGW). Son envoltorios

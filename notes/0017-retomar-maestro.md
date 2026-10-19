@@ -69,6 +69,9 @@ para ~8 frames). Hay que confirmar en código/ASM cuál de estas causas aplica:
    mantenido.
 5. **No** es `KULT_FRAME_GATE` ni `15da6`; ambos están descartados para C.
 
+> Plan anti-fallo detallado: **`notes/0018-plan-c.md`**. Guardia de input:
+> `test_left_click_skips` en `make test-port` (izquierdo salta; derecho no).
+
 ## 4. Plan para confirmar y arreglar C
 
 1. **Trazar el caller de los frames de C**:

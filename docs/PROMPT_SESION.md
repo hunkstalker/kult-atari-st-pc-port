@@ -25,7 +25,18 @@ Linux/Windows, `kult.exe` + ZIP sin assets, `kult.log`). El juego arranca con el
 corregidos** (Physbase del HAL `0x98000`). `make test` **499 verde**,
 `make test-port` verde. Sin bloqueantes.
 
-**Tarea inmediata: T-061 — validación del usuario en Windows** con
+**Tarea inmediata A — T-073c (pantalla C del Maestro)**: lee `AGENTS.md`
+(§ T-073c), `notes/0017-retomar-maestro.md` y `notes/0018-plan-c.md`.
+Reglas duras: **no cambiar el input** (clic izquierdo salta; derecho sin
+función); **A** 3 retratos + descripciones; **B** 4 retratos + descripciones
+(4 bancos `15ac8`/`0x36`); **C** 1 retrato del Maestro + lift + **diálogo**
+(único diálogo y único que se mueve), después de B. C en los logs:
+1219–1249 / 1513–1543; ~8 frames/16 blits a 1–3 VBL; sin `15ac8`/`15da6`.
+**Medir antes de tocar**: una hipótesis, un cambio; si no mejora, revertir. No
+usar `KULT_FRAME_GATE`/`15da6` como fix. La guardia `test_left_click_skips`
+debe seguir verde. Sin capturas nuevas.
+
+**Tarea inmediata B — T-061 — validación del usuario en Windows** con
 `build-win/kult-0.1.0-win64.zip`: descomprimir sobre la carpeta ya usada (los
 `data/` extraídos se conservan), ejecutar `kult.exe` y comprobar arranque/menú,
 partida (**colores**), **guardado**, **audio** y **morir → reiniciar sala**

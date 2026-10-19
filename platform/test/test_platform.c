@@ -26,6 +26,9 @@
 /* Stub del core para poder probar el tick de VBL aislado (boot/vbl.c). */
 uint32_t pal_next_byte(uint8_t *img) { (void)img; return 0; }
 
+/* Core: wait_frame de src/input.c (para la prueba de guardia del input). */
+void wait_frame(uint8_t *img);
+
 /* Las ISR PCM (src/sound.c) las cubre el diferencial del core; aquí no se enlazan
  * (arrastrarían el resto del core). Se sustituyen por stubs para el enlazado. */
 void sound_isr_fwd(uint8_t *img)  { (void)img; }
@@ -255,6 +258,31 @@ static void test_mouse_click_state(void) {
     platform_ikbd_deliver(g_img);
     CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
           "al soltar el botón izquierdo el clic se limpia");
+
+    platform_input_set_auto(1);
+}
+
+/* --- T-073c (guardia): el clic izquierdo salta; sin botón no salta --- */
+static void test_left_click_skips(void) {
+    platform_input_set_auto(0);
+
+    platform_mouse_set(160, 100, 1);       /* izquierdo */
+    g_img[A_IKBD_PACKET] = 0xff;
+    wait_frame(g_img);
+    CHECK(g_img[A_SKIP_TRANSITION] == 0xff,
+          "el clic izquierdo debe saltar la transición");
+
+    platform_mouse_set(160, 100, 0);       /* sin botón */
+    g_img[A_IKBD_PACKET] = 0xff;
+    wait_frame(g_img);
+    CHECK(g_img[A_SKIP_TRANSITION] == 0,
+          "sin botón no debe saltar la transición");
+
+    platform_mouse_set(160, 100, 2);       /* derecho: sin función */
+    g_img[A_IKBD_PACKET] = 0xff;
+    wait_frame(g_img);
+    CHECK(g_img[A_SKIP_TRANSITION] == 0,
+          "el botón derecho no debe saltar la transición");
 
     platform_input_set_auto(1);
 }
@@ -523,6 +551,7 @@ int main(void) {
     test_input_tick();
     test_real_input();
     test_mouse_click_state();
+    test_left_click_skips();
     test_vbl();
     test_prg_loader();
     test_boot_language();

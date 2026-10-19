@@ -5,6 +5,13 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 21 — guardrails T-073c**: reglas duras en `AGENTS.md` (§ T-073c),
+  prueba de guardia **`test_left_click_skips`** en `make test-port` (el clic
+  izquierdo salta; el derecho no) y plan detallado
+  **`notes/0018-plan-c.md`**. La próxima sesión debe leer
+  `AGENTS.md`/`notes/0017`/`notes/0018`, **no cambiar el input** y **medir antes
+  de tocar** (una hipótesis, un cambio; si no mejora, revertir). `make test`
+  499 y `make test-port` verdes.
 - **Sesión 20 — documentación corregida (T-073c, pantallas A/B/C)**: se
   reescribieron el handoff (`notes/0017-retomar-maestro.md`) y el histórico
   (`notes/0016-maestro-handoff.md`), y se corrigieron `TODO`, `PROYECTO`,
@@ -195,6 +202,9 @@ Tareas: `TODO.md`.
 ## Siguiente tarea
 **T-073c — C (Maestro) acelerado; documentación ya corregida.**
 
+0. Leer `AGENTS.md` (§ T-073c), `notes/0017` y `notes/0018`. **No cambiar el
+   input**; la guardia `test_left_click_skips` debe seguir verde. Medir antes de
+   tocar.
 1. Analizar el **bucle de frames de C** con los logs actuales y el código/ASM:
    `12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`, texto;
    localizar el caller y la espera/reveal que falta (`f_0124da` espera VBL,
