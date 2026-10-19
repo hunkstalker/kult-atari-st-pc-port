@@ -5,6 +5,18 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 22 — T-073c resuelto (timing de C)**: la causa era el `dbf` inline de
+  `object_info_card` (`0x16dec`): el guion de C deja `wait=0x0a`, que produce
+  **40960 iteraciones × 18 ciclos ≈ 92 ms ≈ 4,6 VBL por entrada**; el core lo
+  transcribía como bucle C normal y no lo anotaba como espera. Fix **con permiso
+  del usuario para tocar `src/`**: `src/loop.c` usa `cpu_delay_cycles()`; el
+  diferencial sigue no-op y el port cobra ciclos por el mismo reloj de T-073b.
+  Prueba nueva `test_cpu_charge_cycles`. `make test` **499**, `make test-port`
+  OK, builds nativo/win y ZIP. Exe nuevo
+  `fc4108e473a9d44c722245345a44fa32` (headless `e37f65…`, ZIP `8c9266…`).
+  C pasa de ~3 a ~7,6 VBL/frame; A/B no usan `16dec`; input intacto. Falta la
+  validación visual del usuario. Detalle: `notes/0019-fix-timing-c.md`
+  (resumen en `notes/0017` §8).
 - **Sesión 21 — guardrails T-073c**: reglas duras en `AGENTS.md` (§ T-073c),
   prueba de guardia **`test_left_click_skips`** en `make test-port` (el clic
   izquierdo salta; el derecho no) y plan detallado
@@ -172,23 +184,25 @@ Tareas: `TODO.md`.
 - **M6 en curso**: T-060 ✅ (menú fiel); **T-061 pendiente de la validación del
   usuario** (checklist en `docs/VERIFICACION.md`, limitaciones en
   `docs/LIMITACIONES.md`). Incluye **morir → reiniciar sala** (`reset_clear`, core).
-- **T-073c (Maestro C) abierto**: A/B/C corregidas. A: 3 retratos pixel +
-  descripciones; B: 4 retratos lift + descripciones; C: 1 retrato del Maestro +
-  lift + diálogo (único diálogo y único retrato que se mueve), después de B.
-  C en los logs: 1219–1249 / 1513–1543; ~8 frames/16 blits a 1–3 VBL/frame;
-  sin `15ac8`/`15da6`. El siguiente paso es analizar el bucle de frames de C y
-  la espera/reveal que falta; no hace falta capturar. Detalle:
-  **`notes/0017-retomar-maestro.md`**.
+- **T-073c (Maestro C) resuelto, pendiente validación visual**: A/B/C
+  corregidas. A: 3 retratos pixel + descripciones; B: 4 retratos lift +
+  descripciones; C: 1 retrato del Maestro + lift + diálogo (único diálogo y
+  único retrato que se mueve), después de B. La causa de la aceleración era el
+  `dbf` inline de `0x16dec` (40960 iteraciones ≈ 4,6 VBL/entrada) sin anotar;
+  ahora va por `cpu_delay_cycles()` en `src/loop.c` (no-op en diferencial).
+  C queda en ~7,6 VBL/frame; A/B no usan `16dec`; input intacto. Detalle:
+  **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8).
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `900fd…`, sin traza `Y`/`V`; la traza
-  (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` intacto;
-  `make test` 499 y `make test-port` verdes. La documentación está corregida;
-  las capturas de A/B/C quedan en `temp/screenshots/` (no versionadas); no se
-  requiere capturar más.
+- **Build estándar actual**: exe `fc4108…`, sin traza `Y`/`V`; la traza
+  (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
+  lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
+  (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
+  corregida; las capturas de A/B/C quedan en `temp/screenshots/` (no
+  versionadas); no se requiere capturar más.
 - **Colores del juego corregidos** (sesión 14): `OS_SCREEN_BASE = 0x98000` en
   `platform/include/os.h` (Physbase es HAL); con `0x80000` las pantallas y su
   paleta caían dentro de ECHE/heap del juego. **Ritmo en observación**: el port
@@ -200,25 +214,21 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-073c — C (Maestro) acelerado; documentación ya corregida.**
+**T-073c — validar visualmente el fix de C y seguir con T-061.**
 
-0. Leer `AGENTS.md` (§ T-073c), `notes/0017` y `notes/0018`. **No cambiar el
-   input**; la guardia `test_left_click_skips` debe seguir verde. Medir antes de
-   tocar.
-1. Analizar el **bucle de frames de C** con los logs actuales y el código/ASM:
-   `12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`, texto;
-   localizar el caller y la espera/reveal que falta (`f_0124da` espera VBL,
-   `f_012510` no; modo C `0x07`; camino texto/icono).
-2. Si hace falta, montar la traza `Y`/`V` en una build aparte (`notes/0017` §5);
-   no capturar frames.
-3. Corregir **solo C**, sin tocar A/B ni el input; probar con el estándar
-   `900fd…`; reconstruir/regenerar el ZIP si procede.
-4. Después **T-061** (validación Windows: título/idioma, partida/colores,
+0. Leer `AGENTS.md` (§ T-073c), `notes/0019` (y `notes/0017` §8/`notes/0018`).
+   **No cambiar el input**; la guardia `test_left_click_skips` debe seguir verde.
+1. Probar el exe nuevo `fc4108…` en Windows: la animación del retrato del
+   Maestro (C) debe ir a ~7,6 VBL/frame (antes ~3); A/B deben quedar igual.
+2. Si el ritmo no cuadra visualmente, calibrar con `KULT_CPU_HZ`/
+   `KULT_ST_CONTEND` **sin** volver a parchear animaciones; el modelo ya cobra
+   el `dbf` de `0x16dec` (18 ciclos/iteración).
+3. Después **T-061** (validación Windows: título/idioma, partida/colores,
    guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
    → **A1** → **N3** → **A2** → **M5**.
 
-Detalle autoritativo: **`notes/0017-retomar-maestro.md`**. No cambiar el input;
-no usar `KULT_FRAME_GATE`/`15da6` como fix de C.
+Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8, fix aplicado).
+No cambiar el input; no usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,

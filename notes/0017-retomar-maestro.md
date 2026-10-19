@@ -23,7 +23,7 @@
   `temp/screenshots/A.png`, `B.png` y `C.png` (carpeta gitignored; **no se
   versionan**).
 
-## 1. Estado actual
+## 1. Estado al inicio de T-073c (histórico; ver §8 para el fix)
 
 - Commit **`47e1028`**.
 - Exe estándar `build-win/kult-0.1.0-win64/kult.exe` md5
@@ -52,7 +52,7 @@ Run F12 1258 (C en 1219–1249):
 Run F12 1560: C en 1513–1543; mismos patrones (texto + frames de retrato).
 La F12 después de C es correcta; el buffer de 150 VBL incluye C.
 
-## 3. Por qué va acelerada (hipótesis de trabajo)
+## 3. Por qué va acelerada (hipótesis de trabajo; resuelta en §8)
 
 El bucle de frames del retrato de C se ejecuta a **1–3 VBL/frame** (unas 0,5 s
 para ~8 frames). Hay que confirmar en código/ASM cuál de estas causas aplica:
@@ -153,3 +153,16 @@ TAREA
 
 No des por hecho que C es B ni que los 4 bancos son el Maestro.
 ```
+
+## 8. Sesión 22 — T-073c resuelto (nota detallada: `notes/0019`)
+
+- Causa: el `dbf` inline de `object_info_card` (`0x16dec`) no estaba anotado.
+  El guion de C deja `wait=0x0a` → **40960 iteraciones × 18 ciclos ≈ 92 ms ≈
+  4,6 VBL por entrada**.
+- Fix (con permiso para tocar `src/`): `src/loop.c` usa `cpu_delay_cycles()`;
+  no-op en el diferencial y cobro real en el port (mismo reloj que T-073b).
+- C pasa de ~3 a ~**7,6 VBL/frame**; A/B no usan `16dec`; input intacto.
+- `make test` **499**, `make test-port` OK (nueva `test_cpu_charge_cycles`).
+- Exe estándar `fc4108e473a9d44c722245345a44fa32` (headless `e37f65…`, ZIP
+  `8c9266…`). Falta la validación visual del usuario en Windows.
+- Detalle completo, ASM, medición y verificación: **`notes/0019-fix-timing-c.md`**.

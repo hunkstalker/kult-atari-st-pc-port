@@ -145,6 +145,23 @@ static void test_cpu_delay(void) {
     platform_set_realtime(0);
 }
 
+/* Coste de CPU en ciclos exactos (bucle subq/bne de 0x16dec): mismo contrato
+ * que cpu_delay; 737280 ciclos ~92 ms a 8 MHz -> >= 4 VBLs. */
+static void test_cpu_charge_cycles(void) {
+    platform_set_realtime(0);
+    uint32_t f0 = platform_frame_count();
+    platform_cpu_charge_cycles(737280);
+    CHECK(platform_frame_count() == f0,
+          "sin tiempo real charge_cycles no avanza frames");
+
+    platform_set_realtime(1);
+    f0 = platform_frame_count();
+    platform_cpu_charge_cycles(737280);
+    CHECK(platform_frame_count() - f0 >= 4,
+          "charge_cycles en tiempo real cede >= 4 VBLs en ~92 ms");
+    platform_set_realtime(0);
+}
+
 static void test_video(void) {
     const uint32_t base = 0x80000;
     os_setscreen(base, base, -1);
@@ -547,6 +564,7 @@ int main(void) {
     test_log();
     test_present_hook();
     test_cpu_delay();
+    test_cpu_charge_cycles();
     test_video();
     test_input_tick();
     test_real_input();
@@ -562,7 +580,7 @@ int main(void) {
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, log, present, cpu_delay, video, entrada, reloj, "
-           "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
+    printf("RESULTADO: OK (fs, log, present, cpu_delay, cpu_cycles, video, "
+           "entrada, reloj, tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }

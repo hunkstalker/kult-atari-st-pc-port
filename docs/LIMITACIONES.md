@@ -67,10 +67,11 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 - **Ritmo / aceleración (T-073)**: implementado el **modelo de CPU medido**
   (T-073a `cpu_delay` + T-073b coste por función con `-finstrument-functions` y
   tabla del oráculo). El port cobra ciclos del original a cada función y los
-  duerme cediendo VBLs. Queda **calibración por escenas** (T-073c) con
-  `KULT_CPU_HZ`/`KULT_ANIM_GATE`/`KULT_REVEAL_GATE`; `KULT_CPU=0` lo apaga. Los
-  casos **no** medidos en la referencia (p.ej. `palette_cycle`, cuyo `dbra 0xffff`
-  se omitió en el core) pueden seguir rápidos.
+  duerme cediendo VBLs. **T-073c ✅**: el `dbf` inline de `0x16dec` (retrato de
+  C) ya se cobra con `cpu_delay_cycles` (ver `notes/0019`). Queda **calibración
+  fina por escenas** con `KULT_CPU_HZ`/`KULT_ST_CONTEND`; `KULT_CPU=0` lo apaga.
+  Los casos **no** medidos en la referencia (p.ej. `palette_cycle`, cuyo
+  `dbra 0xffff` se omitió en el core) pueden seguir rápidos.
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
 1. `make test` (499) y `make test-port` en verde.

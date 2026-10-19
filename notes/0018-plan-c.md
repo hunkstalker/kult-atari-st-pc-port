@@ -1,5 +1,8 @@
 # 0018 — Plan para arreglar la animación de C (Maestro) sin repetir el fallo
 
+> **Resuelto en `notes/0019-fix-timing-c.md`** (sesión 22): el problema era el
+> `dbf` inline de `0x16dec` sin anotar como espera de CPU.
+>
 > Complementa a `notes/0017-retomar-maestro.md`. La sesión 17 falló porque
 > inventó un cambio de input en vez de medir. Aquí está el protocolo y las
 > pistas concretas para no repetirlo.

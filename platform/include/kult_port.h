@@ -6,7 +6,8 @@
  * el diferencial (`make test`) es un no-op: se compara la imagen, no el tiempo.
  * En el **ejecutable** debe costar tiempo real: aquí se enlaza con
  * `platform_cpu_delay`, que convierte unidades (~ciclos) a tiempo de CPU del ST
- * y duerme cediendo VBLs/presentación. `src/` no se toca.
+ * y duerme cediendo VBLs/presentación. El core solo usa estos hooks; la lógica
+ * del juego no cambia.
  */
 #ifndef KULT_PORT_H
 #define KULT_PORT_H
@@ -20,6 +21,9 @@ void wait_vbl(uint8_t *img);
 /* Retardo de CPU del original (implementado en platform/time.c). */
 void platform_cpu_delay(uint32_t units);
 
+/* Coste de CPU en ciclos exactos (implementado en platform/time.c). */
+void platform_cpu_charge_cycles(uint64_t cycles);
+
 /* KULT_FRAME_GATE: retardo (VBLs) por construccion de banco de frames. */
 static inline void frame_gate_delay(uint8_t *img) {
     static int fg = -1;
@@ -28,6 +32,11 @@ static inline void frame_gate_delay(uint8_t *img) {
 }
 
 static inline void cpu_delay(uint32_t units) { platform_cpu_delay(units); }
+
+/* Retardo de CPU por ciclos exactos (bucles que no son `dbf`). */
+static inline void cpu_delay_cycles(uint64_t cycles) {
+    platform_cpu_charge_cycles(cycles);
+}
 
 /* Logger de diagnostico del motor nativo: no-op en el port. */
 static inline FILE *kult_dbgfile(void) { return NULL; }

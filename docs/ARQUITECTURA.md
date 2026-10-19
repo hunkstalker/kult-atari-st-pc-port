@@ -51,6 +51,9 @@ alimenta el paquete IKBD en `A_IKBD_PACKET` para que se actualicen
 - La HAL aporta el **reloj** que avanza el contador de VBL y ejecuta el tick.
 - Para más fluidez: **simulación** a la cadencia del original y **presentación**
   al refresco; el cursor se repinta aparte (ver `docs/PORTING.md` §Cursor).
+- El **trabajo de CPU** se modela por función (`platform/cpuwork.c`) y los
+  bucles que solo esperan se anotan en el core con `cpu_delay`/
+  `cpu_delay_cycles` (no-op en el diferencial). Ver `notes/0015` y `notes/0019`.
 
 ## Audio
 - El juego programa el **MFP Timer A** y escribe el **PSG** por

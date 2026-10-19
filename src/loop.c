@@ -506,11 +506,11 @@ uint32_t object_info_card(uint8_t *img, uint32_t script) {
                 else
                     screen_clean(img);
             } else {
-                wait = ((wait << 16) | (wait >> 16)) & 0xffffffffu;
-                wait = (wait >> 4) & 0xffffffffu;
-                do {
-                    wait = (wait - 1) & 0xffffffffu;
-                } while (wait != 0);
+                /* 0x16ec2-0x16ec8: swap + lsr.l #4 deja D1 = wait<<12; el
+                 * bucle original es `subq.l #1,d1` (8 ciclos) + `bne.w` (10),
+                 * 18 ciclos por iteracion. En el diferencial es no-op. */
+                uint32_t loops = ((wait << 16) | (wait >> 16)) >> 4;
+                cpu_delay_cycles((uint64_t)loops * 18u);
             }
         }
         if (end == p) break;

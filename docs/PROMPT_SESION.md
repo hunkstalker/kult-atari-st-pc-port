@@ -22,27 +22,24 @@ implementa esos servicios (la HAL o "nuestro TOS").
 usuario) y **M7 build + empaquetado interino hechos** (T-070/T-071: CMake
 Linux/Windows, `kult.exe` + ZIP sin assets, `kult.log`). El juego arranca con el
 **menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
-corregidos** (Physbase del HAL `0x98000`). `make test` **499 verde**,
-`make test-port` verde. Sin bloqueantes.
+corregidos** (Physbase del HAL `0x98000`) y **T-073c resuelto** (timing del
+retrato de C, `notes/0019`). `make test` **499 verde**, `make test-port` verde.
+Sin bloqueantes.
 
-**Tarea inmediata A — T-073c (pantalla C del Maestro)**: lee `AGENTS.md`
-(§ T-073c), `notes/0017-retomar-maestro.md` y `notes/0018-plan-c.md`.
-Reglas duras: **no cambiar el input** (clic izquierdo salta; derecho sin
-función); **A** 3 retratos + descripciones; **B** 4 retratos + descripciones
-(4 bancos `15ac8`/`0x36`); **C** 1 retrato del Maestro + lift + **diálogo**
-(único diálogo y único que se mueve), después de B. C en los logs:
-1219–1249 / 1513–1543; ~8 frames/16 blits a 1–3 VBL; sin `15ac8`/`15da6`.
-**Medir antes de tocar**: una hipótesis, un cambio; si no mejora, revertir. No
-usar `KULT_FRAME_GATE`/`15da6` como fix. La guardia `test_left_click_skips`
-debe seguir verde. Sin capturas nuevas.
+**T-073c ✅ (pantalla C del Maestro)**: resuelto en la sesión 22. La causa era
+el `dbf` inline de `object_info_card` (`0x16dec`, ~4,6 VBL/entrada) sin anotar;
+ahora va por `cpu_delay_cycles` (no-op en diferencial). C pasa de ~3 a
+~7,6 VBL/frame; A/B no usan `16dec`; input intacto. Detalle:
+`notes/0019-fix-timing-c.md`. Queda la **validación visual del usuario**.
 
-**Tarea inmediata B — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip`: descomprimir sobre la carpeta ya usada (los
-`data/` extraídos se conservan), ejecutar `kult.exe` y comprobar arranque/menú,
-partida (**colores**), **guardado**, **audio** y **morir → reiniciar sala**
-(checklist en `docs/VERIFICACION.md`). Si algo falla: **`kult.log`** junto al exe
-y/o `kult-headless.exe` en consola. **Ritmo**: si sigue acelerado, **T-073**
-(medir ciclos con el oráculo + reloj virtual; no hacks por animación).
+**Tarea inmediata — T-061 — validación del usuario en Windows** con
+`build-win/kult-0.1.0-win64.zip` (exe `fc4108e4…`): descomprimir sobre la
+carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
+comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
+**morir → reiniciar sala** (checklist en `docs/VERIFICACION.md`). Si algo falla:
+**`kult.log`** junto al exe y/o `kult-headless.exe` en consola. **Ritmo**: C ya
+está modelado (`notes/0019`); si otra escena va acelerada, calibrar con
+`KULT_CPU_HZ`/`KULT_ST_CONTEND`, no parchear animaciones.
 
 **Orden de hitos** (detalle en `notes/0011`–`notes/0014`):
 `arreglos → M7 build ✅ → T-061 → T-072 (ingesta .STX) / T-073 (ritmo) →
@@ -51,8 +48,10 @@ N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) → M5 (opcional)`
 **T-022/`0x106f2`** queda **abierto**.
 
 **Reglas:**
-- **`src/` (el juego) no se modifica**; lo específico de máquina va en
-  `platform/`, `boot/` y `app/`.
+- **`src/` (el juego) no cambia de lógica**; lo específico de máquina va en
+  `platform/`, `boot/` y `app/`. El **timing** se anota con
+  `cpu_delay`/`cpu_delay_cycles` (no-op en diferencial), como en `anim.c`,
+  `reveal.c` y `loop.c`; cualquier otro cambio en `src/` requiere permiso.
 - **Decisiones cerradas como ADR** (no re-litigar; ver `docs/adr/`): SDL3;
   `SDL_Renderer` base y `SDL_GPU` para CRT; **audio en hito propio**; menú de
   idioma fiel; `boot/` fuera de `src/`; headless primero.

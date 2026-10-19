@@ -40,8 +40,11 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
 
 ## Reglas de trabajo
 1. **Reproducir/medir antes de tocar.** Una hipótesis, un cambio.
-2. **`src/` (el juego) no se modifica.** Lo específico de máquina va en
-   `platform/`; el arranque/tick en `boot/`; el driver en `app/`.
+2. **`src/` (el juego) no cambia de lógica.** Lo específico de máquina va en
+   `platform/`; el arranque/tick en `boot/`; el driver en `app/`. El **timing**
+   se anota con `cpu_delay`/`cpu_delay_cycles` (no-op en diferencial), como en
+   `anim.c`, `reveal.c` y `loop.c`; cualquier otro cambio en `src/` requiere
+   permiso explícito.
 3. **Los 499 tests diferenciales del core deben seguir verdes.** Son la red de
    seguridad de que no cambiamos la lógica.
 4. **Toda corrección/feature deja prueba** (diferencial si aplica; funcional si es

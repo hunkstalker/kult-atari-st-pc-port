@@ -171,21 +171,24 @@ Recogidas como ADR en `docs/adr/`:
 - **Ritmo (T-073a/b, sesión 15)**: implementado el modelo de CPU: `cpu_delay`
   real para los `dbf` transcritos + **coste medido por función** del oráculo
   (`-finstrument-functions` solo en el port, `platform/cpuwork_costs.inc`, 79
-  funciones). El port cobra ciclos y cede VBLs; `KULT_CPU=0` lo apaga. Falta
-  **T-073c** (calibración por escenas/casos no medidos, p.ej. `palette_cycle`).
-  Detalle: `notes/0015`.
-- **T-073c — Maestro (pantalla C, abierto)**: **A** 3 retratos pixel +
-  descripciones; **B** 4 retratos lift + descripciones (4 bancos `15ac8`/`0x36`);
-  **C** 1 retrato del Maestro + lift + **diálogo** (único diálogo y único
-  retrato que se mueve), después de B. C en los logs: 1219–1249 / 1513–1543;
-  ~8 frames/16 blits a 1–3 VBL; sin `15ac8`/`15da6`. Exe estándar `900fd993…`
-  (commit `47e1028`), sin traza; ZIP regenerado. Falta analizar el bucle de
-  frames de C y la espera/reveal que falta. Handoff autoritativo:
-  **`notes/0017-retomar-maestro.md`**; plan anti-fallo: **`notes/0018-plan-c.md`**; guardia: **`test_left_click_skips`**. No cambiar el input.
-- **Siguiente:** analizar el bucle de frames de C y la espera/reveal que falta
-  (`12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`, texto;
-  `f_0124da` espera VBL, `f_012510` no; modo C `0x07`). Sin capturar frames;
-  sin tocar input; sin `KULT_FRAME_GATE`/`15da6`. Después **T-061** (validación
+  funciones). El port cobra ciclos y cede VBLs; `KULT_CPU=0` lo apaga.
+  **T-073c** resuelto (ver abajo); queda calibración por escenas/casos no
+  medidos (p.ej. `palette_cycle`). Detalle: `notes/0015`.
+- **T-073c — Maestro (pantalla C, resuelto; pendiente validación visual)**:
+  **A** 3 retratos pixel + descripciones; **B** 4 retratos lift + descripciones
+  (4 bancos `15ac8`/`0x36`); **C** 1 retrato del Maestro + lift + **diálogo**
+  (único diálogo y único retrato que se mueve), después de B. La aceleración de
+  C era el `dbf` inline de `object_info_card` (`0x16dec`): `wait=0x0a` → 40960
+  iteraciones × 18 ciclos ≈ 92 ms ≈ 4,6 VBL/entrada, que el core no anotaba.
+  Fix autorizado en `src/loop.c` con `cpu_delay_cycles()` (no-op en diferencial;
+  en el port cobra con el reloj de T-073b). C pasa de ~3 a ~7,6 VBL/frame; A/B
+  no usan `16dec`; input intacto. Exe estándar `fc4108e4…`; ZIP `8c926644…`.
+  Detalle: **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8); plan
+  anti-fallo: **`notes/0018-plan-c.md`**; guardia: **`test_left_click_skips`**.
+  No cambiar el input.
+- **Siguiente:** validar visualmente C en Windows con el exe `fc4108e4…`
+  (~7,6 VBL/frame; A/B iguales). Si no cuadra, calibrar con `KULT_CPU_HZ`/
+  `KULT_ST_CONTEND`, sin parchear animaciones. Después **T-061** (validación
   Windows: título/idioma, partida/colores, guardado, audio, morir → reiniciar)
   → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
