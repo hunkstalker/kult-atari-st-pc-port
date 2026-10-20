@@ -35,6 +35,9 @@ int platform_sdl_open(const char *title, int scale) {
         platform_log("CreateWindow: %s", SDL_GetError());
         return -1;
     }
+    /* El juego dibuja su propio cursor en el framebuffer. El cursor del sistema
+     * (Windows) no debe verse encima; se oculta mientras la ventana tenga foco. */
+    SDL_HideCursor();
     /* Icono de la ventana (el recurso del .exe lo pone windres en Windows). */
     SDL_Surface *icon = SDL_CreateSurfaceFrom(KULT_ICON_W, KULT_ICON_H,
                                               SDL_PIXELFORMAT_RGBA32,
@@ -110,6 +113,12 @@ int platform_sdl_pump(void) {
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_EVENT_QUIT) {
             g_quit = 1;
+        } else if (e.type == SDL_EVENT_WINDOW_FOCUS_GAINED) {
+            SDL_HideCursor();          /* solo el cursor del juego */
+        } else if (e.type == SDL_EVENT_WINDOW_FOCUS_LOST) {
+            /* Fuera de la ventana el usuario necesita el cursor del sistema. */
+            g_mouse_mask = 0;
+            SDL_ShowCursor();
         } else if (e.type == SDL_EVENT_KEY_DOWN) {
             if (e.key.key == SDLK_ESCAPE) {
                 g_quit = 1;
@@ -156,6 +165,7 @@ int platform_sdl_pump(void) {
 }
 
 void platform_sdl_close(void) {
+    SDL_ShowCursor();               /* restaurar el cursor del sistema al salir */
     if (g_tex) SDL_DestroyTexture(g_tex);
     if (g_ren) SDL_DestroyRenderer(g_ren);
     if (g_win) SDL_DestroyWindow(g_win);

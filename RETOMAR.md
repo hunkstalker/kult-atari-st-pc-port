@@ -5,6 +5,15 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 28 — cursor del sistema (T-080)**: se veía el cursor de Windows
+  encima del cursor del juego. `platform/video_sdl.c` oculta el cursor del
+  sistema con `SDL_HideCursor()` al abrir/recuperar foco y lo muestra al perder
+  foco/cerrar; dentro de la ventana solo queda el cursor de `src/cursor.c`.
+  `src/` intacto; `make port-sdl` y `package-win` OK. Exe
+  `3237a4d7cc6d1a82423a2b95e017f814` (headless
+  `68ae05eaddcb6c33f4b66da437576aa3`, ZIP
+  `ad7d30dded0c1afe2fee2d4417fb5258`). Detalle:
+  `notes/0027-cursor-sistema-sdl.md`.
 - **Sesión 27 — estrella final (T-079, punto 2)**: la animación ya duraba bien
   (3 elementos, `15da6` delay 20 = 5 VBL cada uno = 15 VBL), pero faltaba la
   espera posterior. En el ASM no hay espera programada: tras `159e2` se llama
@@ -282,7 +291,7 @@ Tareas: `TODO.md`.
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `ed175889…`, sin traza `Y`/`V`; la traza
+- **Build estándar actual**: exe `3237a4d7…`, sin traza `Y`/`V`; la traza
   (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
   lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
   (autorizada). `make test` 499 y `make test-port` verdes. La documentación está

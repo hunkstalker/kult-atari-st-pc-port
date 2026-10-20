@@ -33,7 +33,9 @@ bloqueantes. Ver `notes/0011`–`notes/0014`.
   `wait_vbl` dentro de un comando (puertas, wipes).
 - **Cursor**: la HAL emula `Ikbdws` `0x09` (el juego fija el ratón absoluto a
   **304×184** para el sprite 16×16). No recortar a ojo a 319×199: `src/` no se
-  toca; ver `notes/0021-cursor-e-ikbd.md`.
+  toca; ver `notes/0021-cursor-e-ikbd.md`. En SDL se oculta el cursor del
+  sistema (`SDL_HideCursor`) para que solo se vea el del juego; ver
+  `notes/0027-cursor-sistema-sdl.md`.
 - **Reinicio tras morir**: el original salta de `reset_clear` (`0x1682a`) a
   `0x10158`; el port lo emula en `boot/` con `longjmp` desde el hook de salida de
   `reset_clear` y `boot_enter_game()`. No es `0x106f2`; ver

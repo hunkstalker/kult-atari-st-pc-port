@@ -226,6 +226,11 @@ Recogidas como ADR en `docs/adr/`:
   PRES/DRAP hasta después de ECHE (listas A/B, FOND incluidos) evita la pantalla
   negra inicial, la canción avanzada y los ~20 s tras el idioma. Detalle:
   **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
+- **Cursor del sistema (T-080, sesión 28)**: SDL mostraba el cursor de Windows
+  sobre el cursor del juego. `platform/video_sdl.c` lo oculta con
+  `SDL_HideCursor()` al abrir/recuperar foco y lo restaura al perder foco/cerrar;
+  `src/` intacto. Exe `3237a4d7…`, headless `68ae05ea…`, ZIP `ad7d30dd…`.
+  Detalle: **`notes/0027-cursor-sistema-sdl.md`**.
 - **Siguiente:** validar la espera de la estrella y seguir con el **punto 3**
   (`object_info_card`/`16dec` en 4905–5205). El **punto 4** (glitches
   4516/4640/4767) sigue abierto: el intento de `palette_cycle` se revirtió
