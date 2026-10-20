@@ -77,6 +77,12 @@ void platform_cpu_delay(uint32_t units);
  * `-finstrument-functions`). Misma puerta/reloj que `platform_cpu_delay`. */
 void platform_cpu_charge_cycles(uint64_t cycles);
 
+/* Espera de lectura de disquete del ST (aprox.): 9x512 B/pista a 300 rpm
+ * (1,4 s por 0x7d22 B) + búsqueda/encendido del motor -> ~2 s. Se aplica a
+ * cada Fread (FOND/PRES/DRAP/PUZZL/SCENA/...); en headless es no-op.
+ * Alcance y estimaciones: notes/0026-esperas-de-disco.md. */
+void platform_disk_delay(uint32_t bytes);
+
 /* Vacía la pila de instrumentación tras un longjmp de reinicio (reset_clear). */
 void platform_cpuwork_reset_stack(void);
 

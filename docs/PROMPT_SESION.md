@@ -51,8 +51,16 @@ en `icon_scale_loop` (`1834a`, 22.790/pasada); `181f0` no se cobra al entrar.
 Sangre y viaje espacial ya no van instantáneos. Detalle:
 `notes/0023-costes-sangre-espacio.md`.
 
+**T-079 ✅ (estrella final + esperas de disco)**: la espera posterior a la
+animación es la carga de `FOND.PI1` (`0x13568`, 0x7d22 B); el original bloquea
+en Fread ~2 s con la estrella en pantalla. La HAL modela el tiempo de disquete
+en `platform_disk_delay` (`notes/0025`), sin tocar `src/`. Como se aplica a
+**cada Fread**, también hay pausas de arranque (PRES/DRAP), tras idioma/cambio
+de disco (listas, FOND, ECHE) y al cargar salas/reiniciar
+(`notes/0026-esperas-de-disco.md`).
+
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip` (exe `b7edc936…`): descomprimir sobre la
+`build-win/kult-0.1.0-win64.zip` (exe `f28e7ff5…`): descomprimir sobre la
 carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
 comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
 **morir → reiniciar (Maestro/objeto)** (checklist en `docs/VERIFICACION.md`). **Controles**:

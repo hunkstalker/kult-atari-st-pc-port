@@ -144,6 +144,23 @@ static void test_cpu_delay(void) {
     platform_set_realtime(0);
 }
 
+/* Espera de lectura de disquete del ST: no-op sin tiempo real; con tiempo real
+ * 800 B a 62,5 us/B = 50 ms -> >= 2 VBLs. */
+static void test_disk_delay(void) {
+    platform_set_realtime(0);
+    uint32_t f0 = platform_frame_count();
+    platform_disk_delay(800);
+    CHECK(platform_frame_count() == f0,
+          "sin tiempo real disk_delay no avanza frames");
+
+    platform_set_realtime(1);
+    f0 = platform_frame_count();
+    platform_disk_delay(800);                   /* ~50 ms */
+    CHECK(platform_frame_count() - f0 >= 2,
+          "disk_delay en tiempo real cede >= 2 VBLs en ~50 ms");
+    platform_set_realtime(0);
+}
+
 /* Coste de CPU en ciclos exactos (bucle subq/bne de 0x16dec): mismo contrato
  * que cpu_delay; 737280 ciclos ~92 ms a 8 MHz -> >= 4 VBLs. */
 static void test_cpu_charge_cycles(void) {
@@ -606,6 +623,7 @@ int main(void) {
     test_present_hook();
     test_cpu_delay();
     test_cpu_charge_cycles();
+    test_disk_delay();
     test_video();
     test_input_tick();
     test_real_input();
@@ -622,7 +640,7 @@ int main(void) {
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, log, present por VBL, cpu_delay, cpu_cycles, "
+    printf("RESULTADO: OK (fs, log, present por VBL, cpu_delay, cpu_cycles, disk_delay, "
            "video, entrada/botones, reloj, tick VBL, loader PRG, idioma, "
            "musica PSG, Timer A, RMS)\n");
     return 0;

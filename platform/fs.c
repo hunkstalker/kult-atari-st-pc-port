@@ -137,6 +137,9 @@ int32_t pc_os_fread(uint8_t *mem, uint16_t handle, uint32_t count, uint32_t buf)
     FILE *f = handle_file(handle);
     if (!f) return -1;
     size_t n = fread(mem + buf, 1, count, f);
+    /* Tiempo de lectura de disquete del ST (el original se queda bloqueado en
+     * Fread; la imagen visible no cambia). No-op en headless/diferencial. */
+    platform_disk_delay((uint32_t)n);
     return (int32_t)n;
 }
 

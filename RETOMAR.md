@@ -5,6 +5,22 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 27 — estrella final (T-079, punto 2)**: la animación ya duraba bien
+  (3 elementos, `15da6` delay 20 = 5 VBL cada uno = 15 VBL), pero faltaba la
+  espera posterior. En el ASM no hay espera programada: tras `159e2` se llama
+  `load_fond` (`0x13568`), que lee `0x7d22` B (32.034) de `FOND.PI1`; el ST
+  bloquea en Fread y la estrella queda en pantalla. El port leía al instante y
+  el `room_reset` la tapaba. Fix **solo HAL**: `platform_disk_delay(bytes)` en
+  `pc_os_fread`, estimando disquete ST DD (~1,4 s por 7 pistas + búsqueda/motor
+  ≈ **2,0 s**, 62,5 µs/B; usuario: >1,4 s). No-op en headless/diferencial;
+  `test_disk_delay`. `src/` intacto; 499 + `test-port`; nativo/win/ZIP OK.
+  Exe `f28e7ff5463a75d672695e7100ba0e9d` (headless
+  `ea87c331c9d32f6a69736c473ce9c056`, ZIP
+  `27991c46b203daf7bfb382dea4796c55`). El modelo es **global a cada Fread**:
+  además de la estrella, ahora se notan las pausas de arranque (PRES/DRAP),
+  tras elegir idioma/cambio de disco (listas A/B, FOND, ECHE) y al cargar salas
+  (`load_scena`) o reiniciar (`CLEAR.BIN`). Detalle:
+  `notes/0025-espera-carga-fond.md` y `notes/0026-esperas-de-disco.md`.
 - **Sesión 26 — ritmo de la muerte, punto 1 (T-077)**: sangre y viaje espacial
   iban acelerados porque `room_reset` (`0x181f0`) e `icon_scale_loop`
   (`0x1834a`) tenían coste 0 en `cpuwork_costs.inc`. La sangre se cobra **por
@@ -255,14 +271,17 @@ Tareas: `TODO.md`.
   línea (1063 + 198 × pasos) e `icon_scale_loop` (`1834a`) 22.790/pasada;
   `room_reset` (`181f0`) se deja a 0 para no meter un retardo previo. **Validado
   en Windows**: sangre perfecta y espacio 101 VBL (2373–2473). Detalle:
-  **`notes/0023-costes-sangre-espacio.md`**. Pendientes: estrella (punto 2),
-  animaciones de `object_info_card` (punto 3) y glitches (punto 4).
+  **`notes/0023-costes-sangre-espacio.md`**. Detalle de la espera de la
+  estrella y del alcance global de las esperas de disco:
+  **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
+  Pendientes: animaciones de `object_info_card` (punto 3) y glitches gráficos
+  (punto 4).
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `b7edc936…`, sin traza `Y`/`V`; la traza
+- **Build estándar actual**: exe `f28e7ff5…`, sin traza `Y`/`V`; la traza
   (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
   lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
   (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
@@ -279,27 +298,27 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Punto 1 validado (sangre/espacio). Seguir con el punto 2 (estrella final).**
+**Puntos 1 y 2 hechos. Validar la espera de la estrella y seguir con el punto 3
+(`object_info_card`).**
 
-0. Leer `AGENTS.md` (§ T-073c), `notes/0023`, `notes/0022`, `notes/0021`,
-   `notes/0020` y `notes/0019` (y `notes/0017` §8). Guardias:
+0. Leer `AGENTS.md` (§ T-073c), `notes/0025`, `notes/0023`, `notes/0022`,
+   `notes/0021`, `notes/0020` y `notes/0019` (y `notes/0017` §8). Guardias:
    `test_click_skip`, `test_ikbd_mouse_max`.
 1. Punto 1 (**hecho**): sangre perfecta; espacio `1834a` 2373–2473 =
-   101 VBL, coincide con el ASM. Input, presentación y cursor siguen bien.
-2. Ahora **punto 2 (estrella final)**: en la run nueva el bloque está en
-   **2474/2479/2484** (`S 2474 20 0 172 0`, `S 2479 20 2 12 0`,
-   `S 2484 20 3 18 0`; `15cd8` en 2474–2484). Identificar/medir `15da6`
-   (delay 20, frames 0x00/2x12/3x18) y cobrar el blit que falta solo con
-   delay > 0, sin reactivar el parche global de delay 0.
-3. Después **punto 3** (animaciones de `object_info_card`/`16dec` en
-   4905–5205) y **punto 4** (glitches gráficos: 4516/4640/4767; el fallo de
-   paleta apunta a `palette_cycle`/`0x16310`, cuyo `dbra 0xffff` sigue omitido).
+   101 VBL. Estrella: animación 15 VBL, correcta.
+2. Punto 2 (**fix hecho**): tras la estrella, `load_fond` mantiene la imagen
+   ~2 s (tiempo de disquete estimado) antes de `room_reset`/reinicio. Probar.
+3. Después **punto 3**: animaciones de `object_info_card`/`16dec` en
+   4905–5205. **Punto 4** (glitches 4516/4640/4767): el intento de
+   `palette_cycle` se revirtió; esas trazas son `masked_word4`/revelado, no
+   paleta.
 4. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
    guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
    → **A1** → **N3** → **A2** → **M5**.
 
-Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8) y
-**`notes/0023-costes-sangre-espacio.md`**.
+Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8),
+**`notes/0023-costes-sangre-espacio.md`** y
+**`notes/0025-espera-carga-fond.md`**.
 No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos

@@ -69,7 +69,14 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
    emulado en `boot/`; ver `notes/0022`; **no** depende de `0x106f2`). Antes,
    la **sangre** y el **viaje espacial** deben durar como el original (costes
    medidos en `notes/0023`).
-7. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
+7. **Esperas de disco (T-079):** al arrancar/título, tras elegir idioma/cambio
+   de disco y al entrar en salas debe haber pausas breves de lectura (PRES/DRAP,
+   listas, FOND, ECHE, SCENA); es el ritmo estimado del original. **Estrella
+   final (punto 2):** tras morir, debe quedar visible ~2 s mientras se carga
+   `FOND.PI1` (ver `notes/0025`/`notes/0026`), y después reiniciarse.
+   **Fallo** = desaparece al instante, no hay pausas donde el original las
+   tiene, o no hay reinicio.
+8. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
 
 ### Windows (paquete T-071)
 El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con

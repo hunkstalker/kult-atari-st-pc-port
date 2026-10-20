@@ -215,10 +215,20 @@ Recogidas como ADR en `docs/adr/`:
   regenerada (80 funciones). `src/` intacto. **Validado en Windows**: sangre
   perfecta y espacio 101 VBL. Detalle:
   **`notes/0023-costes-sangre-espacio.md`**.
-- **Siguiente:** **punto 2 (estrella final)**: medir el bloque `15da6`
-  (delay 20; en la run nueva 2474/2479/2484) y cobrar el blit que falta solo
-  con delay > 0. Después punto 3 (`object_info_card`/`16dec` en 4905–5205) y
-  punto 4 (glitches: paleta/`palette_cycle` `0x16310`). Cerrar
+- **Estrella final (T-079, sesión 27, punto 2)**: la animación ya era correcta
+  (15 VBL); faltaba la espera posterior. El ASM no tiene un `wait`: tras
+  `159e2` se lee `FOND.PI1` (`0x13568`, 0x7d22 B) y el ST bloquea en Fread con
+  la estrella en pantalla. La HAL modela la lectura de disquete ST
+  (`platform_disk_delay`, ~2 s; usuario: >1,4 s) desde `pc_os_fread`. `src/`
+  intacto; nativo/win/ZIP OK. Exe `f28e7ff5…`, headless `ea87c331…`, ZIP
+  `27991c46…`. El retardo se aplica a **cada Fread**, así que también da ritmo
+  al arranque (PRES/DRAP), al cambio de idioma/disco (listas A/B, FOND, ECHE),
+  a las salas (`load_scena`) y al reinicio (`CLEAR.BIN`). Detalle:
+  **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
+- **Siguiente:** validar la espera de la estrella y seguir con el **punto 3**
+  (`object_info_card`/`16dec` en 4905–5205). El **punto 4** (glitches
+  4516/4640/4767) sigue abierto: el intento de `palette_cycle` se revirtió
+  porque esas trazas son `masked_word4`, no paleta. Cerrar
   **T-061** (validación Windows: título/idioma, partida/colores, guardado, audio,
   morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** →
   **A2** → **M5**.

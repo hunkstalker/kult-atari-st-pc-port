@@ -208,6 +208,32 @@ static void cpu_charge_us(uint64_t us) {
     g_cpu_busy = 0;
 }
 
+/* Espera de lectura de disquete del ST. El original bloquea la CPU en Fread
+ * mientras la estrella/el fondo siguen en pantalla; la HAL duerme el mismo
+ * tiempo cediendo VBLs y presentando. Estimación DD: 9x512 B/pista a 300 rpm
+ * = 1,4 s para 0x7d22 B; + búsqueda/encendido -> ~2 s (62,5 us/byte).
+ * Se aplica a cada lectura de recurso (notes/0026). No depende de
+ * KULT_CPU_HZ: no es trabajo de CPU, es E/S. */
+void platform_disk_delay(uint32_t bytes) {
+    if (!g_rt || !g_kult_img || g_cpu_busy || bytes == 0)
+        return;
+    uint64_t us = ((uint64_t)bytes * 125ull) / 2ull;   /* 62,5 us/byte */
+    uint64_t end = now_ns() + us * 1000ull;
+    g_cpu_busy = 1;
+    for (;;) {
+        uint64_t now = now_ns();
+        if (now >= end) break;
+        uint64_t next_vbl = g_rt_base_ns + (uint64_t)(g_rt_count + 1) * VBL_NS;
+        if (now >= next_vbl) {                   /* VBL vencido: tick + present */
+            platform_tick(g_kult_img);
+            continue;
+        }
+        uint64_t wake = next_vbl < end ? next_vbl : end;
+        sleep_ns(wake - now);
+    }
+    g_cpu_busy = 0;
+}
+
 /* Bucles `dbf` transcritos por el core (`cpu_delay(unidades)`, ~10 ciclos por
  * unidad): `platform/include/kult_port.h` los enruta aquí. */
 void platform_cpu_delay(uint32_t units) {

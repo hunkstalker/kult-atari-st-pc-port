@@ -5,6 +5,11 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 **validación final** (jugar y escuchar) la hace el usuario con su copia de datos.
 
 ## Intencionales (no son fallos)
+- **Tiempo de disquete modelado (T-079).** El FDC no se emula, pero
+  `platform_disk_delay()` estima la lectura de disco del ST (~2 s por 32 KB,
+  ver `notes/0025`/`notes/0026`); se aplica a **cada Fread**, así que la
+  estrella final se mantiene mientras carga `FOND.PI1` y también hay pausas de
+  arranque, idioma/cambio de disco, salas y reinicio.
 - **El FDC no se emula.** La comprobación de disco `0x19316` se **omite**; se
   siembra el patrón FDC en `0xd8e8` para que el modo de escena (`0x14496`) no
   espere (T-023).

@@ -16,10 +16,11 @@ para PC (SDL3). Ver `docs/PORTING.md`.
 `kult.exe` + ZIP sin assets, `kult.log` de diagnóstico). El juego arranca con el
 **menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
 corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
-visible** (paleta del PI1 antes de la espera). Pendiente: **T-061** (validación en
-Windows) → **T-072** (ingesta `.STX`) y **T-073** (ritmo: trabajo de CPU no
-modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5**
-(opcional). Sin bloqueantes. Ver `notes/0011`–`notes/0014`.
+visible** (paleta del PI1 antes de la espera). **T-077/T-079 ✅** (sangre,
+espacio y espera de la estrella). Pendiente: **T-061** (validación en Windows) →
+**T-072** (ingesta `.STX`) y **punto 3** (`object_info_card`) → **M7-c** →
+**A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
+bloqueantes. Ver `notes/0011`–`notes/0014`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
@@ -41,6 +42,10 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
   (`13d0e`, fórmula medida 1063 + 198 × pasos) y el viaje espacial en
   `icon_scale_loop` (`1834a`, 22.790/pasada); `181f0` no se cobra al entrar.
   No se ajusta a mano. Ver `notes/0023`.
+- **Estrella final**: la espera tras la animación es la lectura de `FOND.PI1`
+  (`0x13568`, 0x7d22 B). La HAL modela el disquete ST (~2 s) en
+  `platform_disk_delay`; se aplica a cada Fread, así que también da ritmo al
+  arranque/idioma/cambio de disco/salas. Ver `notes/0025` y `notes/0026`.
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único
