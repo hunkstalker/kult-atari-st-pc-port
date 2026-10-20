@@ -39,10 +39,29 @@ Pruebas propias de la HAL, sin oráculo:
 Requiere la copia de datos del usuario (recursos de `disk_a`+`disk_b`) y, para
 ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
-1. **Automático:** `make test` (499 verde) y `make test-port` (verde).
-2. **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
+**Leyenda:** ✅ validado; ⬜ pendiente.
+
+**Estado actual (validación completa T-061 en curso):**
+
+- ✅ Título, menú de idioma y colores.
+- ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
+- ✅ Retrato del Maestro y A/B/C (T-073c).
+- ✅ Cursor del juego y cursor de Windows oculto (T-075/T-080).
+- ✅ Sangre, viaje espacial y espera de la estrella (T-077/T-079).
+- ✅ Glitch gráfico del reveal (T-081).
+- ✅ Guardado y carga de partida.
+- ✅ Muerte → reinicio (T-076), incluida la secuencia de animaciones.
+- ⬜ Audio: queda el **sonido de puertas** (T-082).
+- ⬜ Reproducir el glitch gráfico aislado que queda pendiente.
+
+**“Ritmo global”** no es una prueba aparte: significa que cada escena y
+transición mantenga la cadencia del original. Las escenas medidas ya están
+validadas; lo que queda es el sonido/transición de puertas.
+
+1. ✅ **Automático:** `make test` (**511** verde) y `make test-port` (verde).
+2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
-3. **Ventana + entrada:** `make port-sdl` y
+3. ✅ **Ventana + entrada:** `make port-sdl` y
    `KULT_DATA_DIR=<datos> ./build/kult-sdl` (la ventana se abre por defecto;
    `KULT_WINDOW=0` fuerza headless)
    - **Pantalla inicial = título (PRES) visible**: debe verse el **título del
@@ -56,20 +75,25 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
      **Fallo** = título negro, no reacciona a tecla/ratón, o nunca aparece el
      menú. **Estado: ✅ validado por el usuario** (título visible desde el inicio,
      2026-10-19).
-   - elige idioma → **no pide disco 2** (el port usa los dos discos juntos) y
+   - ✅ elige idioma → **no pide disco 2** (el port usa los dos discos juntos) y
      entra en la partida; se ve y se controla (ratón/teclado), **con los colores
      correctos** (sin ruido; Physbase `0x98000`, ver `notes/0014`).
-4. **Audio:** con entrada real, en el título/menú debe sonar la **música de intro**
-   (el port bombea el Timer A durante las esperas); en partida, voz/efectos.
-   `KULT_AUDIO=0` la apaga; `KULT_MUSIC_GAIN` ajusta la música.
-5. **Guardado/partida:** comprobar el guardado/recarga del juego (servicios de
-   fichero reales) según el uso del original.
-6. **Morir → reiniciar:** al morir, tras la animación debe volver el
+   - ✅ **Retrato A/B/C (T-073c)**: A = 3 retratos pixel + descripciones;
+     B = 4 retratos lift + descripciones; C = Maestro + lift + diálogo.
+   - ✅ **Glitch del reveal (T-081)**: el aborto de `elem_command` ya no deja
+     artefactos.
+   - ✅ **Sangre, viaje espacial y estrella (T-077/T-079)**: ritmo y espera de
+     `FOND.PI1` validados.
+4. ⬜ **Audio:** música/voces/efectos ya funcionan; **pendiente el sonido de
+   puertas** (T-082: abrir, llegar al tope y cerrar). `KULT_AUDIO=0` lo apaga;
+   `KULT_MUSIC_GAIN` ajusta la música.
+5. ✅ **Guardado/partida:** validado por el usuario.
+6. ✅ **Morir → reiniciar:** validado por el usuario; al morir, tras la animación vuelve el
    **Maestro/objeto** del inicio del bucle (`reset_clear` → `bra 0x10158`,
    emulado en `boot/`; ver `notes/0022`; **no** depende de `0x106f2`). Antes,
-   la **sangre** y el **viaje espacial** deben durar como el original (costes
-   medidos en `notes/0023`).
-7. **Esperas de disco (T-079):** el título y toda la carga inicial (PRES/DRAP,
+   la **sangre**, el **viaje espacial** y la **espera de la estrella** deben
+   durar como el original (costes medidos en `notes/0023`/`notes/0025`).
+7. ✅ **Esperas de disco (T-079):** el título y toda la carga inicial (PRES/DRAP,
    listas A/B, FOND, ECHE) deben aparecer **sin** espera, y la canción empezar
    desde el principio; después sí debe haber pausas breves al entrar en salas
    (SCENA) y en la estrella, como el original. **Estrella final
@@ -90,7 +114,8 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
 3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
-   **colores correctos**, guardado, audio, morir → reiniciar (Maestro/objeto).
+   **colores correctos**, guardado ✅, morir → reiniciar ✅; **audio pendiente:
+   sonido de puertas**.
    **Controles**:
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
    **derecho** = acción + skip (puertas y A/B/C). **Cursor**: se queda en los
@@ -101,9 +126,11 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    de CPU no modelado), no un fallo de esta validación. En la intro: **A** son
    3 retratos con descripciones, **B** son 4 retratos con descripciones y **C**
    es el retrato del Maestro con **diálogo** (el único); solo C se mueve.
-   **T-073c ✅**: el `dbf` inline de `0x16dec` ya se cobra con
+   **T-073c ✅ validado**: el `dbf` inline de `0x16dec` ya se cobra con
    `cpu_delay_cycles` (ver `notes/0019`). **T-074 ✅ (HAL)**: botones y
-   presentación por VBL (ver `notes/0020`). Si aún se notara acelerado, calibrar
+   presentación por VBL (ver `notes/0020`). **T-079 ✅**: espera de la estrella.
+   **T-080 ✅**: cursor del sistema oculto. **T-081 ✅**: glitch del reveal
+   corregido y validado. Si aún se notara acelerado, calibrar
    `KULT_CPU_HZ`/`KULT_ST_CONTEND`, no parchear la animación.
 5. **Si algo falla**: mirar **`kult.log`** (junto al `.exe`) y/o ejecutar
    **`kult-headless.exe`** desde una consola (imprime el diagnóstico).

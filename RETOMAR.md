@@ -337,17 +337,21 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Validación completa en Windows (T-061) y después T-072/M7-c; no hay punto 3
-pendiente.**
+**Validación completa en Windows (T-061) y audio de puertas (T-082); después
+T-072/M7-c. No hay punto 3 pendiente.**
 
 1. Punto 1 (sangre/espacio): validado.
 2. Punto 2 (estrella final): validado por el usuario; commit `b599cf9`.
 3. Punto 4 (glitch gráfico): resuelto y validado (T-081, `099b94c`/`e041392`).
 4. El supuesto punto 3 (4905/`object_info_card`) **no era un fallo separado**:
    caía dentro del reveal H-el1. No se le asigna tarea.
-5. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
-   guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) →
-   **M7-c** → **A1** → **N3** → **A2** → **M5**.
+5. T-061: título/idioma/colores, partida/controles, retrato C, sangre/espacio,
+   estrella, cursor, glitch, guardado/carga y muerte → reinicio **validados**.
+6. **T-082 — audio de puertas**: diagnosticar los 3 samples (abrir/tope/cerrar);
+   el del tope se corta al cargar/cerrar la sala siguiente o falta cableado.
+   Reproducir con F12 y comparar con el ASM antes de tocar `src/`.
+7. Cerrar **T-061** y **T-082** → **T-072** (ingesta `.STX`) → **M7-c** →
+   **A1** → **N3** → **A2** → **M5**.
 
 Detalle autoritativo: **`notes/0028-retornos-dobles-128a4.md`** (H-el1),
 **`notes/0017-retomar-maestro.md`** (§8), **`notes/0023`**, **`notes/0025`** y

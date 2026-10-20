@@ -241,8 +241,10 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** cerrar **T-061** (validación Windows: título/idioma,
-  partida/colores, guardado, audio, morir → reiniciar) → **T-072**
+- **Siguiente:** cerrar **T-061** (validación Windows). Ya validados:
+  título/idioma/colores, partida/controles, retrato C, sangre/espacio, estrella,
+  cursor, glitch, guardado/carga y muerte → reinicio. Pendiente de audio:
+  **T-082 — sonido de puertas** (abrir/tope/cerrar). Después **T-072**
   (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

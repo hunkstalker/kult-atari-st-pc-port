@@ -72,7 +72,7 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   runtime no dependa del binario original; formatos nativos (PNG/WAV/OGG/UTF-8 +
   binario propio documentado). Ver `notes/0011`.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
-  Fwrite); falta la validación de una partida completa por el usuario.
+  Fwrite); **validado por el usuario**.
 - **Ritmo / aceleración (T-073)**: implementado el **modelo de CPU medido**
   (T-073a `cpu_delay` + T-073b coste por función con `-finstrument-functions` y
   tabla del oráculo). El port cobra ciclos del original a cada función y los
