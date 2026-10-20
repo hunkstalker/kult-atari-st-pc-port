@@ -51,12 +51,12 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Glitch gráfico del reveal (T-081).
 - ✅ Guardado y carga de partida.
 - ✅ Muerte → reinicio (T-076), incluida la secuencia de animaciones.
-- ⬜ Audio: queda el **sonido de puertas** (T-082).
+- ✅ Audio completo: música, voces, efectos y **puertas** (apertura/tope/cierre) validados.
 - ⬜ Reproducir el glitch gráfico aislado que queda pendiente.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
-transición mantenga la cadencia del original. Las escenas medidas ya están
-validadas; lo que queda es el sonido/transición de puertas.
+transición mantenga la cadencia del original. Las escenas medidas y el audio
+están validados.
 
 1. ✅ **Automático:** `make test` (**511** verde) y `make test-port` (verde).
 2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
@@ -84,9 +84,9 @@ validadas; lo que queda es el sonido/transición de puertas.
      artefactos.
    - ✅ **Sangre, viaje espacial y estrella (T-077/T-079)**: ritmo y espera de
      `FOND.PI1` validados.
-4. ⬜ **Audio:** música/voces/efectos ya funcionan; **pendiente el sonido de
-   puertas** (T-082: abrir, llegar al tope y cerrar). `KULT_AUDIO=0` lo apaga;
-   `KULT_MUSIC_GAIN` ajusta la música.
+4. ✅ **Audio:** música, voces, efectos y **puertas** (abrir, llegar al tope y
+   cerrar) validados. `KULT_AUDIO=0` lo apaga; `KULT_MUSIC_GAIN` ajusta la
+   música.
 5. ✅ **Guardado/partida:** validado por el usuario.
 6. ✅ **Morir → reiniciar:** validado por el usuario; al morir, tras la animación vuelve el
    **Maestro/objeto** del inicio del bucle (`reset_clear` → `bra 0x10158`,
@@ -114,8 +114,8 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
 3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
-   **colores correctos**, guardado ✅, morir → reiniciar ✅; **audio pendiente:
-   sonido de puertas**.
+   **colores correctos**, guardado ✅, morir → reiniciar ✅, **audio ✅**
+   (incluidas puertas).
    **Controles**:
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
    **derecho** = acción + skip (puertas y A/B/C). **Cursor**: se queda en los

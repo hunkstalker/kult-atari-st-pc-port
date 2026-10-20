@@ -5,6 +5,16 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
+  del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
+  previo a `sound_stop` (~242.030 ciclos medidos con el oráculo). Fix en
+  `src/mode.c`: la espera se movió **al final de `textform_fwd`**, antes de que
+  la transición pinte/cargue la sala siguiente, hasta que el puntero de sample
+  (`0x192c6`) alcanza su fin (`0x192ca`). Así la sala actual sigue visible
+  mientras suena el tope. **Validado por el usuario.** `src/` solo cambia como
+  espera de audio; tests 511, build/ZIP OK. Exe `bd3764b9…`, headless
+  `0fdda9c8…`, ZIP `1396dd00…`.
+  **Validado por el usuario.** Detalle: `notes/0029-audio-puertas.md`.
 - **Sesión 31 — documentación: retirado `PROMPT_SESION.md`**: era un duplicado
   de `RETOMAR`/`AGENTS`/`PROYECTO`/`TODO` y había derivado. El punto de entrada
   único es **`RETOMAR.md`**; reglas en `AGENTS.md`, contexto en `PROYECTO.md` y
@@ -337,8 +347,8 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Validación completa en Windows (T-061) y audio de puertas (T-082); después
-T-072/M7-c. No hay punto 3 pendiente.**
+**Cerrar T-061 (solo queda reproducir el glitch aislado); audio ya validado.
+Después T-072/M7-c. No hay punto 3 pendiente.**
 
 1. Punto 1 (sangre/espacio): validado.
 2. Punto 2 (estrella final): validado por el usuario; commit `b599cf9`.
@@ -346,16 +356,17 @@ T-072/M7-c. No hay punto 3 pendiente.**
 4. El supuesto punto 3 (4905/`object_info_card`) **no era un fallo separado**:
    caía dentro del reveal H-el1. No se le asigna tarea.
 5. T-061: título/idioma/colores, partida/controles, retrato C, sangre/espacio,
-   estrella, cursor, glitch, guardado/carga y muerte → reinicio **validados**.
-6. **T-082 — audio de puertas**: diagnosticar los 3 samples (abrir/tope/cerrar);
-   el del tope se corta al cargar/cerrar la sala siguiente o falta cableado.
-   Reproducir con F12 y comparar con el ASM antes de tocar `src/`.
-7. Cerrar **T-061** y **T-082** → **T-072** (ingesta `.STX`) → **M7-c** →
+   estrella, cursor, glitch, **guardado/carga, muerte → reinicio y audio**
+   validados.
+6. **T-082 — audio de puertas**: **validado**; la sala espera a que termine el
+   sample del tope. Detalle: `notes/0029-audio-puertas.md`.
+7. Reproducir el único glitch gráfico aislado; después **T-072** (ingesta `.STX`) → **M7-c** →
    **A1** → **N3** → **A2** → **M5**.
 
 Detalle autoritativo: **`notes/0028-retornos-dobles-128a4.md`** (H-el1),
-**`notes/0017-retomar-maestro.md`** (§8), **`notes/0023`**, **`notes/0025`** y
-**`notes/0026`**. No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
+**`notes/0029-audio-puertas.md`** (audio), **`notes/0017-retomar-maestro.md`**
+(§8), **`notes/0023`**, **`notes/0025`** y **`notes/0026`**. No usar
+`KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos
 - Core/diferencial: `make test` (511), `make test PYTEST_ARGS=-n0`,
