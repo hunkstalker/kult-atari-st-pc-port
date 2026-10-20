@@ -5,6 +5,10 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 31 — documentación: retirado `PROMPT_SESION.md`**: era un duplicado
+  de `RETOMAR`/`AGENTS`/`PROYECTO`/`TODO` y había derivado. El punto de entrada
+  único es **`RETOMAR.md`**; reglas en `AGENTS.md`, contexto en `PROYECTO.md` y
+  tareas en `TODO.md`. Se actualizan las referencias.
 - **Sesión 30 — H-el1 resuelta (T-081)**: las salidas anticipadas de
   `elem_command` (`0x128a4`, `$1ad0a` o clase no encontrada) ya se propagan a
   los **12 llamantes** con `elem_command_ex`/`elem_command_wrap_ex`; ningún
@@ -15,8 +19,9 @@ Tareas: `TODO.md`.
   modelados. `make test` **511**, `test-port`, nativo/Windows/ZIP OK. Exe
   Windows `c7b8dac1531acd828cf037ac8f309d2d` (headless
   `76e7974e1f52ce5eb65f9c542dec4327`, ZIP
-  `787bd41d600b3d0ec19046d296d4df08`; Linux `f0f560b6…`). **Pendiente:** validar
-  visualmente el punto 4 en Windows. Detalle: **`notes/0028`**.
+  `787bd41d600b3d0ec19046d296d4df08`; Linux `f0f560b6…`). **Validado
+  visualmente por el usuario** (el glitch del punto 4 desaparece). Detalle:
+  **`notes/0028`**.
 - **Sesión 29 — deuda H-el1 documentada (T-081)**: el glitch gráfico del punto 4
   apunta a `reveal_pixel` (`0x12f28`) ejecutándose tras una salida anticipada de
   `elem_command` (`0x128a4`, `addq.l #4,a7; rts`). El C actual no propaga el
@@ -117,7 +122,7 @@ Tareas: `TODO.md`.
 - **Sesión 20 — documentación corregida (T-073c, pantallas A/B/C)**: se
   reescribieron el handoff (`notes/0017-retomar-maestro.md`) y el histórico
   (`notes/0016-maestro-handoff.md`), y se corrigieron `TODO`, `PROYECTO`,
-  `notes/0015`, `README`, `AGENTS`, `docs/PROMPT_SESION`, `assets/MEDIR_FPS` y
+  `notes/0015`, `README`, `AGENTS`, `assets/MEDIR_FPS` y
   `assets/kult-marcas.bat`.
   - **A**: 3 retratos + descripciones (pixel-reveal), quietos, **sin diálogo**.
   - **B**: 4 retratos + descripciones (lift-reveal), quietos, **sin diálogo**;
@@ -223,8 +228,8 @@ Tareas: `TODO.md`.
   (opcional)`. **T-022/`0x106f2`** se deja **abierto** (parece inobservable, pero
   puede necesitarse; **no** es el reinicio tras morir, que es `0x1842c`→
   `reset_clear`, ya en el core). Se copia el icono a **`assets/kult_icon.ico`**.
-  Se corrige la deriva de docs (`AGENTS.md`, `PROMPT_SESION.md`, `PROYECTO.md`,
-  `BUILD.md`, `LIMITACIONES.md`).
+  Se corrige la deriva de docs (`AGENTS.md`, `PROYECTO.md`, `BUILD.md`,
+  `LIMITACIONES.md`).
 - **Sesión 10 — T-020/T-022/T-023 + M6**: **menú de idioma fiel** de `_start`
   (`boot/language.c`: drena teclas pendientes con Crawio y espera D/E/F;
   `kult_boot_apply_language` escribe las 4 entradas de la lista A). Se quita el
@@ -303,13 +308,13 @@ Tareas: `TODO.md`.
   **`notes/0023-costes-sangre-espacio.md`**. Detalle de la espera de la
   estrella y del alcance global de las esperas de disco:
   **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
-  Pendientes: animaciones de `object_info_card` (punto 3) y glitches gráficos
-  (punto 4).
+  La estrella final (punto 2) está **validada por el usuario** (commit
+  `b599cf9`). El glitch gráfico del punto 4 está **resuelto y validado**
+  (T-081); no hay un punto 3 independiente: 4905 era el mismo reveal de H-el1.
 - **H-el1 resuelta (T-081, sesión 30)**: las salidas anticipadas de
   `elem_command` (`0x128a4`) se propagan a los 12 llamantes; `reveal_pixel` ya
-  no ejecuta reveal ni usa `A_ELEM_*` viejo tras el aborto. Tests por llamante y
-  auditoría en **`notes/0028-retornos-dobles-128a4.md`**. Queda la validación
-  visual del punto 4 en Windows.
+  no ejecuta reveal ni usa `A_ELEM_*` viejo tras el aborto. Tests por llamante,
+  auditoría y validación visual en **`notes/0028-retornos-dobles-128a4.md`**.
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
@@ -327,21 +332,20 @@ Tareas: `TODO.md`.
   va a 50 VBL/s correctos; la aceleración es trabajo de CPU no modelado → T-073.
   Detalle: `notes/0014`.
 - **M2 con `0x106f2` abierto** (no cerrado): ver `notes/0011`.
-- `make test` 499 verde; `make test-port` verde. Sin bloqueantes.
+- `make test` **511** verde; `make test-port` verde. Sin bloqueantes.
 - **Plan de hitos fijado** (sesión 11): `notes/0011`; build (sesión 12):
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Validar visualmente el punto 4** (glitches 4516/4640/4767) con el ZIP nuevo
-y, después, el **punto 3** (`object_info_card`/`16dec` en 4905–5205).
+**Validación completa en Windows (T-061) y después T-072/M7-c; no hay punto 3
+pendiente.**
 
-1. En Windows, descomprimir `build-win/kult-0.1.0-win64.zip` sobre la carpeta
-   de datos y ejecutar `kult.exe`; comprobar que el reveal de la estrella /
-   elemento ya no deja artefactos tras una salida anticipada de `elem_command`.
-2. Si hay glitches, capturar `kult.log` y una traza Y/V; no usar
-   `KULT_FRAME_GATE` ni parches en la HAL.
-3. Pasar al **punto 3** (`object_info_card`/`16dec`).
-4. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
+1. Punto 1 (sangre/espacio): validado.
+2. Punto 2 (estrella final): validado por el usuario; commit `b599cf9`.
+3. Punto 4 (glitch gráfico): resuelto y validado (T-081, `099b94c`/`e041392`).
+4. El supuesto punto 3 (4905/`object_info_card`) **no era un fallo separado**:
+   caía dentro del reveal H-el1. No se le asigna tarea.
+5. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
    guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) →
    **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
@@ -350,7 +354,7 @@ Detalle autoritativo: **`notes/0028-retornos-dobles-128a4.md`** (H-el1),
 **`notes/0026`**. No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos
-- Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
+- Core/diferencial: `make test` (511), `make test PYTEST_ARGS=-n0`,
   `make regscan` (`ids_reg=0`), `make core`.
 - Port: `make port` (→ `build/kult`, headless), `make port-sdl` (→ `build/kult-sdl`,
   ventana SDL3), `make test-port` (HAL, sin oráculo).

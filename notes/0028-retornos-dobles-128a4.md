@@ -1,13 +1,22 @@
 # 0028 — Retornos dobles de `elem_command` (`0x128a4`): deuda H-el1
 
-> **Estado:** **implementado y probado** (sesión 30, T-081). El aborto se
-> propaga por `elem_command_ex`/`elem_command_wrap_ex` a los 12 llamantes; los
-> tests diferenciales cubren las dos salidas (`$1ad0a` y clase no encontrada).
-> La validación visual del punto 4 queda pendiente del usuario.
+> **Estado:** **implementado, probado y validado visualmente por el usuario**
+> (sesión 30, T-081). El aborto se propaga por
+> `elem_command_ex`/`elem_command_wrap_ex` a los 12 llamantes; los tests
+> diferenciales cubren las dos salidas (`$1ad0a` y clase no encontrada).
 >
 > **Síntoma que la destapó:** artefactos gráficos en el reveal de la estrella /
 > elemento (punto 4). El reveal seguía ejecutándose después de una salida
 > anticipada de `elem_command` y pintaba con `A_ELEM_*` viejo.
+
+## 0. Aclaración: el supuesto “punto 3”
+
+El F12 **4905** que se usó para hablar de un “punto 3” de
+`object_info_card`/`16dec` cae dentro del reveal largo **4471–4919**, que es el
+mismo fallo H-el1 del punto 4. `object_info_card`/`16dec` aparece después
+(4919/5048) como ficha normal, no como un fallo observado por el usuario. Por
+tanto **no hay un punto 3 independiente**: era una inferencia del log antiguo,
+anterior a este fix. No se le asigna tarea.
 
 ## 1. Evidencia en el log
 
@@ -146,7 +155,7 @@ Comprobar:
 
 ### 8.3 Regresión
 
-- `make test`: 499 + nuevos casos.
+- `make test`: **511** actuales + nuevos casos.
 - `make test-port`.
 - Build nativo/Windows/ZIP.
 - Validación visual: punto 4 sin artefactos; A/B/C sin regresiones.
@@ -224,8 +233,8 @@ Sospechosos ya conocidos:
 - Exe Windows `c7b8dac1531acd828cf037ac8f309d2d`; headless
   `76e7974e1f52ce5eb65f9c542dec4327`; ZIP
   `787bd41d600b3d0ec19046d296d4df08`.
-- **Pendiente:** validación visual del punto 4 en Windows (la nota se apoya en
-  el diferencial y en el log antiguo).
+- **Validación visual:** confirmada por el usuario; el glitch del punto 4
+  desaparece con el aborto propagado.
 
 ## 13. Referencias
 

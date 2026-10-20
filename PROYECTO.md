@@ -150,7 +150,7 @@ Recogidas como ADR en `docs/adr/`:
   `SDL_SetWindowIcon`). Detalle: **`notes/0012`**.
 - **Empaquetado interino hecho (T-071)**: CPack → ZIP Windows
   (`build-win/kult-0.1.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`LEEME.txt`)
-  y TGZ Linux; sin assets. `make test` 499 y `make test-port` siguen verdes.
+  y TGZ Linux; sin assets. `make test` **511** y `make test-port` siguen verdes.
 - **Datos + diagnóstico (sesión 13)**: el `.exe` "no hacía nada" porque en
   `data/` solo había imágenes `.STX` (el paquete interino necesita ficheros
   extraídos). Los `.STX` del usuario (idénticos a los discos del proyecto) se
@@ -220,11 +220,13 @@ Recogidas como ADR en `docs/adr/`:
   `159e2` se lee `FOND.PI1` (`0x13568`, 0x7d22 B) y el ST bloquea en Fread con
   la estrella en pantalla. La HAL modela la lectura de disquete ST
   (`platform_disk_delay`, ~2 s; usuario: >1,4 s) desde `pc_os_fread`. `src/`
-  intacto; nativo/win/ZIP OK. Exe `ed175889…`, headless `68ae05ea…`, ZIP
-  `c27a1935…`. El retardo se aplica a **cada Fread** (salas, reinicio,
+  intacto; nativo/win/ZIP OK. Build de la estrella: exe `ed175889…`, headless
+  `68ae05ea…`, ZIP `c27a1935…`; build actual: exe `c7b8dac1…`, headless
+  `76e7974e…`, ZIP `787bd41d…`. El retardo se aplica a **cada Fread** (salas, reinicio,
   estrella), pero **no** a la carga inicial: `platform_disk_timing(0)` desde
   PRES/DRAP hasta después de ECHE (listas A/B, FOND incluidos) evita la pantalla
-  negra inicial, la canción avanzada y los ~20 s tras el idioma. Detalle:
+  negra inicial, la canción avanzada y los ~20 s tras el idioma. **Validada
+  visualmente por el usuario** (commit `b599cf9`). Detalle:
   **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
 - **Cursor del sistema (T-080, sesión 28)**: SDL mostraba el cursor de Windows
   sobre el cursor del juego. `platform/video_sdl.c` lo oculta con
@@ -237,11 +239,10 @@ Recogidas como ADR en `docs/adr/`:
   ya no revela ni usa `A_ELEM_*` viejo. Tests por llamante (imagen + A6) y
   auditoría de otros retornos dobles en **`notes/0028-retornos-dobles-128a4.md`**.
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
-  `787bd41d…`. **Pendiente validación visual del punto 4**.
-- **Siguiente:** validar visualmente el **punto 4** y seguir con el **punto 3**
-  (`object_info_card`/`16dec` en 4905–5205). Cerrar
-  **T-061** (validación Windows: título/idioma, partida/colores, guardado, audio,
-  morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** →
-  **A2** → **M5**.
+  `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
+  desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
+- **Siguiente:** cerrar **T-061** (validación Windows: título/idioma,
+  partida/colores, guardado, audio, morir → reiniciar) → **T-072**
+  (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

@@ -18,9 +18,9 @@ para PC (SDL3). Ver `docs/PORTING.md`.
 corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
 visible** (paleta del PI1 antes de la espera). **T-077/T-079 ✅** (sangre,
 espacio y espera de la estrella). Pendiente: **T-061** (validación en Windows) →
-**T-072** (ingesta `.STX`) y **punto 3** (`object_info_card`) → **M7-c** →
-**A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
-bloqueantes. Ver `notes/0011`–`notes/0014`.
+**T-072** (ingesta `.STX`) → **M7-c** → **A1/N3/A2** (Amiga +
+motor/assets nativos) → **M5** (opcional). Sin bloqueantes. Ver
+`notes/0011`–`notes/0014`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
@@ -53,7 +53,8 @@ bloqueantes. Ver `notes/0011`–`notes/0014`.
 - **Retornos dobles**: `elem_command` (`0x128a4`) puede hacer
   `addq.l #4,a7; rts` (aborta a su llamante). El port lo modela con
   `elem_command_ex`/`elem_command_wrap_ex` y los 12 llamantes; no parchear solo
-  el reveal. Ver `notes/0028-retornos-dobles-128a4.md` (T-081, resuelto).
+  el reveal. Validado visualmente por el usuario. Ver
+  `notes/0028-retornos-dobles-128a4.md` (T-081, resuelto).
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único

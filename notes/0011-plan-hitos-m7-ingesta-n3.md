@@ -130,7 +130,8 @@ blobs originales); el motor es **nuestro** y lee **assets nativos**.
 - `AGENTS.md`: estado *"Fase M0: código aún no importado"* → estado real (M0–M4 +
   M6 en curso).
 - `docs/PROMPT_SESION.md`: *"M0–M3 hechas"* / *"Tarea inmediata: M4"* → estado real
-  y **M7 build** como tarea inmediata.
+  y **M7 build** como tarea inmediata. *(Retirado en la sesión 31: duplicaba el
+  handoff; el punto de entrada único es `RETOMAR.md`.)*
 - `PROYECTO.md`: §6 (fila M6 "pendiente" → en curso; **A** dividida en **A1/A2**;
   **N3** añadido; **M7** aclarado) y §8 actualizado.
 - `docs/BUILD.md`: §"Estado (M0/M1)" → estado real + **plan de build M7** (CMake,

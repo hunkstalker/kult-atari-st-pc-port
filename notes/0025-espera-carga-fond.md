@@ -47,7 +47,7 @@ el usuario estima **> 1,4 s**; se modela **~2,0 s** (62,5 µs/byte).
 
 ## Verificación
 
-- `make test`: **499**.
+- `make test`: **499** en el momento del fix (actual: **511**).
 - `make test-port`: OK, con nueva `test_disk_delay` (no-op sin tiempo real;
   800 B ≈ 50 ms → ≥ 2 VBL).
 - `make port`, `make cmake-win`, `make package-win`: OK.
@@ -56,10 +56,10 @@ el usuario estima **> 1,4 s**; se modela **~2,0 s** (62,5 µs/byte).
   - `kult-headless.exe` md5 `68ae05eaddcb6c33f4b66da437576aa3`
   - ZIP md5 `c27a193581bec5e613af547d76b7c209`
 
-Validación visual pendiente: al morir, tras la estrella debe verse ésta ~2 s
-mientras carga el fondo, y después el reinicio. Si dura demasiado/poco, el
-único ajuste es el factor de `platform_disk_delay` (estimación, no medición
-exacta del disquete).
+**Validación visual: confirmada por el usuario.** Al morir, la estrella se
+mantiene ~2 s mientras carga el fondo y después reinicia. El fix quedó en el
+commit `b599cf9` (build de la época: `ed175889…`); el build actual es
+`c7b8dac1…` y conserva este comportamiento.
 
 ## Nota sobre paleta
 
