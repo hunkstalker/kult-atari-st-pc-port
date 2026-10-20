@@ -2609,6 +2609,32 @@ def test_fun_18a98_first():
     assert info["ret"] == info["regs"]["a6"]
 
 
+def test_fun_18a98_abort():
+    for kind in ("flag", "clase"):
+        pokes = _f18a98_pokes(first=False)
+        pokes[0x19715] = bytes([0xFF])
+        pokes[0x1ad0a] = bytes([1 if kind == "flag" else 0])
+        if kind == "clase":
+            pokes[0x1a81e] = (0x60000).to_bytes(4, "big")
+            pokes[0x60000] = (0).to_bytes(4, "big")
+            pokes[0x1a772] = (0x40000).to_bytes(4, "big")
+            pokes[0x40003] = bytes([0x37])
+            for i in range(24):
+                base = 0x19e19 + i * 6
+                pokes[base] = bytes([0x80])
+                for k in range(1, 6):
+                    pokes[base + k] = bytes([(i + k) & 0xFF])
+        # 0x18a98 empuja A6 (0x30000) antes del bsr: el addq.l #4/a7+rts del
+        # original salta al valor salvado, no al centinela del arnés. Se difiere ahí.
+        diffs, info = differential(
+            FUN_18A98, {"a6": 0x30000, "_pokes": pokes},
+            lambda lib, buf: lib.attract(buf, 0x30000),
+            max_insns=40_000_000, stop_pc=0x30000)
+        assert not diffs, f"{kind}\n{report(diffs)}"
+        assert info["ret"] == 0x19716, f"{kind}: {info['ret']:#x}"
+        assert info["regs"]["a6"] == 0x19716, f"{kind} a6"
+
+
 FUN_12CE4 = 0x12CE4
 harness._lib.view_mode_cycle.argtypes = [_u8p, ctypes.c_uint32]
 harness._lib.view_mode_cycle.restype = ctypes.c_uint32

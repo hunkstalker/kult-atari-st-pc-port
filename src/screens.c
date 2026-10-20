@@ -319,8 +319,8 @@ void screen_clean(uint8_t *img) {
  * VBL, gasta $1a84e iteraciones y suma 0x1f4. Al acabar: 0x182f0 y el bucle infinito
  * 0x18c80 (0x1834a con d5=0x64) — frontera verificada hasta 0x18c80; el bucle final no
  * se transcribe (los tests cortan con stop_pc). Devuelve A6 = entry+1. */
-uint32_t elem_command(uint8_t *, uint32_t, uint32_t *, uint32_t *,
-                        uint32_t *);
+uint32_t elem_command_ex(uint8_t *, uint32_t, uint32_t *, uint32_t *,
+                        uint32_t *, int *);
 uint32_t screen_address_raw(uint8_t *, uint32_t, uint32_t, uint32_t *);
 void scale_blit(uint8_t *, uint32_t, uint32_t, uint32_t, uint32_t);
 void set_palette(uint8_t *);
@@ -342,7 +342,10 @@ uint32_t attract(uint8_t *img, uint32_t script) {
     copy_screen(img);
 
     uint32_t entry_out, x0, y0;
-    elem_command(img, 0x19714, &entry_out, &x0, &y0);
+    int aborted;
+    elem_command_ex(img, 0x19714, &entry_out, &x0, &y0, &aborted);
+    if (aborted)
+        return entry_out;
     wr16(img + 0x1a544, (be16(img + A_ELEM_1A52C) - 1) & 0xffff);
     wr16(img + 0x1a542, ((be16(img + A_ELEM_1A52E) << 2) - 1) & 0xffff);
     wr16(img + 0x1a4a8, 0xc7);
