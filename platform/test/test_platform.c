@@ -154,10 +154,18 @@ static void test_disk_delay(void) {
           "sin tiempo real disk_delay no avanza frames");
 
     platform_set_realtime(1);
+    platform_disk_timing(0);
+    f0 = platform_frame_count();
+    platform_disk_delay(800);
+    CHECK(platform_frame_count() == f0,
+          "disk_timing off no avanza frames");
+
+    platform_disk_timing(1);
     f0 = platform_frame_count();
     platform_disk_delay(800);                   /* ~50 ms */
     CHECK(platform_frame_count() - f0 >= 2,
           "disk_delay en tiempo real cede >= 2 VBLs en ~50 ms");
+    platform_disk_timing(1);
     platform_set_realtime(0);
 }
 

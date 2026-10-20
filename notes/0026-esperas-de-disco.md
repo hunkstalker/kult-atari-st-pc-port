@@ -2,9 +2,11 @@
 
 > La espera añadida para la estrella final no es específica de `FOND.PI1` ni de
 > esa escena: `pc_os_fread()` la aplica a **cada** lectura de recurso. Por eso
-> ahora también se notan pausas al arrancar, tras elegir idioma/cambio de disco
-> y al cargar salas. Es una estimación del tiempo de disquete del ST, no una
-> emulación ciclo-exacta del FDC.
+> ahora también se notan pausas tras elegir idioma/cambio de disco y al cargar
+> salas. **Excepción:** las cargas de PRES/DRAP previas al título no pagan la
+> espera (ver § abajo); si no, la pantalla negra retrasaba el título y la
+> canción empezaba ya avanzada. Es una estimación del tiempo de disquete del
+> ST, no una emulación ciclo-exacta del FDC.
 
 ## Mecanismo
 
@@ -44,8 +46,8 @@ Con los ficheros de la versión E (tamaños reales; otras lenguas varían poco):
 
 | Momento | Función / ficheros | Bytes aprox. | Espera aprox. |
 |---|---|---:|---:|
-| Título | `load_named_screen` → `PRES.PI1` | 32.034 | 2,0 s |
-| Menú de idioma | `load_named_screen` → `DRAP.PI1` | 32.034 | 2,0 s |
+| Título | `load_named_screen` → `PRES.PI1` | 32.034 | **0** (excepción) |
+| Menú de idioma | `load_named_screen` → `DRAP.PI1` | 32.034 | **0** (excepción) |
 | Tras idioma | `load_resource_list_a` → `DIAL*`, `DESC*`, `VERB*`, `MOTS*` | ~22.900 | ~1,4 s |
 | Cambio de disco / inicio | `load_fond` → `FOND.PI1` | 32.034 | 2,0 s |
 | Cambio de disco | `load_resource_list_b` → `PUZZL.BIN` + `BRUIT.BIN` | ~142.500 | ~8,9 s |
@@ -57,15 +59,26 @@ Con los ficheros de la versión E (tamaños reales; otras lenguas varían poco):
 Los tamaños de las listas se leen con `Fsfirst` y se pasan a `Fread`; por eso la
 espera es proporcional al fichero real, no una constante por llamada.
 
+## Excepción de arranque (PRES/DRAP)
+
+`boot/boot.c` llama `platform_disk_timing(0)` antes de cargar `PRES.PI1`/
+`DRAP.PI1` y `platform_disk_timing(1)` después de elegir idioma, antes de
+`load_resource_list_a`. Así el título aparece sin los ~4 s de espera inicial y
+la canción se oye desde el principio; a partir de las listas A/B, FOND, ECHE,
+salas y estrella se conservan las esperas. El flag es solo de la HAL; `src/`
+sigue intacto y el modo headless/diferencial es no-op.
+
 ## Efecto y validación
 
 - `make test`: 499 (el diferencial no tiene tiempo real; el delay es no-op).
-- `make test-port`: OK; `test_disk_delay` comprueba no-op sin tiempo real y
-  ≥2 VBL para 800 B (~50 ms) con tiempo real.
-- En ventana: las pausas de arranque/idioma/cambio de disco/estrella son
-  visibles y dan el ritmo del original. Si alguna resulta demasiado larga o
-  corta, el único parámetro a ajustar es el factor de `platform_disk_delay`
-  (62,5 µs/B), no una animación concreta.
+- `make test-port`: OK; `test_disk_delay` comprueba no-op sin tiempo real,
+  `platform_disk_timing(0)` sin avance y ≥2 VBL para 800 B (~50 ms) con timing
+  activo.
+- En ventana: el título aparece sin espera inicial (PRES/DRAP); después se
+  notan las pausas de idioma/cambio de disco, salas y estrella, que dan el
+  ritmo del original. Si alguna resulta demasiado larga o corta, el único
+  parámetro a ajustar es el factor de `platform_disk_delay` (62,5 µs/B), no una
+  animación concreta.
 - `src/` intacto: el modelo vive en la HAL.
 
 ## Referencias

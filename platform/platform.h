@@ -83,6 +83,10 @@ void platform_cpu_charge_cycles(uint64_t cycles);
  * Alcance y estimaciones: notes/0026-esperas-de-disco.md. */
 void platform_disk_delay(uint32_t bytes);
 
+/* Activa/desactiva el modelo de espera de disco (arranque: off hasta que el
+ * título/idioma ya están cargados; después on). */
+void platform_disk_timing(int on);
+
 /* Vacía la pila de instrumentación tras un longjmp de reinicio (reset_clear). */
 void platform_cpuwork_reset_stack(void);
 

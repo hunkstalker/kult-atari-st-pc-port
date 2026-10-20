@@ -106,6 +106,11 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     /* Camino "sin DRAP" (como el producto del predecesor): salta PRES/DRAP/
      * prompt_wait/idioma y va directo a fijar la letra en los nombres de recurso.
      * Útil para bring-up headless y para la versión de un solo idioma. */
+    /* Las cargas de PRES/DRAP ocurren antes de que el usuario pueda
+     * interactuar. Si pagasen la espera de disquete, habría ~4 s de pantalla
+     * negra/título y la canción empezaría ya avanzada. Se modelan (instantáneas)
+     * y se reactiva el timing antes de las cargas posteriores al idioma. */
+    platform_disk_timing(0);
     uint8_t lang;
     int skip_drap = getenv("KULT_SKIP_DRAP") != 0;
     if (!skip_drap) {
@@ -148,6 +153,7 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     /* Menú de idioma: escribe la letra en las 4 entradas de la lista A */
     kult_boot_apply_language(img, lang);
     copy_screen(img);
+    platform_disk_timing(1);       /* desde aquí sí: listas, FOND, ECHE, salas, estrella */
     BOOT_TRACE("lang");
 
     (void)load_resource_list_a(img);

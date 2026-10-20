@@ -220,11 +220,12 @@ Recogidas como ADR en `docs/adr/`:
   `159e2` se lee `FOND.PI1` (`0x13568`, 0x7d22 B) y el ST bloquea en Fread con
   la estrella en pantalla. La HAL modela la lectura de disquete ST
   (`platform_disk_delay`, ~2 s; usuario: >1,4 s) desde `pc_os_fread`. `src/`
-  intacto; nativo/win/ZIP OK. Exe `f28e7ff5…`, headless `ea87c331…`, ZIP
-  `27991c46…`. El retardo se aplica a **cada Fread**, así que también da ritmo
-  al arranque (PRES/DRAP), al cambio de idioma/disco (listas A/B, FOND, ECHE),
-  a las salas (`load_scena`) y al reinicio (`CLEAR.BIN`). Detalle:
-  **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
+  intacto; nativo/win/ZIP OK. Exe `4bca31f9…`, headless `48e64280…`, ZIP
+  `cd51987a…`. El retardo se aplica a **cada Fread** (listas A/B, FOND, ECHE,
+  salas, reinicio), pero **no** a PRES/DRAP: `platform_disk_timing(0)` durante
+  las cargas previas al título evita la pantalla negra inicial y que la canción
+  empiece avanzada. Detalle: **`notes/0025-espera-carga-fond.md`** y
+  **`notes/0026-esperas-de-disco.md`**.
 - **Siguiente:** validar la espera de la estrella y seguir con el **punto 3**
   (`object_info_card`/`16dec` en 4905–5205). El **punto 4** (glitches
   4516/4640/4767) sigue abierto: el intento de `palette_cycle` se revirtió

@@ -85,11 +85,12 @@ static uint32_t g_rt_count;
 static uint64_t g_cpu_acc_us;    /* acumulador de retardos dbf (< 1 ms) */
 static uint32_t g_cpu_hz;        /* Hz de la CPU efectiva (lazy, KULT_CPU_HZ) */
 static int g_cpu_busy;           /* evita reentrada tick -> cpu_delay */
+static int g_disk_timing = 1;    /* 0 = no modelar esperas de disco (arranque) */
 
 void platform_time_init(void) {
     g_frames = 0; g_tick = 0; g_rt = 0;
     g_present = 0; g_in_loop = 0;
-    g_cpu_acc_us = 0; g_cpu_hz = 0; g_cpu_busy = 0;
+    g_cpu_acc_us = 0; g_cpu_hz = 0; g_cpu_busy = 0; g_disk_timing = 1;
 }
 
 void platform_set_tick(void (*fn)(uint8_t *img)) { g_tick = fn; }
@@ -215,7 +216,7 @@ static void cpu_charge_us(uint64_t us) {
  * Se aplica a cada lectura de recurso (notes/0026). No depende de
  * KULT_CPU_HZ: no es trabajo de CPU, es E/S. */
 void platform_disk_delay(uint32_t bytes) {
-    if (!g_rt || !g_kult_img || g_cpu_busy || bytes == 0)
+    if (!g_rt || !g_kult_img || g_cpu_busy || !g_disk_timing || bytes == 0)
         return;
     uint64_t us = ((uint64_t)bytes * 125ull) / 2ull;   /* 62,5 us/byte */
     uint64_t end = now_ns() + us * 1000ull;
@@ -232,6 +233,13 @@ void platform_disk_delay(uint32_t bytes) {
         sleep_ns(wake - now);
     }
     g_cpu_busy = 0;
+}
+
+/* Activa/desactiva el modelo de espera de disco. El arranque lo apaga mientras
+ * carga PRES/DRAP (pantalla negra/título) y lo reactiva tras elegir idioma:
+ * así la canción no empieza avanzada y se conservan las esperas posteriores. */
+void platform_disk_timing(int on) {
+    g_disk_timing = on ? 1 : 0;
 }
 
 /* Bucles `dbf` transcritos por el core (`cpu_delay(unidades)`, ~10 ciclos por

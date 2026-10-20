@@ -55,12 +55,13 @@ Sangre y viaje espacial ya no van instantáneos. Detalle:
 animación es la carga de `FOND.PI1` (`0x13568`, 0x7d22 B); el original bloquea
 en Fread ~2 s con la estrella en pantalla. La HAL modela el tiempo de disquete
 en `platform_disk_delay` (`notes/0025`), sin tocar `src/`. Como se aplica a
-**cada Fread**, también hay pausas de arranque (PRES/DRAP), tras idioma/cambio
-de disco (listas, FOND, ECHE) y al cargar salas/reiniciar
-(`notes/0026-esperas-de-disco.md`).
+**cada Fread**, hay pausas tras idioma/cambio de disco (listas, FOND, ECHE) y al
+cargar salas/reiniciar (`notes/0026-esperas-de-disco.md`). **Excepción**:
+PRES/DRAP no esperan (`platform_disk_timing(0)`), para no perder el inicio de la
+canción con la pantalla negra inicial.
 
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip` (exe `f28e7ff5…`): descomprimir sobre la
+`build-win/kult-0.1.0-win64.zip` (exe `4bca31f9…`): descomprimir sobre la
 carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
 comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
 **morir → reiniciar (Maestro/objeto)** (checklist en `docs/VERIFICACION.md`). **Controles**:
