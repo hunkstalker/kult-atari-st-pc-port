@@ -114,10 +114,12 @@ static void fps_note(void) {
     }
 }
 
+/* Hook del bucle: ya no presenta (lo hace `tick_cb` en cada VBL, también para
+ * las animaciones que corren dentro de un comando). Solo bombea y cuenta FPS. */
 static void present_cb(uint8_t *img) {
+    (void)img;
     if (!platform_sdl_pump()) { kult_request_stop(); return; }
     fps_note();
-    platform_sdl_present(img);
 }
 /* Bombeo durante una espera bloqueante (Cnecin en menús/prompts): presenta y, si
  * se cierra la ventana, sale del programa. */
@@ -128,9 +130,8 @@ static void idle_cb(uint8_t *img) {
     platform_audio_pump(img);
     platform_sdl_present(img);
 }
-/* Presentación durante las esperas de arranque (`wait_frame`): bombea SDL (para
- * que el ratón/teclado entren en esas esperas) y presenta. El audio ya lo avanza
- * `platform_tick` un VBL cada vez; aquí no se avanza por reloj. */
+/* Presentación por VBL (arranque y bucle): bombea SDL (ratón/teclado) y
+ * presenta. El audio ya lo avanza `platform_tick`; aquí no se avanza por reloj. */
 static void tick_cb(uint8_t *img) {
     if (!platform_sdl_pump()) { platform_sdl_close(); exit(0); }
     platform_sdl_present(img);

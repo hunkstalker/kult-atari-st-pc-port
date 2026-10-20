@@ -29,8 +29,9 @@
 - Exe estándar `build-win/kult-0.1.0-win64/kult.exe` md5
   **`900fd9939df1431a21ea8fa7e06c07d0`**; ZIP regenerado.
 - `make test` **499**; `make test-port` OK.
-- Input: **clic izquierdo** interactúa y salta transiciones/reveal; **derecho
-  sin función**. El fix del click pegado se conserva.
+- Input (histórico): en su momento se fijó “clic izquierdo salta; derecho sin
+  función”. **Corregido en `notes/0020`**: izquierdo/teclado = acción sin skip;
+  derecho = acción + skip.
 - La build estándar **no** lleva traza `Y`/`V`; `platform/dispatch_trace.c`
   existe para una build de diagnóstico aparte (ver §5).
 - La documentación actual está corregida para reflejar A/B/C. `src/` intacto.
@@ -69,8 +70,9 @@ para ~8 frames). Hay que confirmar en código/ASM cuál de estas causas aplica:
    mantenido.
 5. **No** es `KULT_FRAME_GATE` ni `15da6`; ambos están descartados para C.
 
-> Plan anti-fallo detallado: **`notes/0018-plan-c.md`**. Guardia de input:
-> `test_left_click_skips` en `make test-port` (izquierdo salta; derecho no).
+> Plan anti-fallo detallado: **`notes/0018-plan-c.md`**. Guardia actual de
+> input: `test_click_skip` en `make test-port` (izquierdo no salta; derecho sí;
+> ver `notes/0020`).
 
 ## 4. Plan para confirmar y arreglar C
 
@@ -111,8 +113,9 @@ build de diagnóstico:
 
 ## 6. Reglas duras
 
-- **No cambiar el input**: clic izquierdo salta; derecho sin función. No crear
-  copias de `src/input.c`, no tocar `wait_frame` ni el estado de botones de SDL.
+- **Input (corregido en `notes/0020`)**: izquierdo/teclado = acción sin skip;
+  derecho = acción + skip. No crear copias de `src/input.c`; el skip se corrige
+  en la HAL (`platform_input_apply_skip`), no en `wait_frame`.
 - `src/` intacto. No tocar repos de referencia externos ni datos del usuario.
 - No usar `KULT_FRAME_GATE` ni retardos manuales como fix de C.
 - No usar `15da6` como objetivo de C sin que la traza lo demuestre.
@@ -134,8 +137,8 @@ MODELO CORRECTO
 - No hay 15ac8 (eso es B) ni 15da6/S en C.
 
 REGLAS
-- NO cambiar el input: clic izquierdo salta; derecho sin función.
-- No crear copias de src/input.c; no tocar wait_frame ni SDL buttons.
+- Input: izquierdo/teclado = acción sin skip; derecho = acción + skip.
+- No crear copias de src/input.c; el skip se corrige en la HAL (notes/0020).
 - src/ intacto. No tocar repos de referencia externos ni datos del usuario.
 - No usar KULT_FRAME_GATE ni retardos manuales como fix de C.
 - No usar 15da6 como objetivo de C sin evidencia de la traza.
@@ -161,7 +164,8 @@ No des por hecho que C es B ni que los 4 bancos son el Maestro.
   4,6 VBL por entrada**.
 - Fix (con permiso para tocar `src/`): `src/loop.c` usa `cpu_delay_cycles()`;
   no-op en el diferencial y cobro real en el port (mismo reloj que T-073b).
-- C pasa de ~3 a ~**7,6 VBL/frame**; A/B no usan `16dec`; input intacto.
+- C pasa de ~3 a ~**7,6 VBL/frame**; A/B no usan `16dec`; input: ver
+  `notes/0020` (izquierdo/teclado sin skip; derecho con skip).
 - `make test` **499**, `make test-port` OK (nueva `test_cpu_charge_cycles`).
 - Exe estándar `fc4108e473a9d44c722245345a44fa32` (headless `e37f65…`, ZIP
   `8c9266…`). Falta la validación visual del usuario en Windows.

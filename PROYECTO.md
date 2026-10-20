@@ -182,14 +182,23 @@ Recogidas como ADR en `docs/adr/`:
   iteraciones × 18 ciclos ≈ 92 ms ≈ 4,6 VBL/entrada, que el core no anotaba.
   Fix autorizado en `src/loop.c` con `cpu_delay_cycles()` (no-op en diferencial;
   en el port cobra con el reloj de T-073b). C pasa de ~3 a ~7,6 VBL/frame; A/B
-  no usan `16dec`; input intacto. Exe estándar `fc4108e4…`; ZIP `8c926644…`.
-  Detalle: **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8); plan
-  anti-fallo: **`notes/0018-plan-c.md`**; guardia: **`test_left_click_skips`**.
-  No cambiar el input.
-- **Siguiente:** validar visualmente C en Windows con el exe `fc4108e4…`
-  (~7,6 VBL/frame; A/B iguales). Si no cuadra, calibrar con `KULT_CPU_HZ`/
-  `KULT_ST_CONTEND`, sin parchear animaciones. Después **T-061** (validación
-  Windows: título/idioma, partida/colores, guardado, audio, morir → reiniciar)
-  → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
+  no usan `16dec`. Exe actual: ver T-074. Detalle:
+  **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8); plan
+  anti-fallo: **`notes/0018-plan-c.md`**; guardia: **`test_click_skip`**.
+- **Input/presentación (T-074, sesión 23)**: bug de puertas/A-B-C. El core
+  deriva acción y skip del bit0 del IKBD; la HAL lo tenía invertido (izquierdo =
+  acción+skip; derecho ignorado). Se corrige en la HAL, como el legacy: acción =
+  izquierdo **o** derecho; skip = solo derecho; `platform_input_apply_skip()`
+  pisa `$1a570` al salir de `wait_frame` (hook de instrumentación). Además,
+  `platform_tick` presenta en **cada VBL**, así se ven las animaciones que corren
+  en `wait_vbl` (puertas, wipes). `src/` intacto; `test_click_skip` y
+  `test_present_hook`. Exe `04858f5e…`, headless `266be2a3…`, ZIP
+  `d2dd6c05…`. Detalle: **`notes/0020-input-hal-y-presentacion.md`**.
+- **Siguiente:** validar el exe nuevo en Windows: izquierdo/teclado = acción y
+  animaciones visibles; derecho = acción + skip; A/B/C y puertas. Si C no cuadra
+  de ritmo, calibrar con `KULT_CPU_HZ`/`KULT_ST_CONTEND`, sin parchear
+  animaciones. Después **T-061** (validación Windows: título/idioma,
+  partida/colores, guardado, audio, morir → reiniciar) → **T-072** (ingesta
+  `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

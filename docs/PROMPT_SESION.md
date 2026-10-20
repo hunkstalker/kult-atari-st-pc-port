@@ -29,16 +29,21 @@ Sin bloqueantes.
 **T-073c ✅ (pantalla C del Maestro)**: resuelto en la sesión 22. La causa era
 el `dbf` inline de `object_info_card` (`0x16dec`, ~4,6 VBL/entrada) sin anotar;
 ahora va por `cpu_delay_cycles` (no-op en diferencial). C pasa de ~3 a
-~7,6 VBL/frame; A/B no usan `16dec`; input intacto. Detalle:
-`notes/0019-fix-timing-c.md`. Queda la **validación visual del usuario**.
+~7,6 VBL/frame; A/B no usan `16dec`. Detalle: `notes/0019-fix-timing-c.md`.
+
+**T-074 ✅ (input HAL + presentación)**: izquierdo/teclado = acción sin skip;
+derecho = acción + skip; la HAL pisa `$1a570` al salir de `wait_frame`, sin tocar
+`src/input.c`. `platform_tick` presenta en cada VBL, así se ven las animaciones
+de puerta/A-B-C. Detalle: `notes/0020-input-hal-y-presentacion.md`.
 
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip` (exe `fc4108e4…`): descomprimir sobre la
+`build-win/kult-0.1.0-win64.zip` (exe `04858f5e…`): descomprimir sobre la
 carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
 comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
-**morir → reiniciar sala** (checklist en `docs/VERIFICACION.md`). Si algo falla:
-**`kult.log`** junto al exe y/o `kult-headless.exe` en consola. **Ritmo**: C ya
-está modelado (`notes/0019`); si otra escena va acelerada, calibrar con
+**morir → reiniciar sala** (checklist en `docs/VERIFICACION.md`). **Controles**:
+izquierdo/teclado = acción y animación visible; derecho = acción + skip. Si algo
+falla: **`kult.log`** junto al exe y/o `kult-headless.exe` en consola. **Ritmo**:
+C ya está modelado (`notes/0019`); si otra escena va acelerada, calibrar con
 `KULT_CPU_HZ`/`KULT_ST_CONTEND`, no parchear animaciones.
 
 **Orden de hitos** (detalle en `notes/0011`–`notes/0014`):

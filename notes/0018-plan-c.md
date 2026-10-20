@@ -1,7 +1,9 @@
 # 0018 — Plan para arreglar la animación de C (Maestro) sin repetir el fallo
 
 > **Resuelto en `notes/0019-fix-timing-c.md`** (sesión 22): el problema era el
-> `dbf` inline de `0x16dec` sin anotar como espera de CPU.
+> `dbf` inline de `0x16dec` sin anotar como espera de CPU. El modelo de input se
+> corrigió después en `notes/0020-input-hal-y-presentacion.md` (izquierdo/teclado
+> sin skip; derecho con skip).
 >
 > Complementa a `notes/0017-retomar-maestro.md`. La sesión 17 falló porque
 > inventó un cambio de input en vez de medir. Aquí está el protocolo y las
@@ -20,10 +22,10 @@
 
 ## 2. Reglas duras (obligatorias)
 
-- **Input invariante**: clic **izquierdo** interactúa y salta
-  transiciones/reveal; **derecho sin función**. No cambiar el mapeo, no crear
-  copias de `src/input.c`, no tocar `wait_frame` ni los botones de SDL. No usar
-  modelos de botones de otros repositorios.
+- **Input (corregido en `notes/0020`)**: izquierdo/teclado = acción sin skip;
+  derecho = acción + skip. No crear copias de `src/input.c`; el skip se corrige
+  en la HAL, no en `wait_frame`. No usar modelos de botones de otros
+  repositorios.
 - **A/B/C**: A = 3 retratos + descripciones (pixel-reveal); B = 4 retratos +
   descripciones (lift-reveal, 4 bancos `15ac8`/`0x36`); C = 1 retrato del
   Maestro + lift + **diálogo** (único diálogo y único retrato que se mueve),
@@ -91,8 +93,8 @@ tiene la espera/reveal que sí tenía el original. Candidatos:
 
 - La animación del retrato de C queda al ritmo del original (visual y/o
   VBL/frame); A/B no cambian.
-- El clic izquierdo sigue saltando; el derecho no hace nada; `test_left_click_skips`
-  sigue verde.
+- Izquierdo/teclado: acción sin skip; derecho: acción + skip;
+  `test_click_skip` sigue verde (`notes/0020`).
 - `make test` 499 y `make test-port` OK; `src/` intacto.
 - Build final sin traza; ZIP regenerado si aplica.
 
@@ -103,8 +105,8 @@ Retomas T-073c (pantalla C del Maestro) en /app/kult-port-pc-compilation.
 Lee AGENTS.md (§ T-073c), RETOMAR.md, notes/0017-retomar-maestro.md y
 notes/0018-plan-c.md. Todo en español.
 
-PROHIBIDO cambiar el input: clic izquierdo salta; derecho sin función.
-No crear copias de src/input.c; no tocar wait_frame/SDL buttons; no usar
+Input: izquierdo/teclado = acción sin skip; derecho = acción + skip (HAL;
+ver notes/0020). No crear copias de src/input.c; no tocar wait_frame; no usar
 modelos de botones de otros repositorios. No usar KULT_FRAME_GATE ni 15da6
 como fix de C sin evidencia.
 

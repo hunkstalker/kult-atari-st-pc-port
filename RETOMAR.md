@@ -5,6 +5,17 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 23 — input y presentación (HAL)**: el bug de puertas/A-B-C no era de
+  `src/`: el core deriva acción y skip del bit0 del IKBD y nuestra HAL lo tenía
+  invertido (izquierdo = acción+skip; derecho ignorado). Se corrige en la HAL,
+  como el legacy: acción = izquierdo **o** derecho; skip = solo derecho;
+  `platform_input_apply_skip()` pisa `$1a570` al salir de `wait_frame` (hook de
+  instrumentación). Además, `platform_tick` ahora presenta en **cada VBL** (antes
+  solo en arranque/CPU-delay), por lo que las animaciones de puerta que corren en
+  `wait_vbl` ya se ven. **`src/` intacto**; 499 + `test-port` verdes; nueva
+  guardia `test_click_skip`. Exe nuevo `04858f5eb9bbc3517e95ce8e9dcc5a60`
+  (headless `266be2a3…`, ZIP `d2dd6c05…`). Detalle:
+  `notes/0020-input-hal-y-presentacion.md`.
 - **Sesión 22 — T-073c resuelto (timing de C)**: la causa era el `dbf` inline de
   `object_info_card` (`0x16dec`): el guion de C deja `wait=0x0a`, que produce
   **40960 iteraciones × 18 ciclos ≈ 92 ms ≈ 4,6 VBL por entrada**; el core lo
@@ -14,16 +25,18 @@ Tareas: `TODO.md`.
   Prueba nueva `test_cpu_charge_cycles`. `make test` **499**, `make test-port`
   OK, builds nativo/win y ZIP. Exe nuevo
   `fc4108e473a9d44c722245345a44fa32` (headless `e37f65…`, ZIP `8c9266…`).
-  C pasa de ~3 a ~7,6 VBL/frame; A/B no usan `16dec`; input intacto. Falta la
-  validación visual del usuario. Detalle: `notes/0019-fix-timing-c.md`
-  (resumen en `notes/0017` §8).
+  C pasa de ~3 a ~7,6 VBL/frame; A/B no usan `16dec`. Falta la validación
+  visual del usuario. Detalle: `notes/0019-fix-timing-c.md`
+  (resumen en `notes/0017` §8). *(El input se corrigió en la sesión 23; ver
+  `notes/0020`.)*
 - **Sesión 21 — guardrails T-073c**: reglas duras en `AGENTS.md` (§ T-073c),
   prueba de guardia **`test_left_click_skips`** en `make test-port` (el clic
   izquierdo salta; el derecho no) y plan detallado
   **`notes/0018-plan-c.md`**. La próxima sesión debe leer
   `AGENTS.md`/`notes/0017`/`notes/0018`, **no cambiar el input** y **medir antes
   de tocar** (una hipótesis, un cambio; si no mejora, revertir). `make test`
-  499 y `make test-port` verdes.
+  499 y `make test-port` verdes. *(La regla de input se corrigió en la sesión
+  23: `test_click_skip`; ver `notes/0020`.)*
 - **Sesión 20 — documentación corregida (T-073c, pantallas A/B/C)**: se
   reescribieron el handoff (`notes/0017-retomar-maestro.md`) y el histórico
   (`notes/0016-maestro-handoff.md`), y se corrigieron `TODO`, `PROYECTO`,
@@ -190,14 +203,19 @@ Tareas: `TODO.md`.
   único retrato que se mueve), después de B. La causa de la aceleración era el
   `dbf` inline de `0x16dec` (40960 iteraciones ≈ 4,6 VBL/entrada) sin anotar;
   ahora va por `cpu_delay_cycles()` en `src/loop.c` (no-op en diferencial).
-  C queda en ~7,6 VBL/frame; A/B no usan `16dec`; input intacto. Detalle:
+  C queda en ~7,6 VBL/frame; A/B no usan `16dec`. Detalle:
   **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8).
+- **Input/presentación (sesión 23, HAL)**: izquierdo/teclado = acción sin skip;
+  derecho = acción + skip. La HAL pisa `$1a570` al salir de `wait_frame` (hook),
+  sin tocar `src/input.c`. `platform_tick` presenta en cada VBL, así se ven las
+  animaciones de puerta que corren en `wait_vbl`. Detalle:
+  **`notes/0020-input-hal-y-presentacion.md`**.
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `fc4108…`, sin traza `Y`/`V`; la traza
+- **Build estándar actual**: exe `04858f5e…`, sin traza `Y`/`V`; la traza
   (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
   lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
   (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
@@ -214,21 +232,23 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-073c — validar visualmente el fix de C y seguir con T-061.**
+**Validar el exe nuevo (input + presentación) y seguir con T-061.**
 
-0. Leer `AGENTS.md` (§ T-073c), `notes/0019` (y `notes/0017` §8/`notes/0018`).
-   **No cambiar el input**; la guardia `test_left_click_skips` debe seguir verde.
-1. Probar el exe nuevo `fc4108…` en Windows: la animación del retrato del
-   Maestro (C) debe ir a ~7,6 VBL/frame (antes ~3); A/B deben quedar igual.
-2. Si el ritmo no cuadra visualmente, calibrar con `KULT_CPU_HZ`/
-   `KULT_ST_CONTEND` **sin** volver a parchear animaciones; el modelo ya cobra
-   el `dbf` de `0x16dec` (18 ciclos/iteración).
+0. Leer `AGENTS.md` (§ T-073c), `notes/0020` y `notes/0019` (y `notes/0017` §8).
+   La guardia es `test_click_skip` en `make test-port`.
+1. Probar en Windows:
+   - **izquierdo/teclado**: acción normal y animaciones de puerta/A-B-C visibles;
+   - **derecho**: acción + skip (puertas y A/B/C);
+   - el izquierdo vuelve a interactuar en el loop del juego.
+2. Si C sigue sin cuadrar de ritmo, calibrar con `KULT_CPU_HZ`/
+   `KULT_ST_CONTEND` **sin** parchear animaciones.
 3. Después **T-061** (validación Windows: título/idioma, partida/colores,
    guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
    → **A1** → **N3** → **A2** → **M5**.
 
-Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8, fix aplicado).
-No cambiar el input; no usar `KULT_FRAME_GATE`/`15da6` como fix de C.
+Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8) y
+**`notes/0020-input-hal-y-presentacion.md`**.
+No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,

@@ -13,8 +13,8 @@
   en el port cobra ciclos por el mismo reloj de T-073b.
 - Cadencia: de ~3 VBL/frame a ~**7,6 VBL/frame** (3 + 4,6 VBL del `dbf`).
   A/B no usan `0x16dec`; el input no se toca.
-- `make test`: **499**; `make test-port`: OK (incluye `test_left_click_skips` y
-  la nueva `test_cpu_charge_cycles`).
+- `make test`: **499**; `make test-port`: OK (incluye `test_cpu_charge_cycles`;
+  la guardia de input actual es `test_click_skip`, ver `notes/0020`).
 - Exe estándar: `build-win/kult-0.1.0-win64/kult.exe`
   md5 **`fc4108e473a9d44c722245345a44fa32`**.
 - Pendiente: validación visual del usuario en Windows (la run automática no
@@ -134,7 +134,8 @@ tienen sus esperas.
 ## 6. Verificación
 
 - `make test`: **499 passed**.
-- `make test-port`: OK (`test_left_click_skips` sigue verde).
+- `make test-port`: OK (la guardia de input es `test_click_skip`, ver
+  `notes/0020`).
 - `make port`, `make cmake-native`, `make cmake-win`, `make package-win`: OK.
 - Artefactos:
   - `kult.exe` md5 `fc4108e473a9d44c722245345a44fa32`

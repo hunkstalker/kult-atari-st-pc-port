@@ -7,6 +7,14 @@
  *
  * La entrada real (SDL) llega en M3; aquí basta con que las esperas no cuelguen y
  * que el cursor/estado sean deterministas.
+ *
+ * Botones (modelo del original):
+ *   - izquierdo: acción (bit2 de A_INPUT_BUTTONS), sin skip.
+ *   - derecho: acción + skip (A_SKIP_TRANSITION = 0xff).
+ * El core `wait_frame` deriva acción y skip del bit0 del paquete IKBD; para que
+ * el izquierdo no salte, la HAL pisa `$1a570` al salir de `wait_frame`
+ * (`platform_input_apply_skip`), igual que hacía el motor legacy al interceptar
+ * la escritura de esa dirección. Así `src/` queda intacto.
  */
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +32,8 @@ static int g_head, g_tail;
 static uint32_t g_auto_key = 'E';
 static uint16_t g_cursor_x = 160;
 static uint16_t g_cursor_y = 100;
-static uint8_t  g_buttons;         /* botón real: bit0 = izquierdo */
+static uint8_t  g_buttons;         /* acción: izquierdo o derecho pulsado */
+static uint8_t  g_mouse_skip;      /* derecho: pide saltar ($1a570) */
 static uint32_t g_deliveries;
 static int g_click_toggle = 1;     /* headless: alterna clic para liberar esperas */
 static int g_auto = 1;             /* 1 = headless (auto-tecla); 0 = entrada real */
@@ -40,13 +49,25 @@ void platform_mouse_set(int x, int y, int buttons) {
     if (y > 199) y = 199;
     g_cursor_x = (uint16_t)x;
     g_cursor_y = (uint16_t)y;
-    g_buttons = (uint8_t)(buttons & 1);
+    /* Máscara del puerto: bit0 = izquierdo, bit1 = derecho. El izquierdo y el
+     * derecho ambos actúan; solo el derecho pide skip. */
+    g_buttons = (uint8_t)((buttons & 0x03) ? 1 : 0);
+    g_mouse_skip = (uint8_t)((buttons & 0x02) ? 1 : 0);
+}
+
+int platform_input_skip_state(void) { return g_mouse_skip; }
+
+/* La HAL pisa el flag de skip que acaba de escribir `wait_frame` (core). Es el
+ * equivalente port-side del intercept de `$1a570` del motor legacy. */
+void platform_input_apply_skip(uint8_t *img) {
+    img[A_SKIP_TRANSITION] = g_mouse_skip ? 0xff : 0;
 }
 
 void platform_input_init(void) {
     g_head = g_tail = 0;
     g_deliveries = 0;
     g_buttons = 0;
+    g_mouse_skip = 0;
     const char *click = getenv("KULT_CLICK");
     if (click && click[0] == '0') g_click_toggle = 0;
     const char *autoenv = getenv("KULT_KEY");

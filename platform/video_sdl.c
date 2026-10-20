@@ -89,7 +89,16 @@ void platform_sdl_present(uint8_t *img) {
 }
 
 static int g_quit;
-static int g_mouse_btn;
+static SDL_MouseButtonFlags g_mouse_mask;   /* máscara SDL (LMASK/RMASK) */
+static int g_mouse_gx = 160, g_mouse_gy = 100;   /* última posición en espacio de juego */
+
+/* Traduce la máscara SDL a la del puerto: bit0 = izquierdo, bit1 = derecho.
+ * OJO: en SDL3 RIGHT no es 2 sino 3, y RMASK = 1<<2 = 4; no pasar la máscara SDL
+ * tal cual a platform_mouse_set. */
+static int mouse_buttons(void) {
+    return ((g_mouse_mask & SDL_BUTTON_LMASK) ? 1 : 0) |
+           ((g_mouse_mask & SDL_BUTTON_RMASK) ? 2 : 0);
+}
 
 int platform_sdl_should_quit(void) { return g_quit; }
 
@@ -117,19 +126,31 @@ int platform_sdl_pump(void) {
         } else if (e.type == SDL_EVENT_MOUSE_MOTION) {
             float gx = 0, gy = 0;
             SDL_RenderCoordinatesFromWindow(g_ren, e.motion.x, e.motion.y, &gx, &gy);
-            platform_mouse_set((int)gx, (int)gy, g_mouse_btn);
+            g_mouse_gx = (int)gx; g_mouse_gy = (int)gy;
+            platform_mouse_set(g_mouse_gx, g_mouse_gy, mouse_buttons());
         } else if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN ||
                    e.type == SDL_EVENT_MOUSE_BUTTON_UP) {
+            SDL_MouseButtonFlags bit = 0;
             if (e.button.button == SDL_BUTTON_LEFT)
-                g_mouse_btn = e.button.down ? 1 : 0;
+                bit = SDL_BUTTON_LMASK;
+            else if (e.button.button == SDL_BUTTON_RIGHT)
+                bit = SDL_BUTTON_RMASK;
+            if (bit) {
+                if (e.button.down) g_mouse_mask |= bit;
+                else               g_mouse_mask &= ~bit;
+            }
             float gx = 0, gy = 0;
             SDL_RenderCoordinatesFromWindow(g_ren, e.button.x, e.button.y, &gx, &gy);
-            platform_mouse_set((int)gx, (int)gy, g_mouse_btn);
+            g_mouse_gx = (int)gx; g_mouse_gy = (int)gy;
+            platform_mouse_set(g_mouse_gx, g_mouse_gy, mouse_buttons());
         }
     }
     {
         SDL_MouseButtonFlags mb = SDL_GetMouseState(NULL, NULL);
-        g_mouse_btn = (mb & SDL_BUTTON_LMASK) ? 1 : 0;
+        g_mouse_mask = mb & (SDL_BUTTON_LMASK | SDL_BUTTON_RMASK);
+        /* Sincroniza también si el botón cambió sin evento (p. ej. pérdida de
+         * foco): el skip y la acción no se quedan pegados. */
+        platform_mouse_set(g_mouse_gx, g_mouse_gy, mouse_buttons());
     }
     return !g_quit;
 }

@@ -54,6 +54,9 @@ alimenta el paquete IKBD en `A_IKBD_PACKET` para que se actualicen
 - El **trabajo de CPU** se modela por función (`platform/cpuwork.c`) y los
   bucles que solo esperan se anotan en el core con `cpu_delay`/
   `cpu_delay_cycles` (no-op en el diferencial). Ver `notes/0015` y `notes/0019`.
+- La **presentación es por VBL** (`platform_tick`), no por iteración del bucle:
+  así se ven las animaciones que corren en `wait_vbl` dentro de un comando
+  (puertas, wipes). Ver `notes/0020`.
 
 ## Audio
 - El juego programa el **MFP Timer A** y escribe el **PSG** por

@@ -22,10 +22,14 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
 (opcional). Sin bloqueantes. Ver `notes/0011`–`notes/0014`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
-- **Input invariante**: el **clic izquierdo** interactúa y salta
-  transiciones/reveal; el **derecho no tiene función**. **No** cambiar el mapeo
-  de botones, no crear copias de `src/input.c`, no tocar `wait_frame` ni el
-  estado de botones de SDL. No usar modelos de botones de otros repositorios.
+- **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
+  skip; **derecho** = acción + skip (A/B/C y puertas). La HAL entrega la acción
+  en el bit0 del IKBD y **pisa `$1a570`** al salir de `wait_frame` con el botón
+  derecho (como el legacy). `src/input.c` no se toca. No usar modelos de botones
+  de otros repositorios.
+- **Presentación**: `platform_tick` presenta en **cada VBL** (arranque y bucle);
+  el frame hook ya no presenta. Así se ven las animaciones que corren en
+  `wait_vbl` dentro de un comando (puertas, wipes).
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único
@@ -35,8 +39,8 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
 - **No** usar `KULT_FRAME_GATE` ni `15da6` como fix de C sin evidencia.
 - Medir antes de tocar; una hipótesis, un cambio; si no mejora, revertir.
 - Handoff: `notes/0017-retomar-maestro.md`; plan detallado:
-  `notes/0018-plan-c.md`. Prueba de guardia:
-  `test_left_click_skips` en `make test-port`.
+  `notes/0018-plan-c.md`. Input/presentación: `notes/0020-input-hal-y-presentacion.md`.
+  Prueba de guardia: `test_click_skip` en `make test-port`.
 
 ## Reglas de trabajo
 1. **Reproducir/medir antes de tocar.** Una hipótesis, un cambio.

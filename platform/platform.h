@@ -37,11 +37,13 @@ void platform_key_push(uint32_t key);
 void platform_key_push_str(const char *s);
 
 /* Entrada real (M3): posición/botones del ratón (coords de juego 320x200) y
- * conmutador del modo auto (headless). `platform_set_idle` registra el bombeo que
- * se usa durante una espera bloqueante (Cnecin) cuando no hay modo auto. */
+ * conmutador del modo auto (headless). `buttons` usa la máscara del puerto:
+ * bit0 = izquierdo (acción), bit1 = derecho (acción + skip). El paquete IKBD
+ * lleva la acción en bit0; el skip se pisa en `$1a570` desde la HAL. */
 void platform_mouse_set(int x, int y, int buttons);
-/* Botón derecho: pide saltar transiciones/reveal ($1a570); el izquierdo solo
- * interactúa (bit2 de A_INPUT_BUTTONS), como en el original. */
+/* Derecho pulsado: la HAL debe pisar `$1a570` tras `wait_frame` (legacy). */
+int  platform_input_skip_state(void);
+void platform_input_apply_skip(uint8_t *img);
 void platform_input_set_auto(int on);
 void platform_set_idle(void (*fn)(uint8_t *img));
 
@@ -55,11 +57,11 @@ uint64_t platform_now_ns(void);
  * juego (boot/vbl.c: 0x160c2); sin hook, el reloj sólo incrementa A_DAT_1ACD4. */
 void platform_set_tick(void (*fn)(uint8_t *img));
 
-/* Presentación durante el ARRANQUE (modo ventana): si se registra, `platform_tick`
- * llama a `fn` en cada VBL *mientras no se haya entrado en el bucle del juego*.
- * Así las esperas de `wait_frame` (0x13698) presentan y bombean SDL (ratón), en
- * vez de dejar la ventana congelada/negra. En el bucle presenta el frame hook del
- * driver (frame_hook), por eso `boot/` marca `platform_set_loop(1)` al entrar. */
+/* Presentación por VBL (modo ventana): si se registra, `platform_tick` llama a
+ * `fn` en cada VBL, tanto en el arranque como dentro del bucle. Así se ven las
+ * animaciones que corren en `wait_vbl` dentro de un comando (puertas, wipes) y
+ * las esperas de `wait_frame` siguen bombeando SDL. `platform_set_loop` se
+ * conserva por compatibilidad, pero ya no desactiva la presentación. */
 void platform_set_present(void (*fn)(uint8_t *img));
 void platform_set_loop(int on);
 

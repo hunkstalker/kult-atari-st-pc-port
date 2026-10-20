@@ -107,9 +107,8 @@ static void test_log(void) {
     unsetenv("KULT_LOG");
 }
 
-/* Presentación en arranque (M7): el tick presenta mientras no se ha entrado en
- * el bucle; al entrar (platform_set_loop) deja de presentar (lo hace el hook del
- * frame), y el ratón/teclado de las esperas de `wait_frame` se bombean vía SDL. */
+/* Presentación por VBL: se presenta tanto en el arranque como dentro del bucle
+ * (las animaciones de los comandos corren en `wait_vbl` y no pasan por el hook). */
 static int g_present_n;
 static void present_counter(uint8_t *img) { (void)img; g_present_n++; }
 static void test_present_hook(void) {
@@ -122,7 +121,7 @@ static void test_present_hook(void) {
     platform_set_loop(1);
     g_present_n = 0;
     platform_tick(g_img);
-    CHECK(g_present_n == 0, "en el bucle no presenta (lo hace el frame hook)");
+    CHECK(g_present_n == 1, "en el bucle también se presenta en cada VBL");
 
     platform_set_loop(0);
     platform_set_present(NULL);
@@ -279,27 +278,42 @@ static void test_mouse_click_state(void) {
     platform_input_set_auto(1);
 }
 
-/* --- T-073c (guardia): el clic izquierdo salta; sin botón no salta --- */
-static void test_left_click_skips(void) {
+/* --- Guardia del modelo de botones original:
+ * izquierdo = acción sin skip; derecho = acción + skip; sin botón = nada.
+ * `platform_input_apply_skip` es el override que la HAL aplica al salir de
+ * `wait_frame` (en el port lo llama el hook de instrumentación). --- */
+static void test_click_skip(void) {
     platform_input_set_auto(0);
 
-    platform_mouse_set(160, 100, 1);       /* izquierdo */
+    platform_mouse_set(160, 100, 1);       /* izquierdo: acción, no skip */
     g_img[A_IKBD_PACKET] = 0xff;
+    g_img[A_SKIP_TRANSITION] = 0xff;
     wait_frame(g_img);
-    CHECK(g_img[A_SKIP_TRANSITION] == 0xff,
-          "el clic izquierdo debe saltar la transición");
+    platform_input_apply_skip(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
+          "el izquierdo debe marcar acción");
+    CHECK(g_img[A_SKIP_TRANSITION] == 0,
+          "el izquierdo NO debe saltar la transición");
 
-    platform_mouse_set(160, 100, 0);       /* sin botón */
+    platform_mouse_set(160, 100, 2);       /* derecho: acción + skip */
     g_img[A_IKBD_PACKET] = 0xff;
+    g_img[A_SKIP_TRANSITION] = 0;
     wait_frame(g_img);
+    platform_input_apply_skip(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
+          "el derecho también debe marcar acción");
+    CHECK(g_img[A_SKIP_TRANSITION] == 0xff,
+          "el derecho SÍ debe saltar la transición");
+
+    platform_mouse_set(160, 100, 0);       /* sin botón: ni acción ni skip */
+    g_img[A_IKBD_PACKET] = 0xff;
+    g_img[A_SKIP_TRANSITION] = 0xff;
+    wait_frame(g_img);
+    platform_input_apply_skip(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
+          "sin botón no debe marcar acción");
     CHECK(g_img[A_SKIP_TRANSITION] == 0,
           "sin botón no debe saltar la transición");
-
-    platform_mouse_set(160, 100, 2);       /* derecho: sin función */
-    g_img[A_IKBD_PACKET] = 0xff;
-    wait_frame(g_img);
-    CHECK(g_img[A_SKIP_TRANSITION] == 0,
-          "el botón derecho no debe saltar la transición");
 
     platform_input_set_auto(1);
 }
@@ -569,7 +583,7 @@ int main(void) {
     test_input_tick();
     test_real_input();
     test_mouse_click_state();
-    test_left_click_skips();
+    test_click_skip();
     test_vbl();
     test_prg_loader();
     test_boot_language();
@@ -580,7 +594,8 @@ int main(void) {
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, log, present, cpu_delay, cpu_cycles, video, "
-           "entrada, reloj, tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
+    printf("RESULTADO: OK (fs, log, present por VBL, cpu_delay, cpu_cycles, "
+           "video, entrada/botones, reloj, tick VBL, loader PRG, idioma, "
+           "musica PSG, Timer A, RMS)\n");
     return 0;
 }

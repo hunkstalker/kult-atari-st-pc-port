@@ -24,6 +24,7 @@
 #include "platform.h"
 
 extern uint8_t *g_kult_img;
+extern void wait_frame(void);   /* src/input.c: escribe $1a570 (skip) */
 
 typedef struct {
     void *fn;
@@ -330,6 +331,11 @@ void __cyg_profile_func_exit(void *this_fn, void *call_site) {
                              ? g_stack[g_depth - 2] : 0;
         if (this_fn == (void *)anim_bank || this_fn == (void *)anim_bank_build)
             bank_mark(this_fn, caller);
+        /* HAL: el core `wait_frame` acaba de escribir $1a570 desde el bit0 del
+         * IKBD. Lo pisamos con el botón derecho (izquierdo = acción sin skip),
+         * igual que el intercept de $1a570 del motor legacy. */
+        if (this_fn == (void *)wait_frame && g_kult_img)
+            platform_input_apply_skip(g_kult_img);
         g_depth--;
     }
 }

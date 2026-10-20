@@ -74,8 +74,8 @@ static void sleep_ns(uint64_t ns) {
 
 static uint32_t g_frames;
 static void (*g_tick)(uint8_t *img);
-static void (*g_present)(uint8_t *img);   /* presentación durante el arranque */
-static int g_in_loop;                     /* 1 = ya en game_loop (presenta el hook) */
+static void (*g_present)(uint8_t *img);   /* presentación por VBL (arranque y bucle) */
+static int g_in_loop;                     /* histórico: ya en game_loop (compat.) */
 
 /* Ritmo en tiempo real (sólo en modo ventana): cada VBL consume 20 ms de reloj. */
 static int g_rt;
@@ -85,12 +85,11 @@ static uint32_t g_rt_count;
 static uint64_t g_cpu_acc_us;    /* acumulador de retardos dbf (< 1 ms) */
 static uint32_t g_cpu_hz;        /* Hz de la CPU efectiva (lazy, KULT_CPU_HZ) */
 static int g_cpu_busy;           /* evita reentrada tick -> cpu_delay */
-static int g_in_delay;           /* 1 = dentro de cpu_delay: presentar al VBL */
 
 void platform_time_init(void) {
     g_frames = 0; g_tick = 0; g_rt = 0;
     g_present = 0; g_in_loop = 0;
-    g_cpu_acc_us = 0; g_cpu_hz = 0; g_cpu_busy = 0; g_in_delay = 0;
+    g_cpu_acc_us = 0; g_cpu_hz = 0; g_cpu_busy = 0;
 }
 
 void platform_set_tick(void (*fn)(uint8_t *img)) { g_tick = fn; }
@@ -135,10 +134,10 @@ void platform_tick(uint8_t *img) {
      * dispara sus ISR a su propia frecuencia (música ~289 Hz, PCM ~5 kHz). */
     platform_audio_tick(img, VBL_US);
 
-    /* Durante el arranque, presentar y bombear SDL en cada VBL: las esperas de
-     * `wait_frame` (0x13698) leen el ratón/teclado y la ventana no se queda
-     * congelada en negro. En el bucle presenta el frame hook del driver. */
-    if (g_present && (!g_in_loop || g_in_delay))
+    /* Presentar y bombear SDL en CADA VBL, también dentro del bucle. Las
+     * animaciones de los comandos (puertas, wipes) se quedan en `wait_vbl` y no
+     * pasan por el frame hook; sin esto se oyen pero no se ven. */
+    if (g_present)
         g_present(img);
 
     if (g_rt) {
@@ -200,9 +199,7 @@ static void cpu_charge_us(uint64_t us) {
         if (now >= end) break;
         uint64_t next_vbl = g_rt_base_ns + (uint64_t)(g_rt_count + 1) * VBL_NS;
         if (now >= next_vbl) {                   /* VBL vencido: corre el tick */
-            g_in_delay = 1;
             platform_tick(g_kult_img);
-            g_in_delay = 0;
             continue;
         }
         uint64_t wake = next_vbl < end ? next_vbl : end;

@@ -80,14 +80,15 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
    **colores correctos**, guardado, audio, morir → reiniciar sala. **Controles**:
-   el **clic izquierdo** interactúa y **salta** las transiciones/reveal (como se
-   decidió para el port); el botón derecho no tiene función. **Ritmo**: el port va a
+   **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
+   **derecho** = acción + skip (puertas y A/B/C). **Ritmo**: el port va a
    50 VBL/s; si una animación va acelerada **sin clicar**, es **T-073** (trabajo
    de CPU no modelado), no un fallo de esta validación. En la intro: **A** son
    3 retratos con descripciones, **B** son 4 retratos con descripciones y **C**
    es el retrato del Maestro con **diálogo** (el único); solo C se mueve.
    **T-073c ✅**: el `dbf` inline de `0x16dec` ya se cobra con
-   `cpu_delay_cycles` (ver `notes/0019`). Si aún se notara acelerado, calibrar
+   `cpu_delay_cycles` (ver `notes/0019`). **T-074 ✅ (HAL)**: botones y
+   presentación por VBL (ver `notes/0020`). Si aún se notara acelerado, calibrar
    `KULT_CPU_HZ`/`KULT_ST_CONTEND`, no parchear la animación.
 5. **Si algo falla**: mirar **`kult.log`** (junto al `.exe`) y/o ejecutar
    **`kult-headless.exe`** desde una consola (imprime el diagnóstico).
