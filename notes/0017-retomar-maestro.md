@@ -168,5 +168,5 @@ No des por hecho que C es B ni que los 4 bancos son el Maestro.
   `notes/0020` (izquierdo/teclado sin skip; derecho con skip).
 - `make test` **499**, `make test-port` OK (nueva `test_cpu_charge_cycles`).
 - Exe estándar `fc4108e473a9d44c722245345a44fa32` (headless `e37f65…`, ZIP
-  `8c9266…`). Falta la validación visual del usuario en Windows.
+  `8c9266…`). Validación visual confirmada por el usuario; commit `3235aa6`.
 - Detalle completo, ASM, medición y verificación: **`notes/0019-fix-timing-c.md`**.

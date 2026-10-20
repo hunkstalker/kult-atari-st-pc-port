@@ -13,12 +13,11 @@
   en el port cobra ciclos por el mismo reloj de T-073b.
 - Cadencia: de ~3 VBL/frame a ~**7,6 VBL/frame** (3 + 4,6 VBL del `dbf`).
   A/B no usan `0x16dec`; el input no se toca.
-- `make test`: **499**; `make test-port`: OK (incluye `test_cpu_charge_cycles`;
+- `make test`: **499** en el momento del fix (actual: **511**); `make test-port`: OK (incluye `test_cpu_charge_cycles`;
   la guardia de input actual es `test_click_skip`, ver `notes/0020`).
 - Exe estándar: `build-win/kult-0.1.0-win64/kult.exe`
   md5 **`fc4108e473a9d44c722245345a44fa32`**.
-- Pendiente: validación visual del usuario en Windows (la run automática no
-  llega a C).
+- Validación visual: confirmada por el usuario; commit `3235aa6`.
 
 ## 2. Síntoma y modelo
 
@@ -142,8 +141,8 @@ tienen sus esperas.
   - `kult-headless.exe` md5 `e37f6592286f1929c04efc46d9051eef`
   - ZIP md5 `8c926644eeb259737047ba4b49d6c2a7`
 - La run automática (`KULT_AUTOINPUT` + `KULT_F12_AT`) no llega a C; la
-  validación visual queda para el usuario. El fix no es un ajuste a ojo: sale
-  del ASM y del reloj de CPU ya usado por el resto del port.
+  validación visual la confirmó el usuario (commit `3235aa6`). El fix no es un
+  ajuste a ojo: sale del ASM y del reloj de CPU ya usado por el resto del port.
 
 ## 7. Referencias
 

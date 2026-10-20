@@ -172,9 +172,9 @@ Recogidas como ADR en `docs/adr/`:
   real para los `dbf` transcritos + **coste medido por función** del oráculo
   (`-finstrument-functions` solo en el port, `platform/cpuwork_costs.inc`, 79
   funciones). El port cobra ciclos y cede VBLs; `KULT_CPU=0` lo apaga.
-  **T-073c** resuelto (ver abajo); queda calibración por escenas/casos no
-  medidos (p.ej. `palette_cycle`). Detalle: `notes/0015`.
-- **T-073c — Maestro (pantalla C, resuelto; pendiente validación visual)**:
+  **T-073c** resuelto y validado (commit `3235aa6`); queda calibración por
+  escenas/casos no medidos (p.ej. `palette_cycle`). Detalle: `notes/0015`.
+- **T-073c — Maestro (pantalla C, resuelto y validado por el usuario)**:
   **A** 3 retratos pixel + descripciones; **B** 4 retratos lift + descripciones
   (4 bancos `15ac8`/`0x36`); **C** 1 retrato del Maestro + lift + **diálogo**
   (único diálogo y único retrato que se mueve), después de B. La aceleración de

@@ -107,8 +107,8 @@ Tareas: `TODO.md`.
   Prueba nueva `test_cpu_charge_cycles`. `make test` **499**, `make test-port`
   OK, builds nativo/win y ZIP. Exe nuevo
   `fc4108e473a9d44c722245345a44fa32` (headless `e37f65…`, ZIP `8c9266…`).
-  C pasa de ~3 a ~7,6 VBL/frame; A/B no usan `16dec`. Falta la validación
-  visual del usuario. Detalle: `notes/0019-fix-timing-c.md`
+  C pasa de ~3 a ~7,6 VBL/frame; A/B no usan `16dec`. **Validación visual
+  posterior: confirmada; commit `3235aa6`.** Detalle: `notes/0019-fix-timing-c.md`
   (resumen en `notes/0017` §8). *(El input se corrigió en la sesión 23; ver
   `notes/0020`.)*
 - **Sesión 21 — guardrails T-073c**: reglas duras en `AGENTS.md` (§ T-073c),
@@ -276,10 +276,10 @@ Tareas: `TODO.md`.
 - **M0–M4 hechas**: el juego arranca con el **menú de idioma fiel**, avanza frames,
   **headless**, con **ventana SDL3 jugable** (render + entrada real + ritmo 50 Hz)
   y **audio** (Timer A del MFP + PSG/YM2149 + SDL).
-- **M6 en curso**: T-060 ✅ (menú fiel); **T-061 pendiente de la validación del
-  usuario** (checklist en `docs/VERIFICACION.md`, limitaciones en
+- **M6 en curso**: T-060 ✅ (menú fiel); **T-061 = validación completa en
+  Windows, en curso** (checklist en `docs/VERIFICACION.md`, limitaciones en
   `docs/LIMITACIONES.md`). Incluye **morir → reiniciar sala** (`reset_clear`, core).
-- **T-073c (Maestro C) resuelto, pendiente validación visual**: A/B/C
+- **T-073c (Maestro C) resuelto y validado (commit `3235aa6`)**: A/B/C
   corregidas. A: 3 retratos pixel + descripciones; B: 4 retratos lift +
   descripciones; C: 1 retrato del Maestro + lift + diálogo (único diálogo y
   único retrato que se mueve), después de B. La causa de la aceleración era el

@@ -58,8 +58,8 @@ corregidos en la HAL (`OS_SCREEN_BASE=0x98000`) y **primera pantalla = título
 visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
 **T-073 🚧**: ritmo real: **T-073a ✅** (`cpu_delay` real), **T-073b ✅**
 (coste medido por función con `-finstrument-functions` + tabla del oráculo) y
-**T-073c ✅** (el `dbf` inline de `0x16dec` ya se cobra con `cpu_delay_cycles`;
-ver `notes/0019`). Queda calibración fina por escenas/casos no medidos (p.ej.
+**T-073c ✅ validado** (el `dbf` inline de `0x16dec` ya se cobra con
+`cpu_delay_cycles`; validación del usuario y commit `3235aa6`; ver `notes/0019`). Queda calibración fina por escenas/casos no medidos (p.ej.
 `palette_cycle`). Ver `notes/0015`.
 
 ## M7 — Empaquetado/release
