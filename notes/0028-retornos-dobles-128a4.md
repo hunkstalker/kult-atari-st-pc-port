@@ -1,11 +1,13 @@
 # 0028 — Retornos dobles de `elem_command` (`0x128a4`): deuda H-el1
 
-> **Estado:** deuda documentada, **no implementada**. Esta nota fija el análisis,
-> el alcance y el plan para una sesión nueva. No se ha tocado `src/` para esto.
+> **Estado:** **implementado y probado** (sesión 30, T-081). El aborto se
+> propaga por `elem_command_ex`/`elem_command_wrap_ex` a los 12 llamantes; los
+> tests diferenciales cubren las dos salidas (`$1ad0a` y clase no encontrada).
+> La validación visual del punto 4 queda pendiente del usuario.
 >
 > **Síntoma que la destapó:** artefactos gráficos en el reveal de la estrella /
-> elemento (punto 4). El reveal sigue ejecutándose después de una salida
-> anticipada de `elem_command` y pinta con `A_ELEM_*` viejo.
+> elemento (punto 4). El reveal seguía ejecutándose después de una salida
+> anticipada de `elem_command` y pintaba con `A_ELEM_*` viejo.
 
 ## 1. Evidencia en el log
 
@@ -63,8 +65,8 @@ Mapeo actual:
 | 11 | `scale_loop` | `src/scale.c` | `elem_command_wrap` |
 | 12 | `attract` | `src/screens.c` | `elem_command` directo |
 
-Arreglar solo `reveal_pixel` corrige el glitch de la estrella, pero deja 11
-rutas con la misma semántica sin modelar.
+Arreglar solo `reveal_pixel` corregiría el glitch de la estrella, pero dejaría 11
+rutas con la misma semántica sin modelar. En la sesión 30 se corrigieron las 12.
 
 ## 4. Por qué produce artefactos
 
@@ -84,8 +86,8 @@ Secuencia actual:
   (`src/commands.c`): devuelve 2 y el llamante se salta `palette_cycle`.
 - `0x15888` (`icon_ring_loop`): **modelado** sustituyendo el
   `addq.l #4,a7` + `bra 0x103ae` por el despacho.
-- `0x128a4`: **no modelado** (esta nota).
-- Quedan por auditar otros `addq.l #N,a7` + `rts`/`bra` (ver §8).
+- `0x128a4`: **modelado** en la sesión 30 con `elem_command_ex` (esta nota).
+- Auditoría de otros `addq.l #N,a7` + `rts`/`bra`: ver §9 (no queda ninguno).
 
 ## 6. Por qué los tests no lo detectan
 
@@ -151,6 +153,14 @@ Comprobar:
 
 ## 9. Auditoría de otros retornos dobles
 
+> **Resultado (sesión 30):** barrido del PRG con Capstone sobre `addq.l #N,a7`
+> (34 apariciones) y sobre `adda.l`/`lea ...(a7),a7`. Solo hay **tres retornos
+> dobles reales**: `0x1294c` (esta nota, ya modelado), `0x14f4a`
+> (`anim_threshold`, ya modelado por `anim_threshold2`) y `0x1592e`
+> (`icon_ring_loop`, ya modelado sustituyendo el `addq` + `bra 0x103ae`). El
+> resto son limpiezas normales de argumentos tras `trap`/`trap #14` o de
+> `movem`; no quedan retornos dobles sin modelar.
+
 Buscar sistemáticamente en el PRG:
 
 - `addq.l #N,a7` seguido de `rts`.
@@ -182,7 +192,7 @@ Sospechosos ya conocidos:
 - No usar `stop_pc` en `0x1294c` como única prueba.
 - Mantener el comportamiento actual del A6 cuando no hay aborto.
 
-## 11. Checklist para la sesión nueva
+## 11. Checklist de la sesión 29 (histórico; completado en la 30)
 
 1. Leer esta nota, `notes/0017` §5, `REVISION.md` H-el1/H-SC1 y
    `test/test_element.py`/`test/test_reveal.py`.
@@ -198,7 +208,26 @@ Sospechosos ya conocidos:
 9. `make test` + `make test-port` + builds.
 10. Actualizar esta nota/TODO/RETOMAR y hacer commit.
 
-## 12. Referencias
+## 12. Implementación (sesión 30)
+
+- `src/element.c`: `elem_command_ex(..., int *aborted)` marca el aborto en las
+  dos salidas; `elem_command` y `elem_command_wrap` se mantienen como envoltorios
+  compatibles sin estado, y se añaden `elem_command_wrap_ex`.
+- `src/reveal.c`, `src/handlers.c`, `src/scale.c`, `src/screens.c`: los 12
+  llamantes consultan el aborto y salen con el script avanzado **sin** blit,
+  reveal ni tocar `A_ELEM_*`. En `attract` se devuelve `entry_out`.
+- Tests nuevos (12): `test_fun_12f28_abort`, abortos de `blit_dispatch_a/b`,
+  `overlay_dispatch_1/2`, `reveal_box_build/wait_a/wait_b`, `elem_blit_vbl`,
+  `scale_prep`, `scale_loop` y `attract`; cada uno con `$1ad0a` y clase no
+  encontrada, comparando imagen y A6.
+- `make test`: **511** verdes; `make test-port` OK; nativo/Windows/ZIP OK.
+- Exe Windows `c7b8dac1531acd828cf037ac8f309d2d`; headless
+  `76e7974e1f52ce5eb65f9c542dec4327`; ZIP
+  `787bd41d600b3d0ec19046d296d4df08`.
+- **Pendiente:** validación visual del punto 4 en Windows (la nota se apoya en
+  el diferencial y en el log antiguo).
+
+## 13. Referencias
 
 - `/app/kult-atari-st-c/docs/REVISION.md`: H-el1 (ALTA), H-SC1, H-an2,
   H-el2, H-el3.

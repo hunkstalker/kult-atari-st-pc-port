@@ -61,9 +61,10 @@ en `platform_disk_delay` (`notes/0025`), sin tocar `src/`. Como se aplica a
 después de ECHE), para no perder el inicio de la canción ni esperar ~20 s tras
 el idioma.
 
-**T-081 🚧 (H-el1, siguiente)**: retornos dobles de `elem_command` (`0x128a4`)
-sin propagar a 12 llamantes; causa probable del glitch 4516/4640/4767. Plan:
-`notes/0028-retornos-dobles-128a4.md`. Requiere tocar `src/`.
+**T-081 ✅ (H-el1, sesión 30)**: retornos dobles de `elem_command` (`0x128a4`)
+propagados a los 12 llamantes con `elem_command_ex`/`elem_command_wrap_ex`;
+tests por llamante y auditoría en `notes/0028-retornos-dobles-128a4.md`.
+**Pendiente:** validación visual del punto 4.
 
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
 `build-win/kult-0.1.0-win64.zip` (exe `3237a4d7…`): descomprimir sobre la

@@ -51,9 +51,9 @@ bloqueantes. Ver `notes/0011`–`notes/0014`.
   desde PRES/DRAP hasta después de ECHE), para no perder el inicio de la canción
   ni esperar ~20 s tras el idioma. Ver `notes/0025` y `notes/0026`.
 - **Retornos dobles**: `elem_command` (`0x128a4`) puede hacer
-  `addq.l #4,a7; rts` (aborta a su llamante). El C actual no lo propaga en 12
-  llamantes; `reveal_pixel` puede revelar con `A_ELEM_*` viejo. No parchear solo
-  el reveal: ver `notes/0028-retornos-dobles-128a4.md` (T-081).
+  `addq.l #4,a7; rts` (aborta a su llamante). El port lo modela con
+  `elem_command_ex`/`elem_command_wrap_ex` y los 12 llamantes; no parchear solo
+  el reveal. Ver `notes/0028-retornos-dobles-128a4.md` (T-081, resuelto).
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único

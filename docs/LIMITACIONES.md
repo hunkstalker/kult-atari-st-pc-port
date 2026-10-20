@@ -46,10 +46,11 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   contenedor sin `/dev/snd`/`DISPLAY` no suena (y el ejecutable cae a headless).
 
 ## Pendientes / futuros
-- **Retornos dobles de `elem_command` (H-el1, T-081).** Las salidas
-  anticipadas de `0x128a4` (`addq.l #4,a7; rts`) no se propagan a los 12
-  llamantes; un reveal puede seguir con `A_ELEM_*` viejo y producir artefactos.
-  Documentado en `notes/0028-retornos-dobles-128a4.md`; no implementado.
+- ~~**Retornos dobles de `elem_command` (H-el1, T-081).**~~ **Resuelto en la
+  sesión 30**: el aborto se propaga a los 12 llamantes
+  (`elem_command_ex`/`elem_command_wrap_ex`) y los tests cubren las dos salidas.
+  Queda solo la validación visual del punto 4. Detalle:
+  `notes/0028-retornos-dobles-128a4.md`.
 - **M5 — filtros CRT** (`SDL_GPU` + shaders): **extra opcional, no prioritario**,
   al final (ver `notes/0009`). Sin filtros hoy (`SDL_Renderer` + escalado entero).
 - **Reinicio `0x106f2` (`l_0101a8`)**: **abierto/pendiente** (no portado). Es un

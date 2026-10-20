@@ -5,6 +5,18 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 30 — H-el1 resuelta (T-081)**: las salidas anticipadas de
+  `elem_command` (`0x128a4`, `$1ad0a` o clase no encontrada) ya se propagan a
+  los **12 llamantes** con `elem_command_ex`/`elem_command_wrap_ex`; ningún
+  llamante hace blit/reveal ni toca `A_ELEM_*` tras el aborto. El diagnóstico
+  diferencial confirmó A6=`script+2` y pantalla intacta en el original, frente a
+  32.640 bytes alterados por el C anterior. Tests nuevos por llamante; auditoría
+  de otros `addq.l #N,a7`: solo `0x1294c`, `0x14f4a` y `0x1592e`, los tres ya
+  modelados. `make test` **511**, `test-port`, nativo/Windows/ZIP OK. Exe
+  Windows `c7b8dac1531acd828cf037ac8f309d2d` (headless
+  `76e7974e1f52ce5eb65f9c542dec4327`, ZIP
+  `787bd41d600b3d0ec19046d296d4df08`; Linux `f0f560b6…`). **Pendiente:** validar
+  visualmente el punto 4 en Windows. Detalle: **`notes/0028`**.
 - **Sesión 29 — deuda H-el1 documentada (T-081)**: el glitch gráfico del punto 4
   apunta a `reveal_pixel` (`0x12f28`) ejecutándose tras una salida anticipada de
   `elem_command` (`0x128a4`, `addq.l #4,a7; rts`). El C actual no propaga el
@@ -293,22 +305,22 @@ Tareas: `TODO.md`.
   **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
   Pendientes: animaciones de `object_info_card` (punto 3) y glitches gráficos
   (punto 4).
-- **Deuda H-el1 (T-081, sesión 29)**: las salidas anticipadas de
-  `elem_command` (`0x128a4`) no se propagan a los 12 llamantes; `reveal_pixel`
-  puede ejecutar un reveal con `A_ELEM_*` viejo. Causa probable del glitch del
-  punto 4. Plan completo en **`notes/0028-retornos-dobles-128a4.md`**. Requiere
-  autorización para tocar `src/`.
+- **H-el1 resuelta (T-081, sesión 30)**: las salidas anticipadas de
+  `elem_command` (`0x128a4`) se propagan a los 12 llamantes; `reveal_pixel` ya
+  no ejecuta reveal ni usa `A_ELEM_*` viejo tras el aborto. Tests por llamante y
+  auditoría en **`notes/0028-retornos-dobles-128a4.md`**. Queda la validación
+  visual del punto 4 en Windows.
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `3237a4d7…`, sin traza `Y`/`V`; la traza
-  (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
-  lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
-  (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
-  corregida; las capturas de A/B/C quedan en `temp/screenshots/` (no
-  versionadas); no se requiere capturar más.
+- **Build estándar actual**: exe Windows `c7b8dac1…`, sin traza `Y`/`V`; la
+  traza (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` solo
+  cambia en `elem_command`/`reveal`/`scale`/`handlers`/`screens` (T-081) y la
+  anotación de timing de `src/loop.c`; ambas autorizadas. `make test` **511** y
+  `make test-port` verdes. Las capturas de A/B/C quedan en
+  `temp/screenshots/` (no versionadas); no se requiere capturar más.
 - **Colores del juego corregidos** (sesión 14): `OS_SCREEN_BASE = 0x98000` en
   `platform/include/os.h` (Physbase es HAL); con `0x80000` las pantallas y su
   paleta caían dentro de ECHE/heap del juego. **Ritmo en observación**: el port
@@ -320,27 +332,22 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-081 — retornos dobles de `0x128a4` (H-el1), documentado en
-`notes/0028-retornos-dobles-128a4.md`.**
+**Validar visualmente el punto 4** (glitches 4516/4640/4767) con el ZIP nuevo
+y, después, el **punto 3** (`object_info_card`/`16dec` en 4905–5205).
 
-0. Leer `notes/0028`, `notes/0017` §5, `REVISION.md` (H-el1/H-SC1) y
-   `test/test_element.py`/`test/test_reveal.py`. Guardias: `make test` y
-   `make test-port`.
-1. Confirmar el glitch con build Y/V: `reveal_pixel` 4471–4919 y salida
-   anticipada de `elem_command` (`$1ad0a` o clase no encontrada).
-2. Añadir test de `reveal_pixel` que falle con el C actual; implementar el
-   estado de aborto en `elem_command`/`elem_command_wrap`.
-3. Corregir `reveal_pixel` y validar el punto 4 visualmente.
-4. Extender el aborto a los otros 11 llamantes y auditar otros
-   `addq.l #N,a7` + `rts`/`bra`.
-5. Después **punto 3** (`object_info_card`/`16dec` en 4905–5205).
-6. Cerrar **T-061** (validación Windows) → **T-072** (ingesta `.STX`) →
+1. En Windows, descomprimir `build-win/kult-0.1.0-win64.zip` sobre la carpeta
+   de datos y ejecutar `kult.exe`; comprobar que el reveal de la estrella /
+   elemento ya no deja artefactos tras una salida anticipada de `elem_command`.
+2. Si hay glitches, capturar `kult.log` y una traza Y/V; no usar
+   `KULT_FRAME_GATE` ni parches en la HAL.
+3. Pasar al **punto 3** (`object_info_card`/`16dec`).
+4. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
+   guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) →
    **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
-Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8),
-**`notes/0023-costes-sangre-espacio.md`**, **`notes/0025-espera-carga-fond.md`**
-y **`notes/0028-retornos-dobles-128a4.md`**.
-No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
+Detalle autoritativo: **`notes/0028-retornos-dobles-128a4.md`** (H-el1),
+**`notes/0017-retomar-maestro.md`** (§8), **`notes/0023`**, **`notes/0025`** y
+**`notes/0026`**. No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos
 - Core/diferencial: `make test` (499), `make test PYTEST_ARGS=-n0`,
