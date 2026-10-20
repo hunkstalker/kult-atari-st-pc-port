@@ -192,8 +192,8 @@ Recogidas como ADR en `docs/adr/`:
   pisa `$1a570` al salir de `wait_frame` (hook de instrumentación). Además,
   `platform_tick` presenta en **cada VBL**, así se ven las animaciones que corren
   en `wait_vbl` (puertas, wipes). `src/` intacto; `test_click_skip` y
-  `test_present_hook`. Exe `e3d0b6ee…`, headless `5ec4eb9d…`, ZIP
-  `c709bfb6…`. Detalle: **`notes/0020-input-hal-y-presentacion.md`**.
+  `test_present_hook`. Exe `b7edc936…`, headless `7faac3d3…`, ZIP
+  `97d56789…`. Detalle: **`notes/0020-input-hal-y-presentacion.md`**.
 - **Cursor 16×16 / máximo IKBD (T-075, sesión 24)**: el cursor reaparecía por el
   lado contrario en el borde. El juego configura el ratón absoluto con
   `Ikbdws` `09 01 30 00 b8` → máximo **304×184**; la HAL lo emula con
@@ -207,12 +207,20 @@ Recogidas como ADR en `docs/adr/`:
   `boot_enter_game()` reproduce `0x10158` (modo 7, `0xc001`, Maestro/objeto,
   `game_loop`). `src/` intacto; `KULT_RESTART_AT` diagnóstico. Detalle:
   **`notes/0022-reinicio-tras-muerte.md`**.
-- **Siguiente:** validar el exe nuevo en Windows: izquierdo/teclado = acción y
-  animaciones visibles; derecho = acción + skip; A/B/C y puertas; cursor sin
-  wrap en los bordes; morir → vuelve el Maestro/objeto. Si C no cuadra de ritmo,
-  calibrar con `KULT_CPU_HZ`/`KULT_ST_CONTEND`, sin parchear animaciones.
-  Después **T-061** (validación Windows: título/idioma, partida/colores,
-  guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
-  → **A1** → **N3** → **A2** → **M5**.
+- **Ritmo de la muerte (T-077, sesión 26, punto 1)**: sangre (`181f0`/`13d0e`)
+  y viaje espacial (`1834a`/`18316`) iban acelerados por coste 0. La sangre se
+  cobra **por línea** en `reveal_line` con la fórmula medida
+  `1063 + 198 × pasos`; `181f0` se deja a 0 para no meter un retardo previo.
+  El viaje espacial cobra `1834a` (2.301.836/101 ≈ 22.790/pasada). Tabla
+  regenerada (80 funciones). `src/` intacto. **Validado en Windows**: sangre
+  perfecta y espacio 101 VBL. Detalle:
+  **`notes/0023-costes-sangre-espacio.md`**.
+- **Siguiente:** **punto 2 (estrella final)**: medir el bloque `15da6`
+  (delay 20; en la run nueva 2474/2479/2484) y cobrar el blit que falta solo
+  con delay > 0. Después punto 3 (`object_info_card`/`16dec` en 4905–5205) y
+  punto 4 (glitches: paleta/`palette_cycle` `0x16310`). Cerrar
+  **T-061** (validación Windows: título/idioma, partida/colores, guardado, audio,
+  morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** →
+  **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

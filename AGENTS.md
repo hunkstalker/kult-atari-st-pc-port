@@ -37,6 +37,10 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
   `0x10158`; el port lo emula en `boot/` con `longjmp` desde el hook de salida de
   `reset_clear` y `boot_enter_game()`. No es `0x106f2`; ver
   `notes/0022-reinicio-tras-muerte.md`.
+- **Ritmo de muerte**: la sangre se cobra por línea en `reveal_line`
+  (`13d0e`, fórmula medida 1063 + 198 × pasos) y el viaje espacial en
+  `icon_scale_loop` (`1834a`, 22.790/pasada); `181f0` no se cobra al entrar.
+  No se ajusta a mano. Ver `notes/0023`.
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único

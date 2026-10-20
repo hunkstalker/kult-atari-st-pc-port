@@ -5,6 +5,19 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 26 — ritmo de la muerte, punto 1 (T-077)**: sangre y viaje espacial
+  iban acelerados porque `room_reset` (`0x181f0`) e `icon_scale_loop`
+  (`0x1834a`) tenían coste 0 en `cpuwork_costs.inc`. La sangre se cobra **por
+  línea** en `reveal_line` (`0x13d0e`) con la fórmula medida del oráculo
+  **1063 + 198 × pasos** (pasos = max(|dx|,|dy|)+1); `181f0` se deja a 0 porque
+  cobrarlo al entrar era un retardo previo, no repartido. El viaje espacial
+  cobra `1834a` **2.301.836/101 ≈ 22.790 ciclos/pasada** (CPU del `icon_scale`
+  menos las 101 esperas de VBL). Tabla regenerada (80 funciones con coste).
+  `src/` intacto; 499 + `test-port` verdes. Exe nuevo
+  `b7edc93660ea7caadd87191f8ffeee7a` (headless `7faac3d3…`, ZIP
+  `97d56789…`). **Validado en Windows**: sangre perfecta; viaje espacial
+  `1834a` 2373–2473 = 101 VBL (101 pasadas del ASM, ~2,02 s). Detalle:
+  `notes/0023-costes-sangre-espacio.md`.
 - **Sesión 25 — reinicio tras morir (T-076)**: al morir se repetía la secuencia
   de muerte. El original termina `reset_clear` (`0x1682a`) con `bra.w 0x10158`
   (inicio del bucle); el C nativo solo hacía la parte de estado y **retornaba**.
@@ -12,7 +25,7 @@ Tareas: `TODO.md`.
   hace `longjmp` a un `setjmp` armado y `boot_enter_game()` reproduce `0x10158`
   (espera clic, modo 7, `0xc001`, Maestro/objeto, `game_loop`). `src/` intacto;
   diagnóstico `KULT_RESTART_AT`; 499 + `test-port` verdes. Exe nuevo
-  `e3d0b6ee0bc98be046b5a02c732fe0ec` (headless `5ec4eb9d…`, ZIP `c709bfb6…`).
+  `b7edc93660ea7caadd87191f8ffeee7a` (headless `7faac3d3…`, ZIP `97d56789…`).
   Detalle: `notes/0022-reinicio-tras-muerte.md`.
 - **Sesión 24 — cursor 16×16 y máximo IKBD**: el cursor reaparecía por el lado
   contrario al llegar al borde. Causa: el juego configura el ratón absoluto del
@@ -21,8 +34,8 @@ Tareas: `TODO.md`.
   319×199. Fix **solo HAL**: `platform_ikbdws()` parsea el comando 0x09,
   `platform_mouse_set()` recorta a ese máximo y `boot/boot.c` lo llama tras
   `crt0_init`. `src/` intacto; nueva prueba `test_ikbd_mouse_max`; 499 +
-  `test-port` verdes. Exe nuevo `e3d0b6ee0bc98be046b5a02c732fe0ec`
-  (headless `5ec4eb9d…`, ZIP `c709bfb6…`). Detalle:
+  `test-port` verdes. Exe nuevo `b7edc93660ea7caadd87191f8ffeee7a`
+  (headless `7faac3d3…`, ZIP `97d56789…`). Detalle:
   `notes/0021-cursor-e-ikbd.md`.
 - **Sesión 23 — input y presentación (HAL)**: el bug de puertas/A-B-C no era de
   `src/`: el core deriva acción y skip del bit0 del IKBD y nuestra HAL lo tenía
@@ -32,8 +45,8 @@ Tareas: `TODO.md`.
   instrumentación). Además, `platform_tick` ahora presenta en **cada VBL** (antes
   solo en arranque/CPU-delay), por lo que las animaciones de puerta que corren en
   `wait_vbl` ya se ven. **`src/` intacto**; 499 + `test-port` verdes; nueva
-  guardia `test_click_skip`. Exe nuevo `e3d0b6ee0bc98be046b5a02c732fe0ec`
-  (headless `5ec4eb9d…`, ZIP `c709bfb6…`). Detalle:
+  guardia `test_click_skip`. Exe nuevo `b7edc93660ea7caadd87191f8ffeee7a`
+  (headless `7faac3d3…`, ZIP `97d56789…`). Detalle:
   `notes/0020-input-hal-y-presentacion.md`.
 - **Sesión 22 — T-073c resuelto (timing de C)**: la causa era el `dbf` inline de
   `object_info_card` (`0x16dec`): el guion de C deja `wait=0x0a`, que produce
@@ -238,12 +251,18 @@ Tareas: `TODO.md`.
   `boot_enter_game()`, así vuelve el Maestro/objeto en vez de repetir la muerte.
   `src/` intacto; `KULT_RESTART_AT` para diagnóstico. Detalle:
   **`notes/0022-reinicio-tras-muerte.md`**.
+- **Ritmo de muerte (punto 1, sesión 26)**: `reveal_line` (`13d0e`) cobra por
+  línea (1063 + 198 × pasos) e `icon_scale_loop` (`1834a`) 22.790/pasada;
+  `room_reset` (`181f0`) se deja a 0 para no meter un retardo previo. **Validado
+  en Windows**: sangre perfecta y espacio 101 VBL (2373–2473). Detalle:
+  **`notes/0023-costes-sangre-espacio.md`**. Pendientes: estrella (punto 2),
+  animaciones de `object_info_card` (punto 3) y glitches (punto 4).
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `e3d0b6ee…`, sin traza `Y`/`V`; la traza
+- **Build estándar actual**: exe `b7edc936…`, sin traza `Y`/`V`; la traza
   (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
   lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
   (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
@@ -260,25 +279,27 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Validar el exe nuevo (input, presentación, cursor y reinicio) y cerrar T-061.**
+**Punto 1 validado (sangre/espacio). Seguir con el punto 2 (estrella final).**
 
-0. Leer `AGENTS.md` (§ T-073c), `notes/0020`, `notes/0021`, `notes/0022` y
-   `notes/0019` (y `notes/0017` §8). Guardias: `test_click_skip`,
-   `test_ikbd_mouse_max`.
-1. Probar en Windows:
-   - **izquierdo/teclado**: acción normal y animaciones de puerta/A-B-C visibles;
-   - **derecho**: acción + skip (puertas y A/B/C);
-   - **cursor**: se queda en el borde derecho/inferior sin reaparecer por el
-     lado contrario;
-   - **morir**: tras la animación vuelve el Maestro/objeto, sin bucle de muerte.
-2. Si C sigue sin cuadrar de ritmo, calibrar con `KULT_CPU_HZ`/
-   `KULT_ST_CONTEND` **sin** parchear animaciones.
-3. Después **T-061** (validación Windows: título/idioma, partida/colores,
+0. Leer `AGENTS.md` (§ T-073c), `notes/0023`, `notes/0022`, `notes/0021`,
+   `notes/0020` y `notes/0019` (y `notes/0017` §8). Guardias:
+   `test_click_skip`, `test_ikbd_mouse_max`.
+1. Punto 1 (**hecho**): sangre perfecta; espacio `1834a` 2373–2473 =
+   101 VBL, coincide con el ASM. Input, presentación y cursor siguen bien.
+2. Ahora **punto 2 (estrella final)**: en la run nueva el bloque está en
+   **2474/2479/2484** (`S 2474 20 0 172 0`, `S 2479 20 2 12 0`,
+   `S 2484 20 3 18 0`; `15cd8` en 2474–2484). Identificar/medir `15da6`
+   (delay 20, frames 0x00/2x12/3x18) y cobrar el blit que falta solo con
+   delay > 0, sin reactivar el parche global de delay 0.
+3. Después **punto 3** (animaciones de `object_info_card`/`16dec` en
+   4905–5205) y **punto 4** (glitches gráficos: 4516/4640/4767; el fallo de
+   paleta apunta a `palette_cycle`/`0x16310`, cuyo `dbra 0xffff` sigue omitido).
+4. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
    guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
    → **A1** → **N3** → **A2** → **M5**.
 
 Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8) y
-**`notes/0020-input-hal-y-presentacion.md`**.
+**`notes/0023-costes-sangre-espacio.md`**.
 No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos

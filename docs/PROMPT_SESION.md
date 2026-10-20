@@ -45,8 +45,14 @@ reaparece por el lado contrario. Detalle: `notes/0021-cursor-e-ikbd.md`.
 `longjmp` y vuelve al Maestro/objeto. Detalle:
 `notes/0022-reinicio-tras-muerte.md`.
 
+**T-077 ✅ (ritmo de muerte, punto 1)**: la sangre se cobra por línea en
+`reveal_line` (`13d0e`, fórmula medida 1063 + 198 × pasos) y el viaje espacial
+en `icon_scale_loop` (`1834a`, 22.790/pasada); `181f0` no se cobra al entrar.
+Sangre y viaje espacial ya no van instantáneos. Detalle:
+`notes/0023-costes-sangre-espacio.md`.
+
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip` (exe `e3d0b6ee…`): descomprimir sobre la
+`build-win/kult-0.1.0-win64.zip` (exe `b7edc936…`): descomprimir sobre la
 carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
 comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
 **morir → reiniciar (Maestro/objeto)** (checklist en `docs/VERIFICACION.md`). **Controles**:

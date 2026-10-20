@@ -27,6 +27,7 @@
 extern uint8_t *g_kult_img;
 extern void wait_frame(void);   /* src/input.c: escribe $1a570 (skip) */
 extern void reset_clear(void);  /* src/fileio.c: 0x1682a (bra 0x10158) */
+extern void reveal_line(void);  /* src/line.c: 0x13d0e (coste por longitud) */
 
 typedef struct {
     void *fn;
@@ -242,6 +243,24 @@ void __cyg_profile_func_enter(void *this_fn, void *call_site) {
             }
             if (g_hash[h].cost)
                 platform_cpu_charge_cycles(g_hash[h].cost);
+            /* 0x13d0e (`reveal_line`) no tiene coste fijo: recorre la recta
+             * (0x1a516,0x1a51a)->(0x1a518,0x1a51c). Medido con el oráculo en
+             * seis rectas y en el conjunto de `room_reset` (304 líneas,
+             * 1392 pasos, 596.918 ciclos): ajuste ponderado
+             * ciclos ≈ 1063 + 198 * pasos, con pasos = max(|dx|,|dy|)+1.
+             * Cobrar aquí (no en `room_reset`, que solo envuelve 16 llamadas
+             * por pasada) reparte el retardo entre las líneas, que es como lo
+             * gasta el original. */
+            if (this_fn == (const void *)reveal_line && g_kult_img) {
+                int32_t x0 = (int16_t)be16(g_kult_img + 0x1a516);
+                int32_t y0 = (int16_t)be16(g_kult_img + 0x1a51a);
+                int32_t x1 = (int16_t)be16(g_kult_img + 0x1a518);
+                int32_t y1 = (int16_t)be16(g_kult_img + 0x1a51c);
+                int32_t dx = x1 - x0; if (dx < 0) dx = -dx;
+                int32_t dy = y1 - y0; if (dy < 0) dy = -dy;
+                uint32_t steps = (uint32_t)((dx > dy ? dx : dy) + 1);
+                platform_cpu_charge_cycles(1063u + 198u * steps);
+            }
             /* Maestro/retrato con retardo 0: el `dbf` de 15da6 se salta, pero
              * el blit interno sigue costando CPU en el ST. Se cobra aparte
              * (KULT_15DA6_BLIT ciclos; **def. 0 = desactivado**). Las demas llamadas

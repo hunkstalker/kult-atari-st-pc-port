@@ -66,7 +66,9 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
    fichero reales) según el uso del original.
 6. **Morir → reiniciar:** al morir, tras la animación debe volver el
    **Maestro/objeto** del inicio del bucle (`reset_clear` → `bra 0x10158`,
-   emulado en `boot/`; ver `notes/0022`; **no** depende de `0x106f2`).
+   emulado en `boot/`; ver `notes/0022`; **no** depende de `0x106f2`). Antes,
+   la **sangre** y el **viaje espacial** deben durar como el original (costes
+   medidos en `notes/0023`).
 7. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
 
 ### Windows (paquete T-071)

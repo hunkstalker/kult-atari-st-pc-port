@@ -71,10 +71,12 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   duerme cediendo VBLs. **T-073c ✅**: el `dbf` inline de `0x16dec` (retrato de
   C) ya se cobra con `cpu_delay_cycles` (ver `notes/0019`). **T-074 ✅ (HAL)**:
   izquierdo/teclado = acción sin skip; derecho = acción + skip; presentación por
-  VBL para ver las animaciones de `wait_vbl` (ver `notes/0020`). Queda
-  **calibración fina por escenas** con `KULT_CPU_HZ`/`KULT_ST_CONTEND`;
-  `KULT_CPU=0` lo apaga. Los casos **no** medidos en la referencia (p.ej.
-  `palette_cycle`, cuyo `dbra 0xffff` se omitió en el core) pueden seguir rápidos.
+  VBL para ver las animaciones de `wait_vbl` (ver `notes/0020`). **T-077 ✅**:
+  `reveal_line` (`13d0e`, coste por línea) e `icon_scale_loop` (`1834a`) ya
+  tienen coste medido (ver `notes/0023`). Queda **calibración fina por escenas** con
+  `KULT_CPU_HZ`/`KULT_ST_CONTEND`; `KULT_CPU=0` lo apaga. Los casos **no**
+  medidos en la referencia (p.ej. `palette_cycle`, cuyo `dbra 0xffff` se omitió
+  en el core) pueden seguir rápidos.
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
 1. `make test` (499) y `make test-port` en verde.

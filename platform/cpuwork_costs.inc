@@ -494,10 +494,11 @@ static const cpuwork_sym k_cpuwork_costs[] = {
   { (void *)script_expr, 0x1606e, 126 },
   { (void *)script_jump_zero, 0x160aa, 64 },
   { (void *)pal_next_byte, 0x16210, 100 },
+  { (void *)icon_scale_loop, 0x1834a, 22790 },
   { (void *)sound_stop_supexec, 0x18f84, 58 },
   { (void *)ym_reset, 0x19282, 1786 },
 };
-static const unsigned k_cpuwork_ncosts = 79;
+static const unsigned k_cpuwork_ncosts = 80;
 
 /* Marcas (F12): todas las funciones mapeadas, coste 0. */
 static const cpuwork_sym k_cpuwork_marks[] = {
