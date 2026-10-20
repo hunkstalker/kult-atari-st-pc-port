@@ -231,10 +231,16 @@ Recogidas como ADR en `docs/adr/`:
   `SDL_HideCursor()` al abrir/recuperar foco y lo restaura al perder foco/cerrar;
   `src/` intacto. Exe `3237a4d7…`, headless `68ae05ea…`, ZIP `ad7d30dd…`.
   Detalle: **`notes/0027-cursor-sistema-sdl.md`**.
-- **Siguiente:** validar la espera de la estrella y seguir con el **punto 3**
-  (`object_info_card`/`16dec` en 4905–5205). El **punto 4** (glitches
-  4516/4640/4767) sigue abierto: el intento de `palette_cycle` se revirtió
-  porque esas trazas son `masked_word4`, no paleta. Cerrar
+- **Deuda H-el1 (T-081, sesión 29)**: las salidas anticipadas de
+  `elem_command` (`0x128a4`, `addq.l #4,a7; rts`) no se propagan a sus 12
+  llamantes; `reveal_pixel` puede ejecutar un reveal con `A_ELEM_*` viejo
+  (causa probable del glitch 4516/4640/4767). **No implementado**: plan,
+  alcance, diseño de aborto, tests y auditoría en
+  **`notes/0028-retornos-dobles-128a4.md`**. Requiere autorización para `src/`.
+- **Siguiente:** T-081 (H-el1), después validar la espera de la estrella y
+  seguir con el **punto 3** (`object_info_card`/`16dec` en 4905–5205). El
+  **punto 4** (glitches 4516/4640/4767) apunta a H-el1; el intento de
+  `palette_cycle` se revirtió. Cerrar
   **T-061** (validación Windows: título/idioma, partida/colores, guardado, audio,
   morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** →
   **A2** → **M5**.

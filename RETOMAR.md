@@ -5,6 +5,13 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 29 — deuda H-el1 documentada (T-081)**: el glitch gráfico del punto 4
+  apunta a `reveal_pixel` (`0x12f28`) ejecutándose tras una salida anticipada de
+  `elem_command` (`0x128a4`, `addq.l #4,a7; rts`). El C actual no propaga el
+  aborto y sigue revelando con `A_ELEM_*` viejo (log: `12f28` 4471, `12fb6`
+  hasta 4919). **No se ha tocado `src/`**: queda documentado el alcance de los
+  12 llamantes, el diseño del arreglo y el plan de pruebas/auditoría en
+  `notes/0028-retornos-dobles-128a4.md` (T-081). Detalle: **`notes/0028`**.
 - **Sesión 28 — cursor del sistema (T-080)**: se veía el cursor de Windows
   encima del cursor del juego. `platform/video_sdl.c` oculta el cursor del
   sistema con `SDL_HideCursor()` al abrir/recuperar foco y lo muestra al perder
@@ -286,6 +293,11 @@ Tareas: `TODO.md`.
   **`notes/0025-espera-carga-fond.md`** y **`notes/0026-esperas-de-disco.md`**.
   Pendientes: animaciones de `object_info_card` (punto 3) y glitches gráficos
   (punto 4).
+- **Deuda H-el1 (T-081, sesión 29)**: las salidas anticipadas de
+  `elem_command` (`0x128a4`) no se propagan a los 12 llamantes; `reveal_pixel`
+  puede ejecutar un reveal con `A_ELEM_*` viejo. Causa probable del glitch del
+  punto 4. Plan completo en **`notes/0028-retornos-dobles-128a4.md`**. Requiere
+  autorización para tocar `src/`.
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
@@ -308,30 +320,26 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Puntos 1 y 2 hechos. Validar la espera de la estrella y seguir con el punto 3
-(`object_info_card`).**
+**T-081 — retornos dobles de `0x128a4` (H-el1), documentado en
+`notes/0028-retornos-dobles-128a4.md`.**
 
-0. Leer `AGENTS.md` (§ T-073c), `notes/0025`, `notes/0023`, `notes/0022`,
-   `notes/0021`, `notes/0020` y `notes/0019` (y `notes/0017` §8). Guardias:
-   `test_click_skip`, `test_ikbd_mouse_max`.
-1. Punto 1 (**hecho**): sangre perfecta; espacio `1834a` 2373–2473 =
-   101 VBL. Estrella: animación 15 VBL, correcta.
-2. Punto 2 (**fix hecho**): tras la estrella, `load_fond` mantiene la imagen
-   ~2 s (tiempo de disquete estimado) antes de `room_reset`/reinicio. El
-   arranque/título y la carga inicial tras idioma ya **no** tienen espera
-   (PRES/DRAP, listas A/B, FOND, ECHE), para no perder el comienzo de la canción
-   ni esperar ~20 s; las esperas de salas/estrella sí se conservan.
-3. Después **punto 3**: animaciones de `object_info_card`/`16dec` en
-   4905–5205. **Punto 4** (glitches 4516/4640/4767): el intento de
-   `palette_cycle` se revirtió; esas trazas son `masked_word4`/revelado, no
-   paleta.
-4. Cerrar **T-061** (validación Windows: título/idioma, partida/colores,
-   guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
-   → **A1** → **N3** → **A2** → **M5**.
+0. Leer `notes/0028`, `notes/0017` §5, `REVISION.md` (H-el1/H-SC1) y
+   `test/test_element.py`/`test/test_reveal.py`. Guardias: `make test` y
+   `make test-port`.
+1. Confirmar el glitch con build Y/V: `reveal_pixel` 4471–4919 y salida
+   anticipada de `elem_command` (`$1ad0a` o clase no encontrada).
+2. Añadir test de `reveal_pixel` que falle con el C actual; implementar el
+   estado de aborto en `elem_command`/`elem_command_wrap`.
+3. Corregir `reveal_pixel` y validar el punto 4 visualmente.
+4. Extender el aborto a los otros 11 llamantes y auditar otros
+   `addq.l #N,a7` + `rts`/`bra`.
+5. Después **punto 3** (`object_info_card`/`16dec` en 4905–5205).
+6. Cerrar **T-061** (validación Windows) → **T-072** (ingesta `.STX`) →
+   **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 Detalle autoritativo: **`notes/0017-retomar-maestro.md`** (§8),
-**`notes/0023-costes-sangre-espacio.md`** y
-**`notes/0025-espera-carga-fond.md`**.
+**`notes/0023-costes-sangre-espacio.md`**, **`notes/0025-espera-carga-fond.md`**
+y **`notes/0028-retornos-dobles-128a4.md`**.
 No usar `KULT_FRAME_GATE`/`15da6` como fix de C.
 
 ## Comandos

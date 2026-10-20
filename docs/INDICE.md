@@ -51,3 +51,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0025-espera-carga-fond.md`](../notes/0025-espera-carga-fond.md)
 - [`notes/0026-esperas-de-disco.md`](../notes/0026-esperas-de-disco.md)
 - [`notes/0027-cursor-sistema-sdl.md`](../notes/0027-cursor-sistema-sdl.md)
+- [`notes/0028-retornos-dobles-128a4.md`](../notes/0028-retornos-dobles-128a4.md)

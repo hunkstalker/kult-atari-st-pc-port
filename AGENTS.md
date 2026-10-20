@@ -50,6 +50,10 @@ bloqueantes. Ver `notes/0011`–`notes/0014`.
   reinicio y estrella. **La carga inicial no espera** (`platform_disk_timing(0)`
   desde PRES/DRAP hasta después de ECHE), para no perder el inicio de la canción
   ni esperar ~20 s tras el idioma. Ver `notes/0025` y `notes/0026`.
+- **Retornos dobles**: `elem_command` (`0x128a4`) puede hacer
+  `addq.l #4,a7; rts` (aborta a su llamante). El C actual no lo propaga en 12
+  llamantes; `reveal_pixel` puede revelar con `A_ELEM_*` viejo. No parchear solo
+  el reveal: ver `notes/0028-retornos-dobles-128a4.md` (T-081).
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único
