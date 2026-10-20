@@ -44,9 +44,10 @@ bloqueantes. Ver `notes/0011`–`notes/0014`.
   No se ajusta a mano. Ver `notes/0023`.
 - **Estrella final**: la espera tras la animación es la lectura de `FOND.PI1`
   (`0x13568`, 0x7d22 B). La HAL modela el disquete ST (~2 s) en
-  `platform_disk_delay`; se aplica a cada Fread, así que también da ritmo al
-  idioma/cambio de disco/salas. **PRES/DRAP no esperan** (`platform_disk_timing`),
-  para no perder el inicio de la canción. Ver `notes/0025` y `notes/0026`.
+  `platform_disk_delay`; se aplica a cada Fread, así que da ritmo a salas,
+  reinicio y estrella. **La carga inicial no espera** (`platform_disk_timing(0)`
+  desde PRES/DRAP hasta después de ECHE), para no perder el inicio de la canción
+  ni esperar ~20 s tras el idioma. Ver `notes/0025` y `notes/0026`.
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único

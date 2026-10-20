@@ -153,9 +153,12 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     /* Menú de idioma: escribe la letra en las 4 entradas de la lista A */
     kult_boot_apply_language(img, lang);
     copy_screen(img);
-    platform_disk_timing(1);       /* desde aquí sí: listas, FOND, ECHE, salas, estrella */
     BOOT_TRACE("lang");
 
+    /* La carga inicial completa (listas A/B, FOND, ECHE) sigue sin espera: el
+     * usuario acaba de elegir idioma y no queremos una pausa de ~20 s. El timing
+     * se reactiva tras ECHE, antes de entrar al juego; la estrella/salas sí
+     * conservan su espera. */
     (void)load_resource_list_a(img);
     BOOT_TRACE("lista_a");
 
@@ -190,6 +193,7 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     }
     BOOT_TRACE("eche");
 
+    platform_disk_timing(1);       /* desde aquí sí: salas, estrella, reinicio */
     set_palette(img);
     copy_screen(img);
     save_clear_bin(img);

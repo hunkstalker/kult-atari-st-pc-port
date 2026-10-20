@@ -14,13 +14,13 @@ Tareas: `TODO.md`.
   `pc_os_fread`, estimando disquete ST DD (~1,4 s por 7 pistas + búsqueda/motor
   ≈ **2,0 s**, 62,5 µs/B; usuario: >1,4 s). No-op en headless/diferencial;
   `test_disk_delay`. `src/` intacto; 499 + `test-port`; nativo/win/ZIP OK.
-  Exe `4bca31f9b3c9ff169c5c54317d8af496` (headless
-  `48e64280bf8b5f80e61bb0a211ade12a`, ZIP
-  `cd51987a1aff0d2dc9c48e1d77722050`). El modelo es **global a cada Fread**:
-  tras elegir idioma/cambio de disco (listas A/B, FOND, ECHE), salas
-  (`load_scena`) y reinicio (`CLEAR.BIN`), además de la estrella. **Excepción**:
-  `platform_disk_timing(0)` durante PRES/DRAP; el título sale sin pantalla negra
-  y la canción empieza desde el principio (`notes/0026`). Detalle:
+  Exe `ed17588978ec5560e2024f1fa995624b` (headless
+  `68ae05eaddcb6c33f4b66da437576aa3`, ZIP
+  `c27a193581bec5e613af547d76b7c209`). El modelo es **global a cada Fread**:
+  salas (`load_scena`), reinicio (`CLEAR.BIN`) y estrella. **Excepción**: el
+  flag está a 0 desde PRES/DRAP hasta después de ECHE (incluye listas A/B y
+  FOND); así el título sale sin pantalla negra, la canción empieza desde el
+  principio y no hay ~20 s de pausa tras el idioma (`notes/0026`). Detalle:
   `notes/0025-espera-carga-fond.md` y `notes/0026-esperas-de-disco.md`.
 - **Sesión 26 — ritmo de la muerte, punto 1 (T-077)**: sangre y viaje espacial
   iban acelerados porque `room_reset` (`0x181f0`) e `icon_scale_loop`
@@ -282,7 +282,7 @@ Tareas: `TODO.md`.
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `4bca31f9…`, sin traza `Y`/`V`; la traza
+- **Build estándar actual**: exe `ed175889…`, sin traza `Y`/`V`; la traza
   (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
   lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
   (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
@@ -309,8 +309,9 @@ Tareas: `TODO.md`.
    101 VBL. Estrella: animación 15 VBL, correcta.
 2. Punto 2 (**fix hecho**): tras la estrella, `load_fond` mantiene la imagen
    ~2 s (tiempo de disquete estimado) antes de `room_reset`/reinicio. El
-   arranque/título ya **no** tiene la espera inicial (PRES/DRAP), para no perder
-   el comienzo de la canción; las esperas desde las listas A/B sí se conservan.
+   arranque/título y la carga inicial tras idioma ya **no** tienen espera
+   (PRES/DRAP, listas A/B, FOND, ECHE), para no perder el comienzo de la canción
+   ni esperar ~20 s; las esperas de salas/estrella sí se conservan.
 3. Después **punto 3**: animaciones de `object_info_card`/`16dec` en
    4905–5205. **Punto 4** (glitches 4516/4640/4767): el intento de
    `palette_cycle` se revirtió; esas trazas son `masked_word4`/revelado, no

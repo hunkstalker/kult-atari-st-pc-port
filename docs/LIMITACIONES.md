@@ -8,10 +8,11 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 - **Tiempo de disquete modelado (T-079).** El FDC no se emula, pero
   `platform_disk_delay()` estima la lectura de disco del ST (~2 s por 32 KB,
   ver `notes/0025`/`notes/0026`); se aplica a **cada Fread**, así que la
-  estrella final se mantiene mientras carga `FOND.PI1` y también hay pausas de
-  idioma/cambio de disco, salas y reinicio. **Excepción:** PRES/DRAP no esperan
-  (`platform_disk_timing(0)`), para que el título no tarde y la canción empiece
-  desde el principio.
+  estrella final se mantiene mientras carga `FOND.PI1` y también hay pausas en
+  salas y reinicio. **Excepción:** la carga inicial no espera
+  (`platform_disk_timing(0)` desde PRES/DRAP hasta después de ECHE), para que el
+  título no tarde, la canción empiece desde el principio y no haya ~20 s de
+  pausa tras elegir idioma.
 - **El FDC no se emula.** La comprobación de disco `0x19316` se **omite**; se
   siembra el patrón FDC en `0xd8e8` para que el modo de escena (`0x14496`) no
   espere (T-023).

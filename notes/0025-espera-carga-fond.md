@@ -4,8 +4,9 @@
 > correcta (3 elementos, `15da6` delay 20 = 5 VBL cada uno = 15 VBL), pero el
 > usuario detectó que en el original la estrella **se queda en pantalla unos
 > segundos** antes del reinicio. En el port desaparecía porque la carga de
-> `FOND.PI1` es instantánea. Las cargas de PRES/DRAP previas al título tienen
-> una excepción (no esperan) para no perder el inicio de la canción; ver
+> `FOND.PI1` es instantánea. La carga inicial (PRES/DRAP y, tras el idioma,
+> listas A/B, FOND y ECHE) tiene una excepción: no espera, para no perder el
+> inicio de la canción ni meter ~20 s de pausa; ver
 > `notes/0026-esperas-de-disco.md`.
 
 ## Evidencia ASM
@@ -51,9 +52,9 @@ el usuario estima **> 1,4 s**; se modela **~2,0 s** (62,5 µs/byte).
   800 B ≈ 50 ms → ≥ 2 VBL).
 - `make port`, `make cmake-win`, `make package-win`: OK.
 - Artefactos:
-  - `kult.exe` md5 `4bca31f9b3c9ff169c5c54317d8af496`
-  - `kult-headless.exe` md5 `48e64280bf8b5f80e61bb0a211ade12a`
-  - ZIP md5 `cd51987a1aff0d2dc9c48e1d77722050`
+  - `kult.exe` md5 `ed17588978ec5560e2024f1fa995624b`
+  - `kult-headless.exe` md5 `68ae05eaddcb6c33f4b66da437576aa3`
+  - ZIP md5 `c27a193581bec5e613af547d76b7c209`
 
 Validación visual pendiente: al morir, tras la estrella debe verse ésta ~2 s
 mientras carga el fondo, y después el reinicio. Si dura demasiado/poco, el
