@@ -81,7 +81,9 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
    **colores correctos**, guardado, audio, morir → reiniciar sala. **Controles**:
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
-   **derecho** = acción + skip (puertas y A/B/C). **Ritmo**: el port va a
+   **derecho** = acción + skip (puertas y A/B/C). **Cursor**: se queda en los
+   bordes sin reaparecer por el lado contrario (máximo IKBD 304×184; ver
+   `notes/0021`). **Ritmo**: el port va a
    50 VBL/s; si una animación va acelerada **sin clicar**, es **T-073** (trabajo
    de CPU no modelado), no un fallo de esta validación. En la intro: **A** son
    3 retratos con descripciones, **B** son 4 retratos con descripciones y **C**

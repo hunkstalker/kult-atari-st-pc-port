@@ -56,6 +56,10 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
         memcpy(img + 0xd8e8 + i * 0x18, img + 0x10000 + 0x9484, 0x18);
 
     crt0_init(img);
+    /* crt0_init manda Ikbdws(0x19, 0x1a459, 4): 5 bytes (09 01 30 00 b8) que
+     * configuran el ratón absoluto con máximo 304x184. La HAL lo emula para que
+     * el cursor de 16x16 no se salga por el borde. */
+    platform_ikbdws(img + 0x1a459, 5);
     BOOT_TRACE("crt0");
     (void)init_hardware(img, 0);
     BOOT_TRACE("init_hardware");

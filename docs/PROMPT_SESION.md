@@ -36,8 +36,12 @@ derecho = acción + skip; la HAL pisa `$1a570` al salir de `wait_frame`, sin toc
 `src/input.c`. `platform_tick` presenta en cada VBL, así se ven las animaciones
 de puerta/A-B-C. Detalle: `notes/0020-input-hal-y-presentacion.md`.
 
+**T-075 ✅ (cursor 16×16 / IKBD)**: el juego configura el ratón absoluto a
+304×184 (`Ikbdws` `09 01 30 00 b8`); la HAL lo emula y el cursor ya no
+reaparece por el lado contrario. Detalle: `notes/0021-cursor-e-ikbd.md`.
+
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip` (exe `04858f5e…`): descomprimir sobre la
+`build-win/kult-0.1.0-win64.zip` (exe `d67ad168…`): descomprimir sobre la
 carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
 comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
 **morir → reiniciar sala** (checklist en `docs/VERIFICACION.md`). **Controles**:

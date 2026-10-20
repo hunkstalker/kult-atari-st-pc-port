@@ -44,6 +44,8 @@ void platform_mouse_set(int x, int y, int buttons);
 /* Derecho pulsado: la HAL debe pisar `$1a570` tras `wait_frame` (legacy). */
 int  platform_input_skip_state(void);
 void platform_input_apply_skip(uint8_t *img);
+/* Emula Ikbdws: 0x09 fija el máximo absoluto del ratón (xmax/ymax). */
+void platform_ikbdws(const uint8_t *buf, uint32_t len);
 void platform_input_set_auto(int on);
 void platform_set_idle(void (*fn)(uint8_t *img));
 

@@ -132,9 +132,9 @@ port).
 - Smoke headless y SDL dummy: arrancan y terminan sin colgar.
 - Con `KULT_MARKS`, el log muestra pares `K <vbl> 255` → `K <vbl> 0`: el core
   escribe el skip y el hook de HAL lo corrige con el botón derecho.
-- Artefactos: `kult.exe` md5 `04858f5eb9bbc3517e95ce8e9dcc5a60`;
-  `kult-headless.exe` `266be2a36020f3a41e6700ac4baf7e6a`; ZIP
-  `d2dd6c05aa6445b4494eec5e6b1b4589`.
+- Artefactos: `kult.exe` md5 `d67ad168b578ae37663f588b4638bf2f`;
+  `kult-headless.exe` `52fb9898e56aeb93fcdd08ef1ad053c3`; ZIP
+  `f7b268e9cf953baefe10c77a61fc7ec1`.
 
 Validación visual pendiente del usuario:
 

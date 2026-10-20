@@ -318,6 +318,33 @@ static void test_click_skip(void) {
     platform_input_set_auto(1);
 }
 
+/* --- IKBD absoluto: el juego fija el máximo del ratón a 304x184 para que el
+ * cursor de 16x16 no se salga por el borde. La HAL debe respetarlo. --- */
+static void test_ikbd_mouse_max(void) {
+    const uint8_t cmd[5] = {0x09, 0x01, 0x30, 0x00, 0xb8};  /* 304x184 */
+    const uint8_t def[5] = {0x09, 0x01, 0x3f, 0x00, 0xc7};  /* 319x199 */
+
+    platform_input_set_auto(0);
+    platform_ikbdws(cmd, 5);
+
+    platform_mouse_set(999, 999, 0);
+    g_img[A_IKBD_PACKET] = 0xff;
+    platform_ikbd_deliver(g_img);
+    CHECK(be16(g_img + A_CURSOR_X) == 304,
+          "el IKBD limita la X del cursor a 304");
+    CHECK(be16(g_img + A_CURSOR_Y) == 184,
+          "el IKBD limita la Y del cursor a 184");
+
+    platform_mouse_set(-10, -10, 0);
+    g_img[A_IKBD_PACKET] = 0xff;
+    platform_ikbd_deliver(g_img);
+    CHECK(be16(g_img + A_CURSOR_X) == 0 && be16(g_img + A_CURSOR_Y) == 0,
+          "el cursor no se sale por arriba/izquierda");
+
+    platform_ikbdws(def, 5);                 /* restaurar 319x199 */
+    platform_input_set_auto(1);
+}
+
 /* --- loader del PRG: relocación DRI, en particular el SALTO (byte 1) --- */
 static void put32be(uint8_t *p, uint32_t v) {
     p[0] = (uint8_t)(v >> 24); p[1] = (uint8_t)(v >> 16);
@@ -584,6 +611,7 @@ int main(void) {
     test_real_input();
     test_mouse_click_state();
     test_click_skip();
+    test_ikbd_mouse_max();
     test_vbl();
     test_prg_loader();
     test_boot_language();

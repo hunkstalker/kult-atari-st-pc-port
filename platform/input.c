@@ -34,6 +34,8 @@ static uint16_t g_cursor_x = 160;
 static uint16_t g_cursor_y = 100;
 static uint8_t  g_buttons;         /* acción: izquierdo o derecho pulsado */
 static uint8_t  g_mouse_skip;      /* derecho: pide saltar ($1a570) */
+static uint16_t g_mouse_max_x = 319;   /* rango absoluto configurado por el IKBD */
+static uint16_t g_mouse_max_y = 199;
 static uint32_t g_deliveries;
 static int g_click_toggle = 1;     /* headless: alterna clic para liberar esperas */
 static int g_auto = 1;             /* 1 = headless (auto-tecla); 0 = entrada real */
@@ -44,9 +46,9 @@ void platform_input_set_auto(int on) { g_auto = on ? 1 : 0; }
 
 void platform_mouse_set(int x, int y, int buttons) {
     if (x < 0) x = 0;
-    if (x > 319) x = 319;
+    if (x > g_mouse_max_x) x = g_mouse_max_x;
     if (y < 0) y = 0;
-    if (y > 199) y = 199;
+    if (y > g_mouse_max_y) y = g_mouse_max_y;
     g_cursor_x = (uint16_t)x;
     g_cursor_y = (uint16_t)y;
     /* Máscara del puerto: bit0 = izquierdo, bit1 = derecho. El izquierdo y el
@@ -56,6 +58,21 @@ void platform_mouse_set(int x, int y, int buttons) {
 }
 
 int platform_input_skip_state(void) { return g_mouse_skip; }
+
+/* Emula el comando IKBD que el juego envía en crt0_init:
+ *   Ikbdws(0x19, 0x1a459, 4) -> 5 bytes: 09 01 30 00 b8
+ * El 0x09 configura el ratón absoluto con máximo X=0x0130 (304) e Y=0x00b8
+ * (184), que es justo el área para un cursor de 16x16. Sin esto, el ratón del
+ * port llega a 319/199 y el sprite se sale por el borde. */
+void platform_ikbdws(const uint8_t *buf, uint32_t len) {
+    if (!buf || len < 5 || buf[0] != 0x09) return;
+    uint32_t xmax = ((uint32_t)buf[1] << 8) | buf[2];
+    uint32_t ymax = ((uint32_t)buf[3] << 8) | buf[4];
+    if (xmax <= 319) g_mouse_max_x = (uint16_t)xmax;
+    if (ymax <= 199) g_mouse_max_y = (uint16_t)ymax;
+    if (g_cursor_x > g_mouse_max_x) g_cursor_x = g_mouse_max_x;
+    if (g_cursor_y > g_mouse_max_y) g_cursor_y = g_mouse_max_y;
+}
 
 /* La HAL pisa el flag de skip que acaba de escribir `wait_frame` (core). Es el
  * equivalente port-side del intercept de `$1a570` del motor legacy. */
@@ -68,6 +85,8 @@ void platform_input_init(void) {
     g_deliveries = 0;
     g_buttons = 0;
     g_mouse_skip = 0;
+    g_mouse_max_x = 319;
+    g_mouse_max_y = 199;
     const char *click = getenv("KULT_CLICK");
     if (click && click[0] == '0') g_click_toggle = 0;
     const char *autoenv = getenv("KULT_KEY");
