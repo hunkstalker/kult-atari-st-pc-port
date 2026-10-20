@@ -52,8 +52,8 @@ ledger PSG con el oráculo y mide RMS/energía. La escucha final la valida el us
 **Estado:** en curso. **T-060 ✅** (menú de idioma **fiel**, ADR 0004, validado en
 T-020). **T-061 🚧**: checklist de validación en `docs/VERIFICACION.md` y
 limitaciones en `docs/LIMITACIONES.md`; **la ejecución la hace el usuario** (jugar
-y escuchar con su copia de datos). Incluye **morir → reiniciar sala** (usa
-`reset_clear`, ya en el core; **no** depende de `0x106f2`). **Colores** del juego
+y escuchar con su copia de datos). Incluye **morir → reiniciar** (`reset_clear`
+→ `bra 0x10158`, emulado en `boot/`; **no** depende de `0x106f2`). **Colores** del juego
 corregidos en la HAL (`OS_SCREEN_BASE=0x98000`) y **primera pantalla = título
 visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
 **T-073 🚧**: ritmo real: **T-073a ✅** (`cpu_delay` real), **T-073b ✅**

@@ -44,7 +44,8 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   "reinicio suave" de `_start`; el análisis estático lo ve **inobservable** (solo
   aparece como constante base de relocalización, sin llamante) pero **se deja
   abierto** por si se necesita (`notes/0010`, `notes/0011`). **No confundir** con
-  el reinicio tras morir (`0x1842c`→`reset_clear`, ya en el core).
+  el reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba
+  en el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — build/empaquetado**: **build hecho** (T-070): CMake nativo y cross
   MinGW; el ZIP/TGZ interino (T-071) lleva `kult.exe`, `kult-headless.exe`,
   `SDL3.dll` y `data/` vacía (**hay que copiar ahí los ficheros del juego**). El

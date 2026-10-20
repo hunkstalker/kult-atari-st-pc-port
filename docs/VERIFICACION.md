@@ -64,8 +64,9 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
    `KULT_AUDIO=0` la apaga; `KULT_MUSIC_GAIN` ajusta la música.
 5. **Guardado/partida:** comprobar el guardado/recarga del juego (servicios de
    fichero reales) según el uso del original.
-6. **Morir → reiniciar sala:** al morir, el juego debe reiniciar la sala (usa
-   `0x1842c`→`reset_clear`, ya en el core; **no** depende de `0x106f2`).
+6. **Morir → reiniciar:** al morir, tras la animación debe volver el
+   **Maestro/objeto** del inicio del bucle (`reset_clear` → `bra 0x10158`,
+   emulado en `boot/`; ver `notes/0022`; **no** depende de `0x106f2`).
 7. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
 
 ### Windows (paquete T-071)
@@ -79,7 +80,8 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
 3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
-   **colores correctos**, guardado, audio, morir → reiniciar sala. **Controles**:
+   **colores correctos**, guardado, audio, morir → reiniciar (Maestro/objeto).
+   **Controles**:
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
    **derecho** = acción + skip (puertas y A/B/C). **Cursor**: se queda en los
    bordes sin reaparecer por el lado contrario (máximo IKBD 304×184; ver

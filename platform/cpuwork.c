@@ -22,9 +22,11 @@
 #include "machine.h"
 #include "addrs.h"
 #include "platform.h"
+#include "boot.h"
 
 extern uint8_t *g_kult_img;
 extern void wait_frame(void);   /* src/input.c: escribe $1a570 (skip) */
+extern void reset_clear(void);  /* src/fileio.c: 0x1682a (bra 0x10158) */
 
 typedef struct {
     void *fn;
@@ -324,6 +326,12 @@ void platform_marks_event(const char *tag, int a, int b) {
 }
 
 __attribute__((no_instrument_function))
+/* El reinicio de `reset_clear` sale por longjmp; la pila de instrumentación no
+ * se desenrolla. El boot la vacía antes del salto. */
+void platform_cpuwork_reset_stack(void) {
+    g_depth = 0;
+}
+
 void __cyg_profile_func_exit(void *this_fn, void *call_site) {
     (void)call_site;
     if (g_depth > 0) {
@@ -336,6 +344,10 @@ void __cyg_profile_func_exit(void *this_fn, void *call_site) {
          * igual que el intercept de $1a570 del motor legacy. */
         if (this_fn == (void *)wait_frame && g_kult_img)
             platform_input_apply_skip(g_kult_img);
+        /* El original termina reset_clear con `bra 0x10158` (inicio del bucle).
+         * En C nativo no hay salto: lo emulamos pidiendo el reinicio al boot. */
+        if (this_fn == (void *)reset_clear)
+            kult_request_restart();
         g_depth--;
     }
 }

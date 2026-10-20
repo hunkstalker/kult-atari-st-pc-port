@@ -5,6 +5,15 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 25 — reinicio tras morir (T-076)**: al morir se repetía la secuencia
+  de muerte. El original termina `reset_clear` (`0x1682a`) con `bra.w 0x10158`
+  (inicio del bucle); el C nativo solo hacía la parte de estado y **retornaba**.
+  Fix **solo `boot/` + hook**: al salir de `reset_clear`, `kult_request_restart()`
+  hace `longjmp` a un `setjmp` armado y `boot_enter_game()` reproduce `0x10158`
+  (espera clic, modo 7, `0xc001`, Maestro/objeto, `game_loop`). `src/` intacto;
+  diagnóstico `KULT_RESTART_AT`; 499 + `test-port` verdes. Exe nuevo
+  `e3d0b6ee0bc98be046b5a02c732fe0ec` (headless `5ec4eb9d…`, ZIP `c709bfb6…`).
+  Detalle: `notes/0022-reinicio-tras-muerte.md`.
 - **Sesión 24 — cursor 16×16 y máximo IKBD**: el cursor reaparecía por el lado
   contrario al llegar al borde. Causa: el juego configura el ratón absoluto del
   IKBD con `Ikbdws(0x19, 0x1a459, 4)` → 5 bytes `09 01 30 00 b8`, es decir
@@ -12,8 +21,8 @@ Tareas: `TODO.md`.
   319×199. Fix **solo HAL**: `platform_ikbdws()` parsea el comando 0x09,
   `platform_mouse_set()` recorta a ese máximo y `boot/boot.c` lo llama tras
   `crt0_init`. `src/` intacto; nueva prueba `test_ikbd_mouse_max`; 499 +
-  `test-port` verdes. Exe nuevo `d67ad168b578ae37663f588b4638bf2f`
-  (headless `52fb9898…`, ZIP `f7b268e9…`). Detalle:
+  `test-port` verdes. Exe nuevo `e3d0b6ee0bc98be046b5a02c732fe0ec`
+  (headless `5ec4eb9d…`, ZIP `c709bfb6…`). Detalle:
   `notes/0021-cursor-e-ikbd.md`.
 - **Sesión 23 — input y presentación (HAL)**: el bug de puertas/A-B-C no era de
   `src/`: el core deriva acción y skip del bit0 del IKBD y nuestra HAL lo tenía
@@ -23,8 +32,8 @@ Tareas: `TODO.md`.
   instrumentación). Además, `platform_tick` ahora presenta en **cada VBL** (antes
   solo en arranque/CPU-delay), por lo que las animaciones de puerta que corren en
   `wait_vbl` ya se ven. **`src/` intacto**; 499 + `test-port` verdes; nueva
-  guardia `test_click_skip`. Exe nuevo `d67ad168b578ae37663f588b4638bf2f`
-  (headless `52fb9898…`, ZIP `f7b268e9…`). Detalle:
+  guardia `test_click_skip`. Exe nuevo `e3d0b6ee0bc98be046b5a02c732fe0ec`
+  (headless `5ec4eb9d…`, ZIP `c709bfb6…`). Detalle:
   `notes/0020-input-hal-y-presentacion.md`.
 - **Sesión 22 — T-073c resuelto (timing de C)**: la causa era el `dbf` inline de
   `object_info_card` (`0x16dec`): el guion de C deja `wait=0x0a`, que produce
@@ -224,12 +233,17 @@ Tareas: `TODO.md`.
   máximo que configura el juego (**304×184**), no a 319×199. El sprite 16×16 ya
   no reaparece por el lado contrario. `src/` intacto; `test_ikbd_mouse_max`.
   Detalle: **`notes/0021-cursor-e-ikbd.md`**.
+- **Reinicio tras morir (sesión 25, `boot/`)**: el original salta de
+  `reset_clear` a `0x10158`; el port lo emula con `longjmp` y
+  `boot_enter_game()`, así vuelve el Maestro/objeto en vez de repetir la muerte.
+  `src/` intacto; `KULT_RESTART_AT` para diagnóstico. Detalle:
+  **`notes/0022-reinicio-tras-muerte.md`**.
 - **M7 build hecho** (T-070) y **empaquetado interino hecho** (T-071): ZIP
   Windows **`build-win/kult-0.1.0-win64.zip`** (`kult.exe` +
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe `d67ad168…`, sin traza `Y`/`V`; la traza
+- **Build estándar actual**: exe `e3d0b6ee…`, sin traza `Y`/`V`; la traza
   (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` sin cambios de
   lógica: solo la anotación de timing `cpu_delay_cycles()` en `src/loop.c`
   (autorizada). `make test` 499 y `make test-port` verdes. La documentación está
@@ -246,15 +260,17 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Validar el exe nuevo (input, presentación y cursor) y seguir con T-061.**
+**Validar el exe nuevo (input, presentación, cursor y reinicio) y cerrar T-061.**
 
-0. Leer `AGENTS.md` (§ T-073c), `notes/0020`, `notes/0021` y `notes/0019`
-   (y `notes/0017` §8). Guardias: `test_click_skip` e `test_ikbd_mouse_max`.
+0. Leer `AGENTS.md` (§ T-073c), `notes/0020`, `notes/0021`, `notes/0022` y
+   `notes/0019` (y `notes/0017` §8). Guardias: `test_click_skip`,
+   `test_ikbd_mouse_max`.
 1. Probar en Windows:
    - **izquierdo/teclado**: acción normal y animaciones de puerta/A-B-C visibles;
    - **derecho**: acción + skip (puertas y A/B/C);
    - **cursor**: se queda en el borde derecho/inferior sin reaparecer por el
-     lado contrario.
+     lado contrario;
+   - **morir**: tras la animación vuelve el Maestro/objeto, sin bucle de muerte.
 2. Si C sigue sin cuadrar de ritmo, calibrar con `KULT_CPU_HZ`/
    `KULT_ST_CONTEND` **sin** parchear animaciones.
 3. Después **T-061** (validación Windows: título/idioma, partida/colores,

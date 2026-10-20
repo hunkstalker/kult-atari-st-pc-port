@@ -76,7 +76,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | `_start` (0x10000) | arranque + **menú de idioma** (único nombre sin C) |
 | `0x160c2` | tick de VBL: contador `A_DAT_1ACD4` + trabajo por frame |
 | `0x135ba` | XBIOS `Setscreen(-1,-1,0)` → `os_setscreen` no-op (✅) |
-| `0x106f2` | reinicio suave `l_0101a8` (**abierto**; parece inobservable). **No** es el reinicio tras morir (ese es `0x1842c`→`reset_clear`, ya en el core) |
+| `0x106f2` | reinicio suave `l_0101a8` (**abierto**; parece inobservable). **No** es el reinicio tras morir (ese es `0x1842c`→`reset_clear`; su `bra 0x10158` se emula en `boot/`, ver T-076) |
 | `0x19316` | comprobación FDC → **se omite** en PC |
 
 ### 5.3 Se implementa (capa de PC)
@@ -192,20 +192,27 @@ Recogidas como ADR en `docs/adr/`:
   pisa `$1a570` al salir de `wait_frame` (hook de instrumentación). Además,
   `platform_tick` presenta en **cada VBL**, así se ven las animaciones que corren
   en `wait_vbl` (puertas, wipes). `src/` intacto; `test_click_skip` y
-  `test_present_hook`. Exe `d67ad168…`, headless `52fb9898…`, ZIP
-  `f7b268e9…`. Detalle: **`notes/0020-input-hal-y-presentacion.md`**.
+  `test_present_hook`. Exe `e3d0b6ee…`, headless `5ec4eb9d…`, ZIP
+  `c709bfb6…`. Detalle: **`notes/0020-input-hal-y-presentacion.md`**.
 - **Cursor 16×16 / máximo IKBD (T-075, sesión 24)**: el cursor reaparecía por el
   lado contrario en el borde. El juego configura el ratón absoluto con
   `Ikbdws` `09 01 30 00 b8` → máximo **304×184**; la HAL lo emula con
   `platform_ikbdws()` y `platform_mouse_set()` recorta a ese máximo. `boot/boot.c`
   lo llama tras `crt0_init`; `src/` intacto. Prueba `test_ikbd_mouse_max`.
   Detalle: **`notes/0021-cursor-e-ikbd.md`**.
+- **Reinicio tras morir (T-076, sesión 25)**: el original termina `reset_clear`
+  (`0x1682a`) con `bra.w 0x10158` (inicio del bucle); el C nativo solo hacía el
+  estado y retornaba, por lo que se repetía la muerte. Fix en `boot/` + hook: al
+  salir de `reset_clear`, `kult_request_restart()` hace `longjmp` y
+  `boot_enter_game()` reproduce `0x10158` (modo 7, `0xc001`, Maestro/objeto,
+  `game_loop`). `src/` intacto; `KULT_RESTART_AT` diagnóstico. Detalle:
+  **`notes/0022-reinicio-tras-muerte.md`**.
 - **Siguiente:** validar el exe nuevo en Windows: izquierdo/teclado = acción y
   animaciones visibles; derecho = acción + skip; A/B/C y puertas; cursor sin
-  wrap en los bordes. Si C no cuadra de ritmo, calibrar con
-  `KULT_CPU_HZ`/`KULT_ST_CONTEND`, sin parchear animaciones. Después **T-061**
-  (validación Windows: título/idioma, partida/colores, guardado, audio, morir →
-  reiniciar) → **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2**
-  → **M5**.
+  wrap en los bordes; morir → vuelve el Maestro/objeto. Si C no cuadra de ritmo,
+  calibrar con `KULT_CPU_HZ`/`KULT_ST_CONTEND`, sin parchear animaciones.
+  Después **T-061** (validación Windows: título/idioma, partida/colores,
+  guardado, audio, morir → reiniciar) → **T-072** (ingesta `.STX`) → **M7-c**
+  → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

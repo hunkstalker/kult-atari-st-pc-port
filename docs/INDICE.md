@@ -46,3 +46,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0019-fix-timing-c.md`](../notes/0019-fix-timing-c.md)
 - [`notes/0020-input-hal-y-presentacion.md`](../notes/0020-input-hal-y-presentacion.md)
 - [`notes/0021-cursor-e-ikbd.md`](../notes/0021-cursor-e-ikbd.md)
+- [`notes/0022-reinicio-tras-muerte.md`](../notes/0022-reinicio-tras-muerte.md)

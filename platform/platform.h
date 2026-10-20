@@ -77,6 +77,9 @@ void platform_cpu_delay(uint32_t units);
  * `-finstrument-functions`). Misma puerta/reloj que `platform_cpu_delay`. */
 void platform_cpu_charge_cycles(uint64_t cycles);
 
+/* Vacía la pila de instrumentación tras un longjmp de reinicio (reset_clear). */
+void platform_cpuwork_reset_stack(void);
+
 /* Marca manual en el log de KULT_MARKS (p. ej. F12 en el momento exacto). */
 void platform_marks_event(const char *tag, int a, int b);
 

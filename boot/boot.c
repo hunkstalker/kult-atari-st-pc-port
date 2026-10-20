@@ -28,6 +28,7 @@ static jmp_buf g_jmp;
 static uint32_t g_frame, g_max;
 static void (*g_frame_cb)(uint8_t *img);
 static int g_stop;
+static int g_restart_armed;    /* 1 = dentro de game_loop; reset_clear puede reiniciar */
 
 void kult_set_frame_cb(void (*fn)(uint8_t *img)) { g_frame_cb = fn; }
 void kult_request_stop(void) { g_stop = 1; }
@@ -42,10 +43,48 @@ static int boot_dbg(void) {
 static void frame_hook(uint8_t *img) {
     if (g_frame_cb)
         g_frame_cb(img);
+    /* Diagnóstico: fuerza un reinicio desde 0x10158 en un VBL concreto. */
+    { static long at = -2; static int done;
+      if (at == -2) { const char *e = getenv("KULT_RESTART_AT");
+                      at = (e && *e) ? strtol(e, NULL, 0) : -1; }
+      if (!done && at >= 0 && (long)platform_frame_count() >= at) {
+          done = 1;
+          kult_request_restart();
+      } }
     if (g_stop)
         longjmp(g_jmp, 1);
     if (g_max && ++g_frame >= g_max)
         longjmp(g_jmp, 1);
+}
+
+/* Equivalente al `bra 0x10158` que el original ejecuta al final de reset_clear
+ * (0x1682a): vuelve a arrancar el bucle de juego desde el Maestro/objeto. */
+void kult_request_restart(void) {
+    if (!g_restart_armed)
+        return;
+    g_restart_armed = 0;
+    platform_cpuwork_reset_stack();
+    platform_log("reinicio: reset_clear -> 0x10158");
+    longjmp(g_jmp, 2);
+}
+
+/* l_010158 del original: espera a soltar el clic, fija el modo 7 y lanza el
+ * comando 0xc001 (Maestro/objeto) antes de entrar en game_loop. */
+static void boot_enter_game(uint8_t *img) {
+    do {
+        wait_frame(img);
+    } while (img[A_INPUT_BUTTONS] & 0x04);
+    BOOT_TRACE("wait_frame l_010158");
+
+    img[A_MODE_FLAG] = 7;
+    img[A_DAT_1AD0D] = 0;
+    wr16(img + A_THE_COMMAND, 0xc001);
+    run_command_keep_sp(img, 0);
+    BOOT_TRACE("run_command c001");
+    draw_hint_icons(img);
+    BOOT_TRACE("hint_icons");
+    wait_frame_cursor(img);
+    BOOT_TRACE("entrando game_loop");
 }
 
 int kult_boot(uint8_t *img, uint32_t max_frames) {
@@ -152,33 +191,26 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     sound_stop_supexec(img);
     BOOT_TRACE("clear/music");
 
-    /* l_010158: espera a que se **suelte** el clic (bit 2 de A_INPUT_BUTTONS) antes
-     * de entrar en la partida. */
-    do {
-        wait_frame(img);
-    } while (img[A_INPUT_BUTTONS] & 0x04);
-    BOOT_TRACE("wait_frame l_010158");
-
-    img[A_MODE_FLAG] = 7;
-    img[A_DAT_1AD0D] = 0;
-    wr16(img + A_THE_COMMAND, 0xc001);
-    run_command_keep_sp(img, 0);
-    BOOT_TRACE("run_command c001");
-    draw_hint_icons(img);
-    BOOT_TRACE("hint_icons");
-    wait_frame_cursor(img);
-    BOOT_TRACE("entrando game_loop");
-
-    /* Bucle principal, con corte por número de frames. */
+    /* Bucle principal, con corte por número de frames. `setjmp` también recibe el
+     * longjmp de `reset_clear` (valor 2): en ese caso se vuelve a 0x10158
+     * (`boot_enter_game`) en vez de repetir el guion de muerte. */
     g_frame = 0;
     g_max = max_frames;
     g_stop = 0;
+    g_restart_armed = 0;
     hook_loop_top = frame_hook;
     /* Ya presentará el hook del bucle; el tick deja de presentar en arranque. */
     platform_log("game_loop: inicio");
     platform_set_loop(1);
-    if (setjmp(g_jmp) == 0)
-        game_loop(img, 0);
+    for (;;) {
+        int reason = setjmp(g_jmp);
+        if (reason == 1)                 /* stop o límite de frames */
+            break;
+        g_restart_armed = 0;             /* no reiniciar durante 0x10158 */
+        boot_enter_game(img);
+        g_restart_armed = 1;
+        game_loop(img, 0);               /* solo sale por longjmp */
+    }
     platform_set_loop(0);
     hook_loop_top = 0;
     return 0;

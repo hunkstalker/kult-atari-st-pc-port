@@ -66,9 +66,9 @@ sprite reaparece por el borde opuesto. Comprobado llamando a `cursor_draw` con
   `make package-win`: OK.
 - Smoke headless (incluido `KULT_CURSOR_X/Y=999`) y SDL dummy: sin cuelgues.
 - Artefactos:
-  - `kult.exe` md5 `d67ad168b578ae37663f588b4638bf2f`
-  - `kult-headless.exe` md5 `52fb9898e56aeb93fcdd08ef1ad053c3`
-  - ZIP md5 `f7b268e9cf953baefe10c77a61fc7ec1`
+  - `kult.exe` md5 `e3d0b6ee0bc98be046b5a02c732fe0ec`
+  - `kult-headless.exe` md5 `5ec4eb9dcfd68930b0813a31be92f853`
+  - ZIP md5 `c709bfb62f7bb8076dd9fb4e70d68d29`
 
 Validación visual pendiente: el cursor debe quedarse en el borde derecho/inferior
 sin reaparecer por el lado contrario; izquierdo/teclado y derecho conservan el

@@ -114,8 +114,9 @@ blobs originales); el motor es **nuestro** y lee **assets nativos**.
   tanto **parece inobservable**, pero **se deja abierto**: puede necesitarse más
   adelante. Si se retoma, portar `0x106f2` (lista C + `crt0` + lista A) en `boot/`.
 - **No confundir** con el **reinicio tras morir**, que es `0x1842c`
-  (`prepare_room`) → `0x1682a` (`reset_clear`), **ya en el core** (`src/loop.c`,
-  `src/fileio.c`) y que se valida en T-061.
+  (`prepare_room`) → `0x1682a` (`reset_clear`). El estado está en el core
+  (`src/loop.c`, `src/fileio.c`), pero el `bra 0x10158` final se emula en
+  `boot/` (T-076, `notes/0022`); se valida en T-061.
 - **Transcripción exacta de `l_0101a8` (0x101a8)** por si se retoma:
   `bsr f_0106f2` (carga la lista C: `load_resource_list` con tabla **`0x1a2c8`**),
   `movea.l #STACK,a7`, `bsr f_0135e2` (`crt0_init`), `bsr f_0106e2`

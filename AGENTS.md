@@ -33,6 +33,10 @@ modelado) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5*
 - **Cursor**: la HAL emula `Ikbdws` `0x09` (el juego fija el ratón absoluto a
   **304×184** para el sprite 16×16). No recortar a ojo a 319×199: `src/` no se
   toca; ver `notes/0021-cursor-e-ikbd.md`.
+- **Reinicio tras morir**: el original salta de `reset_clear` (`0x1682a`) a
+  `0x10158`; el port lo emula en `boot/` con `longjmp` desde el hook de salida de
+  `reset_clear` y `boot_enter_game()`. No es `0x106f2`; ver
+  `notes/0022-reinicio-tras-muerte.md`.
 - **Modelo A/B/C**: A = 3 retratos + descripciones (pixel-reveal, quietos);
   B = 4 retratos + descripciones (lift-reveal, quietos, 4 bancos
   `15ac8`/`0x36`); C = 1 retrato del Maestro + lift + **diálogo** (único

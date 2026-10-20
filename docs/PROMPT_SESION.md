@@ -40,11 +40,16 @@ de puerta/A-B-C. Detalle: `notes/0020-input-hal-y-presentacion.md`.
 304×184 (`Ikbdws` `09 01 30 00 b8`); la HAL lo emula y el cursor ya no
 reaparece por el lado contrario. Detalle: `notes/0021-cursor-e-ikbd.md`.
 
+**T-076 ✅ (reinicio tras morir)**: `reset_clear` termina en el original con
+`bra 0x10158`; el C nativo solo hacía el estado. `boot/` emula el salto con
+`longjmp` y vuelve al Maestro/objeto. Detalle:
+`notes/0022-reinicio-tras-muerte.md`.
+
 **Tarea inmediata — T-061 — validación del usuario en Windows** con
-`build-win/kult-0.1.0-win64.zip` (exe `d67ad168…`): descomprimir sobre la
+`build-win/kult-0.1.0-win64.zip` (exe `e3d0b6ee…`): descomprimir sobre la
 carpeta ya usada (los `data/` extraídos se conservan), ejecutar `kult.exe` y
 comprobar arranque/menú, partida (**colores**), **guardado**, **audio** y
-**morir → reiniciar sala** (checklist en `docs/VERIFICACION.md`). **Controles**:
+**morir → reiniciar (Maestro/objeto)** (checklist en `docs/VERIFICACION.md`). **Controles**:
 izquierdo/teclado = acción y animación visible; derecho = acción + skip. Si algo
 falla: **`kult.log`** junto al exe y/o `kult-headless.exe` en consola. **Ritmo**:
 C ya está modelado (`notes/0019`); si otra escena va acelerada, calibrar con

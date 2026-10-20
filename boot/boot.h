@@ -45,4 +45,9 @@ void kult_set_frame_cb(void (*fn)(uint8_t *img));
  * la ventana). */
 void kult_request_stop(void);
 
+/* Reproduce el `bra 0x10158` del original al salir de `reset_clear` (0x1682a):
+ * reinicia el bucle de juego desde el Maestro/objeto. Lo llama el hook de
+ * instrumentación del port; si no está armado (arranque), no hace nada. */
+void kult_request_restart(void);
+
 #endif /* KULT_BOOT_H */
