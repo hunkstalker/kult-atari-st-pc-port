@@ -247,7 +247,8 @@ Recogidas como ADR en `docs/adr/`:
   puertas incluidas) validados. Solo queda reproducir un glitch gráfico aislado.
   **T-083** (objetos en serpientes) **resuelto y validado**: retorno doble de
   `icon_ring_loop` (`0x1592e`), con tail-call explícito en la VM; ver
-  **`notes/0031`**. Después
+  **`notes/0031`**. Abierto **T-084** (input mantenido / clics repetidos):
+  reanálisis y fix en `platform/`; ver **`notes/0032`**. Después
   **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.
