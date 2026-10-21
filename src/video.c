@@ -14,6 +14,7 @@
 #include "os.h"
 #include "sched.h"
 #include "addrs.h"
+#include "kult_port.h"
 
 
 
@@ -41,6 +42,7 @@ uint32_t pal_next_byte(uint8_t *img) {
     img[A_DAT_1A579] = (uint8_t)idx;
     uint32_t v = img[A_TBL_2741E + idx];
     img[A_DAT_1ACD7] = (uint8_t)v;
+    kult_diag_rnd("rnd_b", img, idx, v, 0);
     return v;
 }
 
@@ -50,7 +52,9 @@ uint32_t pal_next_word(uint8_t *img) {
     uint32_t idx = (uint8_t)(img[A_DAT_1A579] + 1);
     img[A_DAT_1A579] = (uint8_t)idx;
     uint32_t p = A_TBL_2741E + idx;
-    return ((uint32_t)img[p] << 8) | img[p + 1];
+    uint32_t v = ((uint32_t)img[p] << 8) | img[p + 1];
+    kult_diag_rnd("rnd_w", img, idx, v, 0);
+    return v;
 }
 
 /* FUN_0001627a @ 0x1627a: only when the low byte of (0x1ab60 - 0x1a526) reaches

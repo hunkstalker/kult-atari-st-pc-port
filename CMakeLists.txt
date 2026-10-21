@@ -99,6 +99,10 @@ install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/DIAGNOSTICO.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/MEDIR_FPS.txt
+  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-anillo.bat
+  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-normal.bat
+  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-psi.bat
+  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-todo.bat
   DESTINATION .)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets/hatari_fps DESTINATION .)
 if(WIN32)

@@ -28,6 +28,7 @@
 #include "addrs.h"
 #include "platform.h"
 #include "platform_internal.h"
+#include "kult_port.h"
 
 #define KEYQ 64
 
@@ -73,11 +74,32 @@ void platform_mouse_set(int x, int y, int buttons) {
      * generan evento; mantener el botón no repite la acción. */
     int left = (buttons & 0x01) != 0;
     int right = (buttons & 0x02) != 0;
-    if (left && !g_left_down)
+    if (left && !g_left_down) {
+#ifndef KULT_NO_CPUWORK
+        platform_diag_input("mouse_down", NULL, g_cursor_x, g_cursor_y,
+                            (uint32_t)buttons);
+#endif
         g_action_pending = 1;
+    }
+    if (!left && g_left_down) {
+#ifndef KULT_NO_CPUWORK
+        platform_diag_input("mouse_up", NULL, g_cursor_x, g_cursor_y,
+                            (uint32_t)buttons);
+#endif
+    }
     if (right && !g_right_down) {
+#ifndef KULT_NO_CPUWORK
+        platform_diag_input("mouse_down_r", NULL, g_cursor_x, g_cursor_y,
+                            (uint32_t)buttons);
+#endif
         g_action_pending = 1;
         g_skip_pending = 1;
+    }
+    if (!right && g_right_down) {
+#ifndef KULT_NO_CPUWORK
+        platform_diag_input("mouse_up_r", NULL, g_cursor_x, g_cursor_y,
+                            (uint32_t)buttons);
+#endif
     }
     g_left_down = (uint8_t)left;
     g_right_down = (uint8_t)right;
@@ -194,4 +216,6 @@ void platform_ikbd_deliver(uint8_t *img) {
         img[A_INPUT_BUTTONS] &= (uint8_t)~0x04;
     wr16(img + A_CURSOR_X, g_cursor_x);
     wr16(img + A_CURSOR_Y, g_cursor_y);
+    if (b & 1)
+        kult_diag_input("ikbd_click", img, g_cursor_x, g_cursor_y, b);
 }

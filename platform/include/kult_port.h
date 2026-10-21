@@ -41,4 +41,35 @@ static inline void cpu_delay_cycles(uint64_t cycles) {
 /* Logger de diagnostico del motor nativo: no-op en el port. */
 static inline FILE *kult_dbgfile(void) { return NULL; }
 
+/* Traza de diagnostico del anillo de acciones (platform/cpuwork.c). */
+void platform_diag_ev(const char *tag, uint8_t *img,
+                      uint32_t a, uint32_t b, uint32_t c);
+static inline void kult_diag_ev(const char *tag, uint8_t *img,
+                                uint32_t a, uint32_t b, uint32_t c) {
+    platform_diag_ev(tag, img, a, b, c);
+}
+
+/* Traza de lecturas de la tabla ALEAT (0x2741e, pal_next_byte/word). */
+void platform_diag_rnd(const char *tag, uint8_t *img,
+                       uint32_t a, uint32_t b, uint32_t c);
+static inline void kult_diag_rnd(const char *tag, uint8_t *img,
+                                 uint32_t a, uint32_t b, uint32_t c) {
+    platform_diag_rnd(tag, img, a, b, c);
+}
+
+/* Traza de entrada: clics crudos de SDL y clics procesados por wait_frame. */
+void platform_diag_input(const char *tag, uint8_t *img,
+                         uint32_t x, uint32_t y, uint32_t buttons);
+#ifdef KULT_NO_CPUWORK
+static inline void kult_diag_input(const char *tag, uint8_t *img,
+                                   uint32_t x, uint32_t y, uint32_t buttons) {
+    (void)tag; (void)img; (void)x; (void)y; (void)buttons;
+}
+#else
+static inline void kult_diag_input(const char *tag, uint8_t *img,
+                                   uint32_t x, uint32_t y, uint32_t buttons) {
+    platform_diag_input(tag, img, x, y, buttons);
+}
+#endif
+
 #endif

@@ -269,7 +269,14 @@ Recogidas como ADR en `docs/adr/`:
   `icon_ring_loop` (`0x1592e`), con tail-call explícito en la VM; ver
   **`notes/0031`**. **T-084** (input mantenido), **T-085** (retrato/intro) y
   **T-086** (selección de acción) **resueltos, validados y cerrados**; ver
-  **`notes/0032`**, **`notes/0033`** y **`notes/0034`**. Después **T-072**
+  **`notes/0032`**, **`notes/0033`** y **`notes/0034`**. **T-087**
+  (incidencias tras matar un enemigo) **resuelto y validado**: el unwind A7 de
+  los `fxxx` se implementó en sus dos caminos, el directo de
+  `run_command_keep_sp_a6` y el indirecto de `dispatch_a6` desde el byte `0x4d`
+  (boundary `setjmp`/`longjmp` en `run_command`). La run final muestra
+  `RUN_UNWIND4D` tras `e1fc -> f1c2`, sin `loop_reopen`, y la muerte completa
+  del enemigo. Ver **`notes/0037`** (resumen de los dos fixes), **`notes/0036`**
+  (detalle técnico) e histórico en **`notes/0035`**. Después **T-072**
   (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

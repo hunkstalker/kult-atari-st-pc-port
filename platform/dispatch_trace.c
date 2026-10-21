@@ -17,6 +17,8 @@
 #include "platform.h"
 #include "machine.h"
 #include "addrs.h"
+#include "kult_port.h"
+#include "run_boundary.h"
 
 void  walk_entry(uint8_t *, uint32_t, uint32_t, uint32_t *, uint32_t *);
 uint32_t copy_screen_a6(uint8_t *, uint32_t);      /* copy_screen (byte handler 68 / cmd 105) */
@@ -379,6 +381,7 @@ uint32_t vm_run(uint8_t *img, uint32_t script) {
         if (script & VM_TAIL_FLAG) {
             platform_marks_line("D %u VMTAIL a6=%05x", platform_frame_count(),
                                 (unsigned)(script & ~VM_TAIL_FLAG));
+            kult_diag_ev("vm_tail", img, script & ~VM_TAIL_FLAG, byte, 0);
             return script & ~VM_TAIL_FLAG;
         }
     }
@@ -395,6 +398,7 @@ uint32_t inline_cmd_walk(uint8_t *img, uint32_t script) {
                         platform_frame_count(), (unsigned)(cmd & 0xffff),
                         (unsigned)((cmd - 1) & 0xffff),
                         (unsigned)entry_out, (unsigned)end_out);
+    kult_diag_ev("inline_cmd", img, cmd, entry_out, end_out);
     wr32(img + A_TEMPL_PTR, end_out);
     return entry_out;
 }
@@ -408,6 +412,7 @@ static int cmd_implemented(uint32_t idx) { return idx <= 143; }  /* tabla comple
 /* Comandos 0xa000/0xb000 de la tabla 0x19eca. */
 static void cmd_handler(uint8_t *img, uint32_t idx, uint32_t script) {
     kult_dbg_cmd((idx + 1) | 0xa000, cmd_implemented(idx));
+    kult_diag_ev("cmd_handler", img, (idx + 1) | 0xa000, idx, script);
     switch (idx) {
     case 21: clear_flag(img); break;   /* 0x172ba */
     case 0: (void)sample_menu_entry_b(img, script); break;
@@ -575,6 +580,7 @@ uint32_t run_command_keep_sp_a6(uint8_t *img, uint32_t script) {
                         platform_frame_count(), (unsigned)cmd, (unsigned)script,
                         (unsigned)(cmd >> 12), (unsigned)be32(img + A_TEMPL_PTR),
                         (unsigned)be32(img + A_CALL_STACK));
+    kult_diag_ev("run_cmd", img, script, cmd, cmd & 0xf000u);
     if (getenv("KULT_DBG_RUN"))
         fprintf(stderr, "[run] cmd=%04x script=%05x\n", (unsigned)cmd, (unsigned)script);
     if (cmd == 0) return script;
@@ -594,8 +600,17 @@ uint32_t run_command_keep_sp_a6(uint8_t *img, uint32_t script) {
                             platform_frame_count(), (unsigned)cmd,
                             (unsigned)((cmd & 0x3ff) - 1),
                             (unsigned)entry_out, (unsigned)end_out);
+        kult_diag_ev("run_f", img, script, entry_out, end_out);
         wr32(img + A_TEMPL_PTR, end_out);
-        return vm_run(img, entry_out);
+        uint32_t r = vm_run(img, entry_out);
+        kult_diag_ev("run_f_ret", img, script, r, cmd);
+        if (nibble == 0xf000 && run_unwind_boundary_active()) {
+            platform_marks_line("D %u RUN_UNWIND cmd=%04x a6=%05x",
+                                platform_frame_count(), (unsigned)cmd, (unsigned)r);
+            kult_diag_ev("run_unwind", img, script, r, cmd);
+            run_unwind_to_boundary();
+        }
+        return r;
     }
 }
 
@@ -605,9 +620,10 @@ void run_command_keep_sp(uint8_t *img, uint32_t script) {
 
 /* FUN_00010390 @ 0x10390: handler de byte que lee un word de script[1..2], lo marca con el
  * nibble 0xf000 (comando de plantilla) y salta al despacho. El comando formado es
- * siempre 0xf000, asi que 0x103ae toma la rama `walk_entry(TEMPL, cmd-1) + vm_run` y
- * deja A6 = fin del sub-guion; el handler DEVUELVE ese A6 (el `bra f_0103ae` deja
- * que el rts del sub-VM vuelva al VM llamante, que continua en esa direccion). */
+ * siempre 0xf000, asi que 0x103ae toma la rama `walk_entry(TEMPL, cmd-1) + vm_run`.
+ * Dentro de un boundary de run_command, el original restaura A7 desde $1a826 y el
+ * rts del sub-VM vuelve al llamante de run_command (unwind). Fuera de boundary se
+ * conserva el retorno anidado, que es lo que ejercitan los tests directos. */
 uint32_t dispatch_a6(uint8_t *img, uint32_t script) {
     uint32_t cmd = (((uint32_t)img[script + 2] << 8) | img[script + 1]) | 0xf000;
     wr16(img + A_THE_COMMAND, cmd & 0xffff);
@@ -620,8 +636,17 @@ uint32_t dispatch_a6(uint8_t *img, uint32_t script) {
                         (unsigned)entry_out, (unsigned)end_out,
                         (unsigned)be32(img + A_TEMPL_PTR),
                         (unsigned)be32(img + A_CALL_STACK));
+    kult_diag_ev("walk4d", img, script, entry_out, end_out);
     wr32(img + A_TEMPL_PTR, end_out);
-    return vm_run(img, entry_out);
+    uint32_t r = vm_run(img, entry_out);
+    kult_diag_ev("walk4d_ret", img, script, r, cmd);
+    if (run_unwind_boundary_active()) {
+        platform_marks_line("D %u RUN_UNWIND4D cmd=%04x a6=%05x",
+                            platform_frame_count(), (unsigned)cmd, (unsigned)r);
+        kult_diag_ev("run_unwind", img, script, r, cmd);
+        run_unwind_to_boundary();
+    }
+    return r;
 }
 
 /* FUN_000186ee @ 0x186ee: reproduce la paleta 0x10, lanza el comando 0x916b (caja de

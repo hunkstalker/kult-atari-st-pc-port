@@ -18,12 +18,14 @@ para PC (SDL3). Ver `docs/PORTING.md`.
 corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
 visible** (paleta del PI1 antes de la espera). **T-077/T-079 ✅** (sangre,
 espacio y espera de la estrella), **T-083 ✅** (objetos en serpientes) y
-**T-084 ✅** (input mantenido), **T-085 ✅** (retrato/intro) y **T-086 ✅**
-(selección de acción en el anillo), validados por el usuario. Pendiente:
+**T-084 ✅** (input mantenido), **T-085 ✅** (retrato/intro), **T-086 ✅**
+(selección de acción en el anillo) y **T-087 ✅** (A7/unwind de `fxxx` en sus
+dos caminos: directo e `dispatch_a6`), validados por el usuario. Pendiente:
 **T-061** (validación en Windows) → **T-072** (ingesta `.STX`) → **M7-c** →
 **A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
 bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en `notes/0031`, T-084 en
-`notes/0032`, T-085 en `notes/0033` y T-086 en `notes/0034`.
+`notes/0032`, T-085 en `notes/0033`, T-086 en `notes/0034` y T-087 en
+`notes/0037` (detalle técnico en `notes/0036`).
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**

@@ -470,6 +470,7 @@ uint32_t clock(uint8_t *img) {
  * restaura el cursor (0x1060a), reblitea el icono pulsado (0x18f8e + 3x 0x11020)
  * y cierra con 0x12436. Devuelve A6 avanzado 2 + 3*(nº de bits). */
 uint32_t icon_ring(uint8_t *img, uint32_t script) {
+    uint32_t ring_start = script;
     img[A_1AB44] = img[A_TEXT_SEL_A];
     script += 1;
     uint32_t mask_ptr = script;
@@ -509,6 +510,24 @@ uint32_t icon_ring(uint8_t *img, uint32_t script) {
     uint32_t h = (uint32_t)img[0x1a576];
     uint32_t count = 0xffff;                    /* d4: nº de bits - 1 */
     uint32_t mask = img[mask_ptr++];
+    {
+        uint32_t nbits = 0;
+        for (uint32_t m = mask; m; m >>= 1)
+            nbits += m & 1u;
+        kult_diag_ev("ring_open", img, ring_start, mask, nbits);
+        uint32_t p = ring_start + 2;
+        for (uint32_t bit = 7;; bit = (bit - 1) & 7u) {
+            if (mask & (1u << bit)) {
+                uint32_t icon = (uint32_t)img[p];
+                uint32_t cmd = (((uint32_t)img[p + 1] << 8) |
+                                (uint32_t)img[p + 2]) & 0xffff;
+                kult_diag_ev("ring_entry", img, icon, cmd, bit);
+                p += 3;
+            }
+            if (bit == 0)
+                break;
+        }
+    }
     for (uint32_t i = 7;; i = (i - 1) & 0xffff) {
         uint32_t bit = mask & 1;
         mask >>= 1;
@@ -562,6 +581,7 @@ uint32_t icon_ring(uint8_t *img, uint32_t script) {
         }
         img[A_TEXT_SEL_B] = (uint8_t)x;
         wr16(img + A_THE_COMMAND, yy);
+        kult_diag_ev("ring_pick", img, x, yy, (n == 0xffff) ? 0xffffu : n);
         if (img[A_TEXT_SEL_B] != img[A_1AB47])
             overlay_b_draw(img, script);
         handle_frame_input(img);
@@ -583,7 +603,10 @@ uint32_t icon_ring(uint8_t *img, uint32_t script) {
         cpu_delay(0x10000u);
     }
     mask_rows_handler(img);
-    return (script + 1 + 3 * ((count + 1) & 0xffff)) & 0xffffffffu;
+    uint32_t ring_end = (script + 1 + 3 * ((count + 1) & 0xffff)) & 0xffffffffu;
+    kult_diag_ev("ring_return", img, ring_start, ring_end,
+                 be16(img + A_THE_COMMAND));
+    return ring_end;
 }
 
 /* FUN_00015888 @ 0x15888 (cmd idx 98): bucle del anillo de 0x1566a. Guarda el fin
@@ -599,10 +622,13 @@ uint32_t icon_ring_loop_ex(uint8_t *img, uint32_t script, int *tail) {
     wr32(img + 0x1a4be, be32(img + A_TEMPL_PTR));
     wr32(img + 0x1a4c2, script);
     img[0x1a575] = 0xff;
+    kult_diag_ev("loop_in", img, script, be32(img + 0x1a4be), 0);
     for (;;) {
         do {
             script = icon_ring(img, script);
+            kult_diag_ev("loop_sel", img, script, be16(img + A_THE_COMMAND), 0);
             if (be16(img + A_THE_COMMAND) == 0xffff) {
+                kult_diag_ev("loop_exit_ffff", img, script, 0, 0);
                 wr32(img + A_TEMPL_PTR, be32(img + 0x1a4be));
                 return script;
             }
@@ -610,18 +636,29 @@ uint32_t icon_ring_loop_ex(uint8_t *img, uint32_t script, int *tail) {
             if (nib == 0xc000u || nib == 0xa000u) {
                 /* 0x1592e: `addq.l #4,a7` + `bra 0x103ae`. Tail-call: el VM
                  * exterior se abandona y devuelve el A6 del sub-guion. */
+                kult_diag_ev("loop_tail_ac", img, script,
+                             be16(img + A_THE_COMMAND), 0);
                 uint32_t a6 = run_command_keep_sp_a6(img, script);
                 if (tail)
                     *tail = 1;
                 return a6;
             }
+            kult_diag_ev("loop_cmd", img, script, be16(img + A_THE_COMMAND), nib);
             run_command_keep_sp(img, script);
             img[A_DAT_1ACE7] = (uint8_t)(img[A_DAT_1ACE7] + 1);
+            kult_diag_ev("loop_after_cmd", img, script,
+                         be16(img + A_THE_COMMAND), img[A_DAT_1ACE7]);
         } while (be16(img + 0x19316) != 0x2f3c);
+        kult_diag_ev("loop_threshold", img, script, img[A_DAT_1ACE7],
+                     img[A_DAT_1ACF2]);
         if (img[A_DAT_1AD09] == 0 && img[A_DAT_1ACF2] < img[A_DAT_1ACE7]) {
             wr16(img + A_THE_COMMAND, be16(img + A_DAT_1ABF8));
+            kult_diag_ev("loop_pending", img, script,
+                         be16(img + A_THE_COMMAND), 0);
             if (be16(img + A_THE_COMMAND) != 0) {
                 /* Mismo tail-call de 0x1592e para el comando pendiente. */
+                kult_diag_ev("loop_pending_tail", img, script,
+                             be16(img + A_THE_COMMAND), 0);
                 uint32_t a6 = run_command_keep_sp_a6(img, script);
                 if (tail)
                     *tail = 1;
@@ -630,8 +667,11 @@ uint32_t icon_ring_loop_ex(uint8_t *img, uint32_t script, int *tail) {
         }
         script = be32(img + 0x1a4c2);
         img[A_DAT_1ACE8] = (uint8_t)(img[A_DAT_1ACE8] - 1);
-        if (img[A_DAT_1ACE8] == 0)
+        kult_diag_ev("loop_reopen", img, script, img[A_DAT_1ACE8], 0);
+        if (img[A_DAT_1ACE8] == 0) {
+            kult_diag_ev("loop_clear_flags", img, script, 0, 0);
             clear_object_flags(img);
+        }
     }
 }
 

@@ -11,6 +11,8 @@ input.c — paquete IKBD y espera de frame.  ikbd_packet_copy @ 0x13686 : copia 
 
 ## Estado (globales A_* usadas)
 
+- `A_CURSOR_X`
+- `A_CURSOR_Y`
 - `A_IKBD_PACKET`
 - `A_INPUT_BUTTONS`
 - `A_SKIP_TRANSITION`

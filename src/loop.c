@@ -172,6 +172,7 @@ void rot_action(uint8_t *img) {
     }
 cmd_a019:
     wr16(img + A_DAT_1ABF8, 0xa019);
+    kult_diag_ev("set_abf8", img, 0xa019, 0, 0);
     img[A_DAT_1ACF2] = 3;
     img[A_DAT_1ACFF] = (uint8_t)(flag | 4);
     wr32(img + A_ELEM_CLASS, entry);
@@ -179,6 +180,7 @@ cmd_a019:
 cmd_a018:
     img[entry] = img[A_DAT_1ACD2];
     wr16(img + A_DAT_1ABF8, 0xa018);
+    kult_diag_ev("set_abf8", img, 0xa018, 0, 0);
     img[A_DAT_1ACF2] = 3;
     img[A_DAT_1ACFF] = (uint8_t)flag;
     wr32(img + A_ELEM_CLASS, entry);
@@ -862,6 +864,7 @@ l1723c:
         for (;;) {
             if (img[p2] == mode) {
                 wr16(img + A_DAT_1ACAA, 0xa016);
+    kult_diag_ev("set_acaa", img, 0xa016, 0, 0);
                 wr16(img + A_DAT_1ACAC, (be16(img + A_DAT_1AB60) + 5) & 0xffff);
                 img[tbl] = img[p2 + 1];
                 break;
@@ -1016,6 +1019,7 @@ uint32_t obj_seal(uint8_t *img, uint32_t script) {
     uint32_t entry = be32(img + 0x1a812);
     img[entry] = img[A_DAT_1ACD2];
     wr16(img + A_DAT_1ABF8, 0xa018);
+    kult_diag_ev("set_abf8", img, 0xa018, 0, 0);
     img[A_DAT_1ACF2] = 3;
     img[A_DAT_1ACE7] = 0;
     uint32_t class_out;
@@ -2023,6 +2027,7 @@ void anim_step(uint8_t *img) {
             return;
         if (t >= 0x1c20) {
             wr16(img + A_DAT_1AC06, 0xc318);
+            kult_diag_ev("set_ac06", img, 0xc318, 0, 0);
             return;
         }
         img[A_DAT_1ACFD] = 2;
@@ -2033,6 +2038,7 @@ void anim_step(uint8_t *img) {
             return;
         if (img[A_DAT_1ACD2] < 0x4b) {
             wr16(img + A_DAT_1AC06, 0xc012);
+            kult_diag_ev("set_ac06", img, 0xc012, 0, 0);
             return;
         }
         return;
@@ -2054,6 +2060,7 @@ void anim_step(uint8_t *img) {
     if (img[A_DAT_1ACD2] >= 0x16)
         return;
     wr16(img + A_DAT_1AC06, 0xc012);
+    kult_diag_ev("set_ac06", img, 0xc012, 0, 0);
 }
 
 /* ---- actualizacion de pista / sonido (0x18dc0) ---- */
@@ -2132,6 +2139,8 @@ void game_loop(uint8_t *img, uint32_t stack) {
         handle_frame_input(img);
 
         if ((img[A_INPUT_BUTTONS] & 0x04) && be16(img + A_THE_COMMAND) != 0) {
+            kult_diag_ev("click_cmd", img, be16(img + A_THE_COMMAND),
+                         img[A_INPUT_BUTTONS], 0);
             cursor_restore(img);
             hint_icons(img);
             run_command(img, stack);
@@ -2146,18 +2155,24 @@ void game_loop(uint8_t *img, uint32_t stack) {
 
         if (img[A_DAT_1ACF2] < img[A_DAT_1ACE7]) {
             wr16(img + A_THE_COMMAND, be16(img + A_DAT_1ABF8));
-            if (be16(img + A_THE_COMMAND) != 0)
+            if (be16(img + A_THE_COMMAND) != 0) {
+                kult_diag_ev("queue_abf8", img, be16(img + A_THE_COMMAND), 0, 0);
                 goto lab_2cc;
+            }
         }
         if (img[A_DAT_1AD0B] != 0)
             goto lab_310;
         wr16(img + A_THE_COMMAND, be16(img + A_DAT_1AC06));
-        if (be16(img + A_THE_COMMAND) != 0)
+        if (be16(img + A_THE_COMMAND) != 0) {
+            kult_diag_ev("queue_ac06", img, be16(img + A_THE_COMMAND), 0, 0);
             goto lab_2cc;
+        }
         if (be16(img + A_DAT_1ACAC) < be16(img + A_DAT_1AB60)) {
             wr16(img + A_THE_COMMAND, be16(img + A_DAT_1ACAA));
-            if (be16(img + A_THE_COMMAND) != 0)
+            if (be16(img + A_THE_COMMAND) != 0) {
+                kult_diag_ev("queue_acaa", img, be16(img + A_THE_COMMAND), 0, 0);
                 goto lab_2cc;
+            }
         }
         /* B: el original salta a lab_310 si ACB0 >= AB60 (bcc); el comando AE se
          * despacha cuando ACB0 < AB60 (temporizador B ya vencido). */
@@ -2166,7 +2181,9 @@ void game_loop(uint8_t *img, uint32_t stack) {
         wr16(img + A_THE_COMMAND, be16(img + A_DAT_1ACAE));
         if (be16(img + A_THE_COMMAND) == 0)
             goto lab_310;
+        kult_diag_ev("queue_acae", img, be16(img + A_THE_COMMAND), 0, 0);
     lab_2cc:
+        kult_diag_ev("dispatch_queued", img, be16(img + A_THE_COMMAND), 0, 0);
         cursor_restore(img);
         hint_icons(img);
         run_command_keep_sp(img, 0);
@@ -2309,15 +2326,18 @@ lab_17fec:
     cursor_draw(img);
     if (img[A_DAT_1ACF7] != 0) {
         wr16(img + A_DAT_1AC06, 0xc1fd);
+        kult_diag_ev("set_ac06", img, 0xc1fd, 0, 0);
         return;
     }
     if (img[A_1AAE1] & 0x20) {
         wr16(img + A_DAT_1AC06, 0xc1e5);
+        kult_diag_ev("set_ac06", img, 0xc1e5, 0, 0);
         return;
     }
     if (img[A_DAT_1ACD2] != 0x2c)
         return;
     wr16(img + A_DAT_1AC06, 0xc060);
+    kult_diag_ev("set_ac06", img, 0xc060, 0, 0);
 }
 
 /* ---- estado de objetos/hints 0x17094/0x172ca y tabla 0x16f90/0x17930 ---- */

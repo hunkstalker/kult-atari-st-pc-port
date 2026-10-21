@@ -29,4 +29,20 @@ static inline void cpu_delay_cycles(uint64_t cycles) { (void)cycles; }
 /* Logger de diagnostico del motor nativo: no-op en el diferencial. */
 static inline FILE *kult_dbgfile(void) { return NULL; }
 
+/* Traza de diagnostico del anillo de acciones: no-op en el diferencial. */
+static inline void kult_diag_ev(const char *tag, uint8_t *img,
+                                uint32_t a, uint32_t b, uint32_t c) {
+    (void)tag; (void)img; (void)a; (void)b; (void)c;
+}
+
+static inline void kult_diag_rnd(const char *tag, uint8_t *img,
+                                 uint32_t a, uint32_t b, uint32_t c) {
+    (void)tag; (void)img; (void)a; (void)b; (void)c;
+}
+
+static inline void kult_diag_input(const char *tag, uint8_t *img,
+                                   uint32_t x, uint32_t y, uint32_t buttons) {
+    (void)tag; (void)img; (void)x; (void)y; (void)buttons;
+}
+
 #endif

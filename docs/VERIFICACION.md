@@ -52,13 +52,14 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Guardado y carga de partida.
 - ✅ Muerte → reinicio (T-076), incluida la secuencia de animaciones.
 - ✅ Audio completo: música, voces, efectos y **puertas** (apertura/tope/cierre) validados.
+- ✅ Combate/PSI: el enemigo fuerte muere tras el PSI, el anillo no se reabre y no queda el recuadro negro (T-087, `notes/0037`).
 - ⬜ Reproducir el glitch gráfico aislado que queda pendiente.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**511** verde) y `make test-port` (verde).
+1. ✅ **Automático:** `make test` (**516** verde) y `make test-port` (verde).
 2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y

@@ -14,6 +14,8 @@
 
 #include "machine.h"
 #include "addrs.h"
+#include "kult_port.h"
+#include "run_boundary.h"
 
 void prompt_wait(uint8_t *);
 void hint_select_off(uint8_t *, uint32_t, uint32_t *);
@@ -595,10 +597,27 @@ void overlay_a_frame(uint8_t *);
 void overlay_b_frame(uint8_t *);
 void wait_vbl(uint8_t *);
 
+/* Pila de boundaries de run_command (0x103a8): el original guarda A7 en
+ * $1a826 y 0x103ae lo restaura para comandos 0xfxxx; el rts del VM vuelve al
+ * llamante de run_command, saltandose el resto del despacho anidado. */
+kult_run_boundary *g_kult_run_boundary_top;
+
 /* FUN_000103a8 @ 0x103a8: guarda A7 en 0x1a826 y cae en run_command_keep_sp (0x103ae). */
 void run_command(uint8_t *img, uint32_t stack) {
+    kult_run_boundary boundary;
+    kult_run_boundary *volatile prev = g_kult_run_boundary_top;
     wr32(img + A_RUN_STACK, stack);
-    run_command_keep_sp(img, 0);
+    kult_diag_ev("run_boundary_in", img, stack, be16(img + A_THE_COMMAND), 0);
+    boundary.prev = prev;
+    g_kult_run_boundary_top = &boundary;
+    if (setjmp(boundary.env) == 0) {
+        run_command_keep_sp(img, 0);
+        g_kult_run_boundary_top = prev;
+        kult_diag_ev("run_boundary_out", img, stack, be16(img + A_THE_COMMAND), 0);
+    } else {
+        g_kult_run_boundary_top = prev;
+        kult_diag_ev("run_unwind_out", img, stack, be16(img + A_THE_COMMAND), 0);
+    }
 }
 
 /* FUN_0001031c @ 0x1031c (handle_frame_input): espera un frame; mientras el flag

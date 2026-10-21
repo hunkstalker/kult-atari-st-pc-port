@@ -5,6 +5,49 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 43 — T-087 validado y cerrado (dos caminos A7/unwind)**:
+  la run de validación del usuario (2026-10-21 22:21 local) muestra
+  `RUN_UNWIND4D` en VBL 2939 tras `e1fc -> 0x4d/f1c2`, sin `loop_reopen`, y
+  `c357` en 3184 con clase `01ab30` en 3448. Después, `01aa86` muere con
+  `c1d2`/`c1d7`/`c357` (5700/5772/5930). Logs archivados en
+  `build-win/kult-0.1.0-win64/trazas-post-fix-20261021/validacion/` con `README.txt` y
+  `SHA256SUMS`. Documentación de cierre: **`notes/0037-dos-caminos-unwind-a7.md`**;
+  detalle técnico en **`notes/0036`** §11–§13. `make test` **516** y
+  `test-port` OK. Salvedad: la run manual valida el camino indirecto; el
+  directo `b002/f2f8` queda cubierto por test automático, sin reejecución
+  manual en esta captura. Siguiente: **T-061**/T-072.
+- **Sesión 42 — T-087: segundo camino A7/unwind (`dispatch_a6`) implementado**:
+  el fix de la sesión 41 cubría `fxxx` directo (`run_command_keep_sp_a6`), pero
+  el último combate usa `e1fc -> byte 0x4d -> dispatch_a6 -> f1c2`. Ahora
+  `dispatch_a6` dispara el mismo unwind cuando hay boundary de `run_command`;
+  sin boundary conserva el retorno anidado. Traza `RUN_UNWIND4D`. Nuevo
+  `test/test_a7_unwind.py` (helper C con boundary real): **516 tests** y
+  `test-port` OK. Exes recompilados y copiados al paquete. **Validado en la
+  sesión 43.** Detalle: **`notes/0036`** §12.
+- **Sesión 41 — T-087: fix central A7/unwind implementado (validado en sesión 43)**:
+  boundary `setjmp`/`longjmp` en `run_command` (`src/handlers.c`) y unwind
+  central para `nibble == 0xf000` en `run_command_keep_sp_a6`
+  (`src/dispatch.c`), con fallback normal si no hay boundary. Trazas
+  `run_unwind`/`run_unwind_out`; `dispatch_a6` y el tail-call `c/a`/`$1abf8`
+  intactos. Nuevo test diferencial `test_run_command_f000_unwind`: **515
+  tests** y `test-port` OK. `kult-diag.exe` y `kult.exe` recompilados y
+  copiados al paquete. **Validado en la sesión 43** (el camino indirecto en la
+  run final; el directo por test automático). Detalle: **`notes/0036`** §11.
+- **Sesión 40 — T-087: causa raíz A7/unwind localizada (abierto, sin fix)**:
+  captura limpia con dos combates. Enemigo 1 (`01aa77`, `Attack` normal):
+  muere correctamente con `c2f8 -> c1d2 -> c1d7 -> c357`. Enemigo 2
+  (`01aa86`, `PSI Attack`): `b002 -> a010/f2f8` marca la clase
+  `00 44 31 d9 0b`, pero en vez de la secuencia de muerte aparece
+  `loop_reopen` al anillo; después `c2f8/c357` deja el recuadro negro y muere el
+  jugador. **Causa raíz:** falta el retorno no local (A7) de `0x103ae` para
+  comandos `0xfxxx`; `A_RUN_STACK` se guarda pero no se usa. Solución
+  recomendada: unwind central en el boundary de `run_command` con
+  `setjmp`/`longjmp`, no un parche en `palette_cmd`. Logs:
+  `build-win/kult-0.1.0-win64/trazas-run-combates-20261021-2055/` (con
+  `README.txt` y `SHA256SUMS`). Detalle completo: **`notes/0036-a7-unwind-combate.md`**.
+- **Sesión 39 — handoff inicial de T-087**: sin fix y sin commit; log contaminado
+  por varias runs. El protocolo antiguo quedó en **`notes/0035`**; la captura
+  limpia y la causa raíz están en la sesión 40 y **`notes/0036`**.
 - **Sesión 38 — T-086 resuelto y validado (selección de acción en el anillo)**:
   `icon_ring` (`0x1566a`) tenía tres `dbra d0` de `0xffff` entre los tres blits
   del icono seleccionado y el C los omitía; el cierre duraba ~1 VBL. Ahora usan
@@ -166,6 +209,53 @@ se ven los tres destellos al seleccionar acciones.
 
 **Ejecutables:** `kult.exe` `4fc2cfa2…`, `kult-headless.exe` `8c222aff…`,
 `kult-diag.exe` `6628f205…`.
+
+### T-087 — A7/unwind de comandos `0xfxxx` (resuelto y validado)
+
+> **Sesión 43: cerrado.** Los dos caminos que llegan a `0x103ae` están
+> corregidos y el usuario validó la run final. Resumen:
+> **`notes/0037-dos-caminos-unwind-a7.md`**; técnico: **`notes/0036`** §11–§13.**
+
+**Síntoma confirmado con captura limpia:** el `PSI Attack` ejecuta la animación
+de muerte y marca la clase (`byte0=0`, bit6), pero no dispara la secuencia de
+muerte; el anillo se reabre. Un `Attack` posterior deja el recuadro negro del
+enemigo vivo y el jugador muere.
+
+**Traza:** enemigo normal `01aa77`: `c2f8` (nibble `c`) -> `loop_tail_ac` ->
+`c1d2`/`c1d7`/`c357`; muerte correcta. Enemigo `01aa86`: `b002` ->
+`a010`/`f2f8` (nibble `f`) -> clase `00 44 31 d9 0b` en VBL 5926 ->
+`loop_reopen` al anillo `20c88`; no hay `c1d2`/`c1d7`/`c357`.
+
+**Causa:** en el ASM, `0x103a8` guarda A7 en `$1a826` y `0x103ae`, para
+`0xfxxx`, restaura A7 y hace tail-jump al VM; el `rts` del VM vuelve al llamante
+de `run_command`, saltándose `palette_cmd`/`b002`/anillo. El port guardaba
+`A_RUN_STACK` pero no lo leía, así que el anillo se reabría.
+
+**Fix (sesiones 41–42):** boundary con `setjmp` en `run_command` y unwind
+central en dos entradas: `run_command_keep_sp_a6` para `nibble == 0xf000`
+(sesión 41) y `dispatch_a6` para el `fxxx` que forma el byte `0x4d` (sesión 42).
+Fuera de boundary se conserva el retorno normal/anidado. Trazas
+`run_unwind`/`run_unwind_out`/`RUN_UNWIND4D`. No se toca el tail-call `c/a` ni
+`$1abf8`. Tests: `test_run_command_f000_unwind` y `test_a7_unwind`; `make test`
+**516** y `test-port` OK. Ejecutables en el paquete: `kult.exe` `be2cd45a…`,
+headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
+`kult-diag-headless.exe` `5065fcc1…`.
+
+**Validación (sesión 43):** la run del usuario confirmó el fix indirecto:
+`e1fc -> 0x4d/f1c2` -> `RUN_UNWIND4D` en VBL 2939, sin `loop_reopen`; `c357` en
+3184 y clase `01ab30` en 3448. Después, `01aa86` muere con
+`c1d2`/`c1d7`/`c357` (5700/5772/5930). Logs en
+`build-win/kult-0.1.0-win64/trazas-post-fix-20261021/validacion/`. El camino directo
+`b002/f2f8` no se reejecutó manualmente en esta captura; queda cubierto por
+`test_run_command_f000_unwind`.
+
+**Seguimiento:** auditar los demás handlers con restauración de A7
+(`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`, `0x15382`, `0x15530`,
+`0x1699c/a4/b4`). No parchear el anillo por clase ni solo `palette_cmd`.
+
+**Logs de referencia:** `build-win/kult-0.1.0-win64/trazas-run-combates-20261021-2055/`
+(`dano-todo-*`, `kult.log`, `README.txt`, `SHA256SUMS`). Logs antiguos:
+`.../trazas-antes-run-combates-20261021-2035/`.
 
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
@@ -492,27 +582,34 @@ se ven los tres destellos al seleccionar acciones.
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build estándar actual**: exe Windows `c7b8dac1…`, sin traza `Y`/`V`; la
-  traza (`platform/dispatch_trace.c`) es diagnóstica y va aparte. `src/` solo
-  cambia en `elem_command`/`reveal`/`scale`/`handlers`/`screens` (T-081) y la
-  anotación de timing de `src/loop.c`; ambas autorizadas. `make test` **511** y
-  `make test-port` verdes. Las capturas de A/B/C quedan en
-  `temp/screenshots/` (no versionadas); no se requiere capturar más.
+- **Build actual (sesión 42)**: `kult.exe` `be2cd45a…`, `kult-headless.exe`
+  `3e44ba7d…`, `kult-diag.exe` `16605768…`, `kult-diag-headless.exe`
+  `5065fcc1…` (en `build-win/kult-0.1.0-win64/`). La traza `Y`/`V` sigue siendo
+  diagnóstica y va aparte. `make test` **516** y `make test-port` OK. El working
+  tree conserva la instrumentación de diagnóstico de sesiones anteriores **sin
+  commit**. Las capturas de A/B/C quedan en `temp/screenshots/` (no
+  versionadas).
 - **Colores del juego corregidos** (sesión 14): `OS_SCREEN_BASE = 0x98000` en
   `platform/include/os.h` (Physbase es HAL); con `0x80000` las pantallas y su
   paleta caían dentro de ECHE/heap del juego. **Ritmo en observación**: el port
   va a 50 VBL/s correctos; la aceleración es trabajo de CPU no modelado → T-073.
   Detalle: `notes/0014`.
 - **M2 con `0x106f2` abierto** (no cerrado): ver `notes/0011`.
-- `make test` **511** verde; `make test-port` verde. Sin bloqueantes.
+- `make test` **516** verde; `make test-port` verde. Sin bloqueantes.
 - **Plan de hitos fijado** (sesión 11): `notes/0011`; build (sesión 12):
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-061 — validación completa en Windows**: repasar lo ya validado (input
-mantenido/anillo de T-084, retrato/intro de T-085 y destellos de acción de
-T-086) y cerrar el glitch gráfico aislado que queda. Después: **T-072** (ingesta
-`.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
+**T-061 — validación completa en Windows (en curso)**. T-087 queda cerrado y
+validado; la run final está en `trazas-post-fix-20261021/validacion/`. Queda reproducir el
+glitch gráfico aislado que menciona la checklist y completar la validación
+global de `docs/VERIFICACION.md`. Después: **T-072** (ingesta `.STX`) →
+**M7-c** → **A1** → **N3** → **A2** → **M5**.
+
+**Seguimiento técnico de T-087:** auditar los demás handlers con restauración
+de A7 (`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`, `0x15382`,
+`0x15530`, `0x1699c/a4/b4`); no parchear el anillo por clase ni solo
+`palette_cmd`.
 
 T-084 (input mantenido), T-085 (retrato/intro) y T-086 (selección de acción)
 están **cerrados y validados**: detalle en **`notes/0032`**, **`notes/0033`** y
@@ -521,7 +618,7 @@ T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 
 ## Comandos
-- Core/diferencial: `make test` (513), `make test PYTEST_ARGS=-n0`,
+- Core/diferencial: `make test` (514), `make test PYTEST_ARGS=-n0`,
   `make regscan` (`ids_reg=0`), `make core`.
 - Port: `make port` (→ `build/kult`, headless), `make port-sdl` (→ `build/kult-sdl`,
   ventana SDL3), `make test-port` (HAL, sin oráculo).

@@ -126,6 +126,39 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   `kult-marcas.bat` lo activa.
   Los logs van en **append** con separador `# RUN`; F12 también deja
   `F12: marca manual` en `kult.log`.
+- **Traza del anillo (`R`)**: con `KULT_RINGLOG=<ruta>` (solo líneas `R`) o
+  `KULT_MARKS` activo, cada anillo de acciones escribe en vivo (no depende de
+  F12) líneas
+  `R <vbl> <evento> a=.. b=.. c=.. cr2=.. abf8=.. ace7=.. acf2=.. ace8=..
+  ad09=.. w19316=.. a826=.. sel=.. cls=..`.
+  Eventos: `ring_open` (A6 y máscara), `ring_entry` (`icono`, comando y bit),
+  `ring_pick`, `ring_return`, `loop_in/sel/cmd/after_cmd/threshold/pending/
+  pending_tail/reopen/clear_flags/exit_ffff/tail_ac`, `run_cmd`, `run_f`,
+  `run_f_ret`, `walk4d`, `walk4d_ret`, `vm_tail`, `run_boundary_in/out`,
+  `run_unwind`, `run_unwind_out` y `RUN_UNWIND4D` (esta última en el log `D`
+  de `kult-diag.exe`).
+  `cr2` es `$1a4c2`, `abf8` el comando pendiente, `a826` el A7 guardado por
+  `run_command`, `w19316` la palabra comparada con `0x2f3c` y `sel/cls` el
+  objeto y clase seleccionados (con sus primeros 8 bytes). El `icono` de cada
+  `ring_entry` se traduce a verbo con `work/texts/VERBE.BIN.json` del repo
+  legacy (el índice JSON es el icono; p. ej. `0x94` = *LIE DOWN*).
+  `kult-anillo.bat` activa solo esta traza (`kult-anillo.log`); el resumen se
+  obtiene con `python3 tools/ringreport.py kult-anillo.log`.
+  La misma linea `R` incluye `hp` (`$1ad20`), `ad03`, `ad02`, `rnd_idx`
+  (`$1a579`) y `rnd_byte` (`$1acd7`). Con **`KULT_RANDLOG=<ruta>`** se registra
+  cada lectura de la tabla ALEAT (`0x2741e`) desde `pal_next_byte`/`pal_next_word`
+  con `D <vbl> rnd_b|rnd_w ... idx=.. val=.. hp=.. ad03=.. ad02=..`.
+  Para capturas de dano hay dos batches: `kult-dano-normal.bat` y
+  `kult-dano-psi.bat` (usan `kult-diag.exe`, `KULT_MARKS`, `KULT_RINGLOG`,
+  `KULT_RANDLOG` y `KULT_INPUTLOG` con ficheros separados). Para una sola run
+  con todos los ataques (normal + PSI) esta `kult-dano-todo.bat`.
+  **`KULT_INPUTLOG=<ruta>`** registra la entrada con lineas `I <vbl> <evento>
+  x=.. y=.. btn=.. [hp/ad03/ad02/ad09/cmd/sel/cls]`: `mouse_down/up`,
+  `mouse_down_r/up_r` (clic crudo de SDL) e `ikbd_click`/`click` (clic
+  entregado/procesado por `wait_frame`). En la traza `R` tambien aparecen
+  `click_cmd`, `queue_abf8/ac06/acaa/acae`, `dispatch_queued`, `set_ac06`,
+  `set_abf8`, `set_acaa`, `cmd_handler` e `inline_cmd`, para no perder
+  comandos que no pasan por el anillo.
 - **Medida objetiva**: `KULT_FPSLOG=1` imprime cada ~3 s el **FPS del bucle del
   juego** (una iteración = un `wait_frame`, igual que el contador `Ikbdws` del
   arnés Hatari del predecesor: `tools/hatari_fps/`). Comparar la **misma escena**
@@ -144,7 +177,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 
 ## Comandos del core (heredados, ya verdes)
 ```
-make test                      # candidato + oráculo + 499 pruebas (paralelo)
+make test                      # candidato + oráculo + 516 pruebas (paralelo)
 make test PYTEST_ARGS=-n0      # serial
 make regscan                   # ids_reg=0
 make core                      # build/libkultcore.so (API restringida)

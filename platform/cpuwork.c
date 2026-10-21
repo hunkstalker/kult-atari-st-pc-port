@@ -364,6 +364,151 @@ void __cyg_profile_func_enter(void *this_fn, void *call_site) {
     }
 }
 
+/* Fichero de la traza R: KULT_RINGLOG si está definido; si no, el de KULT_MARKS.
+ * Así se puede capturar el anillo sin generar el log masivo de F/Y/V. */
+static FILE *g_ring_file;
+static int g_ring_tried;
+
+__attribute__((no_instrument_function))
+static FILE *ring_file(void) {
+    if (!g_ring_tried) {
+        g_ring_tried = 1;
+        const char *e = getenv("KULT_RINGLOG");
+        if (e && *e)
+            g_ring_file = fopen(e, "a");
+    }
+    return g_ring_file ? g_ring_file : marks_file();
+}
+
+/* Traza del anillo de acciones. Escribe si KULT_RINGLOG o KULT_MARKS están activos. */
+__attribute__((no_instrument_function))
+void platform_diag_ev(const char *tag, uint8_t *img,
+                      uint32_t a, uint32_t b, uint32_t c) {
+    FILE *mf = ring_file();
+    if (!mf || !img) return;
+    uint32_t sel = be32(img + A_SELECTED_OBJECT);
+    uint32_t cls = be32(img + A_ELEM_CLASS);
+    fprintf(mf,
+            "R %u %s a=%05x b=%05x c=%05x cr2=%05x abf8=%04x "
+            "ace7=%02x acf2=%02x ace8=%02x ad09=%02x w19316=%04x "
+            "a826=%05x hp=%02x ad03=%02x ad02=%02x rnd=%02x/%02x "
+            "sel=%06x cls=%06x",
+            platform_frame_count(), tag ? tag : "?", (unsigned)a, (unsigned)b,
+            (unsigned)c, (unsigned)be32(img + 0x1a4c2),
+            (unsigned)be16(img + A_DAT_1ABF8), (unsigned)img[A_DAT_1ACE7],
+            (unsigned)img[A_DAT_1ACF2], (unsigned)img[A_DAT_1ACE8],
+            (unsigned)img[A_DAT_1AD09], (unsigned)be16(img + 0x19316),
+            (unsigned)be32(img + A_RUN_STACK), (unsigned)img[0x1ad20],
+            (unsigned)img[0x1ad03], (unsigned)img[0x1ad02],
+            (unsigned)img[A_DAT_1A579], (unsigned)img[A_DAT_1ACD7],
+            (unsigned)sel, (unsigned)cls);
+    if (sel >= 0x10000u && sel + 8u <= 0x100000u) {
+        fprintf(mf, " selb=");
+        for (uint32_t k = 0; k < 8u; k++)
+            fprintf(mf, "%02x", img[sel + k]);
+    }
+    if (cls >= 0x10000u && cls + 8u <= 0x100000u) {
+        fprintf(mf, " clsb=");
+        for (uint32_t k = 0; k < 8u; k++)
+            fprintf(mf, "%02x", img[cls + k]);
+    }
+    fputc('\n', mf);
+    fflush(mf);
+}
+
+/* Traza de lecturas de ALEAT (0x2741e). Solo escribe con KULT_RANDLOG. */
+static FILE *g_rand_file;
+static int g_rand_tried;
+
+__attribute__((no_instrument_function))
+static FILE *rand_file(void) {
+    if (!g_rand_tried) {
+        g_rand_tried = 1;
+        const char *e = getenv("KULT_RANDLOG");
+        if (e && *e)
+            g_rand_file = fopen(e, "a");
+    }
+    return g_rand_file;
+}
+
+__attribute__((no_instrument_function))
+void platform_diag_rnd(const char *tag, uint8_t *img,
+                       uint32_t a, uint32_t b, uint32_t c) {
+    FILE *mf = rand_file();
+    if (!mf || !img) return;
+    uint32_t sel = be32(img + A_SELECTED_OBJECT);
+    uint32_t cls = be32(img + A_ELEM_CLASS);
+    fprintf(mf,
+            "D %u %s a=%02x b=%04x c=%04x idx=%02x val=%02x "
+            "hp=%02x ad03=%02x ad02=%02x ad09=%02x cmd=%04x "
+            "sel=%06x cls=%06x",
+            platform_frame_count(), tag ? tag : "?", (unsigned)a, (unsigned)b,
+            (unsigned)c, (unsigned)img[A_DAT_1A579], (unsigned)img[A_DAT_1ACD7],
+            (unsigned)img[0x1ad20], (unsigned)img[0x1ad03],
+            (unsigned)img[0x1ad02], (unsigned)img[A_DAT_1AD09],
+            (unsigned)be16(img + A_THE_COMMAND), (unsigned)sel, (unsigned)cls);
+    if (sel >= 0x10000u && sel + 8u <= 0x100000u) {
+        fprintf(mf, " selb=");
+        for (uint32_t k = 0; k < 8u; k++)
+            fprintf(mf, "%02x", img[sel + k]);
+    }
+    if (cls >= 0x10000u && cls + 8u <= 0x100000u) {
+        fprintf(mf, " clsb=");
+        for (uint32_t k = 0; k < 8u; k++)
+            fprintf(mf, "%02x", img[cls + k]);
+    }
+    fputc('\n', mf);
+    fflush(mf);
+}
+
+/* Traza de entrada (clics). Solo escribe con KULT_INPUTLOG. */
+static FILE *g_input_file;
+static int g_input_tried;
+
+__attribute__((no_instrument_function))
+static FILE *input_file(void) {
+    if (!g_input_tried) {
+        g_input_tried = 1;
+        const char *e = getenv("KULT_INPUTLOG");
+        if (e && *e)
+            g_input_file = fopen(e, "a");
+    }
+    return g_input_file;
+}
+
+__attribute__((no_instrument_function))
+void platform_diag_input(const char *tag, uint8_t *img,
+                         uint32_t x, uint32_t y, uint32_t buttons) {
+    FILE *mf = input_file();
+    if (!mf) return;
+    fprintf(mf, "I %u %s x=%04x y=%04x btn=%02x",
+            platform_frame_count(), tag ? tag : "?", (unsigned)x,
+            (unsigned)y, (unsigned)buttons);
+    if (img) {
+        uint32_t sel = be32(img + A_SELECTED_OBJECT);
+        uint32_t cls = be32(img + A_ELEM_CLASS);
+        fprintf(mf,
+                " hp=%02x ad03=%02x ad02=%02x ad09=%02x cmd=%04x "
+                "sel=%06x cls=%06x",
+                (unsigned)img[0x1ad20], (unsigned)img[0x1ad03],
+                (unsigned)img[0x1ad02], (unsigned)img[A_DAT_1AD09],
+                (unsigned)be16(img + A_THE_COMMAND), (unsigned)sel,
+                (unsigned)cls);
+        if (sel >= 0x10000u && sel + 8u <= 0x100000u) {
+            fprintf(mf, " selb=");
+            for (uint32_t k = 0; k < 8u; k++)
+                fprintf(mf, "%02x", img[sel + k]);
+        }
+        if (cls >= 0x10000u && cls + 8u <= 0x100000u) {
+            fprintf(mf, " clsb=");
+            for (uint32_t k = 0; k < 8u; k++)
+                fprintf(mf, "%02x", img[cls + k]);
+        }
+    }
+    fputc('\n', mf);
+    fflush(mf);
+}
+
 __attribute__((no_instrument_function))
 void platform_marks_line(const char *fmt, ...) {
     FILE *mf = marks_file();
