@@ -1,7 +1,9 @@
-# 0032 — T-084: input mantenido / clics repetidos (resuelto)
+# 0032 — T-084: input mantenido / clics repetidos (resuelto y validado)
 
-> **Resuelto en sesión 36.** El clic izquierdo mantenido ya no repite la acción.
-> Fix **sólo en `platform/`**; `src/` (el juego) queda intacto.
+> **Resuelto en sesión 36 y validado por el usuario en Windows.** El clic
+> izquierdo mantenido ya no repite la acción: el anillo se abre una vez y queda
+> abierto para elegir. Fix **sólo en `platform/`**; `src/` (el juego) queda
+> intacto.
 
 ## 1. Síntoma
 
@@ -121,9 +123,9 @@ En `platform/test/test_platform.c` (todas en `make test-port`):
   pulsación mantenida 5 s → **un solo flanco de entrada**. La traza no muestra
   repeticiones de `Y 3d` durante el mantenimiento.
 - `test_click_held` recorre 32 frames con el botón pulsado sin clics nuevos.
-- **Pendiente:** validación visual final del anillo en Windows con el nuevo
-  `kult-diag.exe` (`64505805…`) manteniendo el clic: debe abrirse una vez y
-  quedarse abierto para elegir.
+- **Validado por el usuario en Windows** con `kult-diag.exe` (`64505805…`):
+  manteniendo el clic, el anillo de acciones se abre **una sola vez** y se queda
+  abierto para poder elegir.
 
 Artefactos de esta sesión:
 

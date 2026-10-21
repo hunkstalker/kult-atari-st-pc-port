@@ -118,7 +118,9 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    (incluidas puertas).
    **Controles**:
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
-   **derecho** = acción + skip (puertas y A/B/C). **Cursor**: se queda en los
+   **derecho** = acción + skip (puertas y A/B/C). **Clic mantenido ✅ (T-084)**:
+   una pulsación mantenida = **un** clic; el anillo de acciones se abre una vez y
+   queda abierto para elegir (ver `notes/0032`). **Cursor**: se queda en los
    bordes sin reaparecer por el lado contrario (máximo IKBD 304×184; ver
    `notes/0021`) y **no debe verse el cursor de Windows** dentro de la ventana,
    solo el del juego (`notes/0027`). **Ritmo**: el port va a

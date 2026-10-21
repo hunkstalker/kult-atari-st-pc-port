@@ -5,13 +5,14 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
-- **Sesión 36 — T-084 resuelto (input mantenido / clics repetidos)**: el IKBD
-  original se interroga con `0x0D` y responde con **eventos desde la última
-  interrogación**, no con el nivel del botón. La HAL entregaba nivel en cada
-  `wait_frame`; ahora entrega un flanco de bajada una sola vez. Clic mantenido
-  = un clic, soltar y pulsar = otro, derecho = acción + skip sólo en su bajada.
-  `src/` intacto; tests `test_click_held`, `test_click_skip`,
-  `test_crawio_queue`. Detalle: **§ T-084** y **`notes/0032`**.
+- **Sesión 36 — T-084 resuelto y validado (input mantenido / clics repetidos)**:
+  el IKBD original se interroga con `0x0D` y responde con **eventos desde la
+  última interrogación**, no con el nivel del botón. La HAL entregaba nivel en
+  cada `wait_frame`; ahora entrega un flanco de bajada una sola vez. Clic
+  mantenido = un clic, soltar y pulsar = otro, derecho = acción + skip sólo en
+  su bajada. `src/` intacto; tests `test_click_held`, `test_click_skip`,
+  `test_crawio_queue`. **Validado por el usuario en Windows**: el anillo se abre
+  y se queda abierto para elegir. Detalle: **§ T-084** y **`notes/0032`**.
 - **Sesión 34 — T-083 resuelto y validado (fix + refactor)**: causa raíz en
   `icon_ring_loop` (0x15888): el tail-call/retorno doble de `0x1592e` se
   modelaba como llamada normal y el VM exterior seguía ejecutando la cabecera
@@ -67,9 +68,10 @@ Los blits y `scale_prep` eran víctimas, no causa.
 **Artefactos:** `kult.exe` `41be915acfd6eedccae459e5be014a84`,
 `kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
 
-### T-084 — input mantenido / clics repetidos (resuelto)
+### T-084 — input mantenido / clics repetidos (resuelto y validado)
 
-> **Resuelto en sesión 36. Detalle: `notes/0032-input-clic-mantenido.md`.**
+> **Resuelto en sesión 36 y validado por el usuario. Detalle:
+> `notes/0032-input-clic-mantenido.md`.**
 
 **Síntoma:** mantener el clic izquierdo producía clics continuos; el anillo de
 acciones se abría/cerraba y no se podía elegir.
@@ -100,8 +102,9 @@ que filtrarlo sería menos fiel; no es la causa del anillo.
 **Validación:** `make test` **513** y `make test-port` OK. En el diag nativo SDL
 bajo Xvfb+xdotool, 5 s con el botón mantenido producen **un solo flanco de
 entrada**; el bucle de 32 frames de `test_click_held` no ve clics nuevos.
-Artefactos: `kult-diag.exe` `64505805…`, `kult.exe` `cc4d5cee…`, headless
-`414a82c8…`. Validación visual final del anillo en Windows: usuario.
+**Validado visualmente por el usuario en Windows**: el anillo de acciones se
+abre una vez con el clic mantenido y queda abierto para elegir. Artefactos:
+`kult-diag.exe` `64505805…`, `kult.exe` `cc4d5cee…`, headless `414a82c8…`.
 
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
@@ -445,12 +448,12 @@ Artefactos: `kult-diag.exe` `64505805…`, `kult.exe` `cc4d5cee…`, headless
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-061 — validación completa en Windows**: probar el clic mantenido y el anillo
-de acciones con el nuevo `kult-diag.exe` (`64505805…`), además de repasar lo ya
-validado. Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** →
-**A2** → **M5**.
+**T-061 — validación completa en Windows**: repasar lo ya validado (incluido el
+clic mantenido/anillo de T-084) y cerrar el glitch gráfico aislado que queda.
+Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** →
+**M5**.
 
-T-084 (input mantenido) está **cerrado**: detalle en **`notes/0032`**.
+T-084 (input mantenido) está **cerrado y validado**: detalle en **`notes/0032`**.
 T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 

@@ -199,7 +199,9 @@ Recogidas como ADR en `docs/adr/`:
   interrogación**, no el nivel del botón. La HAL ahora detecta flancos de
   bajada: mantener el clic no repite, soltar y pulsar sí, y el derecho sólo pide
   skip en su bajada. `src/` intacto; `test_click_held`, `test_click_skip` y
-  `test_crawio_queue`. Detalle: **`notes/0032-input-clic-mantenido.md`**.
+  `test_crawio_queue`. **Validado por el usuario en Windows** (el anillo se abre
+  una vez y queda abierto para elegir). Detalle:
+  **`notes/0032-input-clic-mantenido.md`**.
 - **Cursor 16×16 / máximo IKBD (T-075, sesión 24)**: el cursor reaparecía por el
   lado contrario en el borde. El juego configura el ratón absoluto con
   `Ikbdws` `09 01 30 00 b8` → máximo **304×184**; la HAL lo emula con
@@ -253,9 +255,8 @@ Recogidas como ADR en `docs/adr/`:
   puertas incluidas) validados. Solo queda reproducir un glitch gráfico aislado.
   **T-083** (objetos en serpientes) **resuelto y validado**: retorno doble de
   `icon_ring_loop` (`0x1592e`), con tail-call explícito en la VM; ver
-  **`notes/0031`**. **T-084** (input mantenido / clics repetidos) **resuelto
-  en `platform/`**; falta la validación visual del anillo en Windows. Ver
-  **`notes/0032`**. Después **T-072** (ingesta `.STX`) → **M7-c** → **A1** →
-  **N3** → **A2** → **M5**.
+  **`notes/0031`**. **T-084** (input mantenido / clics repetidos) **resuelto,
+  validado y cerrado** en `platform/`; ver **`notes/0032`**. Después **T-072**
+  (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.
