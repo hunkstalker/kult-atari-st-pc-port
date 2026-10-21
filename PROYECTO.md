@@ -246,7 +246,8 @@ Recogidas como ADR en `docs/adr/`:
   cursor, glitch, guardado/carga, muerte → reinicio y **audio** (T-082,
   puertas incluidas) validados. Solo queda reproducir un glitch gráfico aislado.
   **T-083** (objetos en serpientes) **resuelto y validado**: era el retorno
-  doble de `icon_ring_loop` (`0x1592e`); ver **`notes/0031`**. Después
+  doble de `icon_ring_loop` (`0x1592e`), cerrado con tail-call explícito en la
+  VM; ver **`notes/0031`**. Después
   **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

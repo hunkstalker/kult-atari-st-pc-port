@@ -8,7 +8,7 @@ origen), los globales `A_*` que toca y las pruebas que la cubren.
 |---|---|---|---|---|
 | `anim.c` | 21 | 18 | 16 | [anim](anim.md) |
 | `boxdraw.c` | 6 | 1 | 6 | [boxdraw](boxdraw.md) |
-| `commands.c` | 16 | 36 | 16 | [commands](commands.md) |
+| `commands.c` | 17 | 36 | 17 | [commands](commands.md) |
 | `cursor.c` | 2 | 8 | 2 | [cursor](cursor.md) |
 | `delay.c` | 2 | 1 | 2 | [delay](delay.md) |
 | `dispatch.c` | 6 | 3 | 6 | [dispatch](dispatch.md) |

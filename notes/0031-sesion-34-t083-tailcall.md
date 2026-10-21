@@ -74,7 +74,7 @@ modelar el abandono del VM exterior.
   su `A6` en las dos ramas de `0x1592e` (nibble `c`/`a` y comando pendiente).
 - `platform/dispatch_trace.c`: mismo despacho para el build de diagnóstico.
 - `kult_core.map` / `kult_api.h`: exporta el nuevo símbolo.
-- Test: `test_run_command_keep_sp_a6_nibble0`.
+- Test: `test_run_command_keep_sp_a6_nibble0` y `test_fun_15888_ex_sin_tail`.
 
 ## 5. Validación
 
@@ -93,16 +93,29 @@ modelar el abandono del VM exterior.
 ## 6. Artefactos
 
 ```
-kult.exe               ae991db620516ed925afc3eda1352d25
-kult-headless.exe      57e09a8414d91c1a33860b8b6e3b5fd4
-kult-diag.exe          28c63ef30571be50b6309160f5febe3b
-kult-diag-headless.exe e0a20681954fd89fdb7182f098979bf8
+kult.exe               41be915acfd6eedccae459e5be014a84
+kult-headless.exe      a7b180cdfdec055f70165ce2b17bec4a
+kult-diag.exe          b5e94d0645dc3d86fee3909eb9180a47
+kult-diag-headless.exe b178d8413167acd2b29c81146bb9c4d3
 ```
 
-## 7. Pendiente de pulido
+## 7. Refactor de cierre: tail-call explícito en la VM
 
-El fix es correcto pero la emulación del tail-call es implícita: devuelve el
-`A6` anidado y confía en que el VM exterior pare en el siguiente chequeo de
-byte/`A_TEMPL_PTR`. El refactor de cierre introduce un resultado explícito de
-tail-call en la VM para que `0x3d` pueda abandonar el VM exterior sin depender
-de ese chequeo.
+El primer fix era correcto pero implícito: devolvía el `A6` anidado y confiaba
+en que el VM exterior parase en el siguiente chequeo de byte/`A_TEMPL_PTR`.
+
+Refactor aplicado:
+
+- `src/commands.c`: nuevo `icon_ring_loop_ex(img, script, &tail)`. Las dos ramas
+  de `0x1592e` marcan `*tail = 1` y devuelven el `A6` del sub-guion.
+  `icon_ring_loop()` queda como wrapper compatible.
+- `src/dispatch.c` y `platform/dispatch_trace.c`: el byte handler `0x3d`
+  convierte `tail` en el resultado especial `VM_TAIL_FLAG | A6`; `vm_run`
+  detecta el flag y retorna el `A6` final **sin ejecutar ningún byte más** del
+  VM exterior.
+- La build de diagnóstico traza `TAIL_3D` y `VMTAIL`.
+- Tests: `test_run_command_keep_sp_a6_nibble0` y
+  `test_fun_15888_ex_sin_tail`; **513 tests** + `test-port`.
+
+Con esto el abandono del VM exterior es explícito y no depende del contenido del
+byte siguiente. T-083 queda cerrado.

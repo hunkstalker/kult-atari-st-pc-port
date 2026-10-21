@@ -12,6 +12,7 @@
 uint32_t anim_threshold(uint8_t *, uint32_t, uint32_t);
 void run_command_keep_sp(uint8_t *, uint32_t);
 uint32_t run_command_keep_sp_a6(uint8_t *, uint32_t);
+uint32_t icon_ring_loop_ex(uint8_t *, uint32_t, int *);
 uint32_t obj_wait_a0(uint8_t *);
 uint32_t text_index_arg(uint8_t *, uint32_t, uint32_t, uint32_t *);
 void text_window(uint8_t *, uint32_t, uint32_t);
@@ -588,7 +589,9 @@ uint32_t icon_ring(uint8_t *img, uint32_t script) {
  * hace `addq.l #4,a7` + `bra 0x103ae`, asi que el despacho sustituye al bucle).
  * Si no, despacha, cuenta $1ace7 y, tras pasar el 0x2f3c de 0x19316, comprueba el
  * umbral $1acf2/$1ace8 (con 0x15192 al agotarse). */
-uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
+uint32_t icon_ring_loop_ex(uint8_t *img, uint32_t script, int *tail) {
+    if (tail)
+        *tail = 0;
     wr32(img + 0x1a4be, be32(img + A_TEMPL_PTR));
     wr32(img + 0x1a4c2, script);
     img[0x1a575] = 0xff;
@@ -601,10 +604,12 @@ uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
             }
             uint32_t nib = be16(img + A_THE_COMMAND) & 0xf000u;
             if (nib == 0xc000u || nib == 0xa000u) {
-                /* 0x1592e: `addq.l #4,a7` + `bra 0x103ae`. El VM exterior se
-                 * abandona; devolver el A6 final del despacho anidado emula el
-                 * tail-call (el VM exterior termina en el siguiente chequeo). */
-                return run_command_keep_sp_a6(img, script);
+                /* 0x1592e: `addq.l #4,a7` + `bra 0x103ae`. Tail-call: el VM
+                 * exterior se abandona y devuelve el A6 del sub-guion. */
+                uint32_t a6 = run_command_keep_sp_a6(img, script);
+                if (tail)
+                    *tail = 1;
+                return a6;
             }
             run_command_keep_sp(img, script);
             img[A_DAT_1ACE7] = (uint8_t)(img[A_DAT_1ACE7] + 1);
@@ -613,7 +618,10 @@ uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
             wr16(img + A_THE_COMMAND, be16(img + A_DAT_1ABF8));
             if (be16(img + A_THE_COMMAND) != 0) {
                 /* Mismo tail-call de 0x1592e para el comando pendiente. */
-                return run_command_keep_sp_a6(img, script);
+                uint32_t a6 = run_command_keep_sp_a6(img, script);
+                if (tail)
+                    *tail = 1;
+                return a6;
             }
         }
         script = be32(img + 0x1a4c2);
@@ -621,6 +629,11 @@ uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
         if (img[A_DAT_1ACE8] == 0)
             clear_object_flags(img);
     }
+}
+
+/* 0x15888 — wrapper compatible: mismo comportamiento sin señalizar tail-call. */
+uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
+    return icon_ring_loop_ex(img, script, 0);
 }
 
 /* FUN_00015382 @ 0x15382: comando de seleccion con paleta 0x11 y modo 0x9000. */

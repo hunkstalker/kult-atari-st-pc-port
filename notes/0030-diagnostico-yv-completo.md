@@ -16,8 +16,8 @@ estándar.
 
 En el paquete de pruebas se copia como:
 
-- `kult-diag.exe` (md5 `28c63ef30571be50b6309160f5febe3b`)
-- `kult-diag-headless.exe` (md5 `e0a20681954fd89fdb7182f098979bf8`)
+- `kult-diag.exe` (md5 `b5e94d0645dc3d86fee3909eb9180a47`)
+- `kult-diag-headless.exe` (md5 `b178d8413167acd2b29c81146bb9c4d3`)
 - `kult-diag-marcas.bat` (activa `KULT_MARKS=kult-marcas-diag.log`)
 
 **No se empaqueta ni sustituye al exe estándar.** Es solo diagnóstico.
@@ -141,9 +141,9 @@ debe continuar**.
   modelando el tail-call.
 - `platform/dispatch_trace.c`: mismo despacho en la build de diagnóstico.
 - `kult_core.map` / `kult_api.h`: exporta `run_command_keep_sp_a6`.
-- Test nuevo: `test_run_command_keep_sp_a6_nibble0` (512 tests).
-- Artefactos: `kult.exe` `ae991db620516ed925afc3eda1352d25`,
-  `kult-headless.exe` `57e09a8414d91c1a33860b8b6e3b5fd4`.
+- Tests nuevos: `test_run_command_keep_sp_a6_nibble0` y `test_fun_15888_ex_sin_tail` (513 tests).
+- Artefactos: `kult.exe` `41be915acfd6eedccae459e5be014a84`,
+  `kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
   **Validado en `kult.exe` y `kult-diag.exe`:** dado/2.ª y mosca/1.ª sin error.
   El log `diag-logs/post-fix-dado-mosca-2026-10-21.log` no contiene ninguna
   ejecución de `0x1fc2e`, `0x206b1`, `0x2563e` ni `0x206b5`; tras el `0x3d` se

@@ -99,6 +99,7 @@ uint32_t text_box_icon(uint8_t *, uint32_t);
 void textform_fwd_entry(uint8_t *, uint32_t);
 void textform_rev_entry(uint8_t *, uint32_t);
 uint32_t icon_ring_loop(uint8_t *, uint32_t);
+uint32_t icon_ring_loop_ex(uint8_t *, uint32_t, int *);
 uint32_t view_mode_cycle(uint8_t *, uint32_t);
 uint32_t text_table_paint(uint8_t *, uint32_t);
 uint32_t scene_mode_apply(uint8_t *, uint32_t);
@@ -177,6 +178,10 @@ static uint32_t trace_vm_out(uint8_t *img, uint32_t script, const char *why) {
                         (unsigned)be32(img + A_CALL_STACK));
     return script;
 }
+
+/* Resultado de byte_handler para un tail-call: abandona el VM exterior y
+ * devuelve el A6 final codificado en los bits bajos. */
+#define VM_TAIL_FLAG 0x80000000u
 
 static uint32_t byte_handler(uint32_t b, uint8_t *img, uint32_t script) {
     uint32_t n;
@@ -309,7 +314,16 @@ static uint32_t byte_handler(uint32_t b, uint8_t *img, uint32_t script) {
     case 55: return text_box_icon(img, script);
     case 57: textform_fwd_entry(img, script); return addr_add(script, 2);
     case 58: textform_rev_entry(img, script); return addr_add(script, 2);
-    case 61: return icon_ring_loop(img, script);
+    case 61: {
+        int tail = 0;
+        uint32_t r = icon_ring_loop_ex(img, script, &tail);
+        if (tail) {
+            platform_marks_line("D %u TAIL_3D a6=%05x", platform_frame_count(),
+                                (unsigned)(r & 0x7fffffffu));
+            return VM_TAIL_FLAG | (r & 0x7fffffffu);
+        }
+        return r;
+    }
     case 62: return view_mode_cycle(img, script);
     case 65: return text_table_paint(img, script);
     case 66: return scene_mode_apply(img, script);
@@ -362,6 +376,11 @@ uint32_t vm_run(uint8_t *img, uint32_t script) {
         if (byte >= 0x6b || byte == 0)
             return trace_vm_out(img, script, byte ? "end_byte" : "zero");
         script = byte_handler(byte, img, script);
+        if (script & VM_TAIL_FLAG) {
+            platform_marks_line("D %u VMTAIL a6=%05x", platform_frame_count(),
+                                (unsigned)(script & ~VM_TAIL_FLAG));
+            return script & ~VM_TAIL_FLAG;
+        }
     }
 }
 

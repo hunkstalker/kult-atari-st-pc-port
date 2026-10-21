@@ -8,8 +8,8 @@ Tareas: `TODO.md`.
 - **Sesión 34 — T-083 resuelto y validado**: causa raíz en
   `icon_ring_loop` (0x15888): el tail-call/retorno doble de `0x1592e` se
   modelaba como llamada normal y el VM exterior seguía ejecutando la cabecera
-  de TEMPL siguiente. Fix con `run_command_keep_sp_a6`; 512 tests +
-  `test-port`. Validado con `kult.exe` (dado/2.ª y mosca/1.ª) y
+  de TEMPL siguiente. Fix con `run_command_keep_sp_a6` y, tras el refactor, tail-call explícito
+  (`VM_TAIL_FLAG`) en `icon_ring_loop_ex`; 513 tests + `test-port`. Validado con `kult.exe` (dado/2.ª y mosca/1.ª) y
   `kult-diag.exe` (`diag-logs/post-fix-dado-mosca-2026-10-21.log` sin
   `0x1fc2e`/`0x206b1`). Pre-fix conservado en
   `diag-logs/pre-fix-2026-10-21.log`.
@@ -61,7 +61,7 @@ Líneas del log:
   dimensiones/fuente del elemento.
 
 El `script` es una dirección de imagen; para leer bytes del PRG:
-`offset = script - 0x10000 + 28`. La build estándar `kult.exe` (`ae991db6…`)
+`offset = script - 0x10000 + 28`. La build estándar `kult.exe` (`41be915a…`)
 no lleva estas trazas.
 
 **Logs ya capturados** (`build-win/kult-0.1.0-win64/diag-logs/`):
@@ -118,10 +118,10 @@ retorno normal. Pre-fix conservado en `diag-logs/pre-fix-2026-10-21.log`.
 **Traza añadida (T-083b):** el build `KULT_DIAG_TRACE=ON` escribe líneas `D`
 con `VMIN/VMOUT`, `RUN`, `WALK_RUN/WALK_INLINE/WALK_4D` y `JMP/CALL/RET`
 (destino, retorno y pila). Nuevos md5:
-`kult-diag.exe` `28c63ef30571be50b6309160f5febe3b`,
-`kult-diag-headless.exe` `e0a20681954fd89fdb7182f098979bf8`.
-Artefactos estándar: `kult.exe` `ae991db620516ed925afc3eda1352d25`,
-`kult-headless.exe` `57e09a8414d91c1a33860b8b6e3b5fd4`.
+`kult-diag.exe` `b5e94d0645dc3d86fee3909eb9180a47`,
+`kult-diag-headless.exe` `b178d8413167acd2b29c81146bb9c4d3`.
+Artefactos estándar: `kult.exe` `41be915acfd6eedccae459e5be014a84`,
+`kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
 
 **Plan:**
 
@@ -150,7 +150,7 @@ distintos. Guarda un log por objeto en diag-logs/ y analiza desde el final hacia
 atrás. No extrapoles de un objeto a otro.
 
 Usa la build de diagnóstico ya preparada:
-- build-win/kult-0.1.0-win64/kult-diag.exe (md5 28c63ef30571be50b6309160f5febe3b)
+- build-win/kult-0.1.0-win64/kult-diag.exe (md5 b5e94d0645dc3d86fee3909eb9180a47)
 - build-win/kult-0.1.0-win64/kult-diag-marcas.bat
 - log: kult-marcas-diag.log (Y/V/U/P/B de toda la run; no hace falta F12)
 
