@@ -17,17 +17,21 @@ para PC (SDL3). Ver `docs/PORTING.md`.
 **menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
 corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
 visible** (paleta del PI1 antes de la espera). **T-077/T-079 ✅** (sangre,
-espacio y espera de la estrella) y **T-083 ✅** (objetos en serpientes).
-Pendiente: **T-061** (validación en Windows) → **T-072** (ingesta `.STX`) →
-**M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
-bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en `notes/0031`.
+espacio y espera de la estrella), **T-083 ✅** (objetos en serpientes) y
+**T-084 ✅** (input mantenido; validación visual del anillo pendiente en
+Windows). Pendiente: **T-061** (validación en Windows) → **T-072** (ingesta
+`.STX`) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5**
+(opcional). Sin bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en
+`notes/0031` y T-084 en `notes/0032`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
-  skip; **derecho** = acción + skip (A/B/C y puertas). La HAL entrega la acción
-  en el bit0 del IKBD y **pisa `$1a570`** al salir de `wait_frame` con el botón
-  derecho (como el legacy). `src/input.c` no se toca. No usar modelos de botones
-  de otros repositorios.
+  skip; **derecho** = acción + skip (A/B/C y puertas). El IKBD se interroga con
+  `0x0D` y responde con **eventos desde la última interrogación**: una pulsación
+  mantenida produce **un solo clic** (no repetir el nivel). La HAL entrega el
+  flanco de bajada en el bit0 del IKBD y **pisa `$1a570`** al salir de
+  `wait_frame` con el flanco del derecho. `src/input.c` no se toca. No usar
+  modelos de botones de otros repositorios. T-084: `notes/0032`.
 - **Presentación**: `platform_tick` presenta en **cada VBL** (arranque y bucle);
   el frame hook ya no presenta. Así se ven las animaciones que corren en
   `wait_vbl` dentro de un comando (puertas, wipes).

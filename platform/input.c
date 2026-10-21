@@ -8,13 +8,17 @@
  * La entrada real (SDL) llega en M3; aquí basta con que las esperas no cuelguen y
  * que el cursor/estado sean deterministas.
  *
- * Botones (modelo del original):
- *   - izquierdo: acción (bit2 de A_INPUT_BUTTONS), sin skip.
- *   - derecho: acción + skip (A_SKIP_TRANSITION = 0xff).
- * El core `wait_frame` deriva acción y skip del bit0 del paquete IKBD; para que
- * el izquierdo no salte, la HAL pisa `$1a570` al salir de `wait_frame`
- * (`platform_input_apply_skip`), igual que hacía el motor legacy al interceptar
- * la escritura de esa dirección. Así `src/` queda intacto.
+ * Botones (modelo del original): el IKBD se interroga con el comando 0x0D
+ * ("interrogate mouse position") en cada wait_frame. La respuesta del original
+ * es un EVENTO: los bits de bajada/subida sólo aparecen desde la interroga-
+ * ción anterior, no mientras el botón sigue pulsado. Por eso aquí se entrega
+ * un flanco de bajada una sola vez por pulsación:
+ *   - izquierdo: acción (bit0 del paquete -> bit2 de A_INPUT_BUTTONS), sin skip.
+ *   - derecho: acción + skip (A_SKIP_TRANSITION = 0xff) en esa misma bajada.
+ * Mantener cualquiera de los dos NO repite la acción. El core `wait_frame`
+ * deriva acción y skip del bit0 del paquete IKBD; la HAL pisa `$1a570` al salir
+ * de `wait_frame` (`platform_input_apply_skip`) para separar el skip del
+ * derecho, igual que hacía el motor legacy. Así `src/` queda intacto.
  */
 #include <stdlib.h>
 #include <string.h>
@@ -32,8 +36,11 @@ static int g_head, g_tail;
 static uint32_t g_auto_key = 'E';
 static uint16_t g_cursor_x = 160;
 static uint16_t g_cursor_y = 100;
-static uint8_t  g_buttons;         /* acción: izquierdo o derecho pulsado */
-static uint8_t  g_mouse_skip;      /* derecho: pide saltar ($1a570) */
+static uint8_t  g_left_down, g_right_down; /* estado físico de los botones */
+static uint8_t  g_action_pending;  /* flanco de bajada aún no entregado */
+static uint8_t  g_skip_pending;    /* bajada del derecho aún no entregada */
+static uint8_t  g_skip_event;      /* skip del último paquete entregado */
+static uint8_t  g_auto_prev;       /* estado sintético del clic headless */
 static uint16_t g_mouse_max_x = 319;   /* rango absoluto configurado por el IKBD */
 static uint16_t g_mouse_max_y = 199;
 static uint32_t g_deliveries;
@@ -42,7 +49,18 @@ static int g_auto = 1;             /* 1 = headless (auto-tecla); 0 = entrada rea
 static void (*g_idle)(uint8_t *img);   /* bombeo durante una espera bloqueante */
 
 void platform_set_idle(void (*fn)(uint8_t *img)) { g_idle = fn; }
-void platform_input_set_auto(int on) { g_auto = on ? 1 : 0; }
+
+void platform_input_set_auto(int on) {
+    on = on ? 1 : 0;
+    if (on == g_auto) return;
+    g_auto = on;
+    /* No arrastrar botones/flancos entre modos (los tests y el arranque alternan
+     * entre entrada real y auto). */
+    g_left_down = g_right_down = 0;
+    g_action_pending = g_skip_pending = g_skip_event = 0;
+    g_auto_prev = 0;
+    g_deliveries = 0;
+}
 
 void platform_mouse_set(int x, int y, int buttons) {
     if (x < 0) x = 0;
@@ -51,13 +69,21 @@ void platform_mouse_set(int x, int y, int buttons) {
     if (y > g_mouse_max_y) y = g_mouse_max_y;
     g_cursor_x = (uint16_t)x;
     g_cursor_y = (uint16_t)y;
-    /* Máscara del puerto: bit0 = izquierdo, bit1 = derecho. El izquierdo y el
-     * derecho ambos actúan; solo el derecho pide skip. */
-    g_buttons = (uint8_t)((buttons & 0x03) ? 1 : 0);
-    g_mouse_skip = (uint8_t)((buttons & 0x02) ? 1 : 0);
+    /* Máscara del puerto: bit0 = izquierdo, bit1 = derecho. Sólo las bajadas
+     * generan evento; mantener el botón no repite la acción. */
+    int left = (buttons & 0x01) != 0;
+    int right = (buttons & 0x02) != 0;
+    if (left && !g_left_down)
+        g_action_pending = 1;
+    if (right && !g_right_down) {
+        g_action_pending = 1;
+        g_skip_pending = 1;
+    }
+    g_left_down = (uint8_t)left;
+    g_right_down = (uint8_t)right;
 }
 
-int platform_input_skip_state(void) { return g_mouse_skip; }
+int platform_input_skip_state(void) { return g_right_down; }
 
 /* Emula el comando IKBD que el juego envía en crt0_init:
  *   Ikbdws(0x19, 0x1a459, 4) -> 5 bytes: 09 01 30 00 b8
@@ -74,17 +100,20 @@ void platform_ikbdws(const uint8_t *buf, uint32_t len) {
     if (g_cursor_y > g_mouse_max_y) g_cursor_y = g_mouse_max_y;
 }
 
-/* La HAL pisa el flag de skip que acaba de escribir `wait_frame` (core). Es el
- * equivalente port-side del intercept de `$1a570` del motor legacy. */
+/* La HAL pisa el flag de skip que acaba de escribir `wait_frame` (core) con el
+ * flanco del derecho del paquete recién entregado. Es el equivalente port-side
+ * del intercept de `$1a570` del motor legacy, pero por evento (no por nivel). */
 void platform_input_apply_skip(uint8_t *img) {
-    img[A_SKIP_TRANSITION] = g_mouse_skip ? 0xff : 0;
+    img[A_SKIP_TRANSITION] = g_skip_event ? 0xff : 0;
+    g_skip_event = 0;
 }
 
 void platform_input_init(void) {
     g_head = g_tail = 0;
     g_deliveries = 0;
-    g_buttons = 0;
-    g_mouse_skip = 0;
+    g_left_down = g_right_down = 0;
+    g_action_pending = g_skip_pending = g_skip_event = 0;
+    g_auto_prev = 0;
     g_mouse_max_x = 319;
     g_mouse_max_y = 199;
     const char *click = getenv("KULT_CLICK");
@@ -142,12 +171,21 @@ int pc_os_cnecin(uint8_t *mem, uint32_t *out) {
 }
 
 /* Paquete IKBD: [botones][x_hi][x_lo][y_hi][y_lo] = A_IKBD_PACKET(+1..).
- * Headless: el botón va SOLTADO y luego alterna, para que las esperas "soltar y
- * pulsar" (prompt_wait) terminen. Entrada real: se entrega el ratón tal cual. */
+ * Se entrega un flanco de bajada (bit0) y se consume; si el botón sigue
+ * pulsado, las siguientes entregas van a 0, como la respuesta 0x0D del IKBD.
+ * Headless: el clic sintético alterna para liberar las esperas "soltar y
+ * pulsar" (prompt_wait). Entrada real: se entrega el flanco pendiente. */
 void platform_ikbd_deliver(uint8_t *img) {
-    uint8_t b = g_auto
-        ? (uint8_t)((g_click_toggle && (g_deliveries & 1)) ? 1 : 0)
-        : g_buttons;
+    if (g_auto) {
+        int synthetic = g_click_toggle && (g_deliveries & 1);
+        if (synthetic && !g_auto_prev)
+            g_action_pending = 1;
+        g_auto_prev = (uint8_t)synthetic;
+    }
+    uint8_t b = g_action_pending ? 1 : 0;
+    g_action_pending = 0;
+    g_skip_event = g_skip_pending;
+    g_skip_pending = 0;
     g_deliveries++;
     img[A_IKBD_PACKET] = b;
     if (b & 1)

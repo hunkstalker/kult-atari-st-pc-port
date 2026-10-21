@@ -38,10 +38,11 @@ void platform_key_push_str(const char *s);
 
 /* Entrada real (M3): posición/botones del ratón (coords de juego 320x200) y
  * conmutador del modo auto (headless). `buttons` usa la máscara del puerto:
- * bit0 = izquierdo (acción), bit1 = derecho (acción + skip). El paquete IKBD
- * lleva la acción en bit0; el skip se pisa en `$1a570` desde la HAL. */
+ * bit0 = izquierdo (acción), bit1 = derecho (acción + skip). Sólo las bajadas
+ * producen evento (mantener el botón no repite); el paquete IKBD lleva la
+ * acción en bit0 y el skip se pisa en `$1a570` desde la HAL. */
 void platform_mouse_set(int x, int y, int buttons);
-/* Derecho pulsado: la HAL debe pisar `$1a570` tras `wait_frame` (legacy). */
+/* Estado físico del derecho (diagnóstico); el skip se aplica por flanco. */
 int  platform_input_skip_state(void);
 void platform_input_apply_skip(uint8_t *img);
 /* Emula Ikbdws: 0x09 fija el máximo absoluto del ratón (xmax/ymax). */

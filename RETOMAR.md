@@ -5,13 +5,13 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
-- **Sesión 35 — handoff de T-084 (input mantenido / clics repetidos)**: sin fix
-  aplicado. El clic izquierdo mantenido se entrega como clic nuevo en cada
-  `wait_frame`; el anillo de acciones se abre/cierra y no se puede elegir. Hay
-  que **reanalizar** si el modelo correcto es flanco/pestillo o un modelado más
-  fiel del IKBD; el pestillo del legacy es solo un candidato, no una verdad.
-  Evidencia: `diag-logs/input-click-held-2026-10-21.log`. Detalle: **§ T-084**
-  y **`notes/0032-input-clic-mantenido.md`**.
+- **Sesión 36 — T-084 resuelto (input mantenido / clics repetidos)**: el IKBD
+  original se interroga con `0x0D` y responde con **eventos desde la última
+  interrogación**, no con el nivel del botón. La HAL entregaba nivel en cada
+  `wait_frame`; ahora entrega un flanco de bajada una sola vez. Clic mantenido
+  = un clic, soltar y pulsar = otro, derecho = acción + skip sólo en su bajada.
+  `src/` intacto; tests `test_click_held`, `test_click_skip`,
+  `test_crawio_queue`. Detalle: **§ T-084** y **`notes/0032`**.
 - **Sesión 34 — T-083 resuelto y validado (fix + refactor)**: causa raíz en
   `icon_ring_loop` (0x15888): el tail-call/retorno doble de `0x1592e` se
   modelaba como llamada normal y el VM exterior seguía ejecutando la cabecera
@@ -67,62 +67,41 @@ Los blits y `scale_prep` eran víctimas, no causa.
 **Artefactos:** `kult.exe` `41be915acfd6eedccae459e5be014a84`,
 `kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
 
-### T-084 — input mantenido / clics repetidos (handoff, sin fix)
+### T-084 — input mantenido / clics repetidos (resuelto)
 
-> **Abierto. Reanalizar antes de tocar código.** No copiar el legacy a ciegas.
+> **Resuelto en sesión 36. Detalle: `notes/0032-input-clic-mantenido.md`.**
 
-**Síntoma:** mantener el clic izquierdo produce clics continuos; el anillo de
-acciones se abre/cierra y no se puede seleccionar. El usuario sospecha que
-también afecta a otras entradas mantenidas.
+**Síntoma:** mantener el clic izquierdo producía clics continuos; el anillo de
+acciones se abría/cerraba y no se podía elegir.
 
-**Evidencia:** `diag-logs/input-click-held-2026-10-21.log` (22.528 líneas,
-`kult-diag.exe` `b5e94d06…`). `Y 3d 1fb5a` (`icon_ring`) se repite en VBL
-1478/1485/1492/1499/1506 con `V ... 05` (`$1a456` = bit0 + bit2 clic); 135
-apariciones de `V ... 05`.
+**Causa confirmada (ASM + Hatari):** `wait_frame` (`0x13698`) hace
+`Ikbdws(0x19, 0x1a44e, 0)`, es decir envía el comando IKBD **0x0D
+(INTERROGATE MOUSE POSITION)**. El byte en `0x1a44e` es `0x0d`; la respuesta
+`F7 + 5 bytes` la entrega TOS al handler `0x13686`, que copia botones/x/y a
+`0x1a44f`. El byte de botones son **eventos "desde la última interrogación"**
+(bits de bajada/subida), no un nivel: un botón mantenido sólo produce el bit de
+bajada una vez. Hatari (`IKBD_Cmd_ReadAbsMousePos`) implementa ese mismo
+diferencial contra `PrevReadAbsMouseButtons`. El pestillo legacy
+(`g_click_hold=12`, `g_click_latch`) es una aproximación empírica, pero su
+semántica de "una pulsación = un clic" sí es fiel; el timeout de 12 VBL no sale
+del ASM.
 
-**Mecanismo observado:** `platform_mouse_set()` colapsa cualquier botón a
-nivel; `platform_ikbd_deliver()` entrega ese nivel en cada paquete; el
-`wait_frame` de `src/input.c` (fiel al ASM) marca bit2 de clic cada vez. No hay
-pestillo de “una pulsación = un clic”.
+**Fix (sólo `platform/`):** `platform_mouse_set()` detecta flancos de bajada de
+izquierdo/derecho; `platform_ikbd_deliver()` entrega la acción (bit0) una sola
+vez y consume el flanco (0 si sigue pulsado). El derecho además arma el skip de
+esa bajada; `platform_input_apply_skip()` lo pisa en `$1a570`. Mantener
+izquierdo/derecho ya no repite acción ni skip. `src/` intacto.
 
-**Reanálisis obligatorio:**
+**Teclado:** `pc_os_crawio()` avanza `g_head` **una** vez (la sospecha de doble
+pop era de un estado anterior); prueba nueva de dos teclas = dos `Crawio`. Se
+mantiene `e.key.repeat`: TOS también auto-repite (`kb_initial`/`kb_repeat`), así
+que filtrarlo sería menos fiel; no es la causa del anillo.
 
-1. ASM `0x13698` + `Ikbdws`/buffer `0x1a44e`/`0x1a459`: decidir si el botón es
-   nivel o flanco en el original.
-2. Comparar con Hatari/oráculo: clic mantenido, clic corto, clic derecho
-   mantenido y tecla mantenida.
-3. Revisar el pestillo del legacy (`kult_native_host.c`: `g_click_hold=12`,
-   `g_click_latch`, `kult_native_click_consumed`) y justificar si es fiel o un
-   parche empírico. **No asumirlo correcto.**
-4. Sospechas adicionales de teclado: `pc_os_crawio()` avanza `g_head` dos veces
-   (pierde teclas) y `platform_sdl_pump()` encola `e.key.repeat`.
-5. Decidir capa: preferible `platform/`; no tocar `src/` sin evidencia ASM.
-6. Fix + pruebas en `platform/test/test_platform.c` (clic mantenido = 1 clic,
-   nuevo clic tras soltar, derecho = acción + skip, dos teclas = dos `Crawio`).
-7. Validar con `kult-diag-marcas.bat`: `btn=05` una vez por pulsación y anillo
-   abierto para elegir.
-
-**Prompt para sesión nueva:**
-
-```text
-Trabajamos en /app/kult-port-pc-compilation (port PC de Kult).
-Lee RETOMAR.md § T-084, notes/0032-input-clic-mantenido.md, notes/0020,
-notes/0021, notes/0027, AGENTS.md, TODO.md y PROYECTO.md.
-
-Objetivo: reanalizar y resolver el input mantenido: el clic izquierdo
-mantenido produce clics continuos y el anillo de acciones se abre/cierra.
-NO copies el pestillo del legacy a ciegas: primero determina en el ASM/oráculo
-si el IKBD es nivel o flanco y si el pestillo del legacy es fiel o un parche.
-Revisa también teclado (doble pop en pc_os_crawio y e.key.repeat de SDL).
-
-Usa:
-- build-win/kult-0.1.0-win64/kult-diag.exe (md5 b5e94d0645dc3d86fee3909eb9180a47)
-- kult-diag-marcas.bat y diag-logs/input-click-held-2026-10-21.log
-- make test (513) y make test-port.
-
-Entrega: causa confirmada, decisión de diseño (HAL vs core), fix en platform/
-salvo justificación ASM, tests, validación con clic mantenido y commit.
-```
+**Validación:** `make test` **513** y `make test-port` OK. En el diag nativo SDL
+bajo Xvfb+xdotool, 5 s con el botón mantenido producen **un solo flanco de
+entrada**; el bucle de 32 frames de `test_click_held` no ve clics nuevos.
+Artefactos: `kult-diag.exe` `64505805…`, `kult.exe` `cc4d5cee…`, headless
+`414a82c8…`. Validación visual final del anillo en Windows: usuario.
 
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
@@ -466,12 +445,12 @@ salvo justificación ASM, tests, validación con clic mantenido y commit.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-084 — input mantenido / clics repetidos**: reanalizar (ver § T-084 y
-`notes/0032`) y después aplicar el fix. **No copiar legacy a ciegas.**
+**T-061 — validación completa en Windows**: probar el clic mantenido y el anillo
+de acciones con el nuevo `kult-diag.exe` (`64505805…`), además de repasar lo ya
+validado. Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** →
+**A2** → **M5**.
 
-Después: **T-061** (validación completa en Windows; queda el glitch aislado) →
-**T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
-
+T-084 (input mantenido) está **cerrado**: detalle en **`notes/0032`**.
 T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 

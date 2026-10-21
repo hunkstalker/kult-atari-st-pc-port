@@ -285,50 +285,80 @@ static void test_real_input(void) {
     platform_input_set_auto(1);             /* restaurar headless */
 }
 
-/* --- T-073c: el estado del clic sigue al botón izquierdo real (sin quedarse pegado) --- */
-static void test_mouse_click_state(void) {
+/* --- T-084: clic mantenido = UN clic; soltar y volver a pulsar = otro clic.
+ * El IKBD original responde a 0x0D con eventos "desde la interrogarción
+ * anterior", no con el nivel del botón. --- */
+static void test_click_held(void) {
     platform_input_set_auto(0);
 
-    platform_mouse_set(160, 100, 1);
-    g_img[A_INPUT_BUTTONS] = 0;
-    platform_ikbd_deliver(g_img);
-    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
-          "el botón izquierdo marca el clic mientras está pulsado");
-
-    platform_mouse_set(160, 100, 0);
-    platform_ikbd_deliver(g_img);
-    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
-          "al soltar el botón izquierdo el clic se limpia");
-
-    platform_input_set_auto(1);
-}
-
-/* --- Guardia del modelo de botones original:
- * izquierdo = acción sin skip; derecho = acción + skip; sin botón = nada.
- * `platform_input_apply_skip` es el override que la HAL aplica al salir de
- * `wait_frame` (en el port lo llama el hook de instrumentación). --- */
-static void test_click_skip(void) {
-    platform_input_set_auto(0);
-
-    platform_mouse_set(160, 100, 1);       /* izquierdo: acción, no skip */
+    platform_mouse_set(160, 100, 1);       /* bajada izquierda */
     g_img[A_IKBD_PACKET] = 0xff;
     g_img[A_SKIP_TRANSITION] = 0xff;
     wait_frame(g_img);
     platform_input_apply_skip(g_img);
     CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
-          "el izquierdo debe marcar acción");
+          "la bajada del izquierdo marca acción");
     CHECK(g_img[A_SKIP_TRANSITION] == 0,
           "el izquierdo NO debe saltar la transición");
 
-    platform_mouse_set(160, 100, 2);       /* derecho: acción + skip */
+    for (int i = 0; i < 32; i++) {         /* sigue pulsado: sin evento nuevo */
+        g_img[A_IKBD_PACKET] = 0xff;
+        g_img[A_SKIP_TRANSITION] = 0xff;
+        wait_frame(g_img);
+        platform_input_apply_skip(g_img);
+        CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
+              "mantener el izquierdo NO repite el clic");
+        CHECK(g_img[A_SKIP_TRANSITION] == 0,
+              "mantener el izquierdo NO activa el skip");
+    }
+
+    platform_mouse_set(160, 100, 0);       /* soltar: tampoco es clic */
+    g_img[A_IKBD_PACKET] = 0xff;
+    wait_frame(g_img);
+    platform_input_apply_skip(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
+          "soltar el izquierdo no marca acción");
+
+    platform_mouse_set(160, 100, 1);       /* nueva pulsación: nuevo clic */
+    g_img[A_IKBD_PACKET] = 0xff;
+    wait_frame(g_img);
+    platform_input_apply_skip(g_img);
+    CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
+          "una nueva pulsación tras soltar vuelve a marcar acción");
+
+    platform_mouse_set(160, 100, 0);
+    g_img[A_IKBD_PACKET] = 0xff;
+    wait_frame(g_img);
+    platform_input_apply_skip(g_img);
+    platform_input_set_auto(1);
+}
+
+/* --- T-084: derecho = acción + skip, también sólo en la bajada.
+ * `platform_input_apply_skip` es el override que la HAL aplica al salir de
+ * `wait_frame` (en el port lo llama el hook de instrumentación). --- */
+static void test_click_skip(void) {
+    platform_input_set_auto(0);
+
+    platform_mouse_set(160, 100, 2);       /* bajada derecha: acción + skip */
     g_img[A_IKBD_PACKET] = 0xff;
     g_img[A_SKIP_TRANSITION] = 0;
     wait_frame(g_img);
     platform_input_apply_skip(g_img);
     CHECK((g_img[A_INPUT_BUTTONS] & 0x04) != 0,
-          "el derecho también debe marcar acción");
+          "el derecho debe marcar acción");
     CHECK(g_img[A_SKIP_TRANSITION] == 0xff,
           "el derecho SÍ debe saltar la transición");
+
+    for (int i = 0; i < 32; i++) {         /* mantenido: ni acción ni skip */
+        g_img[A_IKBD_PACKET] = 0xff;
+        g_img[A_SKIP_TRANSITION] = 0xff;
+        wait_frame(g_img);
+        platform_input_apply_skip(g_img);
+        CHECK((g_img[A_INPUT_BUTTONS] & 0x04) == 0,
+              "mantener el derecho NO repite la acción");
+        CHECK(g_img[A_SKIP_TRANSITION] == 0,
+              "mantener el derecho NO repite el skip");
+    }
 
     platform_mouse_set(160, 100, 0);       /* sin botón: ni acción ni skip */
     g_img[A_IKBD_PACKET] = 0xff;
@@ -341,6 +371,19 @@ static void test_click_skip(void) {
           "sin botón no debe saltar la transición");
 
     platform_input_set_auto(1);
+}
+
+/* --- T-084: dos teclas encoladas se leen como dos Crawio (no se pierde una). --- */
+static void test_crawio_queue(void) {
+    uint32_t k;
+    while (os_crawio(g_img, 0x00ff) != 0) {}
+    platform_key_push('A');
+    platform_key_push('B');
+    k = os_crawio(g_img, 0x00ff);
+    CHECK((k & 0xff) == 'A', "la primera tecla encolada se lee primero");
+    k = os_crawio(g_img, 0x00ff);
+    CHECK((k & 0xff) == 'B', "la segunda tecla encolada no se pierde");
+    CHECK(os_crawio(g_img, 0x00ff) == 0, "la cola queda vacía tras leer ambas");
 }
 
 /* --- IKBD absoluto: el juego fija el máximo del ratón a 304x184 para que el
@@ -635,8 +678,9 @@ int main(void) {
     test_video();
     test_input_tick();
     test_real_input();
-    test_mouse_click_state();
+    test_click_held();
     test_click_skip();
+    test_crawio_queue();
     test_ikbd_mouse_max();
     test_vbl();
     test_prg_loader();
@@ -649,7 +693,7 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs, log, present por VBL, cpu_delay, cpu_cycles, disk_delay, "
-           "video, entrada/botones, reloj, tick VBL, loader PRG, idioma, "
-           "musica PSG, Timer A, RMS)\n");
+           "video, entrada/botones (clic mantenido), Crawio, reloj, tick VBL, "
+           "loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }
