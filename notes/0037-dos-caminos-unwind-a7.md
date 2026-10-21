@@ -151,7 +151,36 @@ kult   d9531d725371ccfe8569f137556416bcd30c91aabe61318a846ca7a3732d0561
 Las capturas append-only completas tienen sus hashes en el `SHA256SUMS` de la
 carpeta padre.
 
-## 8. Seguimiento
+## 8. Nota sobre el final de la run
+
+El bloque de validación no termina con `fin:` en `kult.log`: el último registro
+es un FPS de 1.0 a las 22:21:38 y el log se corta. La secuencia final es:
+
+```text
+8932/8934  clic izquierdo -> cmd=e105
+8936       mouse_up
+8949       RUN cmd=e105 -> script entry=20224, primer byte 0x29
+           (text_window_entry, byte handler 41)
+8964       B fn=12b04 sel=1ba6c cls=1aaef src=9abe0
+           w=0056 h=0041 x=0016 y=0018
+8964       F 12b40 x216 (misma VBL)
+           [fin del log]
+```
+
+No hay mensaje de error, excepción ni `fin:`/resumen de audio. Esto es
+compatible con cerrar la ventana o terminar el proceso durante el dibujado de
+esa ventana de texto: los hooks `tick_cb`/`idle_cb` de `app/main.c` hacen
+`exit(0)` sin escribir `fin:`. Además, con `KULT_MARKS` cada entrada `F` hace
+`fflush`, así que un blit de texto instrumentado puede parecer una congelación
+a ~1 FPS aunque el juego siga avanzando.
+
+No hay relación con el unwind A7: el `run_unwind` de T-087 ocurre mucho antes,
+en VBL 2939, y esta secuencia final es un comando distinto (`e105` ->
+`text_window_entry`). Si se reproduce un cuelgue real **sin** `KULT_MARKS`, el
+siguiente paso sería revisar `text_window_entry`/`elem_blit_rev` y la fuente
+`src=9abe0` para ese objeto `1ba6c` de clase `1aaef`.
+
+## 9. Seguimiento
 
 T-087 queda cerrado. Queda como auditoría posterior revisar los demás handlers
 con restauración de A7 (`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`,
