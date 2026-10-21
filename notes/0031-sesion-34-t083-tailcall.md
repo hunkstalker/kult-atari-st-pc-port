@@ -1,7 +1,8 @@
 # 0031 — Sesión 34: cierre de T-083 (tail-call de `icon_ring_loop`)
 
-> **Estado:** resuelto y validado con `kult.exe` y `kult-diag.exe`. Este documento
-> resume la sesión completa: evidencia, causa, fix, artefactos y validación.
+> **Estado:** fix + refactor validados con `kult.exe` y `kult-diag.exe`.
+> Este documento resume la sesión completa: evidencia, causa, fix, artefactos
+> y validación.
 
 ## 1. Síntoma
 
@@ -78,7 +79,7 @@ modelar el abandono del VM exterior.
 
 ## 5. Validación
 
-- `make test`: **512 passed**.
+- `make test`: **513 passed**.
 - `make test-port`: **OK**.
 - Smoke nativo headless: OK.
 - `kult.exe`: el usuario confirma dado en la 2.ª serpiente y mosca en la 1.ª
@@ -89,6 +90,11 @@ modelar el abandono del VM exterior.
   aparece `VMOUT a6=20726 why=end_byte tmpl=20727` y siguen los comandos
   normales.
 - Log pre-fix conservado en `diag-logs/pre-fix-2026-10-21.log`.
+
+La validación final se hizo con los artefactos del refactor
+(`kult.exe` `41be915a…`, `kult-diag.exe` `b5e94d06…`): sin bugs visuales y con
+el log `diag-logs/post-refactor-2026-10-21.log`, que no contiene
+`0x1fc2e`/`0x206b1`/`0x2563e`/`0x206b5` y sí `TAIL_3D`/`VMTAIL a6=20726`.
 
 ## 6. Artefactos
 
@@ -118,4 +124,5 @@ Refactor aplicado:
   `test_fun_15888_ex_sin_tail`; **513 tests** + `test-port`.
 
 Con esto el abandono del VM exterior es explícito y no depende del contenido del
-byte siguiente. T-083 queda cerrado.
+byte siguiente. **Validado** con `kult.exe` `41be915a…` y `kult-diag.exe`
+`b5e94d06…`; T-083 queda cerrado.

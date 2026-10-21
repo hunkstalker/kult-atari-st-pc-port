@@ -5,17 +5,21 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
-- **Sesión 34 — T-083 resuelto y validado**: causa raíz en
+- **Sesión 34 — T-083 resuelto y validado (fix + refactor)**: causa raíz en
   `icon_ring_loop` (0x15888): el tail-call/retorno doble de `0x1592e` se
   modelaba como llamada normal y el VM exterior seguía ejecutando la cabecera
-  de TEMPL siguiente. Fix con `run_command_keep_sp_a6` y, tras el refactor, tail-call explícito
-  (`VM_TAIL_FLAG`) en `icon_ring_loop_ex`; 513 tests + `test-port`. Validado con `kult.exe` (dado/2.ª y mosca/1.ª) y
-  `kult-diag.exe` (`diag-logs/post-fix-dado-mosca-2026-10-21.log` sin
-  `0x1fc2e`/`0x206b1`). Pre-fix conservado en
+  de TEMPL siguiente. Fix inicial con `run_command_keep_sp_a6` y refactor de
+  tail-call explícito (`VM_TAIL_FLAG` / `icon_ring_loop_ex`); **513 tests** +
+  `test-port`. Validado con `kult.exe` (dado/2.ª y mosca/1.ª) y con
+  `kult-diag.exe`: el log
+  `diag-logs/post-refactor-2026-10-21.log` no contiene `0x1fc2e`, `0x206b1`,
+  `0x2563e` ni `0x206b5`, y muestra `TAIL_3D`/`VMTAIL a6=20726`. Artefactos:
+  `kult.exe` `41be915a…`, `kult-diag.exe` `b5e94d06…`. Pre-fix en
   `diag-logs/pre-fix-2026-10-21.log`.
-### T-083 — bugs al usar objetos en las serpientes (resuelto)
+### T-083 — bugs al usar objetos en las serpientes (resuelto y validado)
 
-> **Resuelto y validado en sesión 34.** Se deja el contexto histórico abajo.
+> **Fix + refactor validados en sesión 34.** Se deja el contexto histórico
+> abajo.
 
 **Restricción crítica:** los objetos del inventario son **aleatorios** en cada
 run. No se puede probar un objeto concreto a voluntad; cada run puede dar un

@@ -144,7 +144,9 @@ debe continuar**.
 - Tests nuevos: `test_run_command_keep_sp_a6_nibble0` y `test_fun_15888_ex_sin_tail` (513 tests).
 - Artefactos: `kult.exe` `41be915acfd6eedccae459e5be014a84`,
   `kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
-  **Validado en `kult.exe` y `kult-diag.exe`:** dado/2.ª y mosca/1.ª sin error.
-  El log `diag-logs/post-fix-dado-mosca-2026-10-21.log` no contiene ninguna
-  ejecución de `0x1fc2e`, `0x206b1`, `0x2563e` ni `0x206b5`; tras el `0x3d` se
-  ve `VMOUT a6=20726 why=end_byte tmpl=20727` y el retorno normal.
+  **Fix + refactor validados en `kult.exe` y `kult-diag.exe`:** dado/2.ª y
+  mosca/1.ª sin error. El log final
+  `diag-logs/post-refactor-2026-10-21.log` no contiene ninguna ejecución de
+  `0x1fc2e`, `0x206b1`, `0x2563e` ni `0x206b5`; tras el `0x3d` se ve
+  `VMOUT a6=20726 why=end_byte tmpl=20727`, `TAIL_3D a6=20726` y
+  `VMTAIL a6=20726`, y siguen los comandos normales.
