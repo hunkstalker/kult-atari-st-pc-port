@@ -14,7 +14,9 @@ Pruebas propias de la HAL, sin oráculo:
 - **Vídeo/render:** conversión **planar→RGBA** contra una imagen **golden**;
   paleta de 16 words; escalado entero (sin interpolación inesperada).
 - **Entrada:** mapeo teclado/ratón → `os_crawio`/`os_cnecin` y paquete IKBD;
-  `A_CURSOR_X/Y` se actualizan.
+  `A_CURSOR_X/Y` se actualizan. Incluye replay de entrada
+  (`KULT_REPLAY_REC`/`KULT_REPLAY_PLAY`, `test_replay_input`): graba cursor,
+  clics y teclas y los reproduce en orden.
 - **Tiempo/tick:** el contador de VBL avanza; las esperas retornan; el número de
   pasos por segundo es el esperado (simulación a cadencia fija).
 - **Audio:** comparación del **stream de registros PSG** del reproductor de música
@@ -53,13 +55,14 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Muerte → reinicio (T-076), incluida la secuencia de animaciones.
 - ✅ Audio completo: música, voces, efectos y **puertas** (apertura/tope/cierre) validados.
 - ✅ Combate/PSI: el enemigo fuerte muere tras el PSI, el anillo no se reabre y no queda el recuadro negro (T-087, `notes/0037`).
+- ✅ Atacar/ficha de personaje sin crash: el replay reproduce la ficha y la partida continúa (T-088, `notes/0038`).
 - ⬜ Reproducir el glitch gráfico aislado que queda pendiente.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**516** verde) y `make test-port` (verde).
+1. ✅ **Automático:** `make test` (**517** verde) y `make test-port` (verde).
 2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y

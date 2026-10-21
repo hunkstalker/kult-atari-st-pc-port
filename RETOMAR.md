@@ -5,6 +5,42 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 47 — T-088 validado en Windows y cerrado**:
+  el usuario confirmó que el crash de la ficha al atacar a un personaje está
+  resuelto en Windows usando el replay. Con esto T-088 queda cerrado. Causa:
+  `object_info_card` no avanzaba `p` tras `text_block_build`; el ASM `0x129d6`
+  deja A5 al final del bloque de 3 bytes. Fix `p += 3` en `src/loop.c`; test
+  `test_fun_16dec_text_block`; `make test` **517** y `test-port` OK. Detalle:
+  **`notes/0038`** §9–§11. Siguiente: T-061 (solo queda el glitch gráfico
+  aislado) → T-072.
+- **Sesión 46 — T-088: causa raíz corregida y replay validado**:
+  `object_info_card` no avanzaba `p` tras `text_block_build`; el ASM `0x129d6`
+  deja A5 al final del bloque de 3 bytes. El bucle releía el bloque y llegaba al
+  patrón inválido `idx=9`. Fix en `src/loop.c` (`p += 3`), test
+  `test_fun_16dec_text_block`; `make test` **517** y `test-port` OK. El replay
+  nativo ya no hace SIGSEGV: consume todo el fichero y sigue esperando entrada.
+  Logs: `trazas-t088-crash-20261021-224446/` (`replay-fixed.log`). Build:
+  `kult.exe` `154122ef…`, `kult-diag.exe` `da7afa3b…`, ZIP `76c5ee01…`.
+  Pendiente: validación visual en Windows con el replay. Detalle:
+  **`notes/0038`** §9–§10.
+- **Sesión 45 — T-088: replay grabado, reproducido y crash localizado**:
+  el usuario grabó la run con `kult-replay-record.bat`; `kult-replay.bin` se
+  reproduce en Linux nativo y termina en SIGSEGV, igual que en Windows. GDB:
+  `elem_bitmap_build` (`src/element.c:186`) -> `elem_list_build` ->
+  `object_info_card`; patrón `idx=9` (`0x1a2ac`) con `width=1` y scratch
+  `height=210` dispara `dest` por encima de 1 MiB. Replay y save preservados en
+  `build-win/kult-0.1.0-win64/trazas-t088-crash-20261021-224446/`.
+  SHA256 del replay `d9b86974…`. Pendiente: corregir la causa raíz y validar con
+  el replay. Detalle: **`notes/0038`** §8.
+- **Sesión 44 — T-088: replay de entrada implementado; pendiente grabar el crash**:
+  el usuario confirmó que el fallo al atacar a un PJ es un **crash** (la ventana
+  desaparece). Añadido `KULT_REPLAY_REC` / `KULT_REPLAY_PLAY` en `platform/input.c`:
+  graba las respuestas de cada sondeo (IKBD con cursor x/y, `Crawio` y `Cnecin`)
+  y las reproduce en orden. Bats `kult-replay-record.bat` / `kult-replay-play.bat`.
+  Test `test_replay_input` en `make test-port`. Save preservado en
+  `build-win/kult-0.1.0-win64/save-t088/SCENA.BIN`; logs viejos archivados en
+  `trazas-antes-t088-20261021-222057/`. Siguiente: el usuario graba el crash con
+  el save y se analiza el replay contra ASM. Detalle: **`notes/0038`**.
 - **Sesión 43 — T-087 validado y cerrado (dos caminos A7/unwind)**:
   la run de validación del usuario (2026-10-21 22:21 local) muestra
   `RUN_UNWIND4D` en VBL 2939 tras `e1fc -> 0x4d/f1c2`, sin `loop_reopen`, y
@@ -256,6 +292,31 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 **Logs de referencia:** `build-win/kult-0.1.0-win64/trazas-run-combates-20261021-2055/`
 (`dano-todo-*`, `kult.log`, `README.txt`, `SHA256SUMS`). Logs antiguos:
 `.../trazas-antes-run-combates-20261021-2035/`.
+
+### T-088 — Crash al atacar a un personaje (resuelto y validado en Windows)
+
+> **Sesión 47: cerrado y validado en Windows.** El crash era independiente de
+> T-087 y ocurría en la ficha del personaje (`object_info_card`, `0x16dec`).
+> Detalle: **`notes/0038-replay-input-t088.md`** §9–§11; evidencia:
+> **`notes/0037`** §8.
+
+- **Replay:** `KULT_REPLAY_REC=<ruta>` graba cada respuesta de entrada
+  (paquete IKBD con botón/skip/cursor x/y, `Crawio` y `Cnecin`);
+  `KULT_REPLAY_PLAY=<ruta>` la reproduce e ignora los eventos reales de SDL.
+  Cada evento se vuelca con `fflush`, así que el final se conserva aunque el
+  proceso muera.
+- **Bats:** `kult-replay-record.bat` y `kult-replay-play.bat` (en `assets/` y en
+  el paquete).
+- **Save:** `save-t088/SCENA.BIN` (74.524 B = `0x291c + 2×0x7d00`). `CLEAR.BIN`
+  no vale como save: el arranque lo reescribe.
+- **Prueba:** `test_replay_input` en `make test-port`.
+- **Estado:** **resuelto y validado en Windows**. `object_info_card` no avanzaba
+  `p` tras `text_block_build`; el ASM `0x129d6` deja A5 al final del bloque de
+  3 bytes. El bucle releía el bloque y llegaba al patrón inválido `idx=9`. Fix
+  en `src/loop.c` (`p += 3`), test `test_fun_16dec_text_block`; `make test` 517
+  y `test-port` OK. El replay nativo consume todo el fichero sin SIGSEGV y el
+  usuario confirmó el fix en Windows. Artefactos en
+  `trazas-t088-crash-20261021-224446/` (`replay-fixed.log`).
 
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
@@ -595,16 +656,15 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   va a 50 VBL/s correctos; la aceleración es trabajo de CPU no modelado → T-073.
   Detalle: `notes/0014`.
 - **M2 con `0x106f2` abierto** (no cerrado): ver `notes/0011`.
-- `make test` **516** verde; `make test-port` verde. Sin bloqueantes.
+- `make test` **517** verde; `make test-port` verde. Sin bloqueantes.
 - **Plan de hitos fijado** (sesión 11): `notes/0011`; build (sesión 12):
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-061 — validación completa en Windows (en curso)**. T-087 queda cerrado y
-validado; la run final está en `trazas-post-fix-20261021/validacion/`. Queda reproducir el
-glitch gráfico aislado que menciona la checklist y completar la validación
-global de `docs/VERIFICACION.md`. Después: **T-072** (ingesta `.STX`) →
-**M7-c** → **A1** → **N3** → **A2** → **M5**.
+**T-061 — validación completa en Windows**: T-088 queda cerrado y validado.
+Solo queda el glitch gráfico aislado que ya figura como pendiente en
+`docs/VERIFICACION.md`. Después: **T-072** (ingesta `.STX`) → **M7-c** →
+**A1** → **N3** → **A2** → **M5**.
 
 **Seguimiento técnico de T-087:** auditar los demás handlers con restauración
 de A7 (`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`, `0x15382`,
@@ -618,7 +678,7 @@ T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 
 ## Comandos
-- Core/diferencial: `make test` (514), `make test PYTEST_ARGS=-n0`,
+- Core/diferencial: `make test` (516), `make test PYTEST_ARGS=-n0`,
   `make regscan` (`ids_reg=0`), `make core`.
 - Port: `make port` (→ `build/kult`, headless), `make port-sdl` (→ `build/kult-sdl`,
   ventana SDL3), `make test-port` (HAL, sin oráculo).

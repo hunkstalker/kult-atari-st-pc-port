@@ -87,8 +87,12 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   en el core) pueden seguir rápidos.
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
-1. `make test` (**511**) y `make test-port` en verde.
+1. `make test` (**517**) y `make test-port` en verde.
 2. `make port-sdl` y `KULT_WINDOW=1 KULT_DATA_DIR=<datos> ./build/kult-sdl`:
    comprobar título (clic), menú D/E/F, intro/partida, efectos y música.
 3. `make port` headless para arranque/estabilidad (`frames`, `fb_nonzero`,
    `audio: rms/peak/...`).
+
+El replay de entrada (`kult-replay-record.bat`/`kult-replay-play.bat`) y la
+ficha al atacar a un personaje están **validados en Windows** (T-088,
+`notes/0038`).

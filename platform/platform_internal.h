@@ -16,6 +16,7 @@ int platform_exe_dir(char *buf, size_t n);
 void platform_fs_init(void);
 void platform_video_init(void);
 void platform_input_init(void);
+void platform_replay_init(void);
 void platform_time_init(void);
 void platform_audio_init(void);
 

@@ -103,6 +103,8 @@ install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-normal.bat
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-psi.bat
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-todo.bat
+  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-replay-record.bat
+  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-replay-play.bat
   DESTINATION .)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets/hatari_fps DESTINATION .)
 if(WIN32)

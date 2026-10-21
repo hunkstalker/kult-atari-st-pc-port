@@ -495,6 +495,9 @@ uint32_t object_info_card(uint8_t *img, uint32_t script) {
         if (img[p] == 0xff) {
             p = (p + 1) & 0xffffffffu;
             text_block_build(img, p, (p + 3) & 0xffffffffu);
+            /* 0x129d6 deja A5 al final del bloque de 3 bytes; sin este avance
+             * el bucle relee el bloque como entradas de la ficha. */
+            p = (p + 3) & 0xffffffffu;
         }
         bitmap = (bitmap + 4) & 0xffffffffu;
         uint32_t o[8];

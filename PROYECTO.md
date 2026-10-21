@@ -276,7 +276,11 @@ Recogidas como ADR en `docs/adr/`:
   (boundary `setjmp`/`longjmp` en `run_command`). La run final muestra
   `RUN_UNWIND4D` tras `e1fc -> f1c2`, sin `loop_reopen`, y la muerte completa
   del enemigo. Ver **`notes/0037`** (resumen de los dos fixes), **`notes/0036`**
-  (detalle técnico) e histórico en **`notes/0035`**. Después **T-072**
-  (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
+  (detalle técnico) e histórico en **`notes/0035`**. **T-088** (crash al atacar
+  a un personaje) **resuelto y validado en Windows**: `object_info_card` no
+  avanzaba `p` tras `text_block_build`; fix `p += 3`, test
+  `test_fun_16dec_text_block` y replay de entrada. Ver **`notes/0038`**.
+  Después **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** →
+  **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

@@ -159,6 +159,15 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   `click_cmd`, `queue_abf8/ac06/acaa/acae`, `dispatch_queued`, `set_ac06`,
   `set_abf8`, `set_acaa`, `cmd_handler` e `inline_cmd`, para no perder
   comandos que no pasan por el anillo.
+- **Replay de entrada (T-088)**: `KULT_REPLAY_REC=<ruta>` graba un replay
+  binario con las respuestas que ve el juego en cada sondeo: paquete IKBD
+  (botón, skip y **cursor x/y**), `Crawio` y `Cnecin`. `KULT_REPLAY_PLAY=<ruta>`
+  lo reproduce e ignora la entrada real de SDL. Cada evento se vuelca con
+  `fflush`, así que el final se conserva aunque el proceso muera. Bats:
+  `kult-replay-record.bat` y `kult-replay-play.bat`. Formato y uso:
+  **`notes/0038-replay-input-t088.md`**. Flujo **validado en Windows**: sirvió
+  para reproducir y cerrar el crash de la ficha al atacar a un personaje
+  (T-088).
 - **Medida objetiva**: `KULT_FPSLOG=1` imprime cada ~3 s el **FPS del bucle del
   juego** (una iteración = un `wait_frame`, igual que el contador `Ikbdws` del
   arnés Hatari del predecesor: `tools/hatari_fps/`). Comparar la **misma escena**

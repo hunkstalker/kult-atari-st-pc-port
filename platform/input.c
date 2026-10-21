@@ -20,6 +20,7 @@
  * de `wait_frame` (`platform_input_apply_skip`) para separar el skip del
  * derecho, igual que hacía el motor legacy. Así `src/` queda intacto.
  */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -49,6 +50,126 @@ static int g_click_toggle = 1;     /* headless: alterna clic para liberar espera
 static int g_auto = 1;             /* 1 = headless (auto-tecla); 0 = entrada real */
 static void (*g_idle)(uint8_t *img);   /* bombeo durante una espera bloqueante */
 
+/* ---- replay de entrada ---------------------------------------------------
+ *
+ * Se guardan las respuestas que ve el juego en cada sondeo de entrada, no los
+ * eventos crudos de SDL:
+ *   1 = paquete IKBD (boton, skip, cursor x/y)
+ *   2 = Crawio (tecla o 0)
+ *   3 = Cnecin (tecla)
+ * Asi el replay conserva exactamente los clics, el cursor y las teclas que
+ * consumio el juego, sin depender del reloj real ni del objeto inicial.
+ */
+#define REPLAY_MAGIC "KULTREP1"
+#define REPLAY_VERSION 1u
+#define REPLAY_IKBD 1u
+#define REPLAY_CRAWIO 2u
+#define REPLAY_CNECIN 3u
+
+typedef struct {
+    char magic[8];
+    uint32_t version;
+    uint32_t flags;
+} replay_header;
+
+typedef struct {
+    uint8_t type;
+    uint8_t button;
+    uint8_t skip;
+    uint8_t reserved;
+    uint16_t x;
+    uint16_t y;
+    uint32_t key;
+    uint32_t frame;
+} replay_event;
+
+_Static_assert(sizeof(replay_header) == 16, "cabecera de replay inesperada");
+_Static_assert(sizeof(replay_event) == 16, "evento de replay inesperado");
+
+static FILE *g_replay_file;
+static int g_replay_mode;          /* 0 = off, 1 = grabar, 2 = reproducir */
+static int g_replay_eof;
+
+static void replay_write_event(uint8_t type, uint8_t button, uint8_t skip,
+                               uint16_t x, uint16_t y, uint32_t key) {
+    if (!g_replay_file || g_replay_mode != 1) return;
+    replay_event ev = { type, button, skip, 0, x, y, key, platform_frame_count() };
+    fwrite(&ev, sizeof ev, 1, g_replay_file);
+    fflush(g_replay_file);
+}
+
+static int replay_read_event(replay_event *ev, uint8_t want) {
+    if (!g_replay_file || g_replay_mode != 2) return 0;
+    if (fread(ev, sizeof *ev, 1, g_replay_file) != 1) {
+        if (!g_replay_eof) {
+            g_replay_eof = 1;
+            platform_log("replay: fin del fichero antes de terminar la partida");
+        }
+        g_replay_mode = 0;
+        return 0;
+    }
+    if (ev->type != want) {
+        platform_log("replay: tipo inesperado %u (esperaba %u) en frame %u",
+                     (unsigned)ev->type, (unsigned)want, (unsigned)ev->frame);
+        g_replay_mode = 0;
+        return 0;
+    }
+    return 1;
+}
+
+void platform_replay_init(void) {
+    const char *rec = getenv("KULT_REPLAY_REC");
+    const char *play = getenv("KULT_REPLAY_PLAY");
+    g_replay_file = NULL;
+    g_replay_mode = 0;
+    g_replay_eof = 0;
+    if (rec && *rec && play && *play) {
+        platform_log("replay: define solo KULT_REPLAY_REC o KULT_REPLAY_PLAY");
+        return;
+    }
+    if (rec && *rec) {
+        g_replay_file = fopen(rec, "wb");
+        if (!g_replay_file) {
+            platform_log("replay: no se pudo crear %s", rec);
+            return;
+        }
+        replay_header h = { { 'K','U','L','T','R','E','P','1' }, REPLAY_VERSION, 0 };
+        fwrite(&h, sizeof h, 1, g_replay_file);
+        fflush(g_replay_file);
+        g_replay_mode = 1;
+        platform_log("replay: grabando en %s", rec);
+    } else if (play && *play) {
+        g_replay_file = fopen(play, "rb");
+        if (!g_replay_file) {
+            platform_log("replay: no se pudo abrir %s", play);
+            return;
+        }
+        replay_header h;
+        if (fread(&h, sizeof h, 1, g_replay_file) != 1 ||
+            memcmp(h.magic, REPLAY_MAGIC, sizeof h.magic) != 0 ||
+            h.version != REPLAY_VERSION) {
+            platform_log("replay: fichero no valido %s", play);
+            fclose(g_replay_file);
+            g_replay_file = NULL;
+            return;
+        }
+        g_replay_mode = 2;
+        platform_log("replay: reproduciendo %s", play);
+    }
+}
+
+int platform_replay_playing(void) { return g_replay_mode == 2; }
+int platform_replay_recording(void) { return g_replay_mode == 1; }
+
+void platform_replay_shutdown(void) {
+    if (g_replay_file) {
+        fflush(g_replay_file);
+        fclose(g_replay_file);
+        g_replay_file = NULL;
+    }
+    g_replay_mode = 0;
+}
+
 void platform_set_idle(void (*fn)(uint8_t *img)) { g_idle = fn; }
 
 void platform_input_set_auto(int on) {
@@ -64,6 +185,7 @@ void platform_input_set_auto(int on) {
 }
 
 void platform_mouse_set(int x, int y, int buttons) {
+    if (g_replay_mode == 2) return;   /* la entrada viene del replay */
     if (x < 0) x = 0;
     if (x > g_mouse_max_x) x = g_mouse_max_x;
     if (y < 0) y = 0;
@@ -131,6 +253,8 @@ void platform_input_apply_skip(uint8_t *img) {
 }
 
 void platform_input_init(void) {
+    platform_replay_init();
+    atexit(platform_replay_shutdown);
     g_head = g_tail = 0;
     g_deliveries = 0;
     g_left_down = g_right_down = 0;
@@ -151,6 +275,7 @@ void platform_input_init(void) {
 }
 
 void platform_key_push(uint32_t key) {
+    if (g_replay_mode == 2) return;   /* la entrada viene del replay */
     int next = (g_tail + 1) % KEYQ;
     if (next == g_head) return;                 /* cola llena: se descarta */
     g_keys[g_tail] = key;
@@ -166,9 +291,19 @@ void platform_key_push_str(const char *s) {
 uint32_t pc_os_crawio(uint8_t *mem, uint16_t w) {
     (void)mem;
     if (w != 0x00ff) return 0;                  /* escritura a consola: no-op */
-    if (g_head == g_tail) return 0;
-    uint32_t k = g_keys[g_head];
-    g_head = (g_head + 1) % KEYQ;
+    if (g_replay_mode == 2) {
+        replay_event ev;
+        if (replay_read_event(&ev, REPLAY_CRAWIO))
+            return ev.key;
+        return 0;
+    }
+    uint32_t k = 0;
+    if (g_head != g_tail) {
+        k = g_keys[g_head];
+        g_head = (g_head + 1) % KEYQ;
+    }
+    if (g_replay_mode == 1)
+        replay_write_event(REPLAY_CRAWIO, 0, 0, 0, 0, k);
     return k;
 }
 
@@ -176,6 +311,12 @@ uint32_t pc_os_crawio(uint8_t *mem, uint16_t w) {
  * (nunca cuelga). Con entrada real (`platform_input_set_auto(0)`) espera bombeando
  * `g_idle` (SDL) hasta que llegue una tecla. Devuelve ascii en el byte bajo. */
 int pc_os_cnecin(uint8_t *mem, uint32_t *out) {
+    if (g_replay_mode == 2) {
+        replay_event ev;
+        uint32_t k = replay_read_event(&ev, REPLAY_CNECIN) ? ev.key : 0;
+        if (out) *out = k;
+        return 1;
+    }
     if (g_head == g_tail) {
         if (!g_auto) {
             while (g_head == g_tail && g_idle)
@@ -183,12 +324,16 @@ int pc_os_cnecin(uint8_t *mem, uint32_t *out) {
         }
         if (g_head == g_tail) {                   /* sin tecla y sin idle */
             if (out) *out = g_auto_key;
+            if (g_replay_mode == 1)
+                replay_write_event(REPLAY_CNECIN, 0, 0, 0, 0, g_auto_key);
             return 1;
         }
     }
     uint32_t k = g_keys[g_head];
     g_head = (g_head + 1) % KEYQ;
     if (out) *out = k;
+    if (g_replay_mode == 1)
+        replay_write_event(REPLAY_CNECIN, 0, 0, 0, 0, k);
     return 1;
 }
 
@@ -198,17 +343,41 @@ int pc_os_cnecin(uint8_t *mem, uint32_t *out) {
  * Headless: el clic sintético alterna para liberar las esperas "soltar y
  * pulsar" (prompt_wait). Entrada real: se entrega el flanco pendiente. */
 void platform_ikbd_deliver(uint8_t *img) {
-    if (g_auto) {
-        int synthetic = g_click_toggle && (g_deliveries & 1);
-        if (synthetic && !g_auto_prev)
-            g_action_pending = 1;
-        g_auto_prev = (uint8_t)synthetic;
+    uint8_t b;
+    uint8_t skip;
+    if (g_replay_mode == 2) {
+        replay_event ev;
+        if (replay_read_event(&ev, REPLAY_IKBD)) {
+            b = ev.button ? 1 : 0;
+            skip = ev.skip;
+            g_cursor_x = ev.x;
+            g_cursor_y = ev.y;
+        } else {
+            b = 0;
+            skip = 0;
+        }
+        g_left_down = b;
+        g_right_down = 0;
+        g_action_pending = 0;
+        g_skip_pending = 0;
+        g_skip_event = skip;
+        g_deliveries++;
+    } else {
+        if (g_auto) {
+            int synthetic = g_click_toggle && (g_deliveries & 1);
+            if (synthetic && !g_auto_prev)
+                g_action_pending = 1;
+            g_auto_prev = (uint8_t)synthetic;
+        }
+        b = g_action_pending ? 1 : 0;
+        g_action_pending = 0;
+        g_skip_event = g_skip_pending;
+        g_skip_pending = 0;
+        g_deliveries++;
+        skip = g_skip_event;
+        if (g_replay_mode == 1)
+            replay_write_event(REPLAY_IKBD, b, skip, g_cursor_x, g_cursor_y, 0);
     }
-    uint8_t b = g_action_pending ? 1 : 0;
-    g_action_pending = 0;
-    g_skip_event = g_skip_pending;
-    g_skip_pending = 0;
-    g_deliveries++;
     img[A_IKBD_PACKET] = b;
     if (b & 1)
         img[A_INPUT_BUTTONS] |= 0x04;

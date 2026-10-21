@@ -668,6 +668,43 @@ static void test_integration_music(void) {
     free(im);
 }
 
+static void test_replay_input(void) {
+    char path[256];
+    snprintf(path, sizeof path, "%s/replay.bin", DIR);
+    unsetenv("KULT_REPLAY_PLAY");
+    setenv("KULT_REPLAY_REC", path, 1);
+    platform_replay_init();
+    CHECK(platform_replay_recording(), "KULT_REPLAY_REC debe activar la grabacion");
+
+    platform_input_set_auto(0);
+    platform_mouse_set(12, 34, 1);
+    platform_ikbd_deliver(g_img);
+    platform_key_push('A');
+    CHECK(pc_os_crawio(g_img, 0x00ff) == 'A', "Crawio grabado debe devolver A");
+    platform_key_push('B');
+    uint32_t out = 0;
+    CHECK(pc_os_cnecin(g_img, &out) == 1 && out == 'B',
+          "Cnecin grabado debe devolver B");
+    platform_replay_shutdown();
+
+    unsetenv("KULT_REPLAY_REC");
+    setenv("KULT_REPLAY_PLAY", path, 1);
+    platform_replay_init();
+    CHECK(platform_replay_playing(), "KULT_REPLAY_PLAY debe activar el replay");
+
+    memset(g_img + A_IKBD_PACKET, 0xff, 5);
+    platform_ikbd_deliver(g_img);
+    CHECK(g_img[A_IKBD_PACKET] == 1, "replay: boton izquierdo");
+    CHECK(be16(g_img + A_CURSOR_X) == 12 && be16(g_img + A_CURSOR_Y) == 34,
+          "replay: posicion del cursor");
+    CHECK(pc_os_crawio(g_img, 0x00ff) == 'A', "replay: Crawio A");
+    out = 0;
+    CHECK(pc_os_cnecin(g_img, &out) == 1 && out == 'B', "replay: Cnecin B");
+    platform_replay_shutdown();
+    unsetenv("KULT_REPLAY_PLAY");
+    remove(path);
+}
+
 int main(void) {
     make_fixture();
     setenv("KULT_DATA_DIR", DIR, 1);
@@ -688,6 +725,7 @@ int main(void) {
     test_click_held();
     test_click_skip();
     test_crawio_queue();
+    test_replay_input();
     test_ikbd_mouse_max();
     test_vbl();
     test_prg_loader();
@@ -700,7 +738,7 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs, log, present por VBL, cpu_delay, cpu_cycles, disk_delay, "
-           "video, entrada/botones (clic mantenido), Crawio, reloj, tick VBL, "
+           "video, entrada/botones (clic mantenido), Crawio, replay, reloj, tick VBL, "
            "loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }

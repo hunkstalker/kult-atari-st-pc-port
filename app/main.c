@@ -15,6 +15,8 @@
  *   KULT_KEYS      teclas inyectadas        (def. auto 'E')
  *   KULT_WINDOW    ventana SDL              (build SDL: 1 por defecto; 0 =
  *                                           headless; build sin SDL: se ignora)
+ *   KULT_REPLAY_REC  graba las respuestas de entrada en un replay binario
+ *   KULT_REPLAY_PLAY reproduce un replay e ignora la entrada real de SDL
  *
  * La ventana SDL y la entrada real llegan en M3; esto es la base de validación.
  */
@@ -229,8 +231,12 @@ int main(int argc, char **argv) {
             const char *rt = getenv("KULT_REALTIME");
             platform_set_realtime(!(rt && rt[0] == '0'));
             /* Entrada real por defecto; KULT_AUTOINPUT=1 fuerza el modo auto
-             * (útil sin display/para pruebas). */
-            platform_input_set_auto(getenv("KULT_AUTOINPUT") ? 1 : 0);
+             * (útil sin display/para pruebas). En replay la entrada la sirve
+             * el fichero, no SDL. */
+            if (platform_replay_playing())
+                platform_input_set_auto(0);
+            else
+                platform_input_set_auto(getenv("KULT_AUTOINPUT") ? 1 : 0);
             /* Audio SDL3 (KULT_AUDIO=0 lo desactiva). */
             platform_audio_sdl_open();
         } else {

@@ -2327,6 +2327,20 @@ def test_fun_16dec():
     assert info["ret"] == info["regs"]["a6"]
 
 
+def test_fun_16dec_text_block():
+    """0x16dec: tras 0xff, 0x129d6 consume el bloque de texto de 3 bytes y deja
+    A5 al final. El bucle exterior no debe releer esos bytes como entradas."""
+    pokes = _f16dec_pokes()
+    # Entrada de ficha: [len=6][lista=1][0xff][3 bytes de texto][fin]
+    pokes[0x246E6] = bytes([6, 1, 0xFF, 0, 0, 0])
+    diffs, info = differential(
+        FUN_16DEC, {"a6": 0x52000, "_pokes": pokes},
+        lambda lib, buf: lib.object_info_card(buf, 0x52000),
+        schedule=_vbl_k(1), wait_sites=[VBL_SITE], max_insns=1_200_000)
+    assert not diffs, report(diffs)
+    assert info["ret"] == info["regs"]["a6"]
+
+
 def test_fun_16dec_pista():
     pokes = _f16dec_pokes(e0=0x25)
     for i in range(0x24):

@@ -50,6 +50,13 @@ void platform_ikbdws(const uint8_t *buf, uint32_t len);
 void platform_input_set_auto(int on);
 void platform_set_idle(void (*fn)(uint8_t *img));
 
+/* Replay de entrada (T-088): graba o reproduce las respuestas que ve el juego
+ * en cada sondeo (IKBD/cursor, Crawio y Cnecin). KULT_REPLAY_REC=<ruta> graba;
+ * KULT_REPLAY_PLAY=<ruta> reproduce. */
+int  platform_replay_playing(void);
+int  platform_replay_recording(void);
+void platform_replay_shutdown(void);
+
 /* Reloj: número de frames (VBL) entregados desde el arranque. */
 uint32_t platform_frame_count(void);
 

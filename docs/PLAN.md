@@ -60,7 +60,9 @@ visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
 (coste medido por función con `-finstrument-functions` + tabla del oráculo) y
 **T-073c ✅ validado** (el `dbf` inline de `0x16dec` ya se cobra con
 `cpu_delay_cycles`; validación del usuario y commit `3235aa6`; ver `notes/0019`). Queda calibración fina por escenas/casos no medidos (p.ej.
-`palette_cycle`). Ver `notes/0015`.
+`palette_cycle`). Ver `notes/0015`. **T-088 ✅ validado en Windows**: crash de
+la ficha al atacar a un personaje corregido en `object_info_card`; replay de
+entrada en `notes/0038`.
 
 ## M7 — Empaquetado/release
 **Objetivo:** distribuir sin assets (el usuario aporta su copia); **build Windows**

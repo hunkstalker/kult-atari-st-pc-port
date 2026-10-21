@@ -153,32 +153,32 @@ carpeta padre.
 
 ## 8. Nota sobre el final de la run
 
-El bloque de validación no termina con `fin:` en `kult.log`: el último registro
-es un FPS de 1.0 a las 22:21:38 y el log se corta. La secuencia final es:
+El bloque de validación no termina con `fin:` en `kult.log`: el usuario confirmó
+que **el proceso se cerraba/crasheaba** al atacar a un personaje, no por cerrar
+la ventana. La secuencia final es:
 
 ```text
 8932/8934  clic izquierdo -> cmd=e105
 8936       mouse_up
-8949       RUN cmd=e105 -> script entry=20224, primer byte 0x29
-           (text_window_entry, byte handler 41)
+8949       V 29 20224 -> text_window_entry (byte handler 41)
+8950       V 18 20229 -> object_info_card (0x16dec, byte handler 24)
 8964       B fn=12b04 sel=1ba6c cls=1aaef src=9abe0
            w=0056 h=0041 x=0016 y=0018
 8964       F 12b40 x216 (misma VBL)
            [fin del log]
 ```
 
-No hay mensaje de error, excepción ni `fin:`/resumen de audio. Esto es
-compatible con cerrar la ventana o terminar el proceso durante el dibujado de
-esa ventana de texto: los hooks `tick_cb`/`idle_cb` de `app/main.c` hacen
-`exit(0)` sin escribir `fin:`. Además, con `KULT_MARKS` cada entrada `F` hace
-`fflush`, así que un blit de texto instrumentado puede parecer una congelación
-a ~1 FPS aunque el juego siga avanzando.
+El punto de crash está por tanto en **`object_info_card` (`0x16dec`)** o en el
+blit `0x12b04` que lanza para la ficha del personaje. No hay mensaje de error ni
+`fin:`; la ventana desaparece. No está relacionado con el unwind A7 de T-087,
+que ocurre antes, en VBL 2939.
 
-No hay relación con el unwind A7: el `run_unwind` de T-087 ocurre mucho antes,
-en VBL 2939, y esta secuencia final es un comando distinto (`e105` ->
-`text_window_entry`). Si se reproduce un cuelgue real **sin** `KULT_MARKS`, el
-siguiente paso sería revisar `text_window_entry`/`elem_blit_rev` y la fuente
-`src=9abe0` para ese objeto `1ba6c` de clase `1aaef`.
+El seguimiento de este crash fue **T-088**, ya **resuelto y validado en
+Windows**. La causa era que `object_info_card` no avanzaba `p` tras
+`text_block_build` (el ASM `0x129d6` deja A5 al final del bloque de 3 bytes).
+Se añadió un replay de entrada para reproducirlo sin depender del objeto inicial
+aleatorio y se corrigió con `p += 3`. Ver
+**`notes/0038-replay-input-t088.md`** §9–§11.
 
 ## 9. Seguimiento
 
