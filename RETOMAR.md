@@ -5,6 +5,13 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 37 — T-085 resuelto y validado (retrato/intro acelerado)**: la
+  animación es `portrait_intro` (`0x16a20`, comando `a013`). El ASM repite 11
+  veces un bloque con dos `dbra d0` de `0xffff`; el C los tenía como
+  `while (spin != 0xffff)`, que no ejecuta nunca el retardo. Se sustituyen por
+  `cpu_delay(0x10000u)` (no-op en diferencial). La animación pasa de ~0,4 s a
+  **~2,2 s** (110 VBL). Solo afecta a `portrait_intro`; **validado por el
+  usuario**. Detalle: **§ T-085** y **`notes/0033`**.
 - **Sesión 36 — T-084 resuelto y validado (input mantenido / clics repetidos)**:
   el IKBD original se interroga con `0x0D` y responde con **eventos desde la
   última interrogación**, no con el nivel del botón. La HAL entregaba nivel en
@@ -105,6 +112,29 @@ entrada**; el bucle de 32 frames de `test_click_held` no ve clics nuevos.
 **Validado visualmente por el usuario en Windows**: el anillo de acciones se
 abre una vez con el clic mantenido y queda abierto para elegir. Artefactos:
 `kult-diag.exe` `64505805…`, `kult.exe` `cc4d5cee…`, headless `414a82c8…`.
+
+### T-085 — retrato/intro acelerado (resuelto y validado)
+
+> **Resuelto en sesión 37 y validado por el usuario. Detalle: `notes/0033`.**
+
+**Síntoma:** una animación de retrato/intro duraba <1 s cuando debía durar >2 s.
+
+**Causa:** `portrait_intro` (`0x16a20`, comando `a013`) repite 11 veces un bloque
+con **dos `dbra d0` de `0xffff`**. El C los transcribió como
+`uint32_t spin = 0xffff; while (spin != 0xffff) ...`, una condición falsa desde
+el inicio: nunca se ejecutaba el retardo y se perdían ~14,4 M ciclos (~1,8 s).
+El diferencial no podía verlo porque solo compara imagen/estado.
+
+**Fix (solo timing en `src/loop.c`):** los dos bloques pasan a
+`cpu_delay(0x10000u)` (65536 iteraciones), no-op en diferencial y con coste real
+en el port. No se toca `15da6`, `15ac8`, input ni otras animaciones.
+
+**Pruebas:** `test_fun_16a20` sigue verde; guardia en `test_cpu_delay` para
+`0x10000` unidades (>=4 VBL); medición funcional **110 VBL / 2202 ms**.
+`make test` **513** y `make test-port` OK.
+
+**Artefactos:** `kult.exe` `5342b77c…`, `kult-headless.exe` `ccf5f7a9…`,
+`kult-diag.exe` `62710162…`.
 
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
@@ -448,12 +478,13 @@ abre una vez con el clic mantenido y queda abierto para elegir. Artefactos:
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-061 — validación completa en Windows**: repasar lo ya validado (incluido el
-clic mantenido/anillo de T-084) y cerrar el glitch gráfico aislado que queda.
-Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** →
-**M5**.
+**T-061 — validación completa en Windows**: repasar lo ya validado (input
+mantenido/anillo de T-084 y retrato/intro de T-085) y cerrar el glitch gráfico
+aislado que queda. Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** →
+**N3** → **A2** → **M5**.
 
-T-084 (input mantenido) está **cerrado y validado**: detalle en **`notes/0032`**.
+T-084 (input mantenido) y T-085 (retrato/intro) están **cerrados y validados**:
+detalle en **`notes/0032`** y **`notes/0033`**.
 T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 

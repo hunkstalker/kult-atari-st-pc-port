@@ -141,6 +141,13 @@ static void test_cpu_delay(void) {
     platform_cpu_delay(36000);                  /* ~45 ms a 8 MHz */
     CHECK(platform_frame_count() - f0 >= 2,
           "cpu_delay en tiempo real cede >= 2 VBLs en ~45 ms");
+
+    /* Ciclo `dbra d0` con d0=0xffff del retrato/ intro (0x16a20): 65536
+     * iteraciones ~82 ms -> >= 4 VBLs. */
+    f0 = platform_frame_count();
+    platform_cpu_delay(0x10000u);
+    CHECK(platform_frame_count() - f0 >= 4,
+          "cpu_delay de 0x10000 unidades cede >= 4 VBLs (~82 ms)");
     platform_set_realtime(0);
 }
 

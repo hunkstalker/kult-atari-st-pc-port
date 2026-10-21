@@ -818,19 +818,12 @@ void portrait_intro(uint8_t *img) {
         run_text_entry(img, 0x1997e);
         wait_vbl(img);
         copy_screen(img);
-        {
-            uint32_t spin = 0xffff;
-            while (spin != 0xffff)
-                spin = (spin - 1) & 0xffff;
-        }
+        /* dbra d0 con d0=0xffff: 65536 iteraciones (no-op en diferencial). */
+        cpu_delay(0x10000u);
         run_text_entry(img, 0x19981);
         wait_vbl(img);
         copy_screen(img);
-        {
-            uint32_t spin = 0xffff;
-            while (spin != 0xffff)
-                spin = (spin - 1) & 0xffff;
-        }
+        cpu_delay(0x10000u);
         if (i == 0) break;
     }
     run_text_entry(img, 0x19984);
