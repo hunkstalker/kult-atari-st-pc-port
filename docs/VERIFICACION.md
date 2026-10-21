@@ -43,7 +43,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
-**Estado actual (validación completa T-061 en curso):**
+**Estado actual (T-061 🚧 — validación jugada en curso):**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -56,7 +56,8 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Audio completo: música, voces, efectos y **puertas** (apertura/tope/cierre) validados.
 - ✅ Combate/PSI: el enemigo fuerte muere tras el PSI, el anillo no se reabre y no queda el recuadro negro (T-087, `notes/0037`).
 - ✅ Atacar/ficha de personaje sin crash: el replay reproduce la ficha y la partida continúa (T-088, `notes/0038`).
-- ⬜ Reproducir el glitch gráfico aislado que queda pendiente.
+- ✅ Pasada visual actual sin glitches gráficos: el antiguo “glitch aislado” se retira; era un resto del punto 4, ya cubierto por T-081.
+- 🚧 Partida completa en Windows: pendiente de ejecutar, encontrar y triar bugs.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio

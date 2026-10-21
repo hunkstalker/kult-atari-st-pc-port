@@ -57,8 +57,9 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 - **M7 — build/empaquetado**: **build hecho** (T-070): CMake nativo y cross
   MinGW; el ZIP/TGZ interino (T-071) lleva `kult.exe`, `kult-headless.exe`,
   `SDL3.dll` y `data/` vacía (**hay que copiar ahí los ficheros del juego**). El
-  `.exe` no se ha ejecutado en el entorno de desarrollo (sin wine): lo valida el
-  usuario (**T-061**). Requiere **Windows 10+** (UCRT).
+  `.exe` no se ha ejecutado en el entorno de desarrollo (sin wine): el usuario
+  validó el checklist de **T-061**, que sigue abierta por la partida completa.
+  Requiere **Windows 10+** (UCRT).
 - **Ingesta de discos pendiente (T-072)**: este paquete **no lee** `.STX/.MSA/.ST`;
   `data/` debe contener los ficheros **extraídos**. Es la siguiente tarea tras
   T-061 (no se le debe pedir al usuario un `.PRG` como solución final). El

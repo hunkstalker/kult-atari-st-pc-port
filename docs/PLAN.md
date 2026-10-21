@@ -50,10 +50,12 @@ ledger PSG con el oráculo y mide RMS/energía. La escucha final la valida el us
 **Contenido:** menú de idioma (fiel o nativo), guardado, ajustes; validación.
 **Aceptación:** partida completa jugable; lista de limitaciones documentada.
 **Estado:** en curso. **T-060 ✅** (menú de idioma **fiel**, ADR 0004, validado en
-T-020). **T-061 🚧**: checklist de validación en `docs/VERIFICACION.md` y
-limitaciones en `docs/LIMITACIONES.md`; **la ejecución la hace el usuario** (jugar
-y escuchar con su copia de datos). Incluye **morir → reiniciar** (`reset_clear`
-→ `bra 0x10158`, emulado en `boot/`; **no** depende de `0x106f2`). **Colores** del juego
+T-020). **T-061 🚧**: checklist base validado; falta la **partida completa en
+Windows** (checklist en `docs/VERIFICACION.md`, limitaciones en
+`docs/LIMITACIONES.md`). **La ejecución la hace el usuario** (jugar y escuchar
+con su copia de datos).
+Incluye **morir → reiniciar** (`reset_clear` → `bra 0x10158`, emulado en `boot/`;
+**no** depende de `0x106f2`). **Colores** del juego
 corregidos en la HAL (`OS_SCREEN_BASE=0x98000`) y **primera pantalla = título
 visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
 **T-073 🚧**: ritmo real: **T-073a ✅** (`cpu_delay` real), **T-073b ✅**
@@ -77,9 +79,10 @@ para que el usuario valide.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + log/diagnóstico `kult.log`) y **empaquetado interino hecho** (T-071: ZIP
 Windows con `kult.exe`+`kult-headless.exe`+`SDL3.dll`+`data/`+`LEEME.txt`+
-`DIAGNOSTICO.txt`; TGZ Linux). El `.exe` se valida en **T-061** (el usuario).
-**Siguiente a T-061: T-072 — ingesta `.STX`** (el usuario solo aporta imágenes
-de disquete). Detalle: `notes/0012`, `notes/0013`.
+`DIAGNOSTICO.txt`; TGZ Linux). El `.exe` queda validado en el checklist de
+**T-061**, que sigue abierta por la partida completa. **Siguiente tras T-061:
+T-072 — ingesta `.STX`** (el usuario solo aporta imágenes de disquete). Detalle:
+`notes/0012`, `notes/0013`.
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 **Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a

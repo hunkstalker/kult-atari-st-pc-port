@@ -94,7 +94,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` **abierto**) + tick `0x160c2` |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
-| **M6** | pulido y validación | 🚧 T-060 ✅ (menú fiel); **T-061** = validación del usuario |
+| **M6** | pulido y validación | 🚧 T-060 ✅ (menú fiel); **T-061 🚧** (validación jugada, sesión 48); queda T-073 (calibración fina) |
 | **M7** | build/empaquetado (Windows/Linux) + ingesta | 🚧 **build ✅** (T-070) y **ZIP/TGZ interino ✅** (T-071); **ingesta `.STX` adelantada** tras T-061 (T-072) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
@@ -137,7 +137,10 @@ Recogidas como ADR en `docs/adr/`:
   `_start` (T-020: clic de título, drenado de teclas, D/E/F; `0x135ba` como
   `os_setscreen` no-op) y se documenta la **validación** (checklist en
   `docs/VERIFICACION.md`, limitaciones en `docs/LIMITACIONES.md`), que **ejecuta
-  el usuario**. `0x106f2` (reinicio suave) queda **abierto/pendiente**.
+  el usuario**. T-061 se **reabrió en la sesión 48**: checklist base validado,
+  pero falta la partida completa y corregir los bugs que aparezcan. T-073 sigue
+  abierta como calibración fina no bloqueante. `0x106f2` (reinicio suave) queda
+  **abierto/pendiente**.
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
   docs) → M7 build → T-061 validación → M7-c (empaquetado + ingesta) → A1
   (investigación Amiga, prerrequisito duro de N3) → N3 (motor nativo + assets
@@ -261,10 +264,15 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** cerrar **T-061** (validación Windows). Ya validados:
-  título/idioma/colores, partida/controles, retrato C, sangre/espacio, estrella,
-  cursor, glitch, guardado/carga, muerte → reinicio y **audio** (T-082,
-  puertas incluidas) validados. Solo queda reproducir un glitch gráfico aislado.
+- **Siguiente:** **T-061** (partida completa en Windows) → **T-072** (ingesta
+  `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**. El checklist base de
+  T-061 está validado (título/idioma/colores, partida/controles, retrato C,
+  sangre/espacio, estrella, cursor, glitch del reveal, guardado/carga, muerte →
+  reinicio, **audio** T-082, input/anillo T-084, combate/PSI T-087 y ficha al
+  atacar T-088), pero falta jugar de principio a fin y corregir los bugs que
+  aparezcan. El antiguo “glitch aislado” se retira: era un resto del punto
+  4/T-081, sin un segundo caso reproducible. T-073 sigue abierta como calibración
+  fina.
   **T-083** (objetos en serpientes) **resuelto y validado**: retorno doble de
   `icon_ring_loop` (`0x1592e`), con tail-call explícito en la VM; ver
   **`notes/0031`**. **T-084** (input mantenido), **T-085** (retrato/intro) y
@@ -280,7 +288,5 @@ Recogidas como ADR en `docs/adr/`:
   a un personaje) **resuelto y validado en Windows**: `object_info_card` no
   avanzaba `p` tras `text_block_build`; fix `p += 3`, test
   `test_fun_16dec_text_block` y replay de entrada. Ver **`notes/0038`**.
-  Después **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** →
-  **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

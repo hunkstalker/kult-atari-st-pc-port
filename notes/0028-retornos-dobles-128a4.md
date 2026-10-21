@@ -247,3 +247,13 @@ Sospechosos ya conocidos:
 - `test/test_element.py` (`stop_pc=0x1294c`), `test/test_reveal.py`.
 - Log: `build-win/kult-0.1.0-win64/kult-marcas.log` (run con F12
   4516/4640/4767; `12f28` 4471–4919).
+
+## 14. Reapertura de T-061 (sesión 48)
+
+- El usuario confirmó una pasada visual actual **sin glitches gráficos** en Windows.
+- El ítem “reproducir el glitch gráfico aislado” de T-061 se retira: no tenía
+  caso, log ni captura propios y era un resto del punto 4 (H-el1), ya cubierto
+  por T-081. No hay un segundo glitch reproducible.
+- El checklist base de T-061 está validado, pero T-061 **sigue abierta**: falta
+  jugar de principio a fin y corregir los bugs que aparezcan. T-073 sigue
+  abierta como calibración fina no bloqueante.

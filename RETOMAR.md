@@ -5,14 +5,22 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 48 — T-061 reabierta: falta la partida completa**:
+  el usuario confirma que la pasada visual actual no tiene glitches y que los
+  bugs corregidos (T-073c…T-088) formaban parte de la validación de Windows. El
+  checklist base queda validado, pero T-061 **sigue abierta**: falta jugar de
+  principio a fin, reproducir y corregir los bugs que aparezcan. El antiguo
+  “glitch gráfico aislado” se retira como resto del punto 4 (H-el1), ya cubierto
+  por T-081; no hay un segundo caso. Siguiente: **T-061** (partida completa) →
+  **T-072**. T-073 sigue abierta como calibración fina no bloqueante. Detalle:
+  **`notes/0028`** §14.
 - **Sesión 47 — T-088 validado en Windows y cerrado**:
   el usuario confirmó que el crash de la ficha al atacar a un personaje está
   resuelto en Windows usando el replay. Con esto T-088 queda cerrado. Causa:
   `object_info_card` no avanzaba `p` tras `text_block_build`; el ASM `0x129d6`
   deja A5 al final del bloque de 3 bytes. Fix `p += 3` en `src/loop.c`; test
   `test_fun_16dec_text_block`; `make test` **517** y `test-port` OK. Detalle:
-  **`notes/0038`** §9–§11. Siguiente: T-061 (solo queda el glitch gráfico
-  aislado) → T-072.
+  **`notes/0038`** §9–§11. Siguiente: T-061 (validación jugada) → T-072.
 - **Sesión 46 — T-088: causa raíz corregida y replay validado**:
   `object_info_card` no avanzaba `p` tras `text_block_build`; el ASM `0x129d6`
   deja A5 al final del bloque de 3 bytes. El bucle releía el bloque y llegaba al
@@ -599,9 +607,10 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 - **M0–M4 hechas**: el juego arranca con el **menú de idioma fiel**, avanza frames,
   **headless**, con **ventana SDL3 jugable** (render + entrada real + ritmo 50 Hz)
   y **audio** (Timer A del MFP + PSG/YM2149 + SDL).
-- **M6 en curso**: T-060 ✅ (menú fiel); **T-061 = validación completa en
-  Windows, en curso** (checklist en `docs/VERIFICACION.md`, limitaciones en
-  `docs/LIMITACIONES.md`). Incluye **morir → reiniciar sala** (`reset_clear`, core).
+- **M6 en curso**: T-060 ✅ (menú fiel); **T-061 🚧** (checklist base validado;
+  falta la partida completa en Windows; checklist en `docs/VERIFICACION.md`).
+  Queda **T-073** abierta como calibración fina no bloqueante. Incluye **morir →
+  reiniciar sala** (`reset_clear`, core).
 - **T-073c (Maestro C) resuelto y validado (commit `3235aa6`)**: A/B/C
   corregidas. A: 3 retratos pixel + descripciones; B: 4 retratos lift +
   descripciones; C: 1 retrato del Maestro + lift + diálogo (único diálogo y
@@ -661,10 +670,11 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-061 — validación completa en Windows**: T-088 queda cerrado y validado.
-Solo queda el glitch gráfico aislado que ya figura como pendiente en
-`docs/VERIFICACION.md`. Después: **T-072** (ingesta `.STX`) → **M7-c** →
-**A1** → **N3** → **A2** → **M5**.
+**T-061 — validación jugada completa en Windows**: el checklist base está
+validado, pero falta jugar de principio a fin y corregir los bugs que aparezcan.
+T-073 sigue abierta como deuda de fidelidad no bloqueante
+(FPS/`palette_cycle`). Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** →
+**N3** → **A2** → **M5**.
 
 **Seguimiento técnico de T-087:** auditar los demás handlers con restauración
 de A7 (`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`, `0x15382`,
