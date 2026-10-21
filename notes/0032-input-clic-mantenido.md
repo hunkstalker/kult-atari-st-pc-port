@@ -127,7 +127,7 @@ En `platform/test/test_platform.c` (todas en `make test-port`):
   manteniendo el clic, el anillo de acciones se abre **una sola vez** y se queda
   abierto para poder elegir.
 
-Artefactos de esta sesión:
+Ejecutables de esta sesión:
 
 - `kult-diag.exe` `6450580595c4fe623d42d17b5cb6a817`
 - `kult.exe` `cc4d5cee1a297a5dfdef93821a0f2c35`

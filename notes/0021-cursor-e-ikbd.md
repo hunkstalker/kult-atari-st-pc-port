@@ -65,7 +65,7 @@ sprite reaparece por el borde opuesto. Comprobado llamando a `cursor_draw` con
 - `make port`, `make port-sdl`, `make cmake-native`, `make cmake-win`,
   `make package-win`: OK.
 - Smoke headless (incluido `KULT_CURSOR_X/Y=999`) y SDL dummy: sin cuelgues.
-- Artefactos:
+- Ejecutables:
   - `kult.exe` md5 `b7edc93660ea7caadd87191f8ffeee7a`
   - `kult-headless.exe` md5 `7faac3d3351c24c46f825b4096557130`
   - ZIP md5 `97d567898127ab8290d4155113c312d1`

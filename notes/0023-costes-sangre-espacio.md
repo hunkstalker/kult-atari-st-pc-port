@@ -75,7 +75,7 @@ No se toca `src/`, no se añaden retardos manuales ni gates. El cobro va por
 - Prueba directa con un `main` aparte que llama a `room_reset` con la misma
   mesa del test: con CPU on **84 ms / 4 frames**; con `KULT_CPU=0`
   **0,08 ms / 0 frames**. El coste se cobra y se reparte entre las 304 líneas.
-- Artefactos:
+- Ejecutables:
   - `kult.exe` md5 `b7edc93660ea7caadd87191f8ffeee7a`
   - `kult-headless.exe` md5 `7faac3d3351c24c46f825b4096557130`
   - ZIP md5 `97d567898127ab8290d4155113c312d1`

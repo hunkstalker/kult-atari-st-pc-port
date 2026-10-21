@@ -136,7 +136,7 @@ tienen sus esperas.
 - `make test-port`: OK (la guardia de input es `test_click_skip`, ver
   `notes/0020`).
 - `make port`, `make cmake-native`, `make cmake-win`, `make package-win`: OK.
-- Artefactos:
+- Ejecutables:
   - `kult.exe` md5 `fc4108e473a9d44c722245345a44fa32`
   - `kult-headless.exe` md5 `e37f6592286f1929c04efc46d9051eef`
   - ZIP md5 `8c926644eeb259737047ba4b49d6c2a7`

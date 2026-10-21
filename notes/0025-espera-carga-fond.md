@@ -51,7 +51,7 @@ el usuario estima **> 1,4 s**; se modela **~2,0 s** (62,5 µs/byte).
 - `make test-port`: OK, con nueva `test_disk_delay` (no-op sin tiempo real;
   800 B ≈ 50 ms → ≥ 2 VBL).
 - `make port`, `make cmake-win`, `make package-win`: OK.
-- Artefactos:
+- Ejecutables:
   - `kult.exe` md5 `ed17588978ec5560e2024f1fa995624b`
   - `kult-headless.exe` md5 `68ae05eaddcb6c33f4b66da437576aa3`
   - ZIP md5 `c27a193581bec5e613af547d76b7c209`

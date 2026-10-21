@@ -61,7 +61,7 @@ colgar si un sample repite. En diferencial es no-op.
 - `make test`: **511**.
 - `make test-port`: OK.
 - `make package-win`: OK.
-- Artefactos:
+- Ejecutables:
   - `kult.exe` md5 `bd3764b904a4c679b0caed6ea467e76e`
   - `kult-headless.exe` md5 `0fdda9c894a4fb1f5a5dad1b9d64dfef`
   - ZIP md5 `1396dd00eb054ca6d3995e1d7a398816`

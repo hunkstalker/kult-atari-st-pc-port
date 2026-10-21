@@ -144,7 +144,7 @@ debe continuar**.
 - `platform/dispatch_trace.c`: mismo despacho en la build de diagnóstico.
 - `kult_core.map` / `kult_api.h`: exporta `run_command_keep_sp_a6`.
 - Tests nuevos: `test_run_command_keep_sp_a6_nibble0` y `test_fun_15888_ex_sin_tail` (513 tests).
-- Artefactos: `kult.exe` `41be915acfd6eedccae459e5be014a84`,
+- Ejecutables: `kult.exe` `41be915acfd6eedccae459e5be014a84`,
   `kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
   **Fix + refactor validados en `kult.exe` y `kult-diag.exe`:** dado/2.ª y
   mosca/1.ª sin error. El log final

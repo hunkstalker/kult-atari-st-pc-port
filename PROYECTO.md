@@ -208,6 +208,12 @@ Recogidas como ADR en `docs/adr/`:
   diferencial): la animación pasa de ~0,4 s a **~2,2 s**. Solo cambia ese
   timing; no se tocan `15da6`, `15ac8` ni el input. **Validado por el usuario**.
   Detalle: **`notes/0033-portrait-intro-dbf.md`**.
+- **Selección de acción en el anillo (T-086, sesión 38)**: `icon_ring`
+  (`0x1566a`) tenía tres `dbra d0` de `0xffff` entre los tres blits del icono
+  seleccionado y el C los omitía. Ahora usan `cpu_delay(0x10000u)` (no-op en
+  diferencial): se ven los tres destellos (~12-15 VBL). Solo cambia ese timing;
+  no se tocan `15da6`, `15ac8` ni el input. **Validado por el usuario**. Detalle:
+  **`notes/0034-seleccion-anillo-dbra.md`**.
 - **Cursor 16×16 / máximo IKBD (T-075, sesión 24)**: el cursor reaparecía por el
   lado contrario en el borde. El juego configura el ratón absoluto con
   `Ikbdws` `09 01 30 00 b8` → máximo **304×184**; la HAL lo emula con
@@ -261,9 +267,9 @@ Recogidas como ADR en `docs/adr/`:
   puertas incluidas) validados. Solo queda reproducir un glitch gráfico aislado.
   **T-083** (objetos en serpientes) **resuelto y validado**: retorno doble de
   `icon_ring_loop` (`0x1592e`), con tail-call explícito en la VM; ver
-  **`notes/0031`**. **T-084** (input mantenido) y **T-085** (retrato/intro)
-  **resueltos, validados y cerrados**; ver **`notes/0032`** y **`notes/0033`**.
-  Después **T-072** (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** →
-  **M5**.
+  **`notes/0031`**. **T-084** (input mantenido), **T-085** (retrato/intro) y
+  **T-086** (selección de acción) **resueltos, validados y cerrados**; ver
+  **`notes/0032`**, **`notes/0033`** y **`notes/0034`**. Después **T-072**
+  (ingesta `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
 > Mantener esta sección y `RETOMAR.md` al día al cerrar cada sesión.

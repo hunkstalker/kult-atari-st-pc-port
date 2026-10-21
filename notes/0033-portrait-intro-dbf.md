@@ -75,7 +75,7 @@ audio.
 - **Validado por el usuario en Windows**: la animación ya dura lo esperado y no
   se han observado regresiones en otras animaciones.
 
-## 6. Artefactos
+## 6. Ejecutables
 
 - `kult.exe` `5342b77ca9a1ece4d7a495439634366b`
 - `kult-headless.exe` `ccf5f7a92d2087e2d9631ae6e9c1c8c3`

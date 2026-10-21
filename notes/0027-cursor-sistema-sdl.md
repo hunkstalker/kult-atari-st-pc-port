@@ -24,7 +24,7 @@ la HAL solo oculta el cursor del SO. No se toca `src/`.
 - `make port-sdl`: OK.
 - `make package-win`: OK (exe y ZIP).
 - `make test` / `make test-port`: sin cambios (el código SDL no entra en ellos).
-- Artefactos:
+- Ejecutables:
   - `kult.exe` md5 `3237a4d7cc6d1a82423a2b95e017f814`
   - `kult-headless.exe` md5 `68ae05eaddcb6c33f4b66da437576aa3`
   - ZIP md5 `ad7d30dded0c1afe2fee2d4417fb5258`

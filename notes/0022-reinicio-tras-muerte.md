@@ -87,7 +87,7 @@ Morir en Windows con el exe nuevo:
   bucle, no repetirse la muerte;
 - conservar input, presentación y cursor de T-074/T-075.
 
-Artefactos:
+Ejecutables:
 
 - `kult.exe` md5 `b7edc93660ea7caadd87191f8ffeee7a`
 - `kult-headless.exe` md5 `7faac3d3351c24c46f825b4096557130`

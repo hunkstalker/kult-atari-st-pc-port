@@ -56,3 +56,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0031-sesion-34-t083-tailcall.md`](../notes/0031-sesion-34-t083-tailcall.md)
 - [`notes/0032-input-clic-mantenido.md`](../notes/0032-input-clic-mantenido.md)
 - [`notes/0033-portrait-intro-dbf.md`](../notes/0033-portrait-intro-dbf.md)
+- [`notes/0034-seleccion-anillo-dbra.md`](../notes/0034-seleccion-anillo-dbra.md)

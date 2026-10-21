@@ -5,6 +5,12 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 38 — T-086 resuelto y validado (selección de acción en el anillo)**:
+  `icon_ring` (`0x1566a`) tenía tres `dbra d0` de `0xffff` entre los tres blits
+  del icono seleccionado y el C los omitía; el cierre duraba ~1 VBL. Ahora usan
+  `cpu_delay(0x10000u)` (no-op en diferencial): se ven los tres destellos
+  (~12-15 VBL). Solo cambia ese timing. **Validado por el usuario**. Detalle:
+  **§ T-086** y **`notes/0034`**.
 - **Sesión 37 — T-085 resuelto y validado (retrato/intro acelerado)**: la
   animación es `portrait_intro` (`0x16a20`, comando `a013`). El ASM repite 11
   veces un bloque con dos `dbra d0` de `0xffff`; el C los tenía como
@@ -28,7 +34,7 @@ Tareas: `TODO.md`.
   `test-port`. Validado con `kult.exe` (dado/2.ª y mosca/1.ª) y con
   `kult-diag.exe`: el log
   `diag-logs/post-refactor-2026-10-21.log` no contiene `0x1fc2e`, `0x206b1`,
-  `0x2563e` ni `0x206b5`, y muestra `TAIL_3D`/`VMTAIL a6=20726`. Artefactos:
+  `0x2563e` ni `0x206b5`, y muestra `TAIL_3D`/`VMTAIL a6=20726`. Ejecutables:
   `kult.exe` `41be915a…`, `kult-diag.exe` `b5e94d06…`. Pre-fix en
   `diag-logs/pre-fix-2026-10-21.log`.
 ### T-083 — bugs al usar objetos en las serpientes (resuelto y validado)
@@ -72,7 +78,7 @@ Los blits y `scale_prep` eran víctimas, no causa.
 `0x206b5`, y muestra `TAIL_3D`/`VMTAIL a6=20726`. `make test` **513** y
 `make test-port` OK.
 
-**Artefactos:** `kult.exe` `41be915acfd6eedccae459e5be014a84`,
+**Ejecutables:** `kult.exe` `41be915acfd6eedccae459e5be014a84`,
 `kult-headless.exe` `a7b180cdfdec055f70165ce2b17bec4a`.
 
 ### T-084 — input mantenido / clics repetidos (resuelto y validado)
@@ -110,7 +116,7 @@ que filtrarlo sería menos fiel; no es la causa del anillo.
 bajo Xvfb+xdotool, 5 s con el botón mantenido producen **un solo flanco de
 entrada**; el bucle de 32 frames de `test_click_held` no ve clics nuevos.
 **Validado visualmente por el usuario en Windows**: el anillo de acciones se
-abre una vez con el clic mantenido y queda abierto para elegir. Artefactos:
+abre una vez con el clic mantenido y queda abierto para elegir. Ejecutables:
 `kult-diag.exe` `64505805…`, `kult.exe` `cc4d5cee…`, headless `414a82c8…`.
 
 ### T-085 — retrato/intro acelerado (resuelto y validado)
@@ -133,8 +139,33 @@ en el port. No se toca `15da6`, `15ac8`, input ni otras animaciones.
 `0x10000` unidades (>=4 VBL); medición funcional **110 VBL / 2202 ms**.
 `make test` **513** y `make test-port` OK.
 
-**Artefactos:** `kult.exe` `5342b77c…`, `kult-headless.exe` `ccf5f7a9…`,
+**Ejecutables:** `kult.exe` `5342b77c…`, `kult-headless.exe` `ccf5f7a9…`,
 `kult-diag.exe` `62710162…`.
+
+### T-086 — selección de acción en el anillo (resuelto y validado)
+
+> **Resuelto en sesión 38 y validado por el usuario. Detalle: `notes/0034`.**
+
+**Síntoma:** al seleccionar una acción en el anillo, el icono elegido apenas se
+veía; el cierre pasaba al comando siguiente casi en el mismo VBL.
+
+**Causa:** `icon_ring` (`0x1566a`) tiene tres blits del icono seleccionado
+separados por **tres `dbra d0` de `0xffff`**; el C tenía los blits pero no los
+retardos (~82 ms cada uno).
+
+**Fix (solo timing en `src/commands.c`):** añadir `cpu_delay(0x10000u)` tras
+cada blit. No se toca el cuadro de texto, el anillo, `15da6`, `15ac8` ni el
+input.
+
+**Auditoría:** los únicos `dbra 0xffff` de espera son `portrait_intro` (2, T-085),
+`icon_ring` (3, este fix) y `palette_cycle` (2, documentados y no tocados).
+
+**Pruebas:** diferencial **513** y `test-port` OK; guardia de
+`cpu_delay(0x10000u)` en `test-port`. **Validado visualmente por el usuario**:
+se ven los tres destellos al seleccionar acciones.
+
+**Ejecutables:** `kult.exe` `4fc2cfa2…`, `kult-headless.exe` `8c222aff…`,
+`kult-diag.exe` `6628f205…`.
 
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
@@ -479,12 +510,13 @@ en el port. No se toca `15da6`, `15ac8`, input ni otras animaciones.
 
 ## Siguiente tarea
 **T-061 — validación completa en Windows**: repasar lo ya validado (input
-mantenido/anillo de T-084 y retrato/intro de T-085) y cerrar el glitch gráfico
-aislado que queda. Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** →
-**N3** → **A2** → **M5**.
+mantenido/anillo de T-084, retrato/intro de T-085 y destellos de acción de
+T-086) y cerrar el glitch gráfico aislado que queda. Después: **T-072** (ingesta
+`.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**.
 
-T-084 (input mantenido) y T-085 (retrato/intro) están **cerrados y validados**:
-detalle en **`notes/0032`** y **`notes/0033`**.
+T-084 (input mantenido), T-085 (retrato/intro) y T-086 (selección de acción)
+están **cerrados y validados**: detalle en **`notes/0032`**, **`notes/0033`** y
+**`notes/0034`**.
 T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 

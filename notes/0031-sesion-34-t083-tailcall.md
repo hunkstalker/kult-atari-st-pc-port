@@ -1,7 +1,7 @@
 # 0031 — Sesión 34: cierre de T-083 (tail-call de `icon_ring_loop`)
 
 > **Estado:** fix + refactor validados con `kult.exe` y `kult-diag.exe`.
-> Este documento resume la sesión completa: evidencia, causa, fix, artefactos
+> Este documento resume la sesión completa: evidencia, causa, fix, ejecutables
 > y validación.
 
 ## 1. Síntoma
@@ -91,7 +91,7 @@ modelar el abandono del VM exterior.
 - Validación inicial (fix previo al refactor): `post-fix-dado-mosca-2026-10-21.log`.
   Pre-fix conservado en `diag-logs/pre-fix-2026-10-21.log`.
 
-## 6. Artefactos
+## 6. Ejecutables
 
 ```
 kult.exe               41be915acfd6eedccae459e5be014a84

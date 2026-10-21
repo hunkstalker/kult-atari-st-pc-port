@@ -8,6 +8,7 @@
 
 #include "machine.h"
 #include "addrs.h"
+#include "kult_port.h"
 
 uint32_t anim_threshold(uint8_t *, uint32_t, uint32_t);
 void run_command_keep_sp(uint8_t *, uint32_t);
@@ -575,8 +576,11 @@ uint32_t icon_ring(uint8_t *img, uint32_t script) {
         uint32_t x = (uint32_t)img[rects];
         uint32_t yy = (uint32_t)img[rects + 2];
         text_blit_ovl_b(img, x, yy, 0x18);
+        cpu_delay(0x10000u);   /* dbra d0 con d0=0xffff: 65536 iteraciones */
         text_blit_ovl_b(img, x, yy, 0x02);
+        cpu_delay(0x10000u);
         text_blit_ovl_b(img, x, yy, 0x19);
+        cpu_delay(0x10000u);
     }
     mask_rows_handler(img);
     return (script + 1 + 3 * ((count + 1) & 0xffff)) & 0xffffffffu;
