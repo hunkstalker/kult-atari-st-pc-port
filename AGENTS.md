@@ -17,10 +17,10 @@ para PC (SDL3). Ver `docs/PORTING.md`.
 **menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
 corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
 visible** (paleta del PI1 antes de la espera). **T-077/T-079 ✅** (sangre,
-espacio y espera de la estrella). Pendiente: **T-061** (validación en Windows) →
-**T-072** (ingesta `.STX`) → **M7-c** → **A1/N3/A2** (Amiga +
-motor/assets nativos) → **M5** (opcional). Sin bloqueantes. Ver
-`notes/0011`–`notes/0014`.
+espacio y espera de la estrella) y **T-083 ✅** (objetos en serpientes).
+Pendiente: **T-061** (validación en Windows) → **T-072** (ingesta `.STX`) →
+**M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
+bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en `notes/0031`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**

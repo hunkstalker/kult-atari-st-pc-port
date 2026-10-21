@@ -47,6 +47,8 @@ Con `KULT_MARKS` activo, cada byte de guion escribe:
     `walk_entry` en cada despacho.
   - `JMP` / `CALL` / `RET` (y `*_END`): destino, retorno y pila antes/después de
     los bytes `0x33`/`0x34`/`0x35`.
+  - `TAIL_3D a6=...` / `VMTAIL a6=...`: tail-call explícito de `0x3d` y salida
+    del VM exterior sin ejecutar más bytes.
 - `F`, `B`, `S`, `M`: marcas de funciones/bancos/animación/F12.
 
 La build estándar solo escribe las líneas `F/S/B/M`; las `Y/V` son exclusivas de
@@ -121,7 +123,7 @@ La auditoría de `notes/0028` dio `0x15888` por modelado por “sustituir el
 `addq`+`bra` por el despacho”, pero faltaba modelar que el VM exterior **no
 debe continuar**.
 
-### Fix propuesto (requiere tocar `src/`)
+### Fix inicial propuesto (histórico)
 
 1. Exponer el `A6` final de `run_command_keep_sp` (p. ej.
    `uint32_t run_command_keep_sp_a6(...)`, manteniendo el wrapper `void`).
@@ -130,9 +132,9 @@ debe continuar**.
    `run_command_keep_sp(...); return script;`.
 3. Replicar en `platform/dispatch_trace.c` (build de diagnóstico).
 4. Test diferencial de la rama `0xc`/`0xa` de `0x15888` y regresión
-   `make test` 511 + `make test-port`.
+   `make test` 513 + `make test-port`.
 
-### Fix aplicado (T-083, 2026-10-21)
+### Fix inicial aplicado (histórico, T-083)
 
 - `src/dispatch.c`: `run_command_keep_sp_a6()` devuelve el `A6` final del
   despacho; `run_command_keep_sp()` queda como wrapper compatible.
@@ -150,3 +152,9 @@ debe continuar**.
   `0x1fc2e`, `0x206b1`, `0x2563e` ni `0x206b5`; tras el `0x3d` se ve
   `VMOUT a6=20726 why=end_byte tmpl=20727`, `TAIL_3D a6=20726` y
   `VMTAIL a6=20726`, y siguen los comandos normales.
+
+**Refactor final:** el fix inicial se sustituyó por un contrato explícito de
+tail-call: `icon_ring_loop_ex(img, script, &tail)` marca las dos ramas de
+`0x1592e`; el byte handler `0x3d` devuelve `VM_TAIL_FLAG | A6` y `vm_run`
+abandona el VM exterior sin depender del siguiente byte. Detalle en
+`notes/0031` §7.

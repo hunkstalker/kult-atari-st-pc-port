@@ -82,19 +82,14 @@ modelar el abandono del VM exterior.
 - `make test`: **513 passed**.
 - `make test-port`: **OK**.
 - Smoke nativo headless: OK.
-- `kult.exe`: el usuario confirma dado en la 2.ª serpiente y mosca en la 1.ª
-  sin error.
-- `kult-diag.exe`: el log
-  `build-win/kult-0.1.0-win64/diag-logs/post-fix-dado-mosca-2026-10-21.log`
-  no contiene `0x1fc2e`, `0x206b1`, `0x2563e` ni `0x206b5`. Tras el `0x3d`
-  aparece `VMOUT a6=20726 why=end_byte tmpl=20727` y siguen los comandos
-  normales.
-- Log pre-fix conservado en `diag-logs/pre-fix-2026-10-21.log`.
-
-La validación final se hizo con los artefactos del refactor
-(`kult.exe` `41be915a…`, `kult-diag.exe` `b5e94d06…`): sin bugs visuales y con
-el log `diag-logs/post-refactor-2026-10-21.log`, que no contiene
-`0x1fc2e`/`0x206b1`/`0x2563e`/`0x206b5` y sí `TAIL_3D`/`VMTAIL a6=20726`.
+- `kult.exe` (`41be915a…`): el usuario confirma dado en la 2.ª serpiente y
+  mosca en la 1.ª sin error.
+- `kult-diag.exe` (`b5e94d06…`): el log final
+  `diag-logs/post-refactor-2026-10-21.log` no contiene `0x1fc2e`, `0x206b1`,
+  `0x2563e` ni `0x206b5`; tras el `0x3d` aparecen `TAIL_3D a6=20726` y
+  `VMTAIL a6=20726`, y siguen los comandos normales.
+- Validación inicial (fix previo al refactor): `post-fix-dado-mosca-2026-10-21.log`.
+  Pre-fix conservado en `diag-logs/pre-fix-2026-10-21.log`.
 
 ## 6. Artefactos
 
