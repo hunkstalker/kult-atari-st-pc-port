@@ -170,6 +170,14 @@ void obj_wait_cmd_b(uint8_t *);
 uint32_t load_room(uint8_t *);
 uint32_t save_room(uint8_t *);
 
+static uint32_t trace_vm_out(uint8_t *img, uint32_t script, const char *why) {
+    platform_marks_line("D %u VMOUT a6=%05x why=%s tmpl=%05x stack=%05x",
+                        platform_frame_count(), (unsigned)script, why,
+                        (unsigned)be32(img + A_TEMPL_PTR),
+                        (unsigned)be32(img + A_CALL_STACK));
+    return script;
+}
+
 static uint32_t byte_handler(uint32_t b, uint8_t *img, uint32_t script) {
     uint32_t n;
     platform_marks_byte(platform_frame_count(), b, script);
@@ -208,9 +216,50 @@ static uint32_t byte_handler(uint32_t b, uint8_t *img, uint32_t script) {
     case 42: return icon_blit_handler(img, script);
     case 43: n = script; hint_blit_stroke(img, &n); return n;
     case 46: return prompt_wait_entry(img, script);
-    case 51: n = script; script_push(img, &n); return n;
-    case 52: n = script; script_pop(img, &n); return n;
-    case 53: n = script; script_call(img, &n); return n;
+    case 51: {
+        uint32_t target = ((uint32_t)img[script + 2] << 8) | img[script + 1];
+        platform_marks_line("D %u JMP at=%05x target=%04x tmpl=%05x stack=%05x",
+                            platform_frame_count(), (unsigned)script,
+                            (unsigned)(target & 0xffff),
+                            (unsigned)be32(img + A_TEMPL_PTR),
+                            (unsigned)be32(img + A_CALL_STACK));
+        n = script; script_push(img, &n);
+        platform_marks_line("D %u JMP_END at=%05x -> %05x tmpl=%05x stack=%05x",
+                            platform_frame_count(), (unsigned)script,
+                            (unsigned)n, (unsigned)be32(img + A_TEMPL_PTR),
+                            (unsigned)be32(img + A_CALL_STACK));
+        return n;
+    }
+    case 52: {
+        uint32_t target = ((uint32_t)img[script + 2] << 8) | img[script + 1];
+        platform_marks_line("D %u CALL at=%05x target=%04x ret=%05x tmpl=%05x stack=%05x",
+                            platform_frame_count(), (unsigned)script,
+                            (unsigned)(target & 0xffff),
+                            (unsigned)(script + 3),
+                            (unsigned)be32(img + A_TEMPL_PTR),
+                            (unsigned)be32(img + A_CALL_STACK));
+        n = script; script_pop(img, &n);
+        platform_marks_line("D %u CALL_END at=%05x -> %05x tmpl=%05x stack=%05x",
+                            platform_frame_count(), (unsigned)script,
+                            (unsigned)n, (unsigned)be32(img + A_TEMPL_PTR),
+                            (unsigned)be32(img + A_CALL_STACK));
+        return n;
+    }
+    case 53: {
+        uint32_t stack = be32(img + A_CALL_STACK);
+        platform_marks_line("D %u RET at=%05x stack=%05x s0=%05x s4=%05x tmpl=%05x",
+                            platform_frame_count(), (unsigned)script,
+                            (unsigned)stack,
+                            (unsigned)be32(img + stack),
+                            (unsigned)be32(img + stack + 4),
+                            (unsigned)be32(img + A_TEMPL_PTR));
+        n = script; script_call(img, &n);
+        platform_marks_line("D %u RET_END at=%05x -> %05x tmpl=%05x stack=%05x",
+                            platform_frame_count(), (unsigned)script,
+                            (unsigned)n, (unsigned)be32(img + A_TEMPL_PTR),
+                            (unsigned)be32(img + A_CALL_STACK));
+        return n;
+    }
     case 56: anim_entry_a(img, script); return addr_add(script, 4);   /* 0x159d2: push script+4, pop al final */
     case 59: n = script; script_store(img, &n); return n;
     case 60: n = script; script_jump_zero(img, &n); return n;
@@ -302,10 +351,16 @@ static uint32_t byte_handler(uint32_t b, uint8_t *img, uint32_t script) {
 
 /* 0x10630 — vm run */
 uint32_t vm_run(uint8_t *img, uint32_t script) {
+    platform_marks_line("D %u VMIN a6=%05x tmpl=%05x stack=%05x",
+                        platform_frame_count(), (unsigned)script,
+                        (unsigned)be32(img + A_TEMPL_PTR),
+                        (unsigned)be32(img + A_CALL_STACK));
     for (;;) {
         uint32_t byte = img[script];
-        if (script == be32(img + A_TEMPL_PTR)) return script;
-        if (byte >= 0x6b || byte == 0) return script;
+        if (script == be32(img + A_TEMPL_PTR))
+            return trace_vm_out(img, script, "tmpl_ptr");
+        if (byte >= 0x6b || byte == 0)
+            return trace_vm_out(img, script, byte ? "end_byte" : "zero");
         script = byte_handler(byte, img, script);
     }
 }
@@ -317,6 +372,10 @@ uint32_t inline_cmd_walk(uint8_t *img, uint32_t script) {
     wr16(img + A_THE_COMMAND, cmd & 0xffff);
     uint32_t end_out, entry_out;
     walk_entry(img, A_TEMPL_DATA, (cmd - 1) & 0xffff, &end_out, &entry_out);
+    platform_marks_line("D %u WALK_INLINE cmd=%04x idx=%04x entry=%05x end=%05x",
+                        platform_frame_count(), (unsigned)(cmd & 0xffff),
+                        (unsigned)((cmd - 1) & 0xffff),
+                        (unsigned)entry_out, (unsigned)end_out);
     wr32(img + A_TEMPL_PTR, end_out);
     return entry_out;
 }
@@ -489,25 +548,40 @@ static void kult_dbg_cmd(uint32_t cmd, int implemented) {
                 (unsigned)(cmd & 0x3ff) - 1, implemented ? "ok" : "SIN HANDLER");
 }
 
-/* 0x103ae — repite la carga de A:CLEAR.BIN (0x291c B en 0x1a752) hasta que exista (si falla lanza 0x918e); al exito reinicia la pila (A7 = 0x1d1fe), marca $1ad0f, avanza... */
-void run_command_keep_sp(uint8_t *img, uint32_t script) {
+/* 0x103ae — despacho de comando. Devuelve el A6 final de la VM para modelar el
+ * retorno doble/tail-call de 0x1592e. */
+uint32_t run_command_keep_sp_a6(uint8_t *img, uint32_t script) {
     uint32_t cmd = be16(img + A_THE_COMMAND);
+    platform_marks_line("D %u RUN cmd=%04x script=%05x nibble=%01x tmpl=%05x stack=%05x",
+                        platform_frame_count(), (unsigned)cmd, (unsigned)script,
+                        (unsigned)(cmd >> 12), (unsigned)be32(img + A_TEMPL_PTR),
+                        (unsigned)be32(img + A_CALL_STACK));
     if (getenv("KULT_DBG_RUN"))
         fprintf(stderr, "[run] cmd=%04x script=%05x\n", (unsigned)cmd, (unsigned)script);
-    if (cmd == 0) return;
+    if (cmd == 0) return script;
     uint32_t nibble = cmd & 0xf000;
     if (nibble == 0x0000) {
-        vm_run(img, A_TEMPL_DATA + cmd);
+        return vm_run(img, A_TEMPL_DATA + cmd);
     } else if (nibble == 0xa000 || nibble == 0xb000) {
         cmd_handler(img, (cmd & 0x3ff) - 1, script);
+        return script;
     } else if (nibble == 0x9000) {
         draw_text_box_variant(img, cmd);                        /* caja de texto */
+        return script;
     } else {
         uint32_t end_out, entry_out;
         walk_entry(img, A_TEMPL_DATA, (cmd & 0x3ff) - 1, &end_out, &entry_out);
+        platform_marks_line("D %u WALK_RUN cmd=%04x idx=%04x entry=%05x end=%05x",
+                            platform_frame_count(), (unsigned)cmd,
+                            (unsigned)((cmd & 0x3ff) - 1),
+                            (unsigned)entry_out, (unsigned)end_out);
         wr32(img + A_TEMPL_PTR, end_out);
-        vm_run(img, entry_out);
+        return vm_run(img, entry_out);
     }
+}
+
+void run_command_keep_sp(uint8_t *img, uint32_t script) {
+    (void)run_command_keep_sp_a6(img, script);
 }
 
 /* FUN_00010390 @ 0x10390: handler de byte que lee un word de script[1..2], lo marca con el
@@ -520,6 +594,13 @@ uint32_t dispatch_a6(uint8_t *img, uint32_t script) {
     wr16(img + A_THE_COMMAND, cmd & 0xffff);
     uint32_t end_out, entry_out;
     walk_entry(img, A_TEMPL_DATA, (cmd & 0x3ff) - 1, &end_out, &entry_out);
+    platform_marks_line("D %u WALK_4D at=%05x cmd=%04x idx=%04x entry=%05x end=%05x tmpl=%05x stack=%05x",
+                        platform_frame_count(), (unsigned)script,
+                        (unsigned)(cmd & 0xffff),
+                        (unsigned)((cmd & 0x3ff) - 1),
+                        (unsigned)entry_out, (unsigned)end_out,
+                        (unsigned)be32(img + A_TEMPL_PTR),
+                        (unsigned)be32(img + A_CALL_STACK));
     wr32(img + A_TEMPL_PTR, end_out);
     return vm_run(img, entry_out);
 }

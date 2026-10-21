@@ -106,6 +106,7 @@ $(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music
 CMAKE      ?= cmake
 BUILD_NAT  := build-cmake
 BUILD_WIN  := build-win
+BUILD_WIN_DIAG := build-win-diag
 SDL3_MINGW := $(CURDIR)/third_party/SDL3-3.4.10/x86_64-w64-mingw32
 
 .PHONY: cmake-native
@@ -119,6 +120,14 @@ cmake-win:
 	  -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-w64.cmake \
 	  -DCMAKE_PREFIX_PATH=$(SDL3_MINGW)
 	$(CMAKE) --build $(BUILD_WIN) -j
+
+.PHONY: cmake-win-diag
+cmake-win-diag:
+	$(CMAKE) -S . -B $(BUILD_WIN_DIAG) -DCMAKE_BUILD_TYPE=Release \
+	  -DKULT_DIAG_TRACE=ON \
+	  -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-w64.cmake \
+	  -DCMAKE_PREFIX_PATH=$(SDL3_MINGW)
+	$(CMAKE) --build $(BUILD_WIN_DIAG) -j
 
 .PHONY: package-native
 package-native: cmake-native

@@ -11,6 +11,7 @@
 
 uint32_t anim_threshold(uint8_t *, uint32_t, uint32_t);
 void run_command_keep_sp(uint8_t *, uint32_t);
+uint32_t run_command_keep_sp_a6(uint8_t *, uint32_t);
 uint32_t obj_wait_a0(uint8_t *);
 uint32_t text_index_arg(uint8_t *, uint32_t, uint32_t, uint32_t *);
 void text_window(uint8_t *, uint32_t, uint32_t);
@@ -600,8 +601,10 @@ uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
             }
             uint32_t nib = be16(img + A_THE_COMMAND) & 0xf000u;
             if (nib == 0xc000u || nib == 0xa000u) {
-                run_command_keep_sp(img, script);
-                return script;
+                /* 0x1592e: `addq.l #4,a7` + `bra 0x103ae`. El VM exterior se
+                 * abandona; devolver el A6 final del despacho anidado emula el
+                 * tail-call (el VM exterior termina en el siguiente chequeo). */
+                return run_command_keep_sp_a6(img, script);
             }
             run_command_keep_sp(img, script);
             img[A_DAT_1ACE7] = (uint8_t)(img[A_DAT_1ACE7] + 1);
@@ -609,8 +612,8 @@ uint32_t icon_ring_loop(uint8_t *img, uint32_t script) {
         if (img[A_DAT_1AD09] == 0 && img[A_DAT_1ACF2] < img[A_DAT_1ACE7]) {
             wr16(img + A_THE_COMMAND, be16(img + A_DAT_1ABF8));
             if (be16(img + A_THE_COMMAND) != 0) {
-                run_command_keep_sp(img, script);
-                return script;
+                /* Mismo tail-call de 0x1592e para el comando pendiente. */
+                return run_command_keep_sp_a6(img, script);
             }
         }
         script = be32(img + 0x1a4c2);

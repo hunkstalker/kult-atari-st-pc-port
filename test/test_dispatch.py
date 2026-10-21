@@ -26,6 +26,8 @@ harness._lib.vm_run.argtypes = [_u8p, ctypes.c_uint32]
 harness._lib.vm_run.restype = ctypes.c_uint32
 harness._lib.run_command_keep_sp.argtypes = [_u8p, ctypes.c_uint32]
 harness._lib.run_command_keep_sp.restype = None
+harness._lib.run_command_keep_sp_a6.argtypes = [_u8p, ctypes.c_uint32]
+harness._lib.run_command_keep_sp_a6.restype = ctypes.c_uint32
 
 
 def _screen_pokes():
@@ -116,6 +118,19 @@ def test_run_command_zero_nibble():
     diffs, _ = differential(RUN, {"_pokes": pokes},
                             lambda lib, buf: lib.run_command_keep_sp(buf, 0))
     assert not diffs, report(diffs)
+
+
+def test_run_command_keep_sp_a6_nibble0():
+    """La variante que devuelve A6 debe coincidir con el A6 final del oráculo.
+    La usa icon_ring_loop para modelar el tail-call de 0x1592e (T-083)."""
+    pokes = {TEMPL + 0x10: bytes([0]),
+             SCRIPT_END: (SCRIPT + 100).to_bytes(4, "big")}
+    pokes[COMMAND] = (0x0010).to_bytes(2, "big")
+    diffs, info = differential(
+        RUN, {"_pokes": pokes},
+        lambda lib, buf: lib.run_command_keep_sp_a6(buf, 0))
+    assert not diffs, report(diffs)
+    assert info["ret"] == info["regs"]["a6"]
 
 
 def test_run_command_ab_noop():

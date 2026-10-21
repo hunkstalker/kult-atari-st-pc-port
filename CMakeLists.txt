@@ -28,11 +28,18 @@ file(GLOB KULT_CORE_SRC     CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.
 file(GLOB KULT_BOOT_SRC     CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/boot/*.c)
 file(GLOB KULT_PLATFORM_SRC CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/platform/*.c)
 # La entrada/salida SDL (ventana/audio) sólo va al target `kult-sdl`; la copia
-# de traza T-073c no se compila en el build estándar.
+# de traza T-073c no se compila en el build estándar. Con KULT_DIAG_TRACE=ON
+# se sustituye src/dispatch.c por platform/dispatch_trace.c: escribe Y/V de
+# todo el guion (sin depender de F12) para diagnosticar una run completa.
+option(KULT_DIAG_TRACE "Usar dispatch_trace.c (traza Y/V completa)" OFF)
 list(REMOVE_ITEM KULT_PLATFORM_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/platform/video_sdl.c
   ${CMAKE_CURRENT_SOURCE_DIR}/platform/audio_sdl.c
   ${CMAKE_CURRENT_SOURCE_DIR}/platform/dispatch_trace.c)
+if(KULT_DIAG_TRACE)
+  list(REMOVE_ITEM KULT_CORE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/dispatch.c)
+  list(APPEND KULT_PLATFORM_SRC ${CMAKE_CURRENT_SOURCE_DIR}/platform/dispatch_trace.c)
+endif()
 
 # T-073b: solo el core se instrumenta para cobrar el coste medido por función.
 # El diferencial (make test) no usa este CMake y sigue sin instrumentar.

@@ -477,25 +477,34 @@ static void kult_dbg_cmd(uint32_t cmd, int implemented) {
                 (unsigned)(cmd & 0x3ff) - 1, implemented ? "ok" : "SIN HANDLER");
 }
 
-/* 0x103ae — repite la carga de A:CLEAR.BIN (0x291c B en 0x1a752) hasta que exista (si falla lanza 0x918e); al exito reinicia la pila (A7 = 0x1d1fe), marca $1ad0f, avanza... */
-void run_command_keep_sp(uint8_t *img, uint32_t script) {
+/* 0x103ae — despacho de comando. Devuelve el A6 final de la VM, que solo
+ * necesitan los llamantes que modelan el retorno doble/tail-call de 0x1592e
+ * (`icon_ring_loop`). `run_command_keep_sp` conserva la firma historica. */
+uint32_t run_command_keep_sp_a6(uint8_t *img, uint32_t script) {
     uint32_t cmd = be16(img + A_THE_COMMAND);
     if (getenv("KULT_DBG_RUN"))
         fprintf(stderr, "[run] cmd=%04x script=%05x\n", (unsigned)cmd, (unsigned)script);
-    if (cmd == 0) return;
+    if (cmd == 0) return script;
     uint32_t nibble = cmd & 0xf000;
     if (nibble == 0x0000) {
-        vm_run(img, A_TEMPL_DATA + cmd);
+        return vm_run(img, A_TEMPL_DATA + cmd);
     } else if (nibble == 0xa000 || nibble == 0xb000) {
         cmd_handler(img, (cmd & 0x3ff) - 1, script);
+        return script;
     } else if (nibble == 0x9000) {
         draw_text_box_variant(img, cmd);                        /* caja de texto */
+        return script;
     } else {
         uint32_t end_out, entry_out;
         walk_entry(img, A_TEMPL_DATA, (cmd & 0x3ff) - 1, &end_out, &entry_out);
         wr32(img + A_TEMPL_PTR, end_out);
-        vm_run(img, entry_out);
+        return vm_run(img, entry_out);
     }
+}
+
+/* 0x103ae — variante compatible: despacha e ignora el A6 final. */
+void run_command_keep_sp(uint8_t *img, uint32_t script) {
+    (void)run_command_keep_sp_a6(img, script);
 }
 
 /* FUN_00010390 @ 0x10390: handler de byte que lee un word de script[1..2], lo marca con el

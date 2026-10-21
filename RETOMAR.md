@@ -5,6 +5,177 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 34 — T-083 resuelto y validado**: causa raíz en
+  `icon_ring_loop` (0x15888): el tail-call/retorno doble de `0x1592e` se
+  modelaba como llamada normal y el VM exterior seguía ejecutando la cabecera
+  de TEMPL siguiente. Fix con `run_command_keep_sp_a6`; 512 tests +
+  `test-port`. Validado con `kult.exe` (dado/2.ª y mosca/1.ª) y
+  `kult-diag.exe` (`diag-logs/post-fix-dado-mosca-2026-10-21.log` sin
+  `0x1fc2e`/`0x206b1`). Pre-fix conservado en
+  `diag-logs/pre-fix-2026-10-21.log`.
+### T-083 — bugs al usar objetos en las serpientes (resuelto)
+
+> **Resuelto y validado en sesión 34.** Se deja el contexto histórico abajo.
+
+**Restricción crítica:** los objetos del inventario son **aleatorios** en cada
+run. No se puede probar un objeto concreto a voluntad; cada run puede dar un
+objeto y un bug distintos. Guardar **un log por objeto** en `diag-logs/` y
+analizar **desde el final hacia atrás** (se cierra la partida al fallar). No
+extrapolar de un objeto a otro.
+
+**Comportamiento esperado (usuario):**
+
+- Primera serpiente: usar un objeto incorrecto **no debe hacer nada** y el
+  objeto se consume.
+- Agua: el vaso se rellena en la sala de al lado; al echarla en la serpiente,
+  el agua sube y hace flotar un dado que se puede recoger.
+- Segunda serpiente: meter el **dado** abre la puerta.
+
+En el port, los objetos incorrectos producen bugs distintos (retratos
+gigantes, artefactos, blits desbocados y crashes). El dado correcto en la
+segunda serpiente también produjo glitch y crash en una run.
+
+**Herramientas de diagnóstico:**
+
+```sh
+make cmake-win-diag     # build-win-diag/, KULT_DIAG_TRACE=ON
+```
+
+Sustituye `src/dispatch.c` por `platform/dispatch_trace.c`. En el paquete de
+pruebas:
+
+- `kult-diag.exe` (md5 `91434313d5aa57f46dd812aa7e97322c`)
+- `kult-diag-headless.exe` (md5 `a21fb5d670dc0b995a730a24ee2948bc`)
+- `kult-diag-marcas.bat` → `kult-marcas-diag.log`
+
+Líneas del log:
+
+- `Y <vbl> <byte> <script>`: byte de guion y puntero.
+- `V <vbl> <byte> <script> ...`: estado de la VM (comando, objeto seleccionado,
+  modo, skip, cursor, botones, etc.).
+- `U <vbl> sel=... cls=... cmd=... selb=... clsb=...`: entrada en
+  `use_object` (`0x17ca4`).
+- `P <vbl> ...`: entrada en `scale_prep` (`0x13702`).
+- `B <vbl> fn=... sel=... cls=... cmd=... src=... w=... h=... x=... y=...`:
+  entrada en `blit_dispatch_b` (`0x11f2e`) o `elem_blit_rev` (`0x12b04`), con
+  dimensiones/fuente del elemento.
+
+El `script` es una dirección de imagen; para leer bytes del PRG:
+`offset = script - 0x10000 + 28`. La build estándar `kult.exe` (`ae991db6…`)
+no lleva estas trazas.
+
+**Logs ya capturados** (`build-win/kult-0.1.0-win64/diag-logs/`):
+
+- `cuchillo-serpiente1.log` — primera serpiente, cuchillo.
+- `dado-serpiente2.log` — segunda serpiente, dado (correcto).
+
+Evidencia:
+
+- **Cuchillo / primera serpiente**: VBL 3336, `Y 3336 10 2563e` (`scale_prep`);
+  bytes `10 2e 4b` → `b3=0x2e`, `b2=0x4b`; escalado 73×182 (retrato gigante).
+  Estado: `acc9=05`, `acd2=0x26`, `a572=01`, `cmd=0x0134`,
+  `selobj=0x1b97a`.
+- **Dado / segunda serpiente**: último `Y/V` en VBL 5342, byte `0x08`
+  (`blit_dispatch_b`), script `0x206b5`, estado `acc9=04`, `acd2=0x26`,
+  `a572=01`, `cmd=0x0134`, `selobj=0x1b972`; después `F 12b40` de 5343 a 6894
+  (~1550 VBL) → bucle de `bit_permute_byte`, glitch y crash.
+
+**Evidencia nueva (run del 2026-10-21, vaso y dado; log raíz `kult-marcas-diag.log`):**
+
+- VBL 3322: tras `Y 3322 3b 20719` (`script_store`) se ejecuta
+  `Y 3322 11 206b1` → `0x206b1` es la **cabecera** de la entrada `0x132`
+  (longitud `0x11`), no su cuerpo (`0x206b2`).
+- El byte `0x11` salta a `0x206b5`, donde `Y 3322 08 206b5` ejecuta
+  `blit_dispatch_b`; allí `py=img[0x206b6]=0x00` → índice de elemento
+  `py-1=0xffff` → `elem_list_build`/`walk_entry` se va de rango.
+- `B 3322 fn=11f2e sel=1b972 cls=1aa9a cmd=0134 ...`, `B 3323 fn=12b04 ...`
+  y `F 12b40` de 3323 a 4875 (bucle de `bit_permute`). El blit es víctima, no
+  causa.
+- Cuchillo: `0x1fc2e` es igualmente la cabecera de la entrada `0xd3`; su
+  longitud `0x34` se ejecuta como `call`.
+
+**Causa común (mecanismo):** el puntero de guion entra en una entrada de TEMPL
+en `header` en vez de `header+1`. No es específico del objeto; el objeto decide
+qué cabecera se alcanza. El `12b40`/`scale_prep` son consecuencias.
+
+**Hipótesis de trabajo:** desbalance del contrato de `A6`/pila de llamadas en la
+VM (`0x10630`, `walk_entry`, `0x33/0x34/0x35`, `0x4d`), o un despacho que
+devuelve el fin de entrada en vez del cuerpo. Pendiente identificar la función
+exacta; no tocar `src/` sin autorización.
+
+**Causa confirmada y fix aplicado (autorizado):** `0x3d` (`icon_ring_loop`,
+`0x15888`) hace un retorno doble/tail-call a `run_command_keep_sp` (`0x1592e`:
+`addq.l #4,a7` + `bra 0x103ae`), pero el C volvía al VM exterior con
+`return script`. El despacho anidado ya pisaba `A_TEMPL_PTR`; el VM exterior no
+terminaba en su antiguo fin (`0x1fc2e`) y ejecutaba la cabecera siguiente.
+Fix: `run_command_keep_sp_a6()` devuelve el `A6` final y `icon_ring_loop` lo
+usa en las dos ramas de `0x1592e`, modelando el tail-call. Detalle en
+`notes/0030`. **Validado en `kult.exe` y `kult-diag.exe`** (dado/2.ª y mosca/1.ª). El log
+post-fix (`diag-logs/post-fix-dado-mosca-2026-10-21.log`) no contiene ninguna
+ejecución de `0x1fc2e`/`0x206b1`; tras `0x3d` aparece `VMOUT a6=20726` y el
+retorno normal. Pre-fix conservado en `diag-logs/pre-fix-2026-10-21.log`.
+
+**Traza añadida (T-083b):** el build `KULT_DIAG_TRACE=ON` escribe líneas `D`
+con `VMIN/VMOUT`, `RUN`, `WALK_RUN/WALK_INLINE/WALK_4D` y `JMP/CALL/RET`
+(destino, retorno y pila). Nuevos md5:
+`kult-diag.exe` `28c63ef30571be50b6309160f5febe3b`,
+`kult-diag-headless.exe` `e0a20681954fd89fdb7182f098979bf8`.
+Artefactos estándar: `kult.exe` `ae991db620516ed925afc3eda1352d25`,
+`kult-headless.exe` `57e09a8414d91c1a33860b8b6e3b5fd4`.
+
+**Plan:**
+
+1. Ejecutar `kult-diag-marcas.bat` con el objeto aleatorio que toque; usarlo en
+   la serpiente; cerrar al ver glitch/crash.
+2. Guardar el log en `diag-logs/<objeto>-serpiente<N>-<fecha>.log`; no borrar
+   los anteriores ni extrapolar entre objetos.
+3. Analizar desde el final: último `D/B`, luego `U/P`, `Y/V` y `F` repetitivas.
+4. Comparar con el original/Hatari para el mismo objeto/serpiente antes de
+   tocar código. Si el fix requiere `src/`, pedir autorización.
+5. Tests base: `make test` 511 + `make test-port`; actualizar esta sección,
+   notas y commit.
+
+**Prompt para sesión nueva:**
+
+```text
+Trabajamos en /app/kult-port-pc-compilation (port PC de Kult).
+Lee RETOMAR.md (§ T-083), notes/0030, notes/0028, notes/0029, AGENTS.md,
+TODO.md y PROYECTO.md.
+
+Objetivo: investigar los bugs al usar objetos en las dos serpientes.
+
+IMPORTANTE: los objetos del inventario son ALEATORIOS en cada run. No se puede
+probar un objeto concreto a voluntad; cada run puede dar un objeto y un bug
+distintos. Guarda un log por objeto en diag-logs/ y analiza desde el final hacia
+atrás. No extrapoles de un objeto a otro.
+
+Usa la build de diagnóstico ya preparada:
+- build-win/kult-0.1.0-win64/kult-diag.exe (md5 28c63ef30571be50b6309160f5febe3b)
+- build-win/kult-0.1.0-win64/kult-diag-marcas.bat
+- log: kult-marcas-diag.log (Y/V/U/P/B de toda la run; no hace falta F12)
+
+Contexto esperado:
+- Primera serpiente: objeto incorrecto -> no debe hacer nada y se consume.
+- Agua (vaso rellenado en la sala de al lado) -> sube el agua y flota un dado.
+- Segunda serpiente: el dado abre la puerta.
+
+Evidencia actual:
+- cuchillo/primera serpiente: VBL 3336, Y 0x10 script 0x2563e (scale_prep),
+  bytes 10 2e 4b -> retrato 73x182; cmd 0x0134, selobj 0x1b97a.
+- dado/segunda serpiente: último Y/V 5342 byte 0x08 script 0x206b5
+  (blit_dispatch_b), luego F 12b40 de 5343 a 6894 (bucle de bit_permute),
+  glitch y crash.
+- No hay causa confirmada. Las funciones C pueden ser fieles y recibir un
+  script/objeto equivocado.
+
+Siguiente paso: hacer una run con el objeto aleatorio que toque, usarlo en la
+serpiente, cerrar al fallar, guardar el log por objeto y analizar el último
+B/U/P/Y/V. Comparar con el original/Hatari antes de tocar código.
+
+No parchear scale_prep/blits a ciegas. Si el fix requiere src/, pedir
+autorización. Tests base: make test 511 + make test-port.
+```
+
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
   previo a `sound_stop` (~242.030 ciclos medidos con el oráculo). Fix en
@@ -347,23 +518,25 @@ Tareas: `TODO.md`.
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**Cerrar T-061 (solo queda reproducir el glitch aislado); audio ya validado.
-Después T-072/M7-c. No hay punto 3 pendiente.**
+**T-083 — investigar bugs al usar objetos en las serpientes (objetos
+aleatorios).**
 
-1. Punto 1 (sangre/espacio): validado.
-2. Punto 2 (estrella final): validado por el usuario; commit `b599cf9`.
-3. Punto 4 (glitch gráfico): resuelto y validado (T-081, `099b94c`/`e041392`).
-4. El supuesto punto 3 (4905/`object_info_card`) **no era un fallo separado**:
-   caía dentro del reveal H-el1. No se le asigna tarea.
-5. T-061: título/idioma/colores, partida/controles, retrato C, sangre/espacio,
-   estrella, cursor, glitch, **guardado/carga, muerte → reinicio y audio**
-   validados.
-6. **T-082 — audio de puertas**: **validado**; la sala espera a que termine el
-   sample del tope. Detalle: `notes/0029-audio-puertas.md`.
-7. Reproducir el único glitch gráfico aislado; después **T-072** (ingesta `.STX`) → **M7-c** →
-   **A1** → **N3** → **A2** → **M5**.
+0. Leer **`RETOMAR.md` § T-083**, `notes/0030`, `notes/0028`, `notes/0029`,
+   `AGENTS.md` y `TODO.md`.
+1. Ejecutar `kult-diag-marcas.bat` con el objeto aleatorio que toque; usarlo en
+   la serpiente; cerrar al ver glitch/crash.
+2. Guardar el log en `diag-logs/<objeto>-serpiente<N>-<fecha>.log`; **no
+   extrapolar** de un objeto a otro.
+3. Analizar desde el final: último `B` (dimensiones/fuente), `U/P`
+   (objeto/clase), `Y/V` (byte/script/estado) y `F` repetitivas.
+4. Comparar con el original/Hatari para el mismo objeto/serpiente antes de
+   tocar código. Si el fix requiere `src/`, pedir autorización.
+5. Cerrar T-061 (glitch aislado) → T-072 (ingesta `.STX`) → **M7-c** → **A1** →
+   **N3** → **A2** → **M5**.
 
-Detalle autoritativo: **`notes/0028-retornos-dobles-128a4.md`** (H-el1),
+Detalle autoritativo: **`RETOMAR.md` § T-083**,
+**`notes/0030-diagnostico-yv-completo.md`**,
+**`notes/0028-retornos-dobles-128a4.md`** (H-el1),
 **`notes/0029-audio-puertas.md`** (audio), **`notes/0017-retomar-maestro.md`**
 (§8), **`notes/0023`**, **`notes/0025`** y **`notes/0026`**. No usar
 `KULT_FRAME_GATE`/`15da6` como fix de C.

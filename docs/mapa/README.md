@@ -11,7 +11,7 @@ origen), los globales `A_*` que toca y las pruebas que la cubren.
 | `commands.c` | 16 | 36 | 16 | [commands](commands.md) |
 | `cursor.c` | 2 | 8 | 2 | [cursor](cursor.md) |
 | `delay.c` | 2 | 1 | 2 | [delay](delay.md) |
-| `dispatch.c` | 5 | 3 | 5 | [dispatch](dispatch.md) |
+| `dispatch.c` | 6 | 3 | 6 | [dispatch](dispatch.md) |
 | `element.c` | 18 | 28 | 15 | [element](element.md) |
 | `fileio.c` | 17 | 14 | 17 | [fileio](fileio.md) |
 | `handlers.c` | 44 | 39 | 40 | [handlers](handlers.md) |

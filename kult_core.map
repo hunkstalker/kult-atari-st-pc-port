@@ -30,6 +30,7 @@
     prompt_wait;
     psg_trap3;
     run_command_keep_sp;
+    run_command_keep_sp_a6;
     save_clear_bin;
     save_scena;
     set_palette;

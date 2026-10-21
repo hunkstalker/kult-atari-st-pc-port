@@ -46,6 +46,7 @@ KULT_API uint32_t pal_next_byte(uint8_t *img);
 KULT_API void prompt_wait(uint8_t *img);
 KULT_API void psg_trap3(uint8_t *img, uint32_t d0, uint32_t d2, uint32_t d7, uint32_t *d0_out);
 KULT_API void run_command_keep_sp(uint8_t *img, uint32_t a6);
+KULT_API uint32_t run_command_keep_sp_a6(uint8_t *img, uint32_t a6);
 KULT_API void save_clear_bin(uint8_t *img);
 KULT_API int32_t save_scena(uint8_t *img);
 KULT_API void set_palette(uint8_t *img);

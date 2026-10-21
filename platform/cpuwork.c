@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -28,6 +29,10 @@ extern uint8_t *g_kult_img;
 extern void wait_frame(void);   /* src/input.c: escribe $1a570 (skip) */
 extern void reset_clear(void);  /* src/fileio.c: 0x1682a (bra 0x10158) */
 extern void reveal_line(void);  /* src/line.c: 0x13d0e (coste por longitud) */
+extern void use_object(void);   /* src/loop.c: 0x17ca4 (usar objeto) */
+extern void scale_prep(void);   /* src/scale.c: 0x13702 (escalado/retrato) */
+extern void blit_dispatch_b(void); /* src/handlers.c: 0x11f2e */
+extern void elem_blit_rev(void);   /* src/element.c: 0x12b04 */
 
 typedef struct {
     void *fn;
@@ -265,6 +270,74 @@ void __cyg_profile_func_enter(void *this_fn, void *call_site) {
              * el blit interno sigue costando CPU en el ST. Se cobra aparte
              * (KULT_15DA6_BLIT ciclos; **def. 0 = desactivado**). Las demas llamadas
              * con retardo > 0 ya van paced por cpu_delay. */
+            /* Diagnóstico de blits de elemento: dimensiones/fuente que
+             * recibe el dispatcher. Si son enormes, el bucle de 12b40 se
+             * dispara y la partida parece colgarse. */
+            if ((this_fn == (const void *)blit_dispatch_b ||
+                 this_fn == (const void *)elem_blit_rev) && g_kult_img) {
+                FILE *mf = marks_file();
+                if (mf) {
+                    uint32_t selp = be32(g_kult_img + A_SELECTED_OBJECT);
+                    uint32_t clsp = be32(g_kult_img + A_ELEM_CLASS);
+                    fprintf(mf, "B %u fn=%x sel=%x cls=%x cmd=%04x "
+                                "src=%x w=%04x h=%04x x=%04x y=%04x "
+                                "selb=",
+                            platform_frame_count(),
+                            this_fn == (const void *)blit_dispatch_b ? 0x11f2e : 0x12b04,
+                            selp, clsp, (unsigned)be16(g_kult_img + A_THE_COMMAND),
+                            (unsigned)be32(g_kult_img + A_ELEM_1A528),
+                            (unsigned)be16(g_kult_img + A_ELEM_1A52E),
+                            (unsigned)be16(g_kult_img + A_ELEM_1A52C),
+                            (unsigned)be16(g_kult_img + A_ELEM_1A532),
+                            (unsigned)be16(g_kult_img + A_ELEM_1A530));
+                    if (selp >= 0x10000u && selp + 8u <= 0x100000u)
+                        for (uint32_t k = 0; k < 8u; k++)
+                            fprintf(mf, "%02x", g_kult_img[selp + k]);
+                    else
+                        fprintf(mf, "-");
+                    fprintf(mf, " clsb=");
+                    if (clsp >= 0x10000u && clsp + 8u <= 0x100000u)
+                        for (uint32_t k = 0; k < 8u; k++)
+                            fprintf(mf, "%02x", g_kult_img[clsp + k]);
+                    else
+                        fprintf(mf, "-");
+                    fprintf(mf, "\n");
+                    fflush(mf);
+                }
+            }
+            /* Diagnóstico de acciones de objeto: guarda el puntero y los
+             * bytes del objeto seleccionado/clase. Sirve para saber por qué
+             * un objeto incorrecto llega a un script de scale_prep. */
+            if ((this_fn == (const void *)use_object ||
+                 this_fn == (const void *)scale_prep) && g_kult_img) {
+                FILE *mf = marks_file();
+                if (mf) {
+                    uint32_t selp = be32(g_kult_img + A_SELECTED_OBJECT);
+                    uint32_t clsp = be32(g_kult_img + A_ELEM_CLASS);
+                    fprintf(mf, "%c %u sel=%x cls=%x cmd=%04x acc7=%02x "
+                                "acd2=%02x a57a=%02x a57b=%02x ad26=%02x "
+                                "acf7=%02x ad09=%02x",
+                            this_fn == (const void *)use_object ? 'U' : 'P',
+                            platform_frame_count(), selp, clsp,
+                            (unsigned)be16(g_kult_img + A_THE_COMMAND),
+                            g_kult_img[0x1acc7], g_kult_img[0x1acd2],
+                            g_kult_img[0x1a57a], g_kult_img[0x1a57b],
+                            g_kult_img[0x1ad26], g_kult_img[0x1acf7],
+                            g_kult_img[0x1ad09]);
+                    if (selp >= 0x10000u && selp + 8u <= 0x100000u) {
+                        fprintf(mf, " selb=");
+                        for (uint32_t k = 0; k < 8u; k++)
+                            fprintf(mf, "%02x", g_kult_img[selp + k]);
+                    }
+                    if (clsp >= 0x10000u && clsp + 8u <= 0x100000u) {
+                        fprintf(mf, " clsb=");
+                        for (uint32_t k = 0; k < 8u; k++)
+                            fprintf(mf, "%02x", g_kult_img[clsp + k]);
+                    }
+                    fprintf(mf, "\n");
+                    fflush(mf);
+                }
+            }
             if (g_hash[h].fn == (const void *)anim_engine_entry && g_kult_img) {
                 uint16_t delay = (uint16_t)be16(g_kult_img + A_ANIM_1A470);
                 uint32_t w = be16(g_kult_img + A_DAT_1A49E);
@@ -289,6 +362,18 @@ void __cyg_profile_func_enter(void *this_fn, void *call_site) {
         }
         h = (h + 1) & (CPUWORK_HASH - 1);
     }
+}
+
+__attribute__((no_instrument_function))
+void platform_marks_line(const char *fmt, ...) {
+    FILE *mf = marks_file();
+    if (!mf) return;
+    va_list ap;
+    va_start(ap, fmt);
+    vfprintf(mf, fmt, ap);
+    va_end(ap);
+    fputc('\n', mf);
+    fflush(mf);
 }
 
 __attribute__((no_instrument_function))
