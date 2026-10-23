@@ -142,7 +142,8 @@ static void test_cpu_delay(void) {
     CHECK(platform_frame_count() - f0 >= 2,
           "cpu_delay en tiempo real cede >= 2 VBLs en ~45 ms");
 
-    /* Ciclo `dbra d0` con d0=0xffff del retrato/ intro (0x16a20): 65536
+    /* Ciclo `dbra d0` con d0=0xffff del retrato/intro (0x16a20), del anillo
+     * (0x1566a) y de palette_cycle (0x16310, SOLAR EYES/T-090): 65536
      * iteraciones ~82 ms -> >= 4 VBLs. */
     f0 = platform_frame_count();
     platform_cpu_delay(0x10000u);
