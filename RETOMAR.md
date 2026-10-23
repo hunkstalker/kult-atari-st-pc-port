@@ -35,7 +35,7 @@ Tareas: `TODO.md`.
   calibración/fidelidad)**, no como tarea pendiente. T-061 se cerró en la
   sesión 53 (validación de Windows).
 - **Sesión 51 — handoff para T-090: animación de habilidad del jugador acelerada**:
-  T-089 está cerrado y validado (`cf8d38f`); T-061 estaba abierta en ese
+  T-089 está cerrado y validado (`32730fc`); T-061 estaba abierta en ese
   momento (se cerró en la sesión 53). La próxima sesión debe abordar una
   **animación acelerada que forma parte de las habilidades del personaje del
   jugador**. Hay que identificarla, capturarla con un replay nuevo y genérico,
@@ -751,7 +751,7 @@ parte de las **habilidades del personaje del jugador** y que en el port iba
 acelerada.
 
 **Estado de partida**
-- T-089 ✅ cerrado y validado en Windows (`cf8d38f`): el final se queda en el
+- T-089 ✅ cerrado y validado en Windows (`32730fc`): el final se queda en el
   bucle infinito de `attract` (`0x18c80`), no vuelve al título. Ver
   `notes/0040-t089-final-attract-loop.md`.
 - T-061 ✅ **cerrada y validada en Windows (2026-10-23)**: checklist M6 completo;

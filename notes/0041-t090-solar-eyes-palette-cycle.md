@@ -202,4 +202,4 @@ original y **fuera del alcance de T-090**: no es una divergencia ASM<->C. La
 calibracion del presupuesto efectivo de CPU/ritmo (y, si se quisiera, el hueco)
 es **T-073, feature opcional no bloqueante**, no una tarea pendiente del core.
 La validacion visual global se cerro con **T-061** (Windows, 2026-10-23).
-Commits: `63692ac` (fix) y `f0e2ce5` (docs).
+Commits: `96ef0fc` (fix) y `ff56305` (docs).
