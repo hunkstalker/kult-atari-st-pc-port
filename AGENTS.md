@@ -22,7 +22,9 @@ espacio y espera de la estrella), **T-083 ✅** (objetos en serpientes) y
 (selección de acción en el anillo), **T-087 ✅** (A7/unwind de `fxxx` en sus
 dos caminos: directo e `dispatch_a6`) y **T-088 ✅** (crash de la ficha al
 atacar a un personaje, con replay de entrada), validados por el usuario.
-Pendiente: **T-061** (partida completa en Windows) → **T-072** (ingesta `.STX`) →
+**T-089 ✅** (final del juego: bucle infinito de `attract`; validado en Windows).
+Pendiente: **T-061** (partida completa en Windows; ya es posible jugar de
+principio a fin) → **T-072** (ingesta `.STX`) →
 **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
 bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en `notes/0031`, T-084 en
 `notes/0032`, T-085 en `notes/0033`, T-086 en `notes/0034`, T-087 en

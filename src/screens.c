@@ -328,9 +328,12 @@ void copy_screen(uint8_t *);
 void wait_vbl(uint8_t *);
 void sound_play_a(uint8_t *, uint32_t);
 void icon_list_reset(uint8_t *);
+void icon_scale_loop(uint8_t *, uint32_t, uint32_t);
 
-/* 0x18a98 — attract */
-uint32_t attract(uint8_t *img, uint32_t script) {
+/* 0x18a98 — primera pasada de attract. Termina en 0x18c78 con el reset de la
+ * lista de iconos y devuelve A6 = script+1. El bucle infinito posterior se
+ * modela en attract_loop/attract. */
+uint32_t attract_once(uint8_t *img, uint32_t script) {
     img[0x1ad0d] = 5;
     uint32_t back = be32(img + A_SCREEN_PTR_B);
     for (uint32_t y = 0x1f3f;; y = (y - 1) & 0xffff) {
@@ -496,4 +499,25 @@ uint32_t attract(uint8_t *img, uint32_t script) {
 
     icon_list_reset(img);
     return script + 1;
+}
+
+/* 0x18c80 — bucle final de attract:
+ *   l_018c80: move.l #$64,d5; bsr f_01834a; bra l_018c80
+ * El original no retorna nunca. max_loops=0 es el comportamiento real
+ * (infinito); un valor >0 solo lo usan las pruebas para acotar la ejecución. */
+uint32_t attract_loop(uint8_t *img, uint32_t script, uint32_t max_loops) {
+    uint32_t r = attract_once(img, script);
+    if (r != script + 1)
+        return r;                       /* salida anticipada de elem_command */
+
+    for (uint32_t loops = 0;; loops++) {
+        icon_scale_loop(img, 0, 0x64);  /* f_01834a con A5=0, D5=0x64 */
+        if (max_loops != 0 && loops + 1 >= max_loops)
+            return script + 1;
+    }
+}
+
+/* 0x18a98 — attract completo: primera pasada + bucle infinito de estrellas. */
+uint32_t attract(uint8_t *img, uint32_t script) {
+    return attract_loop(img, script, 0);
 }

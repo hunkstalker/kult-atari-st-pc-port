@@ -8,10 +8,11 @@ No parte de cero: parte del **C verificado** del Atari ST
 **backend de PC** (SDL3) para que ese mismo C corra en Windows/Linux.
 
 > **Estado:** **M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 = validación del
-> usuario) y **M7 build/empaquetado interino hechos** (T-070/T-071: CMake
-> Linux/Windows, `kult.exe` + ZIP, `kult.log` de diagnóstico). El juego arranca
-> (menú de idioma fiel), se ve y suena (ventana SDL3 + audio); `make test` (499)
-> y `make test-port` verdes. El estado vivo está en **`PROYECTO.md`** y las tareas
+> usuario, ya se puede jugar de principio a fin; **T-089 ✅** final del juego) y
+> **M7 build/empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
+> `kult.exe` + ZIP, `kult.log` de diagnóstico). El juego arranca (menú de idioma
+> fiel), se ve y suena (ventana SDL3 + audio); `make test` (518) y
+> `make test-port` verdes. El estado vivo está en **`PROYECTO.md`** y las tareas
 > en **`TODO.md`**; el punto de retorno entre sesiones, en **`RETOMAR.md`**. Aquí
 > no se duplica: `README` solo orienta.
 

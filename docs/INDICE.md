@@ -61,3 +61,5 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0036-a7-unwind-combate.md`](../notes/0036-a7-unwind-combate.md)
 - [`notes/0037-dos-caminos-unwind-a7.md`](../notes/0037-dos-caminos-unwind-a7.md)
 - [`notes/0038-replay-input-t088.md`](../notes/0038-replay-input-t088.md)
+- [`notes/0039-handoff-endgame-titulo.md`](../notes/0039-handoff-endgame-titulo.md)
+- [`notes/0040-t089-final-attract-loop.md`](../notes/0040-t089-final-attract-loop.md)

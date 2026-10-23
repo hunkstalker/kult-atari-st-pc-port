@@ -2559,8 +2559,10 @@ def test_fun_17a1a():
 
 
 FUN_18A98 = 0x18A98
-harness._lib.attract.argtypes = [_u8p, ctypes.c_uint32]
-harness._lib.attract.restype = ctypes.c_uint32
+harness._lib.attract_once.argtypes = [_u8p, ctypes.c_uint32]
+harness._lib.attract_once.restype = ctypes.c_uint32
+harness._lib.attract_loop.argtypes = [_u8p, ctypes.c_uint32, ctypes.c_uint32]
+harness._lib.attract_loop.restype = ctypes.c_uint32
 
 
 def _f18a98_pokes(first):
@@ -2603,7 +2605,7 @@ def test_fun_18a98():
     pokes = _f18a98_pokes(first=False)
     diffs, info = differential(
         FUN_18A98, {"a6": 0x30000, "_pokes": pokes},
-        lambda lib, buf: lib.attract(buf, 0x30000),
+        lambda lib, buf: lib.attract_once(buf, 0x30000),
         schedule=_vbl_k(53), wait_sites=[VBL_SITE], max_insns=20_000_000,
         stop_pc=0x18C80)
     assert not diffs, report(diffs)
@@ -2616,7 +2618,7 @@ def test_fun_18a98_first():
               "value": (k % 255) + 1} for k in range(1, 270)]
     diffs, info = differential(
         FUN_18A98, {"a6": 0x30000, "_pokes": pokes},
-        lambda lib, buf: lib.attract(buf, 0x30000),
+        lambda lib, buf: lib.attract_once(buf, 0x30000),
         schedule=sched, wait_sites=[VBL_SITE], max_insns=40_000_000,
         stop_pc=0x18C80)
     assert not diffs, report(diffs)
@@ -2642,11 +2644,26 @@ def test_fun_18a98_abort():
         # original salta al valor salvado, no al centinela del arnés. Se difiere ahí.
         diffs, info = differential(
             FUN_18A98, {"a6": 0x30000, "_pokes": pokes},
-            lambda lib, buf: lib.attract(buf, 0x30000),
+            lambda lib, buf: lib.attract_once(buf, 0x30000),
             max_insns=40_000_000, stop_pc=0x30000)
         assert not diffs, f"{kind}\n{report(diffs)}"
         assert info["ret"] == 0x19716, f"{kind}: {info['ret']:#x}"
         assert info["regs"]["a6"] == 0x19716, f"{kind} a6"
+
+
+def test_fun_18a98_loop_once():
+    # 0x18c80: tras la primera pasada, el original llama a f_01834a con D5=0x64
+    # y vuelve a 0x18c80. Acotamos a una iteración (max_loops=1) y comparamos
+    # con el oráculo parado en el `bra` del bucle (0x18c8a).
+    pokes = _f18a98_pokes(first=False)
+    diffs, info = differential(
+        FUN_18A98, {"a6": 0x30000, "_pokes": pokes},
+        lambda lib, buf: lib.attract_loop(buf, 0x30000, 1),
+        schedule=_vbl_k(54), wait_sites=[VBL_SITE], max_insns=40_000_000,
+        stop_pc=0x18C8A)
+    assert not diffs, report(diffs)
+    assert info["ret"] == 0x30001
+    assert info["regs"]["a6"] == 0x30001
 
 
 FUN_12CE4 = 0x12CE4

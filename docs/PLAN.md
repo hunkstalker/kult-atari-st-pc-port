@@ -50,10 +50,10 @@ ledger PSG con el oráculo y mide RMS/energía. La escucha final la valida el us
 **Contenido:** menú de idioma (fiel o nativo), guardado, ajustes; validación.
 **Aceptación:** partida completa jugable; lista de limitaciones documentada.
 **Estado:** en curso. **T-060 ✅** (menú de idioma **fiel**, ADR 0004, validado en
-T-020). **T-061 🚧**: checklist base validado; falta la **partida completa en
-Windows** (checklist en `docs/VERIFICACION.md`, limitaciones en
-`docs/LIMITACIONES.md`). **La ejecución la hace el usuario** (jugar y escuchar
-con su copia de datos).
+T-020). **T-061 🚧**: checklist base validado; ya es posible jugar de principio a fin,
+pero el usuario quiere revisar algún punto más antes de cerrarla (checklist en
+`docs/VERIFICACION.md`, limitaciones en `docs/LIMITACIONES.md`). **La ejecución
+la hace el usuario** (jugar y escuchar con su copia de datos).
 Incluye **morir → reiniciar** (`reset_clear` → `bra 0x10158`, emulado en `boot/`;
 **no** depende de `0x106f2`). **Colores** del juego
 corregidos en la HAL (`OS_SCREEN_BASE=0x98000`) y **primera pantalla = título
@@ -64,7 +64,9 @@ visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
 `cpu_delay_cycles`; validación del usuario y commit `3235aa6`; ver `notes/0019`). Queda calibración fina por escenas/casos no medidos (p.ej.
 `palette_cycle`). Ver `notes/0015`. **T-088 ✅ validado en Windows**: crash de
 la ficha al atacar a un personaje corregido en `object_info_card`; replay de
-entrada en `notes/0038`.
+entrada en `notes/0038`. **T-089 ✅ validado en Windows**: el final se queda en
+la animación de estrellas (`attract`/`0x18c80`), sin volver al guion ni dejar
+escena/paleta corruptas; `notes/0040`.
 
 ## M7 — Empaquetado/release
 **Objetivo:** distribuir sin assets (el usuario aporta su copia); **build Windows**

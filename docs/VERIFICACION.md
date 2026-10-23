@@ -57,13 +57,14 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Combate/PSI: el enemigo fuerte muere tras el PSI, el anillo no se reabre y no queda el recuadro negro (T-087, `notes/0037`).
 - ✅ Atacar/ficha de personaje sin crash: el replay reproduce la ficha y la partida continúa (T-088, `notes/0038`).
 - ✅ Pasada visual actual sin glitches gráficos: el antiguo “glitch aislado” se retira; era un resto del punto 4, ya cubierto por T-081.
-- 🚧 Partida completa en Windows: pendiente de ejecutar, encontrar y triar bugs.
+- 🚧 Partida completa en Windows: ya es posible jugar de principio a fin (T-089 incluido); el usuario quiere revisar algún punto más antes de cerrar T-061.
+- ✅ Final del juego: el original **no vuelve al título**; tras la última secuencia entra en el bucle infinito de `attract` (`0x18c80`) y muestra la animación de estrellas. El port retornaba y seguía el guion, dejando escena/paleta corruptas. Fix **T-089** (`attract_once`/`attract_loop`/`attract`) **validado por el usuario en Windows (2026-10-22)**. Detalle: `notes/0040-t089-final-attract-loop.md`.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**517** verde) y `make test-port` (verde).
+1. ✅ **Automático:** `make test` (**518** verde) y `make test-port` (verde).
 2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y

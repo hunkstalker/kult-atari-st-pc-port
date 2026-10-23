@@ -74,6 +74,11 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   binario propio documentado). Ver `notes/0011`.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
   Fwrite); **validado por el usuario**.
+- **Final del juego (T-089)**: intencionadamente **no vuelve al título**. El
+  original entra en el bucle infinito de `attract` (`0x18c80`) y se queda en la
+  animación de estrellas; el port ya lo reproduce. Para salir hay que cerrar la
+  ventana. **Validado en Windows (2026-10-22)**; detalle y evidencia en
+  `notes/0040-t089-final-attract-loop.md`.
 - **Ritmo / aceleración (T-073)**: implementado el **modelo de CPU medido**
   (T-073a `cpu_delay` + T-073b coste por función con `-finstrument-functions` y
   tabla del oráculo). El port cobra ciclos del original a cada función y los
@@ -88,7 +93,7 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   en el core) pueden seguir rápidos.
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
-1. `make test` (**517**) y `make test-port` en verde.
+1. `make test` (**518**) y `make test-port` en verde.
 2. `make port-sdl` y `KULT_WINDOW=1 KULT_DATA_DIR=<datos> ./build/kult-sdl`:
    comprobar título (clic), menú D/E/F, intro/partida, efectos y música.
 3. `make port` headless para arranque/estabilidad (`frames`, `fb_nonzero`,

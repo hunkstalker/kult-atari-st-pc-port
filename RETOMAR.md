@@ -5,6 +5,27 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 50 — T-089: final del juego (bucle de `attract`) implementado y validado**:
+  el original **no vuelve al título**: tras la última secuencia entra en
+  `attract` y se queda en `l_018c80` (`0x18c80`) llamando indefinidamente a
+  `f_01834a` con `D5=0x64` (estrellas). El C retornaba de `attract` tras la
+  primera pasada y el guion seguía, dejando escena/paleta corruptas. Evidencia
+  en Hatari: el juego ejecuta una copia relocalizada `+0xB018`; la pila da
+  `0x23CA2 = 0x18C8A + 0xB018`, retorno del `bsr f_01834a` dentro de
+  `l_018c80`. Fix en `src/screens.c`: `attract_once` + `attract_loop` +
+  `attract` (no retorna). `make test` **518** y `test-port` OK; builds
+  nativo/Windows/ZIP. **Validado visualmente por el usuario en Windows
+  (2026-10-22)**: se queda en las estrellas, sin escena/paleta corruptas.
+  Detalle: **`notes/0040-t089-final-attract-loop.md`**.
+- **Sesión 49 — handoff para analizar el final del juego**:
+  incidencia de T-061: con `save-endgame` + `kult-replay-endgame.bin`, tras la
+  escena final el port hace `reset_clear -> 0x10158` y muestra una escena
+  corrupta con la paleta rota; el original debería volver al título con su
+  música principal. Evidencia preservada en
+  `trazas-endgame-20261022-125714/` (replay, log, save y `SHA256SUMS`). Próxima
+  sesión: **solo análisis de divergencia** (Hatari/oráculo + traza del port),
+  sin fix. No crear T-089 hasta confirmar. Detalle:
+  **`notes/0039-handoff-endgame-titulo.md`**.
 - **Sesión 48 — T-061 reabierta: falta la partida completa**:
   el usuario confirma que la pasada visual actual no tiene glitches y que los
   bugs corregidos (T-073c…T-088) formaban parte de la validación de Windows. El
@@ -608,9 +629,12 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   **headless**, con **ventana SDL3 jugable** (render + entrada real + ritmo 50 Hz)
   y **audio** (Timer A del MFP + PSG/YM2149 + SDL).
 - **M6 en curso**: T-060 ✅ (menú fiel); **T-061 🚧** (checklist base validado;
-  falta la partida completa en Windows; checklist en `docs/VERIFICACION.md`).
-  Queda **T-073** abierta como calibración fina no bloqueante. Incluye **morir →
-  reiniciar sala** (`reset_clear`, core).
+  ya es posible jugar de principio a fin, pero el usuario quiere revisar algún
+  punto más antes de cerrarla; checklist en `docs/VERIFICACION.md`). Final del
+  juego: **T-089 ✅ validado en Windows** (el original se queda en el bucle
+  infinito de `attract`, no vuelve al título). Queda **T-073** abierta como
+  calibración fina no bloqueante.
+  Incluye **morir → reiniciar sala** (`reset_clear`, core).
 - **T-073c (Maestro C) resuelto y validado (commit `3235aa6`)**: A/B/C
   corregidas. A: 3 retratos pixel + descripciones; B: 4 retratos lift +
   descripciones; C: 1 retrato del Maestro + lift + diálogo (único diálogo y
@@ -665,16 +689,17 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   va a 50 VBL/s correctos; la aceleración es trabajo de CPU no modelado → T-073.
   Detalle: `notes/0014`.
 - **M2 con `0x106f2` abierto** (no cerrado): ver `notes/0011`.
-- `make test` **517** verde; `make test-port` verde. Sin bloqueantes.
+- `make test` **518** verde; `make test-port` verde. Sin bloqueantes.
 - **Plan de hitos fijado** (sesión 11): `notes/0011`; build (sesión 12):
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
 ## Siguiente tarea
-**T-061 — validación jugada completa en Windows**: el checklist base está
-validado, pero falta jugar de principio a fin y corregir los bugs que aparezcan.
-T-073 sigue abierta como deuda de fidelidad no bloqueante
-(FPS/`palette_cycle`). Después: **T-072** (ingesta `.STX`) → **M7-c** → **A1** →
-**N3** → **A2** → **M5**.
+**T-061 — partida completa en Windows**: T-089 ya está validado (el final se
+queda en la animación de estrellas; no vuelve al título ni deja la escena/paleta
+corruptas). El usuario quiere revisar algún punto más antes de cerrar T-061.
+Queda **T-073** abierta como deuda de fidelidad no bloqueante
+(FPS/`palette_cycle`). Después: **T-072** (ingesta `.STX`) → **M7-c** →
+**A1** → **N3** → **A2** → **M5**.
 
 **Seguimiento técnico de T-087:** auditar los demás handlers con restauración
 de A7 (`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`, `0x15382`,
