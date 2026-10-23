@@ -2,7 +2,8 @@
 
 > **Estado:** ✅ **resuelto y validado por el usuario en Windows** (2026-10-22).
 > Tras el final se queda en la animación de estrellas, sin volver al guion ni
-> dejar la escena/paleta corruptas. T-061 sigue abierta por la partida completa.
+> dejar la escena/paleta corruptas. T-061 se cerró y validó en Windows en la
+> sesión 53 (2026-10-23).
 
 ## 1. Síntoma
 
@@ -103,5 +104,5 @@ Validado por el usuario en Windows el **2026-10-22** con `save-endgame` +
 - el proceso se cierra cerrando la ventana, como corresponde al bucle infinito
   del original.
 
-Con esto T-089 queda cerrado. T-061 sigue abierta: ya es posible una partida
-completa de principio a fin, pero el usuario quiere revisar algún punto más.
+Con esto T-089 queda cerrado. T-061 se cerró y validó en Windows en la sesión
+53 (2026-10-23): ya es posible una partida completa de principio a fin.

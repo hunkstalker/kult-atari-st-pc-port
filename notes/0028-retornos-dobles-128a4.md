@@ -254,6 +254,6 @@ Sospechosos ya conocidos:
 - El ítem “reproducir el glitch gráfico aislado” de T-061 se retira: no tenía
   caso, log ni captura propios y era un resto del punto 4 (H-el1), ya cubierto
   por T-081. No hay un segundo glitch reproducible.
-- El checklist base de T-061 está validado, pero T-061 **sigue abierta**: falta
-  jugar de principio a fin y corregir los bugs que aparezcan. T-073 sigue
-  abierta como calibración fina no bloqueante.
+- **Actualización (sesión 53, 2026-10-23):** T-061 se **cerró y validó en
+  Windows** con la partida completa. T-073 queda como **feature opcional** de
+  calibración fina no bloqueante.

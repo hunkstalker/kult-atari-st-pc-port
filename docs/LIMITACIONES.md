@@ -58,12 +58,12 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   MinGW; el ZIP/TGZ interino (T-071) lleva `kult.exe`, `kult-headless.exe`,
   `SDL3.dll` y `data/` vacía (**hay que copiar ahí los ficheros del juego**). El
   `.exe` no se ha ejecutado en el entorno de desarrollo (sin wine): el usuario
-  validó el checklist de **T-061**, que sigue abierta por la partida completa.
+  validó el checklist de **T-061** (cerrada y validada en Windows, 2026-10-23).
   Requiere **Windows 10+** (UCRT).
 - **Ingesta de discos pendiente (T-072)**: este paquete **no lee** `.STX/.MSA/.ST`;
-  `data/` debe contener los ficheros **extraídos**. Es la siguiente tarea tras
-  T-061 (no se le debe pedir al usuario un `.PRG` como solución final). El
-  contenedor `kult.data` puede ir después con N3.
+  `data/` debe contener los ficheros **extraídos**. Es la **siguiente tarea**
+  (T-072; T-061 ya cerrada) y no se le debe pedir al usuario un `.PRG` como
+  solución final. El contenedor `kult.data` puede ir después con N3.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI (sin ventana de
   consola); los errores van a **`kult.log`** (junto al exe) y a un **MessageBox**.
   `kult-headless.exe` (incluido en el ZIP) muestra el diagnóstico por consola.

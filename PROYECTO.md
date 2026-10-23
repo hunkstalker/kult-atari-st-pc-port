@@ -94,8 +94,8 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` **abierto**) + tick `0x160c2` |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
-| **M6** | pulido y validación | 🚧 T-060 ✅ (menú fiel); **T-061 🚧** (validación jugada; ya se puede completar); **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES: `palette_cycle`, cerrado; audio gap fuera de alcance); T-073 es **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta | 🚧 **build ✅** (T-070) y **ZIP/TGZ interino ✅** (T-071); **ingesta `.STX` adelantada** tras T-061 (T-072) |
+| **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta | 🚧 **build ✅** (T-070) y **ZIP/TGZ interino ✅** (T-071); **ingesta `.STX` (T-072)** como siguiente tras T-061 cerrada |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -104,7 +104,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 
 > **Orden acordado:** `arreglos (portabilidad Windows + docs) → M7 build → T-061
-> (validación del usuario) → M7-c (empaquetado + ingesta) → A1 → N3 → A2 → M5`.
+> (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta) → A1 → N3 → A2 → M5`.
 > **M5** es un extra de presentación independiente (no se junta con A). **A1** es
 > **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
 > **T-022/`0x106f2`** se deja **abierto** (posible futuro). Detalle: `notes/0011`.
@@ -133,19 +133,19 @@ Recogidas como ADR en `docs/adr/`:
   `0x3a872`/0x936** reconstruido en `boot/music_player.c`. Verificación: ledger
   PSG del reproductor contra el **oráculo** (23 eventos) y RMS/energía del YM en
   `make test-port`; la escucha final la valida el usuario.
-- **M6 en curso (T-060 ✅ / T-061 🚧)**: se cierra el **menú de idioma fiel** de
+- **M6 cerrada (T-060 ✅ / T-061 ✅)**: se cierra el **menú de idioma fiel** de
   `_start` (T-020: clic de título, drenado de teclas, D/E/F; `0x135ba` como
-  `os_setscreen` no-op) y se documenta la **validación** (checklist en
-  `docs/VERIFICACION.md`, limitaciones en `docs/LIMITACIONES.md`), que **ejecuta
-  el usuario**. T-061 se **reabrió en la sesión 48**: checklist base validado;
-  ya es posible una partida completa de principio a fin, pero el usuario quiere
-  revisar algún punto más antes de cerrarla. **T-089 ✅** (final del juego:
-  bucle infinito de `attract`, validado en Windows). **T-090 ✅** (SOLAR EYES: `palette_cycle`, cerrado; audio gap fuera de
-  alcance). T-073 queda como **feature opcional** de calibración fina no
-  bloqueante. `0x106f2` (reinicio suave) queda
-  **abierto/pendiente**.
+  `os_setscreen` no-op) y la **validación** (checklist en
+  `docs/VERIFICACION.md`, limitaciones en `docs/LIMITACIONES.md`). **T-061
+  validada en Windows (2026-10-23)**: el C sigue los mismos caminos y
+  comportamiento que el ASM a nivel de experiencia del jugador; no se exige
+  timing ciclo-exacto. **T-089 ✅** (final del juego: `attract`, validado en
+  Windows). **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance).
+  T-073 queda como **feature opcional** de calibración fina no bloqueante.
+  `0x106f2` (reinicio suave) queda **abierto/pendiente**. Siguiente: **T-072**
+  (ingesta `.STX`/`.ST`/`.MSA`).
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
-  docs) → M7 build → T-061 validación → M7-c (empaquetado + ingesta) → A1
+  docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta) → A1
   (investigación Amiga, prerrequisito duro de N3) → N3 (motor nativo + assets
   nativos, ADR + rama) → A2 (Amiga) → M5 (opcional)`. Detalle: **`notes/0011`**.
 - **M7 build hecho (sesión 12, T-070)**: portabilidad Windows (`platform/time.c`
@@ -267,15 +267,15 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** **T-061** (partida completa en Windows) → **T-072** (ingesta
-  `.STX`) → **M7-c** → **A1** → **N3** → **A2** → **M5**. El checklist base de
-  T-061 está validado (título/idioma/colores, partida/controles, retrato C,
-  sangre/espacio, estrella, cursor, glitch del reveal, guardado/carga, muerte →
-  reinicio, **audio** T-082, input/anillo T-084, combate/PSI T-087, ficha al
-  atacar T-088 y **final del juego T-089**). Ya es posible jugar de principio a
-  fin; el usuario quiere revisar algún punto más antes de cerrar T-061. El
-  antiguo “glitch aislado” se retira: era un resto del punto 4/T-081, sin un
-  segundo caso reproducible. T-073 queda como **feature opcional** de calibración fina.
+- **Siguiente:** **T-072** (ingesta `.STX`/`.ST`/`.MSA`) → **M7-c** → **A1** →
+  **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
+  (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
+  retrato C, sangre/espacio, estrella, cursor, glitch del reveal,
+  guardado/carga, muerte → reinicio, **audio** T-082, input/anillo T-084,
+  combate/PSI T-087, ficha al atacar T-088, **final T-089** y **T-090**). El C
+  sigue los mismos caminos/comportamiento que el ASM a nivel de experiencia del
+  jugador; no se exige timing ciclo-exacto. T-073 queda como **feature opcional**
+  de calibración fina.
   **T-083** (objetos en serpientes) **resuelto y validado**: retorno doble de
   `icon_ring_loop` (`0x1592e`), con tail-call explícito en la VM; ver
   **`notes/0031`**. **T-084** (input mantenido), **T-085** (retrato/intro) y

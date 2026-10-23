@@ -184,7 +184,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   si no se define `KULT_PRG`.
 - **Estado interino (T-071)**: `data/` debe contener los ficheros **extraídos**
   de `disk_a`+`disk_b`. Las imágenes `.STX/.MSA/.ST` **aún no se leen**; la
-  ingesta automática es **T-072** (siguiente tras T-061).
+  ingesta automática es **T-072** (siguiente; T-061 cerrada el 2026-10-23).
 
 ## Comandos del core (heredados, ya verdes)
 ```

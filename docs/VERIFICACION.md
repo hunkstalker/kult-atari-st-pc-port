@@ -43,7 +43,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
-**Estado actual (T-061 🚧 — validación jugada en curso):**
+**Estado actual (T-061 ✅ cerrada y validada en Windows, 2026-10-23):**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -57,15 +57,21 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Combate/PSI: el enemigo fuerte muere tras el PSI, el anillo no se reabre y no queda el recuadro negro (T-087, `notes/0037`).
 - ✅ Atacar/ficha de personaje sin crash: el replay reproduce la ficha y la partida continúa (T-088, `notes/0038`).
 - ✅ Pasada visual actual sin glitches gráficos: el antiguo “glitch aislado” se retira; era un resto del punto 4, ya cubierto por T-081.
-- 🚧 Partida completa en Windows: ya es posible jugar de principio a fin (T-089 incluido); el usuario quiere revisar algún punto más antes de cerrar T-061.
+- ✅ Partida completa en Windows: jugada de principio a fin (T-089 incluido) y validada por el usuario.
 - ✅ Final del juego: el original **no vuelve al título**; tras la última secuencia entra en el bucle infinito de `attract` (`0x18c80`) y muestra la animación de estrellas. El port retornaba y seguía el guion, dejando escena/paleta corruptas. Fix **T-089** (`attract_once`/`attract_loop`/`attract`) **validado por el usuario en Windows (2026-10-22)**. Detalle: `notes/0040-t089-final-attract-loop.md`.
-- ✅ **T-090 cerrado**: SOLAR EYES era `palette_cycle` (`0x16310`); el C omitía los dos `dbra 0xffff` por pasada. Fix de timing en `src/video.c` con `cpu_delay(0x10000u)`; oráculo 7.879.396 ciclos (~985 ms) y port 12→60 VBL. Replay, logs y medición en `trazas-t090-20261023/`; detalle en `notes/0041`. El hueco de audio de Hatari queda documentado como artefacto de timing del original, **fuera del alcance de T-090**; la calibración de CPU/ritmo es **T-073 (feature opcional)**. La validación visual global sigue en T-061.
+- ✅ **T-090 cerrado**: SOLAR EYES era `palette_cycle` (`0x16310`); el C omitía los dos `dbra 0xffff` por pasada. Fix de timing en `src/video.c` con `cpu_delay(0x10000u)`; oráculo 7.879.396 ciclos (~985 ms) y port 12→60 VBL. Replay, logs y medición en `trazas-t090-20261023/`; detalle en `notes/0041`. El hueco de audio de Hatari queda documentado como artefacto de timing del original, **fuera del alcance de T-090**; la calibración de CPU/ritmo es **T-073 (feature opcional)**. T-061 quedó cerrada con la validación de Windows (2026-10-23).
+
+**Cierre de T-061:** validada la versión de Windows (2026-10-23). Criterio:
+el C sigue los mismos caminos y comportamiento que el ASM **a nivel de
+experiencia del jugador**; no se exige timing ciclo-exacto. El hueco de audio
+de SOLAR EYES es un artefacto de timing del original y T-073 queda como feature
+opcional no bloqueante. **M6 cerrada.** Siguiente: T-072 (ingesta `.STX`).
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**518** verde) y `make test-port` (verde).
+1. ✅ **Automático:** `make test` (**519** verde) y `make test-port` (verde).
 2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y

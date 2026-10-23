@@ -5,6 +5,15 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 53 — T-061 cerrada y validada en Windows (2026-10-23)**: el usuario
+  da por validada la versión de Windows. Criterio de cierre: el C sigue los
+  mismos caminos/comportamiento que el ASM **a nivel de experiencia del
+  jugador**; no se exige timing ciclo-exacto. Checklist M6 completo: título,
+  idioma, colores, partida/controles, guardado/carga, audio y puertas,
+  muerte→reinicio, combate/PSI, final (`attract`) y SOLAR EYES. El hueco de audio
+  de SOLAR EYES queda como artefacto de timing del original, fuera de alcance;
+  T-073 sigue como feature opcional. **M6 cerrada.** Siguiente: **T-072**
+  (ingesta automática `.STX`/`.ST`/`.MSA`). Sin cambios de código en esta sesión.
 - **Sesión 52 — T-090: SOLAR EYES cerrada y documentada (sin commit)**:
   la habilidad es el poder PSI **SOLAR EYES** (`0xa00a` → `f_014f5e` →
   `palette_cycle`, `0x16310`). El ASM hace por pasada `wait_vbl` + `dbra d0`
@@ -23,11 +32,11 @@ Tareas: `TODO.md`.
   forward), **fuera del alcance de T-090**: no es una divergencia ASM↔C. A 8 MHz
   el port es más rápido y no lo reproduce; a `KULT_CPU_HZ=5000000` dura 84 VBL
   (1,68 s) y aparece. Eso queda como **T-073 (feature opcional de
-  calibración/fidelidad)**, no como tarea pendiente. La validación visual global
-  sigue en **T-061**.
+  calibración/fidelidad)**, no como tarea pendiente. T-061 se cerró en la
+  sesión 53 (validación de Windows).
 - **Sesión 51 — handoff para T-090: animación de habilidad del jugador acelerada**:
-  T-089 está cerrado y validado (`cf8d38f`); T-061 sigue abierta (el usuario
-  quiere revisar algún punto más). La próxima sesión debe abordar una
+  T-089 está cerrado y validado (`cf8d38f`); T-061 estaba abierta en ese
+  momento (se cerró en la sesión 53). La próxima sesión debe abordar una
   **animación acelerada que forma parte de las habilidades del personaje del
   jugador**. Hay que identificarla, capturarla con un replay nuevo y genérico,
   medirla contra el original y corregirla solo con evidencia. Herramienta ya
@@ -58,7 +67,8 @@ Tareas: `TODO.md`.
 - **Sesión 48 — T-061 reabierta: falta la partida completa**:
   el usuario confirma que la pasada visual actual no tiene glitches y que los
   bugs corregidos (T-073c…T-088) formaban parte de la validación de Windows. El
-  checklist base queda validado, pero T-061 **sigue abierta**: falta jugar de
+  checklist base queda validado; T-061 quedó abierta en ese momento (se cerró en
+  la sesión 53). Faltaba jugar de
   principio a fin, reproducir y corregir los bugs que aparezcan. El antiguo
   “glitch gráfico aislado” se retira como resto del punto 4 (H-el1), ya cubierto
   por T-081; no hay un segundo caso. Siguiente: **T-061** (partida completa) →
@@ -657,13 +667,14 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 - **M0–M4 hechas**: el juego arranca con el **menú de idioma fiel**, avanza frames,
   **headless**, con **ventana SDL3 jugable** (render + entrada real + ritmo 50 Hz)
   y **audio** (Timer A del MFP + PSG/YM2149 + SDL).
-- **M6 en curso**: T-060 ✅ (menú fiel); **T-061 🚧** (checklist base validado;
-  ya es posible jugar de principio a fin, pero el usuario quiere revisar algún
-  punto más antes de cerrarla; checklist en `docs/VERIFICACION.md`). Final del
-  juego: **T-089 ✅ validado en Windows** (el original se queda en el bucle
-  infinito de `attract`, no vuelve al título). Queda **T-073** abierta como
-  calibración fina no bloqueante.
-  Incluye **morir → reiniciar sala** (`reset_clear`, core).
+- **M6 cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows
+  (2026-10-23)** con el checklist M6 completo (partida de principio a fin,
+  guardado/carga, audio, muerte→reinicio, combate/PSI, final T-089 y T-090).
+  Criterio: mismos caminos/comportamiento ASM↔C a nivel de experiencia del
+  jugador; no se exige timing ciclo-exacto. **T-089 ✅** (final en `attract`) y
+  **T-090 ✅** (SOLAR EYES) cerrados. **T-073** queda como feature opcional de
+  calibración fina (CPU/ritmo), no bloqueante. Incluye **morir → reiniciar sala**
+  (`reset_clear`, core). Siguiente: **T-072** (ingesta `.STX`/`.ST`/`.MSA`).
 - **T-073c (Maestro C) resuelto y validado (commit `3235aa6`)**: A/B/C
   corregidas. A: 3 retratos pixel + descripciones; B: 4 retratos lift +
   descripciones; C: 1 retrato del Maestro + lift + diálogo (único diálogo y
@@ -733,7 +744,7 @@ oráculo mide **7.879.396 ciclos ≈985 ms** (12 pasadas); el port pasa de
 Evidencia en `build-win/kult-0.1.0-win64/trazas-t090-20261023/`; detalle en
 **`notes/0041`**. `make test` **519** y `test-port` OK; builds nativo/Windows/ZIP.
 **Cerrado.** El hueco de audio de Hatari es un artefacto de timing del original
-y queda fuera de T-090; la validación visual global sigue en T-061.
+y queda fuera de T-090; T-061 se cerró en la sesión 53.
 
 **Objetivo original:** reproducir, medir y corregir una animación que forma
 parte de las **habilidades del personaje del jugador** y que en el port iba
@@ -743,13 +754,14 @@ acelerada.
 - T-089 ✅ cerrado y validado en Windows (`cf8d38f`): el final se queda en el
   bucle infinito de `attract` (`0x18c80`), no vuelve al título. Ver
   `notes/0040-t089-final-attract-loop.md`.
-- T-061 🚧 abierta: checklist base validado; ya es posible jugar de principio a
-  fin, pero el usuario quiere revisar algún punto más antes de cerrarla.
+- T-061 ✅ **cerrada y validada en Windows (2026-10-23)**: checklist M6 completo;
+  el C sigue los mismos caminos/comportamiento que el ASM a nivel de
+  experiencia del jugador.
 - T-073 🧩 **feature opcional** de calibración de CPU/ritmo/fidelidad
   (FPS/`KULT_CPU_HZ`/`KULT_ST_CONTEND`, ISR/VBL); no bloqueante y no es una
   tarea pendiente del core ASM↔C.
-- T-072 (**Ingesta automática de `.STX`/`.ST`/`.MSA` a `data/`**) va después
-  de T-061.
+- T-072 (**Ingesta automática de `.STX`/`.ST`/`.MSA` a `data/`**) es la
+  siguiente tarea.
 
 **Datos ya resueltos**
 - Habilidad: **SOLAR EYES**, poder PSI del jugador, fuera de combate; consume
@@ -809,7 +821,7 @@ acelerada.
 - ✅ Builds nativo/Windows/ZIP actualizados.
 - ✅ Documentado (`notes/0041`) y actualizado TODO/RETOMAR/VERIFICACION.
 - ✅ T-090 cerrado; el hueco de audio queda documentado y fuera de alcance.
-- ✅ La validación visual global continúa en **T-061** (no bloquea T-090).
+- ✅ La validación visual global se cerró con **T-061** (sesión 53).
 
 **Trampas**
 - No usar `KULT_FRAME_GATE` ni parches por animación sin medición.
@@ -818,8 +830,8 @@ acelerada.
 - No confundir esta tarea con T-073: si es falta de coste de CPU, se mide y se
   modela, no se “acelera/decelera a ojo”.
 
-**Después:** **T-061** (validación completa de la partida en Windows) →
-**T-072** (ingesta automática `.STX`/`.ST`/`.MSA`) → **M7-c** → **A1** →
+**Después:** **T-072** (ingesta automática `.STX`/`.ST`/`.MSA`) → **M7-c** →
+**A1** →
 **N3** → **A2** → **M5**. **T-073** (calibración opcional de CPU/ritmo) queda
 como feature opcional, no bloqueante.
 

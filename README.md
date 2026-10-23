@@ -7,12 +7,12 @@ No parte de cero: parte del **C verificado** del Atari ST
 (`/app/kult-atari-st-c`, 415 funciones, 499 pruebas diferenciales) y añade un
 **backend de PC** (SDL3) para que ese mismo C corra en Windows/Linux.
 
-> **Estado:** **M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 = validación del
-> usuario, ya se puede jugar de principio a fin; **T-089 ✅** final del juego) y
+> **Estado:** **M0–M4 hechas**, **M6 cerrada** (T-060 ✅; **T-061 ✅ validada en
+> Windows 2026-10-23**; **T-089 ✅** final del juego; **T-090 ✅** SOLAR EYES) y
 > **M7 build/empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
 > `kult.exe` + ZIP, `kult.log` de diagnóstico). El juego arranca (menú de idioma
-> fiel), se ve y suena (ventana SDL3 + audio); `make test` (518) y
-> `make test-port` verdes. El estado vivo está en **`PROYECTO.md`** y las tareas
+> fiel), se ve y suena (ventana SDL3 + audio); `make test` (519) y
+> `make test-port` verdes. T-073 queda como feature opcional. El estado vivo está en **`PROYECTO.md`** y las tareas
 > en **`TODO.md`**; el punto de retorno entre sesiones, en **`RETOMAR.md`**. Aquí
 > no se duplica: `README` solo orienta.
 
@@ -35,7 +35,7 @@ No parte de cero: parte del **C verificado** del Atari ST
 - El usuario aporta su copia en `data/` (junto al ejecutable). En el paquete
   interino (T-071) deben ser los ficheros **extraídos** de los disquetes
   (`KULT.PRG`, `*.PI1`, `*.BIN`); las imágenes `.STX/.MSA/.ST` aún no se leen.
-  La **ingesta automática** es T-072 (siguiente tras la validación T-061).
+  La **ingesta automática** es **T-072** (siguiente; T-061 ya cerrada).
 - **`kult.log`** se escribe junto al ejecutable (y a stderr) con directorios de
   datos, ruta de `KULT.PRG`, resultado de SDL/ventana/audio y exit code. En GUI,
   los errores fatales salen también en un `MessageBox`. `kult-headless.exe`

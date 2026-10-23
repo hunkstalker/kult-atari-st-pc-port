@@ -5,8 +5,8 @@
 > animación de estrellas. El port retornaba de `attract` y seguía el guion, de
 > ahí la escena/paleta corruptas. Fix **T-089** implementado y **validado en
 > Windows (2026-10-22)**; detalle y evidencia en
-> **`notes/0040-t089-final-attract-loop.md`**. T-061 sigue abierta por la
-> partida completa, aunque ya es posible jugar de principio a fin.
+> **`notes/0040-t089-final-attract-loop.md`**. T-061 se cerró y validó en
+> Windows en la sesión 53 (2026-10-23).
 >
 > **Estado original de esta nota:** incidencia abierta de **T-061**
 > (validación de Windows). Esta sesión era **solo análisis de divergencia**:
@@ -31,13 +31,12 @@ No se implementa ninguna corrección en esta fase.
 
 ## 2. Contexto de tareas
 
-- **T-061** es la validación completa de Windows y sigue **🚧 abierta**. El
-  checklist base está validado, pero falta la partida completa y los bugs que
-  aparezcan. No crear otra campaña de validación.
+- **T-061** es la validación completa de Windows; **cerrada y validada en
+  Windows el 2026-10-23** (sesión 53). No crear otra campaña de validación.
 - Los fixes anteriores (T-073c, T-076, T-077, T-079…T-088) fueron **incidencias
   hijas** de esa validación.
-- **T-073** sigue abierta como calibración fina no bloqueante.
-- **T-072** (ingesta `.STX`) va después de cerrar T-061.
+- **T-073** queda como **feature opcional** de calibración fina no bloqueante.
+- **T-072** (ingesta `.STX`) es la siguiente tarea tras cerrar T-061.
 - Si el análisis confirma un bug de código, la corrección podrá registrarse como
   **T-089 — final del juego: volver al título**. **No crear T-089 todavía**:
   primero hay que demostrar la divergencia.
