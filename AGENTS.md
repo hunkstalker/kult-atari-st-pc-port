@@ -11,7 +11,7 @@ habla con el Atari: llama a **19 servicios**; el port implementa esos servicios
 para PC (SDL3). Ver `docs/PORTING.md`.
 
 ## Estado
-**M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 🚧 validación jugada; T-073 abierta) y
+**M0–M4 hechas**, **M6 en curso** (T-060 ✅; T-061 🚧 validación jugada; T-073 feature opcional) y
 **M7 build + empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
 `kult.exe` + ZIP sin assets, `kult.log` de diagnóstico). El juego arranca con el
 **menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
@@ -24,7 +24,8 @@ dos caminos: directo e `dispatch_a6`) y **T-088 ✅** (crash de la ficha al
 atacar a un personaje, con replay de entrada), validados por el usuario.
 **T-089 ✅** (final del juego: bucle infinito de `attract`; validado en Windows).
 Pendiente: **T-061** (partida completa en Windows; ya es posible jugar de
-principio a fin) → **T-072** (ingesta `.STX`) →
+principio a fin) y **T-090** (SOLAR EYES: `palette_cycle`, cerrado; audio gap fuera de alcance;
+replay genérico en `assets/kult-replay-generic.bat`) → **T-072** (ingesta `.STX`) →
 **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5** (opcional). Sin
 bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en `notes/0031`, T-084 en
 `notes/0032`, T-085 en `notes/0033`, T-086 en `notes/0034`, T-087 en

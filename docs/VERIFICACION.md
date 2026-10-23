@@ -59,6 +59,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 - ✅ Pasada visual actual sin glitches gráficos: el antiguo “glitch aislado” se retira; era un resto del punto 4, ya cubierto por T-081.
 - 🚧 Partida completa en Windows: ya es posible jugar de principio a fin (T-089 incluido); el usuario quiere revisar algún punto más antes de cerrar T-061.
 - ✅ Final del juego: el original **no vuelve al título**; tras la última secuencia entra en el bucle infinito de `attract` (`0x18c80`) y muestra la animación de estrellas. El port retornaba y seguía el guion, dejando escena/paleta corruptas. Fix **T-089** (`attract_once`/`attract_loop`/`attract`) **validado por el usuario en Windows (2026-10-22)**. Detalle: `notes/0040-t089-final-attract-loop.md`.
+- ✅ **T-090 cerrado**: SOLAR EYES era `palette_cycle` (`0x16310`); el C omitía los dos `dbra 0xffff` por pasada. Fix de timing en `src/video.c` con `cpu_delay(0x10000u)`; oráculo 7.879.396 ciclos (~985 ms) y port 12→60 VBL. Replay, logs y medición en `trazas-t090-20261023/`; detalle en `notes/0041`. El hueco de audio de Hatari queda documentado como artefacto de timing del original, **fuera del alcance de T-090**; la calibración de CPU/ritmo es **T-073 (feature opcional)**. La validación visual global sigue en T-061.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio
@@ -134,7 +135,7 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    `notes/0021`) y **no debe verse el cursor de Windows** dentro de la ventana,
    solo el del juego (`notes/0027`). **Ritmo**: el port va a
    50 VBL/s; si una animación va acelerada **sin clicar**, es **T-073** (trabajo
-   de CPU no modelado), no un fallo de esta validación. En la intro: **A** son
+   de CPU no modelado; **feature opcional**), no un fallo de esta validación. En la intro: **A** son
    3 retratos con descripciones, **B** son 4 retratos con descripciones y **C**
    es el retrato del Maestro con **diálogo** (el único); solo C se mueve.
    **T-073c ✅ validado**: el `dbf` inline de `0x16dec` ya se cobra con

@@ -58,7 +58,7 @@ Incluye **morir → reiniciar** (`reset_clear` → `bra 0x10158`, emulado en `bo
 **no** depende de `0x106f2`). **Colores** del juego
 corregidos en la HAL (`OS_SCREEN_BASE=0x98000`) y **primera pantalla = título
 visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
-**T-073 🚧**: ritmo real: **T-073a ✅** (`cpu_delay` real), **T-073b ✅**
+**T-073 🧩 feature opcional**: calibración de ritmo real: **T-073a ✅** (`cpu_delay` real), **T-073b ✅**
 (coste medido por función con `-finstrument-functions` + tabla del oráculo) y
 **T-073c ✅ validado** (el `dbf` inline de `0x16dec` ya se cobra con
 `cpu_delay_cycles`; validación del usuario y commit `3235aa6`; ver `notes/0019`). Queda calibración fina por escenas/casos no medidos (p.ej.
@@ -66,7 +66,11 @@ visible** (se aplica la paleta del PI1 antes de la espera; `notes/0014`).
 la ficha al atacar a un personaje corregido en `object_info_card`; replay de
 entrada en `notes/0038`. **T-089 ✅ validado en Windows**: el final se queda en
 la animación de estrellas (`attract`/`0x18c80`), sin volver al guion ni dejar
-escena/paleta corruptas; `notes/0040`.
+escena/paleta corruptas; `notes/0040`. **T-090 ✅ cerrado**: SOLAR EYES (`palette_cycle`, `0x16310`) medido y
+corregido con `cpu_delay(0x10000u)` en las dos fases. El hueco de audio de
+Hatari queda documentado como artefacto de timing del original, fuera de
+alcance. Detalle en `notes/0041` y `trazas-t090-20261023/`; la calibración
+opcional es **T-073 (feature opcional)**.
 
 ## M7 — Empaquetado/release
 **Objetivo:** distribuir sin assets (el usuario aporta su copia); **build Windows**

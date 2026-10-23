@@ -62,7 +62,7 @@ Se revisaron todos los `move.w #$ffff,d0` del ASM que forman un bucle `dbra`
 |---|---|---|
 | `portrait_intro` (`0x16a20`) | 2 | corregidos en T-085 (`notes/0033`) |
 | `icon_ring` (`0x1566a`) | 3 | corregidos aquí |
-| `palette_cycle` (`0x16310`) | 2 | **no se tocan**: documentados como bucles de espera sin efecto observable; requerirían su propia validación de fundidos |
+| `palette_cycle` (`0x16310`) | 2 | **corregidos en T-090**: `cpu_delay(0x10000u)` en cada fase; era el flash de SOLAR EYES (`notes/0041`) |
 
 No aparecen más bucles de espera `dbra 0xffff` en el ASM. No se han añadido
 retardos a ciegas ni a otras animaciones.

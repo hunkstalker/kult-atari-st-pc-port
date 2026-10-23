@@ -14,7 +14,7 @@ por el core como `cpu_delay(unidades)`:
 | `0x15da6` | motor de elementos (criaturas/movimiento) | `d0=A_ANIM_1A470`; interno `d1=0xbb8` (3001) | `cpu_delay(delay*3200)` |
 | `0x12e2e` | reveal pixelado (retrato/habla) | `d1=A_ANIM_1A56A` por punto | `cpu_delay(delay)` |
 | `0x12f28` | reveal de elemento | `d1=0x64` fijo por paso | `cpu_delay(0x64)` |
-| `0x16310` | `palette_cycle` (fundidos de color) | `wait_vbl` + `dbra 0xffff` + `set_palette` | **el `dbra` se omite** ("sin efecto observable") |
+| `0x16310` | `palette_cycle` (fundidos de color) | `wait_vbl` + `dbra 0xffff` + `set_palette` | **corregido en T-090**: `cpu_delay(0x10000)` en cada fase (`notes/0041`) |
 
 Además hay mucho coste CPU **no** marcado como `cpu_delay` (blits, `masked_word4`,
 permuta de bits, `screen_address`…).
@@ -52,8 +52,8 @@ permuta de bits, `screen_address`…).
 - El predecesor tuvo **una animación que nunca cuadró**: la calibración es
   sensible (por eso la tabla trae `TUNE`/gates y `KULT_CPU=0`). Hay que validar
   **escena a escena** contra el original, no de golpe.
-- `0x16310` (`palette_cycle`) es el caso testigo de espera **no** transcrita
-  (los fundidos de color); el modelo medido lo cubriría.
+- `0x16310` (`palette_cycle`) era el caso testigo de espera **no** transcrita;
+  se corrigió en T-090 con `cpu_delay(0x10000)` en cada fase (`notes/0041`).
 
 ## Implementación T-073b (hecha)
 
@@ -134,9 +134,9 @@ texto/retrato (`12ad6/12b04`, `124da/12510`, `12950/1296c/129c8`, `12b40`).
 
 - Ajustar escena a escena con `KULT_CPU_HZ` (def. 8 MHz), `KULT_ANIM_GATE` y
   `KULT_REVEAL_GATE`; `KULT_CPU=0` para A/B. No tocar animaciones a mano.
-- `0x16310` (`palette_cycle`) **no** está en la referencia medida del predecesor
-  (no se ejecutó en su escenario): el `dbra 0xffff` omitido sigue sin cobrarse.
-  Si los fundidos de color van rápidos, hay que medirlo/cubrirlo aparte.
+- `0x16310` (`palette_cycle`) no está en la referencia medida del predecesor;
+  su `dbra 0xffff` se corrigió en T-090 con `cpu_delay(0x10000)`
+  (`notes/0041`). Si aparecen otros fundidos no medidos, se miden aparte.
 
 ## Sesiones 16–20 (T-073c) — corregido
 

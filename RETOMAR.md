@@ -5,6 +5,35 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 52 — T-090: SOLAR EYES cerrada y documentada (sin commit)**:
+  la habilidad es el poder PSI **SOLAR EYES** (`0xa00a` → `f_014f5e` →
+  `palette_cycle`, `0x16310`). El ASM hace por pasada `wait_vbl` + `dbra d0`
+  con `d0=0xffff` + `set_palette`; el C omitía los dos `dbra`. Es una
+  divergencia ASM↔C real y se corrigió solo el timing en `src/video.c` con
+  `cpu_delay(0x10000u)` en fase 1 y fase 2. Replay nuevo/generico desde un save
+  fuera de combate y dos reproducciones deterministas. Medición: original
+  (oráculo, misma paleta) **7.879.396 ciclos ≈985 ms**, 12 pasadas; port
+  **12 VBL (240 ms) → 60 VBL (1,2 s)** con el mismo frame de entrada (4983).
+  Nueva `test_palette_cycle_solar_eyes_timing`; `make test` **519**,
+  `test-port` OK; builds nativo/Windows/ZIP. Evidencia en
+  `build-win/kult-0.1.0-win64/trazas-t090-20261023/` (replay, save, logs,
+  vídeos, audio de Hatari y del port, gdb, oráculo, `SHA256SUMS`). Detalle:
+  **`notes/0041`**. El hueco de audio de Hatari (~21 ms) se investigó y queda
+  documentado como artefacto de timing del original (sample backward + retrigger
+  forward), **fuera del alcance de T-090**: no es una divergencia ASM↔C. A 8 MHz
+  el port es más rápido y no lo reproduce; a `KULT_CPU_HZ=5000000` dura 84 VBL
+  (1,68 s) y aparece. Eso queda como **T-073 (feature opcional de
+  calibración/fidelidad)**, no como tarea pendiente. La validación visual global
+  sigue en **T-061**.
+- **Sesión 51 — handoff para T-090: animación de habilidad del jugador acelerada**:
+  T-089 está cerrado y validado (`cf8d38f`); T-061 sigue abierta (el usuario
+  quiere revisar algún punto más). La próxima sesión debe abordar una
+  **animación acelerada que forma parte de las habilidades del personaje del
+  jugador**. Hay que identificarla, capturarla con un replay nuevo y genérico,
+  medirla contra el original y corregirla solo con evidencia. Herramienta ya
+  preparada: `assets/kult-replay-generic.bat` (y copia en el paquete), con
+  `record|play <carpeta-save> [replay.bin]`. Detalle operativo completo en
+  **`T-090 — SOLAR EYES`**, más abajo.
 - **Sesión 50 — T-089: final del juego (bucle de `attract`) implementado y validado**:
   el original **no vuelve al título**: tras la última secuencia entra en
   `attract` y se queda en `l_018c80` (`0x18c80`) llamando indefinidamente a
@@ -676,30 +705,123 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   `kult-headless.exe` + `SDL3.dll` + `data/` + `LEEME.txt` +
   `DIAGNOSTICO.txt`) y TGZ Linux; **sin assets**. **Log**: `kult.log` junto al
   exe (ver `notes/0013`).
-- **Build actual (sesión 42)**: `kult.exe` `be2cd45a…`, `kult-headless.exe`
-  `3e44ba7d…`, `kult-diag.exe` `16605768…`, `kult-diag-headless.exe`
-  `5065fcc1…` (en `build-win/kult-0.1.0-win64/`). La traza `Y`/`V` sigue siendo
-  diagnóstica y va aparte. `make test` **516** y `make test-port` OK. El working
-  tree conserva la instrumentación de diagnóstico de sesiones anteriores **sin
-  commit**. Las capturas de A/B/C quedan en `temp/screenshots/` (no
-  versionadas).
+- **Build actual (sesión 52)**: `kult.exe` `35b18ae0…`, `kult-headless.exe`
+  `71a0e96c…`, `kult-diag.exe` `938f0268…`, `kult-diag-headless.exe`
+  `e246c2ce…` (en `build-win/kult-0.1.0-win64/`); ZIP `02a571d5…`. La traza
+  `Y`/`V` sigue siendo diagnóstica y va aparte. `make test` **519** y
+  `make test-port` OK. El working tree conserva la instrumentación de
+  diagnóstico de sesiones anteriores **sin commit**. Las capturas de A/B/C
+  quedan en `temp/screenshots/` (no versionadas).
 - **Colores del juego corregidos** (sesión 14): `OS_SCREEN_BASE = 0x98000` en
   `platform/include/os.h` (Physbase es HAL); con `0x80000` las pantallas y su
   paleta caían dentro de ECHE/heap del juego. **Ritmo en observación**: el port
   va a 50 VBL/s correctos; la aceleración es trabajo de CPU no modelado → T-073.
   Detalle: `notes/0014`.
 - **M2 con `0x106f2` abierto** (no cerrado): ver `notes/0011`.
-- `make test` **518** verde; `make test-port` verde. Sin bloqueantes.
+- `make test` **519** verde; `make test-port` verde. Sin bloqueantes.
 - **Plan de hitos fijado** (sesión 11): `notes/0011`; build (sesión 12):
   `notes/0012`; datos/log (13): `notes/0013`; Physbase/ritmo (14): `notes/0014`.
 
-## Siguiente tarea
-**T-061 — partida completa en Windows**: T-089 ya está validado (el final se
-queda en la animación de estrellas; no vuelve al título ni deja la escena/paleta
-corruptas). El usuario quiere revisar algún punto más antes de cerrar T-061.
-Queda **T-073** abierta como deuda de fidelidad no bloqueante
-(FPS/`palette_cycle`). Después: **T-072** (ingesta `.STX`) → **M7-c** →
-**A1** → **N3** → **A2** → **M5**.
+## T-090 — SOLAR EYES (flash PSI acelerado): cerrado
+
+**Resultado (sesión 52):** la habilidad es **SOLAR EYES** (`0xa00a` →
+`f_014f5e` → `palette_cycle`, `0x16310`). El ASM hace por pasada `wait_vbl` +
+`dbra d0` con `d0=0xffff` + `set_palette`; el C omitía los dos `dbra`. Fix solo
+de timing en `src/video.c` con `cpu_delay(0x10000u)` en las dos fases. El
+oráculo mide **7.879.396 ciclos ≈985 ms** (12 pasadas); el port pasa de
+**12 VBL (240 ms)** a **60 VBL (1,2 s)** con el mismo frame de entrada (4983).
+Evidencia en `build-win/kult-0.1.0-win64/trazas-t090-20261023/`; detalle en
+**`notes/0041`**. `make test` **519** y `test-port` OK; builds nativo/Windows/ZIP.
+**Cerrado.** El hueco de audio de Hatari es un artefacto de timing del original
+y queda fuera de T-090; la validación visual global sigue en T-061.
+
+**Objetivo original:** reproducir, medir y corregir una animación que forma
+parte de las **habilidades del personaje del jugador** y que en el port iba
+acelerada.
+
+**Estado de partida**
+- T-089 ✅ cerrado y validado en Windows (`cf8d38f`): el final se queda en el
+  bucle infinito de `attract` (`0x18c80`), no vuelve al título. Ver
+  `notes/0040-t089-final-attract-loop.md`.
+- T-061 🚧 abierta: checklist base validado; ya es posible jugar de principio a
+  fin, pero el usuario quiere revisar algún punto más antes de cerrarla.
+- T-073 🧩 **feature opcional** de calibración de CPU/ritmo/fidelidad
+  (FPS/`KULT_CPU_HZ`/`KULT_ST_CONTEND`, ISR/VBL); no bloqueante y no es una
+  tarea pendiente del core ASM↔C.
+- T-072 (**Ingesta automática de `.STX`/`.ST`/`.MSA` a `data/`**) va después
+  de T-061.
+
+**Datos ya resueltos**
+- Habilidad: **SOLAR EYES**, poder PSI del jugador, fuera de combate; consume
+  2 de energía (`$1ad20`: 0x3f → 0x3d).
+- Entrada: replay nuevo/generico desde un save fuera de combate
+  (`save-t090`, copia de save-t088); dos reproducciones deterministas.
+- Duración: la del ASM es 12 pasadas de `dbra 0xffff`; el oráculo da 984,9 ms
+  de ciclos para esa paleta. El port actual queda ~1,2 s por el ajuste de VBL.
+  No se fuerza el ~2 s percibido por el usuario: manda el ASM.
+
+**Replay genérico (ya preparado)**
+- `assets/kult-replay-generic.bat` (copia en `build-win/kult-0.1.0-win64/`).
+- Uso:
+  ```bat
+  kult-replay-generic.bat record <carpeta-save> [replay.bin]
+  kult-replay-generic.bat play   <carpeta-save> [replay.bin]
+  ```
+- Copia `SCENA.BIN`/`CLEAR.BIN` de `<carpeta-save>` a `data\` si existen,
+  define `KULT_REPLAY_REC`/`KULT_REPLAY_PLAY` y `KULT_FPSLOG=0`, y lanza
+  `kult.exe` del mismo directorio. No es exclusivo de T-088 ni de endgame.
+- Formato/semántica del replay: `notes/0038-replay-input-t088.md` (cabecera
+  `KULTREP1`, eventos IKBD/Crawio/Cnecin; graba respuestas a cada sondeo, no
+  eventos crudos de SDL).
+- Para trazas, usar `kult-diag.exe` con `KULT_MARKS`, `KULT_RINGLOG`,
+  `KULT_INPUTLOG`, `KULT_DBG_RUN`, `KULT_DBG_CMDS` y `KULT_LOG` (ver
+  `docs/BUILD.md`).
+
+**Plan de captura**
+1. Guardar la partida justo antes de usar la habilidad.
+2. Grabar con el bat genérico y usar la habilidad; cerrar.
+3. Reproducir dos veces y comprobar que llega al mismo punto (determinismo).
+4. Repetir con `kult-diag.exe` y trazas; archivar en
+   `trazas-t090-<fecha>/`: replay, copia de `SCENA.BIN`/`CLEAR.BIN`, `kult.log`,
+   `kult-marcas.log`, `kult-ring.log`, `kult-input.log`, `README.txt` y
+   `SHA256SUMS`.
+
+**Plan de análisis**
+- Medir VBLs/frames de la animación en original y port (`KULT_FPSLOG`, marcas de
+  entrada/salida de la rutina).
+- Identificar la rutina/PC en ASM
+  (`/app/kult-atari-st-decomp/matching/src`) y en el port (`KULT_DBG_RUN`,
+  `KULT_DBG_CMDS`, `KULT_MARKS`/`KULT_RINGLOG`).
+- Revisar `platform/cpuwork_costs.inc` y
+  `tools/cpuwork/funcost_st_reference.txt`: si la función no está o tiene coste
+  0, es candidata (patrón T-073).
+- Buscar esperas `dbra d0` de `0xffff` transcritas como bucle normal (patrón
+  T-085/T-086); medir antes de tocar.
+- Comparar estado/paleta en RAM (`A_SAVE_DESC`, screen A/B, `A_PALETTE_PTR`), no
+  solo capturas.
+- Ojo con la relocalización: en T-089 el original ejecutaba copia `+0xB018`;
+  las direcciones estáticas del ASM pueden no ser las de ejecución.
+
+**Criterios de cierre**
+- ✅ Replay reproducible (dos pasadas al mismo comando y misma bajada de PSI).
+- ✅ Causa raíz y fix medidos (oráculo 984,9 ms; port 12 → 60 VBL); sin gates.
+- ✅ `make test` **519** y `make test-port` verdes.
+- ✅ Builds nativo/Windows/ZIP actualizados.
+- ✅ Documentado (`notes/0041`) y actualizado TODO/RETOMAR/VERIFICACION.
+- ✅ T-090 cerrado; el hueco de audio queda documentado y fuera de alcance.
+- ✅ La validación visual global continúa en **T-061** (no bloquea T-090).
+
+**Trampas**
+- No usar `KULT_FRAME_GATE` ni parches por animación sin medición.
+- No tocar `src/` sin permiso explícito; una hipótesis, un cambio; revertir si
+  no mejora.
+- No confundir esta tarea con T-073: si es falta de coste de CPU, se mide y se
+  modela, no se “acelera/decelera a ojo”.
+
+**Después:** **T-061** (validación completa de la partida en Windows) →
+**T-072** (ingesta automática `.STX`/`.ST`/`.MSA`) → **M7-c** → **A1** →
+**N3** → **A2** → **M5**. **T-073** (calibración opcional de CPU/ritmo) queda
+como feature opcional, no bloqueante.
 
 **Seguimiento técnico de T-087:** auditar los demás handlers con restauración
 de A7 (`0x14ee8`, `0x14f74`, `0x15052`, `0x151b0`, `0x152ee`, `0x15382`,
