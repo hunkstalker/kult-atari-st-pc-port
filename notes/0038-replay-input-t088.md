@@ -64,6 +64,18 @@ set KULT_REPLAY_PLAY=%~dp0kult-replay.bin
 kult.exe
 ```
 
+Para un replay **reutilizable** (cualquier save, no solo T-088/endgame), usar
+`assets/kult-replay-generic.bat` (copia en el paquete):
+
+```bat
+kult-replay-generic.bat record <carpeta-save> [replay.bin]
+kult-replay-generic.bat play   <carpeta-save> [replay.bin]
+```
+
+Copia `SCENA.BIN`/`CLEAR.BIN` de `<carpeta-save>` a `data\` si existen, define
+`KULT_REPLAY_REC`/`KULT_REPLAY_PLAY` y lanza `kult.exe`. Es la vía recomendada
+para capturar incidencias nuevas (p. ej. T-090).
+
 Durante el replay se ignoran los eventos reales de ratón/teclado de SDL. El
 cursor se restaura desde el campo `x/y` de cada paquete IKBD.
 

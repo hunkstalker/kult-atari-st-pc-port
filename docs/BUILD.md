@@ -163,8 +163,10 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   binario con las respuestas que ve el juego en cada sondeo: paquete IKBD
   (botón, skip y **cursor x/y**), `Crawio` y `Cnecin`. `KULT_REPLAY_PLAY=<ruta>`
   lo reproduce e ignora la entrada real de SDL. Cada evento se vuelca con
-  `fflush`, así que el final se conserva aunque el proceso muera. Bats:
-  `kult-replay-record.bat` y `kult-replay-play.bat`. Formato y uso:
+  `fflush`, así que el final se conserva aunque el proceso muera. Bats
+  específicos: `kult-replay-record.bat` y `kult-replay-play.bat`. Genérico
+  (cualquier save): `kult-replay-generic.bat record|play <carpeta-save>
+  [replay.bin]`. Formato y uso:
   **`notes/0038-replay-input-t088.md`**. Flujo **validado en Windows**: sirvió
   para reproducir y cerrar el crash de la ficha al atacar a un personaje
   (T-088).
