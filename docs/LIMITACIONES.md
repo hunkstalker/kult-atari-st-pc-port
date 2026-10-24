@@ -1,8 +1,8 @@
-# LIMITACIONES — estado de M6
+# LIMITACIONES — release 1.0.0
 
-Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
-(pulido y validación). El objetivo de M6 es **jugable de principio a fin**; la
-**validación final** (jugar y escuchar) la hace el usuario con su copia de datos.
+Lista de limitaciones conocidas del port a PC para la release **1.0.0**. La
+validación final de juego, textos y audio la hace el usuario con su copia de
+datos.
 
 ## Intencionales (no son fallos)
 - **Tiempo de disquete modelado (T-079).** El FDC no se emula, pero
@@ -56,11 +56,12 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   abierto** por si se necesita (`notes/0010`, `notes/0011`). **No confundir** con
   el reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba
   en el C nativo ya se emula en `boot/` (`notes/0022`).
-- **M7 — build/empaquetado**: **build hecho** (T-070): CMake nativo y cross
-  MinGW; el paquete de release lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
-  `LEEME.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`. Requiere **Windows
-  10+** (UCRT). El `.exe` quedó validado en el checklist de **T-061**
-  (2026-10-23).
+- **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
+  completados. El paquete lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
+  `LEEME.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
+  Requiere **Windows 10+** (UCRT). Pendientes: revisión lingüística del catalán,
+  validación visual final, tests automatizados y, después, publicación. El CI va
+  al final.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a

@@ -7,14 +7,13 @@ No parte de cero: el **C verificado** del Atari ST está importado en
 `lib/kult-core/` y este repo añade un **backend de PC** (SDL3) para que ese mismo
 C corra en Windows/Linux.
 
-> **Estado:** **M0–M4 hechas**, **M6 cerrada** (T-060 ✅; **T-061 ✅ validada en
-> Windows 2026-10-23**; **T-089 ✅** final del juego; **T-090 ✅** SOLAR EYES) y
-> **M7 build/empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
-> `kult.exe` + ZIP, `kult.log` de diagnóstico). El juego arranca (menú de idioma
-> fiel), se ve y suena (ventana SDL3 + audio); `make test` (518 core + test propio)
-> y `make test-port` verdes. T-073 queda como feature opcional. El estado vivo está en **`PROYECTO.md`** y las tareas
-> en **`TODO.md`**; el punto de retorno entre sesiones, en **`RETOMAR.md`**. Aquí
-> no se duplica: `README` solo orienta.
+> **Estado:** el port es jugable de principio a fin en Windows y Linux. Incluye
+> la ingesta de los discos originales, el selector de idioma, los packs español y
+> catalán, guardado/carga y audio. La release 1.0.0 está preparada como ZIP
+> portable de Windows; la revisión lingüística del catalán, la validación visual
+> y los tests automatizados de ingesta siguen en curso. La publicación y el CI
+> serán los últimos pasos. El seguimiento técnico del desarrollo está en
+> **`PROYECTO.md`**, **`TODO.md`** y **`RETOMAR.md`**.
 
 ## Core importado
 
@@ -51,6 +50,13 @@ git subtree pull --prefix=lib/kult-core \
 - Base **Atari ST**; el trabajo sobre Amiga queda para fases posteriores.
 - **Español y catalán**, además de D/E/F.
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
+
+## Requisitos
+- **Windows 10 o superior, 64 bits**, para el paquete precompilado. En Linux se
+  compila desde el código fuente.
+- Una copia legal del juego con los dos discos en formato `.STX`:
+  `Kult.STX` y `Kult (B).STX`. Los nombres no importan; se identifican por
+  SHA-256.
 
 ## Datos y diagnóstico
 - Release **portable**: todo vive junto al `.exe`. `data/` contiene los assets

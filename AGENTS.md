@@ -11,26 +11,15 @@ llama a **19 servicios**; el port implementa esos servicios para PC (SDL3). Ver
 `docs/PORTING.md`.
 
 ## Estado
-**M0–M4 hechas**, **M6 cerrada** (T-060 ✅; T-061 ✅ validada en Windows 2026-10-23; T-073 feature opcional) y
-**M7 build + empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
-`kult.exe` + ZIP sin assets, `kult.log` de diagnóstico). El juego arranca con el
-**menú de idioma fiel**, se ve y suena (ventana SDL3 + audio); **colores del juego
-corregidos** (Physbase del HAL `0x98000`) y **primera pantalla = título
-visible** (paleta del PI1 antes de la espera). **T-077/T-079 ✅** (sangre,
-espacio y espera de la estrella), **T-083 ✅** (objetos en serpientes) y
-**T-084 ✅** (input mantenido), **T-085 ✅** (retrato/intro), **T-086 ✅**
-(selección de acción en el anillo), **T-087 ✅** (A7/unwind de `fxxx` en sus
-dos caminos: directo e `dispatch_a6`) y **T-088 ✅** (crash de la ficha al
-atacar a un personaje, con replay de entrada), validados por el usuario.
-**T-089 ✅** (final del juego: bucle infinito de `attract`; validado en Windows)
-y **T-090 ✅** (SOLAR EYES: `palette_cycle`, cerrado; audio gap fuera de alcance;
-replay genérico en `assets/kult-replay-generic.bat`). **T-061 ✅ cerrada y
-validada en Windows (2026-10-23)**: el C sigue los mismos caminos/comportamiento
-que el ASM a nivel de experiencia del jugador. Siguiente: **T-072** (ingesta
-`.STX`) → **M7-c** → **A1/N3/A2** (Amiga + motor/assets nativos) → **M5**
-(opcional). Sin bloqueantes. Ver `notes/0011`–`notes/0014`; T-083 en `notes/0031`, T-084 en
-`notes/0032`, T-085 en `notes/0033`, T-086 en `notes/0034`, T-087 en
-`notes/0037` (detalle técnico en `notes/0036`) y T-088 en `notes/0038`.
+El port es jugable de principio a fin en Windows y Linux. **M0–M7 funcionalmente cerradas**:
+incluye ingesta de los discos originales, selector de idioma, packs español y
+catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
+La release **1.0.0** está preparada. El orden de cierre es: revisión lingüística
+del catalán, validación visual final de Windows, tests automatizados de ingesta y,
+después, publicación (`main`, tag y GitHub Release). El CI va al final, ya con el
+repo publicado. `0x106f2` sigue abierto y T-073 es opcional. Sin bloqueantes de
+código. Ver `notes/0011`–`notes/0014`, `notes/0041` y
+`notes/0042`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**

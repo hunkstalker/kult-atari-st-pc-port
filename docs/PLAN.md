@@ -81,14 +81,15 @@ para que el usuario valide.
 **icono** (`assets/`); ZIP Windows + TGZ Linux; **ingesta** (`kult.data`) y
 **overlays de idioma** (`language.data`).
 **Aceptación:** doble clic + copia del usuario → funciona.
-**Nota:** build, paquete portable e ingesta ya están hechos; queda M7-c para
-`language.data`/idiomas y la validación final de la release.
+**Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. La
+release 1.0.0 está preparada; el orden pendiente es revisión del catalán →
+validación visual → tests automatizados → publicación. El CI va después de
+publicar.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
-icono + `kult.log`) y **paquete portable** (solo `kult.exe`, `SDL3.dll`,
-`data/`, `saves/` y `LEEME.txt`; sin headless ni `DIAGNOSTICO.txt`). El `.exe`
-quedó validado en el checklist de **T-061** (cerrada el 2026-10-23).
-**T-072 — ingesta `.STX`/`kult.data`: ✅ implementada.** Detecta los STX por
-SHA-256, los extrae y genera `data/kult.data`; los STX se pueden borrar después.
+icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
+`saves/`, `LEEME.txt` y licencias; sin headless ni `DIAGNOSTICO.txt`), ingesta
+`.STX`/`kult.data` (T-072) y `language.data` con español y catalán (T-091). El
+`.exe` quedó validado en el checklist de **T-061** (cerrada el 2026-10-23).
 Detalle: `notes/0012`, `notes/0013`.
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)

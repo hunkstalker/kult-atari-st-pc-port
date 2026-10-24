@@ -132,7 +132,8 @@ Ejecutables de esta sesión:
 - `kult-diag.exe` `6450580595c4fe623d42d17b5cb6a817`
 - `kult.exe` `cc4d5cee1a297a5dfdef93821a0f2c35`
 - `kult-headless.exe` `414a82c85329022188c1e9c5781251d1`
-- `build-diag-native/kult-sdl` `cded5de825b6bba3c68b2f4e90376cd6`
+- Build local de diagnóstico (no conservado): `kult-sdl`
+  `cded5de825b6bba3c68b2f4e90376cd6`
 
 ## 9. Referencias
 

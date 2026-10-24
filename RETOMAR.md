@@ -5,6 +5,10 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+> Las entradas de sesiones anteriores son histórico; el estado vigente es la
+> última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
+> notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
+> se conservan, van directamente bajo `build-win/`.
 - **Sesión 56 — licencias y textos públicos de release (2026-10-24)**:
   añadidos `LICENSE` MIT, `THIRD_PARTY_NOTICES.md` y `LICENSES/` (SDL3 y
   GPL-2.0); el paquete instala las licencias y ya no incluye scripts de
@@ -12,9 +16,12 @@ Tareas: `TODO.md`.
   retiradas las referencias a materiales ajenos al port de documentación, notas,
   comentarios y herramientas. `language.data` intacto. `make test` 518 + HAL +
   port OK; `make package-win` OK. ZIP:
-  `build-win/kult-0.1.0-win64.zip`, SHA256
-  `af48e8b4…`. Remoto `origin` configurado; pendiente publicar `main` y revisar
-  el catalán. Detalle: `notes/0042`.
+  `build-win/kult-1.0.0-win64.zip`, SHA256
+  `ef26b159…`. Nota pública de la release 1.0.0 preparada en
+  `docs/RELEASE_NOTES_1.0.0.md`. Remoto `origin` configurado. Orden pendiente:
+  revisar el catalán, cerrar la validación visual, añadir tests automatizados de
+  ingesta/packs y después publicar `main` con tag/GitHub Release. El CI queda
+  para el final. Detalle: `notes/0042`.
 - **Sesión 55 — release portable + ingesta STX (2026-10-24)**: release portable
   (`data/`, `saves/`, `kult.log` junto al exe, sin appdata ni variables de ruta),
   política B de errores (solo log; diálogo únicamente si no se puede escribir),

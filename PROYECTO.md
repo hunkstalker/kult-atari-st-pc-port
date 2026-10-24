@@ -95,7 +95,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072) y `language.data` con español y catalán |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). Release 1.0.0 preparada; publicación pendiente (T-092) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -104,7 +104,8 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 
 > **Orden acordado:** `arreglos (portabilidad Windows + docs) → M7 build → T-061
-> (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta) → A1 → N3 → A2 → M5`.
+> (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta + idiomas) ✅ →
+> publicación de la release 1.0.0 → A1 → N3 → A2 → M5`.
 > **M5** es un extra de presentación independiente (no se junta con A). **A1** es
 > **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
 > **T-022/`0x106f2`** se deja **abierto** (posible futuro). Detalle: `notes/0011`.
@@ -145,9 +146,10 @@ Recogidas como ADR en `docs/adr/`:
   `0x106f2` (reinicio suave) queda **abierto/pendiente**. Ingesta `.STX` /
   `kult.data` (T-072): ✅ implementada.
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
-  docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta) → A1
-  (investigación Amiga, prerrequisito duro de N3) → N3 (motor nativo + assets
-  nativos, ADR + rama) → A2 (Amiga) → M5 (opcional)`. Detalle: **`notes/0011`**.
+  docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta +
+  idiomas) ✅ → publicación 1.0.0 → A1 (investigación Amiga, prerrequisito duro
+  de N3) → N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) → M5
+  (opcional)`. Detalle: **`notes/0011`**.
 - **M7 build hecho (sesión 12, T-070)**: portabilidad Windows (`platform/time.c`
   reloj/espera, `platform/fs.c` `;` + `data/` junto al exe, `KULT_PRG` del dir de
   datos), **CMake** nativo (`kult`, `kult-sdl`) y **cross MinGW**
@@ -155,8 +157,9 @@ Recogidas como ADR en `docs/adr/`:
   SDL3 **3.4.10** MinGW en `third_party/` (gitignored) e icono (`.rc` + RGBA +
   `SDL_SetWindowIcon`). Detalle: **`notes/0012`**.
 - **Paquete portable**: CPack → ZIP Windows
-  (`build-win/kult-0.1.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`saves/`+
-  `LEEME.txt`) y TGZ Linux; sin assets, sin headless y sin `DIAGNOSTICO.txt`.
+  (`build-win/kult-1.0.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`saves/`+
+  `LEEME.txt`+licencias) y TGZ Linux; sin assets, sin headless y sin
+  `DIAGNOSTICO.txt`.
 - **Datos + diagnóstico (sesión 13)**: el `.exe` "no hacía nada" porque en
   `data/` solo había imágenes `.STX` (el paquete interino necesita ficheros
   extraídos). Los `.STX` del usuario (idénticos a los discos del proyecto) se
@@ -267,8 +270,10 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** **M7-c** (idiomas/overlays) → **A1** →
-  **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
+- **Siguiente:** revisar el catalán (T-093), cerrar la validación visual
+  (T-094), añadir tests automatizados de ingesta/packs (T-095) y después publicar
+  la release **1.0.0** (T-092); el CI (T-096) va después de publicar. Después
+  **A1** → **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,
   guardado/carga, muerte → reinicio, **audio** T-082, input/anillo T-084,
