@@ -87,8 +87,8 @@ que el ASM a nivel de experiencia del jugador. Siguiente: **T-072** (ingesta
    se anota con `cpu_delay`/`cpu_delay_cycles` (no-op en diferencial), como en
    `anim.c`, `reveal.c` y `loop.c`; cualquier otro cambio en `lib/kult-core/src/` requiere
    permiso explícito.
-3. **Los 519 tests diferenciales del core deben seguir verdes.** Son la red de
-   seguridad de que no cambiamos la lógica.
+3. **Los 518 tests diferenciales del core deben seguir verdes.** Se ejecutan
+   con `make test-core`; son la red de seguridad de que no cambiamos la lógica.
 4. **Toda corrección/feature deja prueba** (diferencial si aplica; funcional si es
    del backend).
 5. **No tocar** los repos de referencia (solo lectura).

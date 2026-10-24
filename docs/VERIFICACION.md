@@ -1,7 +1,7 @@
 # VERIFICACIÓN
 
 ## Core (heredado, no se toca)
-- **499 pruebas diferenciales** contra el oráculo (Musashi): dan la misma entrada
+- **518 pruebas diferenciales** contra el oráculo (Musashi): dan la misma entrada
   al original (emulado) y al C, y comparan memoria + registros + ledger.
 - Son la **red de seguridad** de que el porte **no cambia la lógica**. Deben
   seguir verdes al importar el core (M0/T-002).
@@ -71,7 +71,7 @@ opcional no bloqueante. **M6 cerrada.** Siguiente: T-072 (ingesta `.STX`).
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**519** verde) y `make test-port` (verde).
+1. ✅ **Automático:** `make test` (**518 core + test propio**) y `make test-port` (verde).
 2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y

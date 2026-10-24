@@ -188,7 +188,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 
 ## Comandos del core (heredados, ya verdes)
 ```
-make test                      # candidato + oráculo + 516 pruebas (paralelo)
+make test                      # core + HAL + tests propios del port
 make test PYTEST_ARGS=-n0      # serial
 make regscan                   # ids_reg=0
 make core                      # build/libkultcore.so (API restringida)

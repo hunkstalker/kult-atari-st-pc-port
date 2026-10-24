@@ -11,8 +11,8 @@ C corra en Windows/Linux.
 > Windows 2026-10-23**; **T-089 ✅** final del juego; **T-090 ✅** SOLAR EYES) y
 > **M7 build/empaquetado interino hechos** (T-070/T-071: CMake Linux/Windows,
 > `kult.exe` + ZIP, `kult.log` de diagnóstico). El juego arranca (menú de idioma
-> fiel), se ve y suena (ventana SDL3 + audio); `make test` (519) y
-> `make test-port` verdes. T-073 queda como feature opcional. El estado vivo está en **`PROYECTO.md`** y las tareas
+> fiel), se ve y suena (ventana SDL3 + audio); `make test` (518 core + test propio)
+> y `make test-port` verdes. T-073 queda como feature opcional. El estado vivo está en **`PROYECTO.md`** y las tareas
 > en **`TODO.md`**; el punto de retorno entre sesiones, en **`RETOMAR.md`**. Aquí
 > no se duplica: `README` solo orienta.
 
