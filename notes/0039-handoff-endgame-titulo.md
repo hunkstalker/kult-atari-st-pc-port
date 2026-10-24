@@ -209,7 +209,7 @@ No elegir una hipótesis antes de tracear el original.
 ### Paso 0 — Verificar evidencia
 
 ```sh
-cd /app/kult-port-pc-compilation/build-win/kult-0.1.0-win64/trazas-endgame-20261022-125714
+cd /app/kult-atari-st-pc-port/build-win/kult-0.1.0-win64/trazas-endgame-20261022-125714
 sha256sum -c SHA256SUMS
 ```
 
@@ -322,7 +322,7 @@ Informe en `notes/0039` o nota nueva:
 ## 8. Primeros comandos de la próxima sesión
 
 ```sh
-cd /app/kult-port-pc-compilation
+cd /app/kult-atari-st-pc-port
 git status --short
 git log --oneline -3
 cat notes/0039-handoff-endgame-titulo.md

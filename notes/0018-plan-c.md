@@ -101,7 +101,7 @@ tiene la espera/reveal que sí tenía el original. Candidatos:
 ## 8. Primer mensaje sugerido para la sesión nueva
 
 ```text
-Retomas T-073c (pantalla C del Maestro) en /app/kult-port-pc-compilation.
+Retomas T-073c (pantalla C del Maestro) en /app/kult-atari-st-pc-port.
 Lee AGENTS.md (§ T-073c), RETOMAR.md, notes/0017-retomar-maestro.md y
 notes/0018-plan-c.md. Todo en español.
 

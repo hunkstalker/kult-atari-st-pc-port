@@ -125,7 +125,7 @@ build de diagnóstico:
 ## 7. Prompt para la próxima sesión
 
 ```text
-Retomas el port nativo de Kult en /app/kult-port-pc-compilation. Lee primero
+Retomas el port nativo de Kult en /app/kult-atari-st-pc-port. Lee primero
 notes/0017-retomar-maestro.md, RETOMAR.md y TODO.md. Todo en español.
 
 MODELO CORRECTO

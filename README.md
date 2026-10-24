@@ -45,7 +45,7 @@ No parte de cero: parte del **C verificado** del Atari ST
 ## Origen y repos
 - **`/app/kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).
 - **`/app/kult-atari-st-c`** — C verificado del ST (**base de este repo**).
-- **`/app/kult-port-pc-compilation`** — este repo (la compilación).
+- **`/app/kult-atari-st-pc-port`** — este repo (la compilación).
 
 Detalle en `PROYECTO.md`.
 

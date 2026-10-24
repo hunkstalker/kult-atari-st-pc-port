@@ -1,6 +1,6 @@
 # PROYECTO — contexto maestro y estado
 
-Documento raíz de **`kult-port-pc-compilation`**. Es el punto de entrada: qué es
+Documento raíz de **`kult-atari-st-pc-port`**. Es el punto de entrada: qué es
 el proyecto, cómo se organiza, qué piezas hay y en qué estado están. Las tareas
 viven en **`TODO.md`**; el punto de retorno de sesión, en **`RETOMAR.md`**; el
 índice de documentación, en **`docs/INDICE.md`**.

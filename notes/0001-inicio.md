@@ -1,6 +1,6 @@
 # Nota 0001 — Inicio del proyecto
 
-- **Sesión 1.** Se crea el repositorio `kult-port-pc-compilation` y **toda la
+- **Sesión 1.** Se crea el repositorio `kult-atari-st-pc-port` y **toda la
   documentación inicial**.
 
 ## Qué se decidió
