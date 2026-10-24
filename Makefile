@@ -33,15 +33,31 @@ $(CORE): $(CORE_SRC) $(wildcard lib/kult-core/include/*.h) lib/kult-core/kult_co
 	$(CC) $(CFLAGS) -shared -Wl,--version-script=lib/kult-core/kult_core.map $(CORE_SRC) -o $(CORE)
 .PHONY: core
 core: $(CORE)
-test: $(CORE)
+
+# La suite diferencial canónica vive en el subtree del core.
+.PHONY: test-core
+test-core:
+	@test -f work/disk_a/KULT.PRG || { echo "falta work/disk_a/KULT.PRG"; exit 2; }
+	@mkdir -p lib/kult-core/work
+	@ln -sfn ../../../work/disk_a lib/kult-core/work/disk_a
+	$(MAKE) -C lib/kult-core test PY=$(abspath $(PY))
+
+# Pruebas propias del port (por ahora ringreport).
+.PHONY: test-tools
+test-tools:
+	$(PY) -m pytest -q test
+
+.PHONY: test
+test: test-core test-port
 
 # ---------------------------------------------------------------------------
 # Port PC: core + boot/ + platform/ + app/. Este build NO usa el modelo del kit:
 # `-Iplatform/include` sombrea os.h/hw.h/psg.h/sched.h con la HAL de PC. El
-# diferencial (`make test`) sigue intacto.
+# make test ejecuta la suite del core, la HAL y los tests propios.
 #   make port       -> build/kult      headless (PPM), sin SDL
 #   make port-sdl   -> build/kult-sdl  con ventana SDL3 (-DHAVE_SDL3)
 #   make test-port  -> pruebas de la HAL (sin oráculo)
+#   make test       -> core + HAL + tests propios del port
 PLATFORM_SRC := $(filter-out platform/video_sdl.c platform/audio_sdl.c platform/dispatch_trace.c,$(wildcard platform/*.c))
 PORT_CORE_SRC := $(wildcard lib/kult-core/src/*.c)
 PORT_SRC     := $(PORT_CORE_SRC) $(PLATFORM_SRC) $(wildcard boot/*.c) $(wildcard app/*.c)

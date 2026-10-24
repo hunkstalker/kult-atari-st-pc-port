@@ -1,10 +1,16 @@
-# test/ — pruebas diferenciales
+# test/ — pruebas propias del port
 
-- `harness.py` — encuaderna el arnés (`lib/kult-core/tools/recreate_kit`) con este proyecto.
-- `test_*.py` — una prueba por pieza reconstruida (empiezan a escribirse con el
-  piloto de paleta).
+La suite diferencial del core **no vive aquí**: está en
+`lib/kult-core/test/` (518 pruebas) y se ejecuta con:
 
-Cada prueba ejecuta el **original** en el oráculo (Musashi) con una entrada y
-compara con tu C (memoria + registros; el hardware va por el *ledger*).
-Patrón: ver `reference/test_f4/` (pruebas del intento anterior) y la doc del kit
-en `lib/kult-core/tools/recreate_kit/README.md`.
+```sh
+make test-core
+```
+
+En esta carpeta quedan solo las pruebas específicas del port. Ahora mismo:
+
+- `test_ringreport.py` — prueba de `tools/ringreport.py` con una traza `R`
+  sintética.
+
+Las futuras pruebas de ingesta `.STX`, `kult.data`, `language.data` y del
+formato portable irán aquí. No duplicar aquí tests que ya estén en el core.
