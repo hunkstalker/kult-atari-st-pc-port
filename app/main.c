@@ -6,8 +6,6 @@
  *
  * Variables de entorno:
  *   KULT_PRG       ruta del .PRG            (def. KULT.PRG de los dirs de datos)
- *   KULT_DATA_DIR  directorio(s) de datos   (def. data/ junto al exe; en Windows
- *                                           varios con ';', en POSIX con ':')
  *   KULT_FRAMES    frames a avanzar         (def. 300; 0 = sin límite)
  *   KULT_DUMP      PPM de salida            (def. out/frame.ppm headless; en
  *                                           ventana no se vuelca si no se pide)
@@ -176,6 +174,16 @@ int main(int argc, char **argv) {
 
     platform_set_image(img);
     platform_init();
+    if (!platform_storage_ready()) {
+        platform_fatal(
+            "No se puede escribir en la carpeta del juego:\n%s\n\n"
+            "Descomprime el port en una carpeta con permisos de escritura "
+            "(por ejemplo, Documentos o Escritorio). No lo ejecutes desde "
+            "Program Files.", platform_storage_path());
+        platform_log_close();
+        free(img);
+        return 5;
+    }
     platform_set_tick(kult_vbl_tick);
 
     /* El PRG del juego se busca en los directorios de datos (paquete Windows:

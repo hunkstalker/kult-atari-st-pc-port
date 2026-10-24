@@ -72,11 +72,10 @@ transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
 1. ✅ **Automático:** `make test` (**518 core + test propio**) y `make test-port` (verde).
-2. ✅ **Arranque headless:** `KULT_DATA_DIR=<datos> KULT_FRAMES=400 ./build/kult`
+2. ✅ **Arranque headless:** `KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
-3. ✅ **Ventana + entrada:** `make port-sdl` y
-   `KULT_DATA_DIR=<datos> ./build/kult-sdl` (la ventana se abre por defecto;
-   `KULT_WINDOW=0` fuerza headless)
+3. ✅ **Ventana + entrada:** `make port-sdl` y `./build/kult-sdl`
+   (la ventana se abre por defecto; `KULT_WINDOW=0` fuerza headless)
    - **Pantalla inicial = título (PRES) visible**: debe verse el **título del
      juego con sus colores** (logo KULT/creditos) y sonar la música, esperando
      **tecla o clic**. El port aplica la paleta de `PRES.PI1` antes de la espera
@@ -116,14 +115,13 @@ están validados.
    pausas donde el original las tiene, o no hay reinicio.
 8. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
 
-### Windows (paquete T-071)
+### Windows (paquete de release)
 El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
 `make package-win`). **No lleva assets.** Para validar:
 
-1. Descomprimir el ZIP (p. ej. en `C:\kult\`).
-2. Copiar **el contenido de `disk_a` + `disk_b`** (juntos y **extraídos**, no
-   las imágenes `.STX`) dentro de `data/` (debe quedar `data\KULT.PRG`).
-   *(La ingesta automática de `.STX` es T-072; aún no está en este paquete.)*
+1. Descomprimir el ZIP en una carpeta escribible (no Program Files).
+2. Copiar **el contenido extraído de `disk_a` + `disk_b`** dentro de `data/`
+   (debe quedar `data\KULT.PRG`). La ingesta de `.STX` es T-072.
 3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
@@ -150,10 +148,10 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    **T-080 ✅**: cursor del sistema oculto. **T-081 ✅**: glitch del reveal
    corregido y validado. Si aún se notara acelerado, calibrar
    `KULT_CPU_HZ`/`KULT_ST_CONTEND`, no parchear la animación.
-5. **Si algo falla**: mirar **`kult.log`** (junto al `.exe`) y/o ejecutar
-   **`kult-headless.exe`** desde una consola (imprime el diagnóstico).
+5. **Si algo falla**: mirar **`kult.log`** junto al `.exe`, con timestamp.
    Códigos: `0` ok, `2` PRG/datos ausentes, `3` fallo de arranque, `4` fallo de
-   ventana. En GUI, los errores fatales salen también en un **MessageBox**.
+   ventana, `5` carpeta del juego no escribible. Sin diálogos normales; solo si
+   no se pudo escribir el log aparece uno de emergencia.
 6. Requisito: **Windows 10 o superior** (UCRT).
 
 ## Regla

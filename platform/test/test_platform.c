@@ -53,8 +53,8 @@ static void make_fixture(void) {
     char path[256];
     /* nos aseguramos de que existe el directorio y creamos un fichero conocido */
     snprintf(path, sizeof path, "%s", DIR);
-    system("mkdir -p " DIR);
-    snprintf(path, sizeof path, "%s/HELLO.BIN", DIR);
+    system("mkdir -p " DIR "/data " DIR "/saves");
+    snprintf(path, sizeof path, "%s/data/HELLO.BIN", DIR);
     FILE *f = fopen(path, "wb");
     const uint8_t data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
     if (f) { fwrite(data, 1, sizeof data, f); fclose(f); }
@@ -82,18 +82,33 @@ static void test_fs(void) {
 
     put_name(0x2000, "A:NOEXISTE.BIN");
     CHECK(os_fopen(g_img, 0x2000) < 0, "Fopen de un fichero ausente debe fallar");
+
+    /* Las escrituras del juego van a saves/, no a data/. */
+    put_name(0x2000, "A:OUT.BIN");
+    int32_t hw = os_fcreate(g_img, 0x2000);
+    CHECK(hw >= 6, "Fcreate debe crear el fichero en saves/");
+    if (hw >= 6) {
+        const uint8_t out[3] = {9, 8, 7};
+        memcpy(g_img + 0x3000, out, sizeof out);
+        CHECK(os_fwrite(g_img, (uint16_t)hw, sizeof out, 0x3000) == 3,
+              "Fwrite debe escribir 3 bytes");
+        CHECK(os_fclose(g_img, (uint16_t)hw) == 0, "Fclose del fichero de salida");
+    }
+    FILE *sf = fopen(DIR "/saves/OUT.BIN", "rb");
+    CHECK(sf != NULL, "la escritura debe quedar en saves/, no en data/");
+    if (sf) fclose(sf);
+    remove(DIR "/saves/OUT.BIN");
 }
 
-/* Log de diagnóstico (M7): KULT_LOG fija la ruta y el mensaje llega al fichero. */
+/* Log de diagnóstico: siempre en <base>/kult.log. */
 static void test_log(void) {
     const char *path = DIR "/kult.log";
-    setenv("KULT_LOG", path, 1);
     platform_log_init();
     platform_log("prueba de log %d", 42);
     platform_log_close();
 
     FILE *f = fopen(path, "rb");
-    CHECK(f != NULL, "el log debe crearse en la ruta de KULT_LOG");
+    CHECK(f != NULL, "el log debe crearse en <base>/kult.log");
     if (f) {
         char buf[1024] = {0};
         size_t n = fread(buf, 1, sizeof buf - 1, f);
@@ -104,7 +119,6 @@ static void test_log(void) {
         CHECK(strstr(buf, "Kult ") != NULL, "el log debe incluir la cabecera");
     }
     remove(path);
-    unsetenv("KULT_LOG");
 }
 
 /* Presentación por VBL: se presenta tanto en el arranque como dentro del bucle
@@ -708,11 +722,12 @@ static void test_replay_input(void) {
 
 int main(void) {
     make_fixture();
-    setenv("KULT_DATA_DIR", DIR, 1);
+    platform_set_base_dir_for_tests(DIR);
     setenv("KULT_KEY", "E", 1);
 
     platform_set_image(g_img);
     platform_init();
+    CHECK(platform_storage_ready(), "data/ y saves/ deben ser escribibles");
 
     test_fs();
     test_log();

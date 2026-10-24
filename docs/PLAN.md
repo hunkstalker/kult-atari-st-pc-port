@@ -84,9 +84,9 @@ para que el usuario valide.
 **Nota:** el **primer build** (validación) empaqueta con carpeta `data/` interina
 (sin ingesta); el empaquetado completo (TGZ/CPack/ingesta) es M7-c.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
-icono + log/diagnóstico `kult.log`) y **empaquetado interino hecho** (T-071: ZIP
-Windows con `kult.exe`+`kult-headless.exe`+`SDL3.dll`+`data/`+`LEEME.txt`+
-`DIAGNOSTICO.txt`; TGZ Linux). El `.exe` quedó validado en el checklist de **T-061** (cerrada el 2026-10-23).
+icono + `kult.log`) y **paquete portable** (solo `kult.exe`, `SDL3.dll`,
+`data/`, `saves/` y `LEEME.txt`; sin headless ni `DIAGNOSTICO.txt`). El `.exe`
+quedó validado en el checklist de **T-061** (cerrada el 2026-10-23).
 **Siguiente: T-072 — ingesta `.STX`** (el usuario solo aporta imágenes de
 disquete). Detalle:
 `notes/0012`, `notes/0013`.

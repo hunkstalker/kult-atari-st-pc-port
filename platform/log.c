@@ -1,13 +1,9 @@
-/* platform/log.c — log de diagnóstico del port (M7).
+/* platform/log.c — log de diagnóstico del port.
  *
- * El ejecutable de Windows es de subsistema GUI (sin consola): cualquier error
- * (no encontrar KULT.PRG, fallo de SDL, fallo del arranque) sería invisible. Por
- * eso todo se escribe en `kult.log` (junto al .exe) y también a stderr (build
- * headless). `platform_fatal` además muestra un MessageBox en la build GUI.
- *
- * Variables:
- *   KULT_LOG=<ruta>  ruta alternativa del log
- *   KULT_LOG=0       apaga el fichero (queda solo stderr)
+ * Release portable: `kult.log` vive siempre en la carpeta del ejecutable. No
+ * hay KULT_LOG, appdata ni /tmp. Política B: los errores se registran con
+ * timestamp; solo se muestra un diálogo de emergencia si el log no se pudo
+ * abrir/escribir.
  */
 #include <stdarg.h>
 #include <stdio.h>
@@ -17,10 +13,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#include <direct.h>
-#else
-#include <sys/stat.h>
-#include <sys/types.h>
 #endif
 
 #include "platform.h"
@@ -49,40 +41,11 @@ static FILE *open_log_at(const char *path) {
 void platform_log_init(void) {
     if (g_log) return;
 
-    const char *env = getenv("KULT_LOG");
-    if (env && env[0] == '0' && env[1] == '\0') return;   /* KULT_LOG=0 lo apaga */
-
-    if (env && *env && !(env[0] == '1' && env[1] == '\0')) {
-        g_log = open_log_at(env);                         /* ruta explícita */
-    } else {
-        char dir[1024];
-        if (platform_exe_dir(dir, sizeof dir) == 0) {
-            char path[1200];
-            snprintf(path, sizeof path, "%s/kult.log", dir);
-            g_log = open_log_at(path);
-        }
-        if (!g_log) {
-#ifdef _WIN32
-            const char *la = getenv("LOCALAPPDATA");
-            if (la && *la) {
-                char d[1024], path[1200];
-                snprintf(d, sizeof d, "%s/Kult", la);
-                _mkdir(d);
-                snprintf(path, sizeof path, "%s/kult.log", d);
-                g_log = open_log_at(path);
-            }
-            if (!g_log) {
-                const char *tmp = getenv("TEMP");
-                if (tmp && *tmp) {
-                    char path[1200];
-                    snprintf(path, sizeof path, "%s/kult.log", tmp);
-                    g_log = open_log_at(path);
-                }
-            }
-#else
-            g_log = open_log_at("/tmp/kult.log");
-#endif
-        }
+    char base[1024];
+    if (platform_base_dir(base, sizeof base) == 0) {
+        char path[1200];
+        snprintf(path, sizeof path, "%s/kult.log", base);
+        g_log = open_log_at(path);
     }
 
     char ts[32];
@@ -91,7 +54,7 @@ void platform_log_init(void) {
         fprintf(g_log, "[%s] Kult %s — log en %s\n", ts, KULT_VERSION, g_log_path);
         fflush(g_log);
     } else {
-        fprintf(stderr, "[kult] Kult %s — sin fichero de log (solo stderr)\n",
+        fprintf(stderr, "[kult] Kult %s — no se pudo escribir kult.log\n",
                 KULT_VERSION);
     }
 }
@@ -121,10 +84,9 @@ void platform_fatal(const char *fmt, ...) {
 
     platform_log("ERROR: %s", msg);
 #ifdef _WIN32
-    /* Sin consola (doble clic / subsistema GUI) el error sería invisible: se
-     * muestra un diálogo. Si hay consola (kult-headless.exe desde cmd) no se
-     * interpone: el mensaje ya está en stderr y en el log. */
-    if (GetConsoleWindow() == NULL)
+    /* Política B: sin log no hay forma de diagnosticar; este es el único
+     * diálogo permitido. Si el log existe, el error solo va a kult.log. */
+    if (!g_log && GetConsoleWindow() == NULL)
         MessageBoxA(NULL, msg, "Kult — error", MB_OK | MB_ICONERROR);
 #endif
 }

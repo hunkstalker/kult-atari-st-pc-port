@@ -154,16 +154,16 @@ Recogidas como ADR en `docs/adr/`:
   (`kult.exe` GUI con icono + `kult-headless.exe`), `cmake/mingw-w64.cmake`,
   SDL3 **3.4.10** MinGW en `third_party/` (gitignored) e icono (`.rc` + RGBA +
   `SDL_SetWindowIcon`). Detalle: **`notes/0012`**.
-- **Empaquetado interino hecho (T-071)**: CPack → ZIP Windows
-  (`build-win/kult-0.1.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`LEEME.txt`)
-  y TGZ Linux; sin assets. `make test` **511** y `make test-port` siguen verdes.
+- **Paquete portable**: CPack → ZIP Windows
+  (`build-win/kult-0.1.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`saves/`+
+  `LEEME.txt`) y TGZ Linux; sin assets, sin headless y sin `DIAGNOSTICO.txt`.
 - **Datos + diagnóstico (sesión 13)**: el `.exe` "no hacía nada" porque en
   `data/` solo había imágenes `.STX` (el paquete interino necesita ficheros
   extraídos). Los `.STX` del usuario (idénticos a los discos del proyecto) se
   extrajeron y se dejaron los 28 ficheros en `data/`. Se añadió **`kult.log`**
   junto al `.exe` (+stderr, `MessageBox` sin consola), **fallo de ventana =
   fatal** (antes bucle invisible) y **preflight de los 26 ficheros** del juego
-  con lista clara. ZIP con `kult-headless.exe` + `DIAGNOSTICO.txt`. Detalle:
+  con lista clara. Detalle:
   **`notes/0013`**.
 - **Colores del juego (sesión 14)**: corregidos cambiando la **base de pantalla
   del HAL** (`OS_SCREEN_BASE = 0x98000` en `platform/include/os.h`). Con el valor

@@ -12,6 +12,10 @@
 /* Directorio del ejecutable (sin barra final); 0 si no se puede averiguar. Lo
  * usan fs.c (data/ junto al exe) y log.c (kult.log). */
 int platform_exe_dir(char *buf, size_t n);
+int platform_base_dir(char *buf, size_t n);
+
+/* Solo para platform/test: fija la raíz portable sin usar variables de entorno. */
+void platform_set_base_dir_for_tests(const char *dir);
 
 void platform_fs_init(void);
 void platform_video_init(void);

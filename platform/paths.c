@@ -20,6 +20,21 @@
 
 #include "platform_internal.h"
 
+static char g_test_base[1024];
+
+void platform_set_base_dir_for_tests(const char *dir) {
+    if (!dir) { g_test_base[0] = '\0'; return; }
+    snprintf(g_test_base, sizeof g_test_base, "%s", dir);
+}
+
+int platform_base_dir(char *buf, size_t n) {
+    if (g_test_base[0]) {
+        snprintf(buf, n, "%s", g_test_base);
+        return 0;
+    }
+    return platform_exe_dir(buf, n);
+}
+
 int platform_exe_dir(char *buf, size_t n) {
 #ifdef _WIN32
     DWORD len = GetModuleFileNameA(NULL, buf, (DWORD)n);

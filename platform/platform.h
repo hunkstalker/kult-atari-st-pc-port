@@ -10,20 +10,22 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* Inicia la HAL: directorio de datos (KULT_DATA_DIR o `data/` junto al
- * ejecutable), entrada (KULT_KEYS o auto-tecla 'E') y estado de vídeo. `img` no
- * se toca aquí. */
+/* Inicia la HAL. Release portable: data/ y saves/ viven junto al ejecutable,
+ * sin variables de entorno ni fallback fuera de esa carpeta. */
 void platform_init(void);
 
-/* Busca un fichero de datos (p. ej. "KULT.PRG") en los directorios de datos y
- * copia su ruta a `out`. Devuelve 0 si existe. (M7/T-070) */
+/* Busca un fichero de datos (p. ej. "KULT.PRG") solo en `<exe>/data/` y copia
+ * su ruta a `out`. Devuelve 0 si existe. */
 int platform_data_resolve(const char *name, char *out, size_t out_size);
 
-/* ---- diagnóstico (M7) ---------------------------------------------------- */
-/* Log a fichero y a stderr. Por defecto escribe `kult.log` junto al ejecutable
- * (fallback a %LOCALAPPDATA% en Windows o /tmp en POSIX). KULT_LOG=<ruta> lo
- * redirige y KULT_LOG=0 lo apaga. `platform_fatal` además muestra un MessageBox
- * en la build GUI de Windows (KULT_GUI). Iniciar antes de resolver los datos. */
+/* Estado de la carpeta portable tras platform_init(). */
+int platform_storage_ready(void);
+const char *platform_storage_path(void);
+
+/* ---- diagnóstico --------------------------------------------------------- */
+/* Log a fichero y stderr en `<exe>/kult.log`, con timestamp. Política B: los
+ * errores no abren diálogos; solo si el log no se pudo escribir se muestra un
+ * MessageBox de emergencia en la build GUI de Windows. */
 void platform_log_init(void);
 void platform_log(const char *fmt, ...);
 void platform_fatal(const char *fmt, ...);

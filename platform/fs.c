@@ -1,17 +1,22 @@
 /* platform/fs.c — servicio de ficheros del port (GEMDOS sobre el SO real).
  *
- * Mapea los nombres Atari del juego (con o sin prefijo de unidad `A:`) a ficheros
- * de un directorio de datos del PC. El directorio se toma de `KULT_DATA_DIR`
- * (admite varios separados por `;` en Windows y `:` en POSIX); si no, `data/`
- * junto al ejecutable (M7/T-070) y, en su defecto, `data/` del directorio actual.
- *
- * Es el equivalente PC de los `os_fopen/os_fread/...` del kit, pero sobre el
- * sistema de ficheros real: el core no cambia, sólo cambia quién responde.
+ * Release portable: la base es siempre la carpeta del ejecutable (o la raíz de
+ * test). Los assets del juego se leen de `<base>/data/`; las escrituras del
+ * juego (CLEAR.BIN, SCENA.BIN...) van a `<base>/saves/`. No hay variables de
+ * entorno ni fallback a appdata/tmp.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+
+#ifdef _WIN32
+#include <direct.h>
+#include <sys/stat.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
 
 #include "os.h"
 #include "platform.h"
@@ -20,47 +25,59 @@
 #define FS_MAX_HANDLES 32
 #define FS_FIRST_HANDLE 6          /* GEMDOS reserva 0..5 */
 
-#ifdef _WIN32
-#define DATA_SEP ';'
-#else
-#define DATA_SEP ':'
-#endif
-
 static FILE *g_files[FS_MAX_HANDLES];
-static char *g_dirstr;            /* copia de KULT_DATA_DIR (o del directorio por defecto) */
-static const char *g_dirs[16];
-static int g_ndirs;
+static char g_base_dir[1024];
+static char g_data_dir[1200];
+static char g_saves_dir[1200];
+static int  g_storage_ok;
+
+static int ensure_dir(const char *path) {
+#ifdef _WIN32
+    if (_mkdir(path) == 0) return 0;
+    struct _stat st;
+    if (_stat(path, &st) == 0) return 0;
+#else
+    if (mkdir(path, 0755) == 0) return 0;
+    struct stat st;
+    if (stat(path, &st) == 0) return 0;
+#endif
+    return -1;
+}
+
+static int dir_writable(const char *path) {
+    char probe[1200];
+    snprintf(probe, sizeof probe, "%s/.write-test", path);
+    FILE *f = fopen(probe, "wb");
+    if (!f) return 0;
+    fclose(f);
+    remove(probe);
+    return 1;
+}
 
 void platform_fs_init(void) {
-    const char *env = getenv("KULT_DATA_DIR");
-    char def[1024];
-    if (!env || !*env) {
-        /* Por defecto, `data/` junto al ejecutable (Windows/Linux); si la ruta del
-         * ejecutable no se puede resolver, `data/` relativo al directorio actual. */
-        if (platform_exe_dir(def, sizeof def) == 0) {
-            size_t l = strlen(def);
-            snprintf(def + l, sizeof def - l, "/data");
-        } else {
-            snprintf(def, sizeof def, "data");
-        }
-        env = def;
+    if (platform_base_dir(g_base_dir, sizeof g_base_dir) != 0) {
+        g_storage_ok = 0;
+        platform_log("ERROR: no se pudo resolver la carpeta del ejecutable");
+        return;
     }
-    g_dirstr = malloc(strlen(env) + 1);
-    if (g_dirstr) strcpy(g_dirstr, env);
-    g_ndirs = 0;
-    if (!g_dirstr) return;
-    char *p = g_dirstr;
-    while (p && *p && g_ndirs < 16) {
-        g_dirs[g_ndirs++] = p;
-        char *sep = strchr(p, DATA_SEP);
-        if (!sep) break;
-        *sep = '\0';
-        p = sep + 1;
-    }
+    snprintf(g_data_dir, sizeof g_data_dir, "%s/data", g_base_dir);
+    snprintf(g_saves_dir, sizeof g_saves_dir, "%s/saves", g_base_dir);
 
-    for (int i = 0; i < g_ndirs; i++)
-        platform_log("datos[%d]: %s", i, g_dirs[i]);
+    int ok_data = ensure_dir(g_data_dir) == 0;
+    int ok_saves = ensure_dir(g_saves_dir) == 0;
+    int wr_data = ok_data && dir_writable(g_data_dir);
+    int wr_saves = ok_saves && dir_writable(g_saves_dir);
+    g_storage_ok = wr_data && wr_saves;
+
+    platform_log("base: %s", g_base_dir);
+    platform_log("datos: %s", g_data_dir);
+    platform_log("saves: %s", g_saves_dir);
+    if (!g_storage_ok)
+        platform_log("ERROR: la carpeta del juego no es escribible: %s", g_base_dir);
 }
+
+int platform_storage_ready(void) { return g_storage_ok; }
+const char *platform_storage_path(void) { return g_base_dir; }
 
 /* Basura de unidad/ruta: de `A:CLEAR.BIN` deja `CLEAR.BIN`. */
 static const char *base_name(const char *name) {
@@ -70,33 +87,47 @@ static const char *base_name(const char *name) {
     return b;
 }
 
-/* Busca `name` en el/los directorio(s) de datos y lo abre como `mode`. */
-static FILE *open_data(const char *name, const char *mode) {
-    const char *base = base_name(name);
-    char path[1024];
-    for (int i = 0; i < g_ndirs; i++) {
-        snprintf(path, sizeof path, "%s/%s", g_dirs[i], base);
-        FILE *f = fopen(path, mode);
-        if (f) return f;
-    }
-    return NULL;
+static int path_in(const char *dir, const char *name, char *out, size_t out_size) {
+    if (!dir[0]) return -1;
+    snprintf(out, out_size, "%s/%s", dir, base_name(name));
+    FILE *f = fopen(out, "rb");
+    if (!f) return -1;
+    fclose(f);
+    return 0;
 }
 
-/* Resuelve `name` en los directorios de datos y copia su ruta a `out`; 0 si
- * existe. Lo usa `app/` (p. ej. para localizar KULT.PRG en `data/`). */
+/* Lectura: primero saves/, después data/. Así el juego lee sus escrituras. */
+static int resolve_read(const char *name, char *out, size_t out_size) {
+    if (path_in(g_saves_dir, name, out, out_size) == 0) return 0;
+    return path_in(g_data_dir, name, out, out_size);
+}
+
+static FILE *open_read(const char *name, char *path, size_t path_size) {
+    if (resolve_read(name, path, path_size) != 0) return NULL;
+    return fopen(path, "rb");
+}
+
+static FILE *open_write(const char *name, char *path, size_t path_size) {
+    if (!g_storage_ok || !g_saves_dir[0]) return NULL;
+    const char *base = base_name(name);
+    size_t n = strlen(g_saves_dir);
+    size_t m = strlen(base);
+    if (n + 1 + m + 1 > path_size) return NULL;
+    memcpy(path, g_saves_dir, n);
+    path[n] = '/';
+    memcpy(path + n + 1, base, m + 1);
+    return fopen(path, "wb");
+}
+
+/* Resuelve un asset del juego solo en data/. Lo usa app/ para KULT.PRG. */
 int platform_data_resolve(const char *name, char *out, size_t out_size) {
-    const char *base = base_name(name);
-    for (int i = 0; i < g_ndirs; i++) {
-        snprintf(out, out_size, "%s/%s", g_dirs[i], base);
-        FILE *f = fopen(out, "rb");
-        if (f) { fclose(f); return 0; }
-    }
-    return -1;
+    return path_in(g_data_dir, name, out, out_size);
 }
 
-/* Tamaño de un fichero de datos, o -1 si no existe. */
+/* Tamaño de un fichero visible para el juego (saves/ o data/). */
 static long data_size(const char *name) {
-    FILE *f = open_data(name, "rb");
+    char path[1200];
+    FILE *f = open_read(name, path, sizeof path);
     if (!f) return -1;
     if (fseek(f, 0, SEEK_END) != 0) { fclose(f); return -1; }
     long n = ftell(f);
@@ -118,7 +149,8 @@ static FILE *handle_file(uint16_t handle) {
 }
 
 int32_t pc_os_fopen(uint8_t *mem, uint32_t name_ptr) {
-    FILE *f = open_data((const char *)(mem + name_ptr), "rb");
+    char path[1200];
+    FILE *f = open_read((const char *)(mem + name_ptr), path, sizeof path);
     if (!f) return -1;
     int h = alloc_handle(f);
     if (h < 0) { fclose(f); return -1; }
@@ -126,7 +158,8 @@ int32_t pc_os_fopen(uint8_t *mem, uint32_t name_ptr) {
 }
 
 int32_t pc_os_fcreate(uint8_t *mem, uint32_t name_ptr) {
-    FILE *f = open_data((const char *)(mem + name_ptr), "wb");
+    char path[1200];
+    FILE *f = open_write((const char *)(mem + name_ptr), path, sizeof path);
     if (!f) return -1;
     int h = alloc_handle(f);
     if (h < 0) { fclose(f); return -1; }
@@ -161,8 +194,9 @@ int32_t pc_os_fclose(uint8_t *mem, uint16_t handle) {
 
 /* Fsfirst: existe el fichero -> vuelca nombre (13 B) y tamaño en el DTA y da 0. */
 int32_t pc_os_fsfirst(uint8_t *mem, uint32_t name_ptr) {
-    const char *base = base_name((const char *)(mem + name_ptr));
-    long size = data_size((const char *)(mem + name_ptr));
+    const char *name = (const char *)(mem + name_ptr);
+    const char *base = base_name(name);
+    long size = data_size(name);
     if (size < 0) return -1;
     memset(mem + g_os_dta + 0x1e, 0, 14);
     size_t n = strlen(base);

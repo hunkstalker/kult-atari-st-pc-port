@@ -92,12 +92,12 @@ if(WIN32)
   set_target_properties(kult PROPERTIES OUTPUT_NAME kult-headless)
 endif()
 
-# ---- empaquetado interino (T-071) -------------------------------------------
-# El paquete NO lleva assets del juego: el usuario aporta su copia en data/.
-install(TARGETS kult kult-sdl RUNTIME DESTINATION .)
+# ---- empaquetado de release -------------------------------------------------
+# El paquete NO lleva assets del juego: el usuario aporta sus STX en data/.
+# kult-headless sigue siendo un target de desarrollo, pero no se empaqueta.
+install(TARGETS kult-sdl RUNTIME DESTINATION .)
 install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME.txt
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/DIAGNOSTICO.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/MEDIR_FPS.txt
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-anillo.bat
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-normal.bat
@@ -121,6 +121,7 @@ if(WIN32)
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-marcas.bat
     DESTINATION .)
   install(DIRECTORY DESTINATION data)
+  install(DIRECTORY DESTINATION saves)
 endif()
 
 set(CPACK_PACKAGE_NAME "kult")

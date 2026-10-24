@@ -55,18 +55,17 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   el reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba
   en el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — build/empaquetado**: **build hecho** (T-070): CMake nativo y cross
-  MinGW; el ZIP/TGZ interino (T-071) lleva `kult.exe`, `kult-headless.exe`,
-  `SDL3.dll` y `data/` vacía (**hay que copiar ahí los ficheros del juego**). El
-  `.exe` no se ha ejecutado en el entorno de desarrollo (sin wine): el usuario
-  validó el checklist de **T-061** (cerrada y validada en Windows, 2026-10-23).
-  Requiere **Windows 10+** (UCRT).
+  MinGW; el paquete de release lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/` y
+  `LEEME.txt`; **no** lleva headless ni `DIAGNOSTICO.txt`. Requiere **Windows
+  10+** (UCRT). El `.exe` quedó validado en el checklist de **T-061**
+  (2026-10-23).
 - **Ingesta de discos pendiente (T-072)**: este paquete **no lee** `.STX/.MSA/.ST`;
   `data/` debe contener los ficheros **extraídos**. Es la **siguiente tarea**
   (T-072; T-061 ya cerrada) y no se le debe pedir al usuario un `.PRG` como
   solución final. El contenedor `kult.data` puede ir después con N3.
-- **Windows: sin consola.** `kult.exe` es subsistema GUI (sin ventana de
-  consola); los errores van a **`kult.log`** (junto al exe) y a un **MessageBox**.
-  `kult-headless.exe` (incluido en el ZIP) muestra el diagnóstico por consola.
+- **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a
+  **`kult.log`** junto al exe, con timestamp. Solo si no se puede escribir el
+  log aparece un diálogo de emergencia.
 - **Amiga**: **A1** (investigación/censo/decomp) es **prerrequisito duro de N3**;
   **A2** (implementación) va después de N3.
 - **N3 — motor nativo + assets nativos**: hito futuro (ADR + rama) para que el
@@ -94,7 +93,7 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
 1. `make test` (**518**) y `make test-port` en verde.
-2. `make port-sdl` y `KULT_WINDOW=1 KULT_DATA_DIR=<datos> ./build/kult-sdl`:
+2. `make port-sdl` y `KULT_WINDOW=1 ./build/kult-sdl`:
    comprobar título (clic), menú D/E/F, intro/partida, efectos y música.
 3. `make port` headless para arranque/estabilidad (`frames`, `fb_nonzero`,
    `audio: rms/peak/...`).

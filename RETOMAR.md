@@ -854,24 +854,24 @@ T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 **`notes/0031`**.
 
 ## Comandos
-- Core/diferencial: `make test` (516), `make test PYTEST_ARGS=-n0`,
-  `make regscan` (`ids_reg=0`), `make core`.
-- Port: `make port` (→ `build/kult`, headless), `make port-sdl` (→ `build/kult-sdl`,
-  ventana SDL3), `make test-port` (HAL, sin oráculo).
-- Ejecutar headless: `KULT_DATA_DIR=/tmp/kult_data ./build/kult`
-  (junta `disk_a`+`disk_b` del usuario en `/tmp/kult_data`).
-- Con ventana: `KULT_DATA_DIR=/tmp/kult_data ./build/kult-sdl` (la ventana se
-  abre por defecto; `KULT_SCALE=3`, ESC para salir; `KULT_WINDOW=0` fuerza
-  headless). Sin display: `SDL_VIDEODRIVER=dummy`.
+- Core/diferencial: `make test` (518 core + HAL + port), `make test-core`,
+  `make test PYTEST_ARGS=-n0`, `make regscan` (`ids_reg=0`), `make core`.
+- Port: `make port` (→ `build/kult`, headless de desarrollo), `make port-sdl`
+  (→ `build/kult-sdl`, ventana SDL3), `make test-port` (HAL, sin oráculo).
+- Ejecutar headless: `./build/kult` (usa `build/data` y escribe en
+  `build/saves`).
+- Con ventana: `./build/kult-sdl` (la ventana se abre por defecto;
+  `KULT_SCALE=3`, ESC para salir; `KULT_WINDOW=0` fuerza headless). Sin display:
+  `SDL_VIDEODRIVER=dummy`.
 - **Ritmo (T-073)**: `KULT_CPU=0` desactiva el modelo; `KULT_CPU_HZ` (def.
   8 MHz), `KULT_ST_CONTEND` (%) y `KULT_ANIM_GATE`/`KULT_REVEAL_GATE` calibran.
   `KULT_FPSLOG=1` imprime el FPS del bucle cada ~3 s (comparar con Hatari en la
   misma escena). Regenerar la tabla:
   `make cmake-native && python3 tools/gen_cpuwork_costs.py`.
 - **CMake (M7)**: `make cmake-native` (→ `build-cmake/kult`, `kult-sdl`),
-  `make cmake-win` (→ `build-win/kult.exe` GUI + `kult-headless.exe`),
-  `make package-win` (→ `build-win/kult-0.1.0-win64.zip`) y
-  `make package-native` (→ TGZ). El cross necesita SDL3 MinGW en `third_party/`
+  `make cmake-win` (→ `build-win/kult.exe` GUI + `kult-headless.exe` de
+  desarrollo), `make package-win` (ZIP solo con `kult.exe`) y
+  `make package-native` (TGZ). El cross necesita SDL3 MinGW en `third_party/`
   (gitignored; URLs en `docs/BUILD.md`).
 
 ## M1–M7: qué hay y cómo se prueba
@@ -886,21 +886,21 @@ T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 - `boot/prg.c` (loader GEMDOS: cabecera + relocación DRI, espejo de `loader.py`) +
   `boot/boot.c` (`_start` **fiel**: corte por `frames` con `hook_loop_top` +
   `longjmp`), `boot/language.c` (menú de idioma fiel) y `boot/vbl.c` (tick 0x160c2).
-- `app/main.c`: `KULT_PRG` (si no, se busca `KULT.PRG` en el dir de datos),
-  `KULT_DATA_DIR` (varios con `:` en POSIX y `;` en Windows; por defecto `data/`
-  **junto al exe**), `KULT_FRAMES` (0 = sin límite), `KULT_DUMP` (en ventana ya
-  no se vuelca PPM por defecto), `KULT_PLANAR`, `KULT_KEYS`/`KULT_KEY`,
-  `KULT_SKIP_DRAP`, `KULT_DEBUG`; en ventana: `KULT_SCALE`,
-  `KULT_REALTIME=0`, `KULT_AUTOINPUT=1`, `KULT_AUDIO=0`; `KULT_WINDOW=0` fuerza
-  headless (en la build SDL la ventana es el modo por defecto).
+- `app/main.c`: `KULT_PRG` (si no, se busca `KULT.PRG` en `data/`),
+  `KULT_FRAMES` (0 = sin límite), `KULT_DUMP` (en ventana ya no se vuelca PPM
+  por defecto), `KULT_PLANAR`, `KULT_KEYS`/`KULT_KEY`, `KULT_SKIP_DRAP`,
+  `KULT_DEBUG`; en ventana: `KULT_SCALE`, `KULT_REALTIME=0`,
+  `KULT_AUTOINPUT=1`, `KULT_AUDIO=0`; `KULT_WINDOW=0` fuerza headless (en la
+  build SDL la ventana es el modo por defecto). `data/`, `saves/` y `kult.log`
+  viven junto al ejecutable.
 - **M7 (build/empaquetado)**: `CMakeLists.txt` + `cmake/mingw-w64.cmake`,
   icono `assets/` (`.rc`, RGBA con `SDL_SetWindowIcon`) y CPack (ZIP/TGZ).
   Detalle: `notes/0012`, `docs/BUILD.md`.
 - **Diagnóstico (M7)**: `platform/log.c` escribe **`kult.log` junto al exe** (y
-  stderr); `platform_fatal` muestra MessageBox si no hay consola. En el ZIP van
-  `kult-headless.exe` y `DIAGNOSTICO.txt`. `KULT_LOG=<ruta>` / `KULT_LOG=0`.
-  Fallo de ventana y datos incompletos dan error visible, no crash/silencio.
-  Detalle: `notes/0013`.
+  stderr) con timestamp. Política B: sin MessageBox normal; solo diálogo de
+  emergencia si no se puede escribir el log. El ZIP no lleva headless ni
+  `DIAGNOSTICO.txt`. Sin `KULT_LOG`. Fallo de ventana y datos incompletos van al
+  log. Detalle: `notes/0013`.
 - Datos de prueba: **hay que juntar** `disk_a`+`disk_b` (el juego necesita
   además `FOND.PI1`, `PUZZL.BIN`, `ECHE*.BIN`… que están en `disk_b`). Los
   recursos "empotrados" (CARAC/TEMPL/ICONE/ARPLA…) van **dentro del PRG**.

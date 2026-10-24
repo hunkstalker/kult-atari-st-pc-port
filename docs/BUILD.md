@@ -21,9 +21,9 @@
 - **CMake (M7/T-070)**: build alternativo del ejecutable para **Linux y
   Windows** (cross MinGW). Ver abajo; el **Makefile se mantiene** para
   core/diferencial y para `make port`/`port-sdl`/`test-port`.
-- **Empaquetado interino (T-071)**: ZIP Windows y TGZ Linux con **CPack**, sin
-  assets (el usuario aporta `data/`). El empaquetado completo con **ingesta
-  (`kult.data`)** es M7-c (va con N3).
+- **Empaquetado de release**: ZIP Windows y TGZ Linux con **CPack**, sin assets
+  (el usuario aporta sus STX). `kult-headless` y `DIAGNOSTICO.txt` no forman
+  parte del paquete. La ingesta de STX/`kult.data` es T-072.
 
 ## Objetivo
 - **Core** compilable aparte para las pruebas diferenciales (sin SDL).
@@ -64,24 +64,23 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
      -DCMAKE_PREFIX_PATH=$PWD/third_party/SDL3-3.4.10/x86_64-w64-mingw32
    cmake --build build-win -j
    ```
-   Salidas: **`build-win/kult.exe`** (ventana/audio SDL3, subsistema GUI con
-   icono) y `build-win/kult-headless.exe` (consola, diagnóstico).
+   Salidas de build: **`build-win/kult.exe`** (ventana/audio SDL3, GUI con
+   icono) y `build-win/kult-headless.exe` (solo desarrollo). El paquete solo
+   instala `kult.exe`.
 3. Empaquetar (o `make package-win`):
    ```sh
    (cd build-win && cpack -G ZIP)      # -> kult-0.1.0-win64.zip
    ```
-   Contenido: `kult.exe` + `kult-headless.exe` + `SDL3.dll` + `data/` (vacía) +
-   `LEEME.txt` + `DIAGNOSTICO.txt`. **Sin assets.** Requiere Windows 10+ (UCRT:
-   `api-ms-win-crt-*`).
+   Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt`.
+   **Sin assets, sin headless y sin DIAGNOSTICO.txt.** Requiere Windows 10+
+   (UCRT: `api-ms-win-crt-*`).
 
 ## Diagnóstico en ejecución (M7)
-- **`kult.log`** se escribe **junto al `.exe`** (fallback `%LOCALAPPDATA%\Kult`
-  en Windows y `/tmp` en POSIX) y también va a stderr. Contiene: versión,
-  directorios de datos, ruta de `KULT.PRG`, resultado de SDL/ventana/audio,
-  frames, volcados y **exit code**.
-- `KULT_LOG=<ruta>` redirige el log; `KULT_LOG=0` lo apaga.
-- `platform_fatal` muestra un **MessageBox** si el proceso no tiene consola
-  (build GUI); en `kult-headless.exe` (consola) no interpone cuadro de diálogo de Windows.
+- **`kult.log`** se escribe **junto al `.exe`** y también va a stderr. Contiene:
+  versión, directorios de datos, ruta de `KULT.PRG`, resultado de
+  SDL/ventana/audio, frames, volcados y **exit code**. Lleva timestamp.
+- Política B: los errores no abren ventanas; solo si no se puede escribir el log
+  se muestra un diálogo de emergencia en la build GUI.
 - Si en modo ventana falla SDL/ventana se sale con **error visible** (ya no se
   continúa en un bucle headless invisible).
 - **Preflight**: antes de arrancar se comprueban los 26 ficheros del juego
@@ -177,14 +176,12 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   `KULT_ST_CONTEND` (o `KULT_CPU_HZ`) hasta igualar los FPS.
 
 ## Datos y rutas
-- El ejecutable busca los datos del usuario en **`data/` junto al ejecutable**
-  (o en `KULT_DATA_DIR`; en Windows varios directorios separados por `;`, en
-  POSIX por `:`). **No** se versionan assets.
-- El **`KULT.PRG`** se busca también en el directorio de datos (`data/KULT.PRG`)
-  si no se define `KULT_PRG`.
-- **Estado interino (T-071)**: `data/` debe contener los ficheros **extraídos**
-  de `disk_a`+`disk_b`. Las imágenes `.STX/.MSA/.ST` **aún no se leen**; la
-  ingesta automática es **T-072** (siguiente; T-061 cerrada el 2026-10-23).
+- Release portable: `data/`, `saves/` y `kult.log` viven junto al ejecutable.
+  No hay `KULT_DATA_DIR`, appdata ni `/tmp`. **No** se versionan assets.
+- El **`KULT.PRG`** se busca en `data/KULT.PRG` si no se define `KULT_PRG`.
+- **Estado interino**: `data/` debe contener los ficheros **extraídos** de
+  `disk_a`+`disk_b`. Las imágenes `.STX/.MSA/.ST` aún no se leen; la ingesta
+  automática es **T-072**.
 
 ## Comandos del core (heredados, ya verdes)
 ```
@@ -196,7 +193,6 @@ make mapa                      # regenera lib/kult-core/docs/mapa/
 ```
 
 ## Datos
-El ejecutable busca los datos del usuario en un directorio `data/` junto al
-ejecutable (o en una ruta configurable con `KULT_DATA_DIR`; en Windows el
-separador de varios directorios será `;`). **No** se versionan assets.
+El ejecutable usa `data/` y `saves/` junto al ejecutable. **No** se versionan
+assets.
 

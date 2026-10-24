@@ -51,15 +51,16 @@ git subtree pull --prefix=lib/kult-core \
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
 
 ## Datos y diagnóstico
-- El usuario aporta su copia en `data/` (junto al ejecutable). En el paquete
-  interino (T-071) deben ser los ficheros **extraídos** de los disquetes
-  (`KULT.PRG`, `*.PI1`, `*.BIN`); las imágenes `.STX/.MSA/.ST` aún no se leen.
-  La **ingesta automática** es **T-072** (siguiente; T-061 ya cerrada).
-- **`kult.log`** se escribe junto al ejecutable (y a stderr) con directorios de
-  datos, ruta de `KULT.PRG`, resultado de SDL/ventana/audio y exit code. En GUI,
-  los errores fatales salen también en un `MessageBox`. `kult-headless.exe`
-  (en el ZIP) da el mismo diagnóstico por consola. `KULT_LOG=<ruta>` lo redirige
-  y `KULT_LOG=0` lo apaga.
+- Release **portable**: todo vive junto al `.exe`. `data/` contiene los assets
+  del usuario y `saves/` las escrituras del juego. No hay appdata ni rutas de
+  datos alternativas.
+- En este build intermedio, `data/` debe contener los ficheros **extraídos**
+  (`KULT.PRG`, `*.PI1`, `*.BIN`). La release final pedirá los dos `.STX` y
+  generará `data/kult.data`; la ingesta es **T-072**.
+- **`kult.log`** se escribe en la raíz, junto al `.exe`, con timestamp. Los
+  errores no abren ventanas; solo si el log no se puede escribir aparece un
+  diálogo de emergencia. `kult-headless.exe` es solo una herramienta de
+  desarrollo y no forma parte de la release.
 
 ## Origen y repos
 - **`/app/kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).
