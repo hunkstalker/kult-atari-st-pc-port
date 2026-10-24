@@ -59,10 +59,8 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   `LEEME.txt`; **no** lleva headless ni `DIAGNOSTICO.txt`. Requiere **Windows
   10+** (UCRT). El `.exe` quedó validado en el checklist de **T-061**
   (2026-10-23).
-- **Ingesta de discos pendiente (T-072)**: este paquete **no lee** `.STX/.MSA/.ST`;
-  `data/` debe contener los ficheros **extraídos**. Es la **siguiente tarea**
-  (T-072; T-061 ya cerrada) y no se le debe pedir al usuario un `.PRG` como
-  solución final. El contenedor `kult.data` puede ir después con N3.
+- **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
+  extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a
   **`kult.log`** junto al exe, con timestamp. Solo si no se puede escribir el
   log aparece un diálogo de emergencia.

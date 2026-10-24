@@ -21,6 +21,13 @@ int platform_data_resolve(const char *name, char *out, size_t out_size);
 /* Estado de la carpeta portable tras platform_init(). */
 int platform_storage_ready(void);
 const char *platform_storage_path(void);
+const char *platform_data_dir(void);
+int platform_file_exists(const char *name);
+int platform_file_read(const char *name, uint8_t **out, size_t *out_size);
+
+/* Ingesta portable: si falta data/kult.data busca los dos STX conocidos. */
+int platform_ingest_ensure(void);
+void platform_fs_reload_containers(void);
 
 /* ---- diagnóstico --------------------------------------------------------- */
 /* Log a fichero y stderr en `<exe>/kult.log`, con timestamp. Política B: los

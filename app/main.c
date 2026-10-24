@@ -43,16 +43,6 @@ static const char *env_or(const char *name, const char *def) {
 }
 #endif
 
-/* PRG del juego: KULT_PRG si está definido; si no, se busca KULT.PRG en los
- * directorios de datos (el paquete de Windows lo lleva en `data/`); y como
- * último recurso, la ruta del oráculo en el árbol de desarrollo. */
-static const char *find_prg(char *buf, size_t n) {
-    static const char *names[] = { "KULT.PRG", "kult.prg" };
-    for (size_t i = 0; i < sizeof names / sizeof names[0]; i++)
-        if (platform_data_resolve(names[i], buf, n) == 0) return buf;
-    return "work/disk_a/KULT.PRG";
-}
-
 /* Ficheros que el juego necesita en el directorio de datos (los de disk_a +
  * disk_b, ya extraídos). Comprobarlos antes de arrancar evita un cuelgue/crash
  * opaco si falta alguno (p. ej. si solo hay imágenes .STX o subcarpetas). */
@@ -67,10 +57,10 @@ static const char *const k_game_files[] = {
 };
 
 static int check_game_files(void) {
-    char path[1024], missing[1024] = "";
+    char missing[1024] = "";
     int nmiss = 0;
     for (size_t i = 0; i < sizeof k_game_files / sizeof k_game_files[0]; i++) {
-        if (platform_data_resolve(k_game_files[i], path, sizeof path) != 0) {
+        if (!platform_file_exists(k_game_files[i])) {
             nmiss++;
             if (strlen(missing) + strlen(k_game_files[i]) + 4 < sizeof missing) {
                 strcat(missing, "  ");
@@ -81,10 +71,9 @@ static int check_game_files(void) {
     }
     if (nmiss == 0) return 0;
     platform_fatal(
-        "Faltan %d fichero(s) del juego en la carpeta data/:\n%s\n"
-        "Copia los ficheros EXTRAIDOS de disk_a y disk_b directamente en data/ "
-        "(sin subcarpetas). Las imágenes .STX/.MSA todavía no se leen.\n\n"
-        "Directorios de datos y detalle en kult.log.", nmiss, missing);
+        "Faltan %d fichero(s) del juego en data/ o kult.data:\n%s\n"
+        "Coloca los dos .STX junto a kult.exe o en data/, o revisa kult.log.",
+        nmiss, missing);
     return -1;
 }
 
@@ -186,30 +175,35 @@ int main(int argc, char **argv) {
     }
     platform_set_tick(kult_vbl_tick);
 
-    /* El PRG del juego se busca en los directorios de datos (paquete Windows:
-     * `data/KULT.PRG`) si KULT_PRG no lo fija. */
-    char prgbuf[1024];
-    const char *prgenv = getenv("KULT_PRG");
-    const char *prg;
-    if (prgenv && *prgenv) {
-        prg = prgenv;
-        platform_log("PRG (KULT_PRG): %s", prg);
-    } else {
-        prg = find_prg(prgbuf, sizeof prgbuf);
-        platform_log("PRG: %s", prg);
-    }
-    if (kult_load_prg(img, prg) != 0) {
+    if (platform_ingest_ensure() != 0) {
         platform_fatal(
-            "No se pudo cargar KULT.PRG:\n%s\n\n"
-            "Copia en la carpeta data/ (junto a kult.exe) los ficheros "
-            "EXTRAIDOS de los disquetes del juego (KULT.PRG, *.PI1, *.BIN...), "
-            "no las imágenes .STX/.MSA.\n\n"
-            "Directorio(s) de datos y detalle en kult.log.", prg);
+            "No se encontró kult.data ni los discos del juego.\n\n"
+            "Coloca Kult.STX y Kult (B).STX en data/ o junto a kult.exe.\n"
+            "Los nombres no importan: se identifican por SHA-256.");
         platform_log_close();
         free(img);
         return 2;
     }
-    platform_log("PRG cargado (%s)", prg);
+    platform_fs_reload_containers();
+
+    const char *prgenv = getenv("KULT_PRG");
+    if (prgenv && *prgenv) {
+        platform_log("PRG (KULT_PRG): %s", prgenv);
+        if (kult_load_prg(img, prgenv) != 0) {
+            platform_fatal("No se pudo cargar KULT.PRG desde %s", prgenv);
+            platform_log_close(); free(img); return 2;
+        }
+    } else {
+        uint8_t *prg = NULL; size_t prglen = 0;
+        if (platform_file_read("KULT.PRG", &prg, &prglen) != 0 ||
+            kult_load_prg_mem(img, prg, prglen) != 0) {
+            free(prg);
+            platform_fatal("No se pudo cargar KULT.PRG desde data/ o kult.data");
+            platform_log_close(); free(img); return 2;
+        }
+        free(prg);
+        platform_log("PRG cargado (data/ o kult.data)");
+    }
     if (check_game_files() != 0) {
         platform_log_close();
         free(img);
@@ -289,8 +283,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    printf("prg=%s frames=%u visible=0x%05x fb_nonzero=%u ppm=%s\n",
-           prg, platform_frame_count(), platform_visible_base(),
+    printf("frames=%u visible=0x%05x fb_nonzero=%u ppm=%s\n",
+           platform_frame_count(), platform_visible_base(),
            platform_fb_nonzero(), dump ? dump : "-");
     printf("audio: rms=%u peak=%u samples=%u isr=%u music_isr=%u\n",
            platform_audio_rms(), platform_audio_peak(),

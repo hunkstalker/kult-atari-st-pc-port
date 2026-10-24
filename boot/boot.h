@@ -9,10 +9,12 @@
 #ifndef KULT_BOOT_H
 #define KULT_BOOT_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 /* Carga un .PRG en la imagen (base 0x10000, 1 MiB). 0 = ok. */
 int kult_load_prg(uint8_t *img, const char *path);
+int kult_load_prg_mem(uint8_t *img, const uint8_t *data, size_t len);
 
 /* Ejecuta el arranque y el bucle principal, cortando tras `max_frames` pasos del
  * bucle (longjmp desde el hook del motor). Devuelve 0 si llegó al bucle; <0 si algo

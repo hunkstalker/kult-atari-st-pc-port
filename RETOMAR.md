@@ -5,6 +5,14 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 55 — release portable + ingesta STX (2026-10-24)**: release portable
+  (`data/`, `saves/`, `kult.log` junto al exe, sin appdata ni variables de ruta),
+  política B de errores (solo log; diálogo únicamente si no se puede escribir),
+  paquete sin `kult-headless` ni `DIAGNOSTICO.txt`. Implementados contenedores
+  `kult.data`/`language.data` y la ingesta T-072: detección de los dos `.STX`
+  por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación
+  atómica de `data/kult.data`; los STX se pueden borrar después. `make test`
+  518 + HAL + port OK; `make package-win` OK.
 - **Sesión 54 — core importado como subtree (2026-10-24)**: el core C vive en
   `lib/kult-core/`, importado con `git subtree` desde `kult-atari-st-c`. El
   build (`Makefile`, CMake, tests, tools) compila desde el subtree; se retiraron

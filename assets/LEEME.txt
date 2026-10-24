@@ -7,28 +7,28 @@ Este paquete NO incluye ningún fichero del juego: aporta tu copia.
 Todo vive en la carpeta donde descomprimes el .exe. No uses Program Files:
 la carpeta debe ser escribible.
 
-1) Datos del juego
-   Crea `data/` junto a kult.exe y copia ahí, de momento, los ficheros
-   EXTRAIDOS de los discos A y B del juego:
-     KULT.PRG, *.PI1, *.BIN, ...
-   Las imágenes .STX/.MSA/.ST todavía no se leen en este build intermedio;
-   la ingesta automática está planificada (T-072).
-
-   La release final solo pedirá los dos .STX en data/ o junto al .exe, y
-   generará data/kult.data. Los .STX se podrán borrar después.
+1) Copia tus dos imágenes de disquete en `data/` o junto a kult.exe:
+     Kult.STX
+     Kult (B).STX
+   Los nombres no importan; el contenido se identifica por SHA-256.
 
 2) Ejecuta `kult.exe`.
+   La primera vez extrae los assets y genera `data/kult.data`. Puede tardar
+   unos segundos.
 
-3) Al arrancar la pantalla puede verse NEGRA (es fiel al original: PRES se
+3) Cuando termine la ingesta, puedes borrar los .STX: el juego ya arranca
+   desde `data/kult.data`.
+
+4) Al arrancar la pantalla puede verse NEGRA (es fiel al original: PRES se
    muestra antes de fijar la paleta). Haz clic con el botón izquierdo; aparece
    el título con el menú de idioma. Elige D (alemán), E (inglés) o F (francés).
    El port usa los dos discos juntos y no pide cambiar de disco.
 
-4) ESC cierra la ventana.
+5) ESC cierra la ventana.
 
 Carpetas
 --------
-- `data/`   assets de tu copia (entrada).
+- `data/`   entrada de los STX + `kult.data` generado + `language.data` opcional.
 - `saves/`  escrituras del juego (CLEAR.BIN, SCENA.BIN...).
 - `kult.log` se crea junto a kult.exe con timestamp y errores.
 

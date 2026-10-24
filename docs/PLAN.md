@@ -78,18 +78,18 @@ opcional es **T-073 (feature opcional)**.
 para que el usuario valide.
 **Contenido:** portabilidad Windows (`platform/time.c`, `platform/fs.c`); **CMake**
 + `cmake/mingw-w64.cmake`; **SDL3 3.4.10** para MinGW (`third_party/`, gitignored);
-**icono** (`assets/`); ZIP Windows + TGZ Linux; **ingesta** (`kult.data`) — esta
-última va de la mano de N3.
+**icono** (`assets/`); ZIP Windows + TGZ Linux; **ingesta** (`kult.data`) y
+**overlays de idioma** (`language.data`).
 **Aceptación:** doble clic + copia del usuario → funciona.
-**Nota:** el **primer build** (validación) empaqueta con carpeta `data/` interina
-(sin ingesta); el empaquetado completo (TGZ/CPack/ingesta) es M7-c.
+**Nota:** build, paquete portable e ingesta ya están hechos; queda M7-c para
+`language.data`/idiomas y la validación final de la release.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`) y **paquete portable** (solo `kult.exe`, `SDL3.dll`,
 `data/`, `saves/` y `LEEME.txt`; sin headless ni `DIAGNOSTICO.txt`). El `.exe`
 quedó validado en el checklist de **T-061** (cerrada el 2026-10-23).
-**Siguiente: T-072 — ingesta `.STX`** (el usuario solo aporta imágenes de
-disquete). Detalle:
-`notes/0012`, `notes/0013`.
+**T-072 — ingesta `.STX`/`kult.data`: ✅ implementada.** Detecta los STX por
+SHA-256, los extrae y genera `data/kult.data`; los STX se pueden borrar después.
+Detalle: `notes/0012`, `notes/0013`.
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 **Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a

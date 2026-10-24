@@ -40,6 +40,7 @@ git subtree pull --prefix=lib/kult-core \
 - **`docs/INDICE.md`** — índice de toda la documentación.
 - **`docs/CORE_DELTA.md`** — core importado y cambios locales del port.
 - **`docs/RELEASE.md`** — formato portable, contenedores y errores de release.
+- **`docs/DATA_FORMAT.md`** — formato de `kult.data`/`language.data` e ingesta STX.
 - **`docs/TESTS.md`** — inventario y política de tests.
 - **`notes/`** — notas de sesión (histórico).
 
@@ -54,9 +55,9 @@ git subtree pull --prefix=lib/kult-core \
 - Release **portable**: todo vive junto al `.exe`. `data/` contiene los assets
   del usuario y `saves/` las escrituras del juego. No hay appdata ni rutas de
   datos alternativas.
-- En este build intermedio, `data/` debe contener los ficheros **extraídos**
-  (`KULT.PRG`, `*.PI1`, `*.BIN`). La release final pedirá los dos `.STX` y
-  generará `data/kult.data`; la ingesta es **T-072**.
+- Copia `Kult.STX` y `Kult (B).STX` en `data/` o junto al `.exe`. En el primer
+  arranque se extraen, se validan por SHA-256 y se genera `data/kult.data`.
+  Después puedes borrar los `.STX`.
 - **`kult.log`** se escribe en la raíz, junto al `.exe`, con timestamp. Los
   errores no abren ventanas; solo si el log no se puede escribir aparece un
   diálogo de emergencia. `kult-headless.exe` es solo una herramienta de

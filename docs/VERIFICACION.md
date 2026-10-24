@@ -65,7 +65,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 el C sigue los mismos caminos y comportamiento que el ASM **a nivel de
 experiencia del jugador**; no se exige timing ciclo-exacto. El hueco de audio
 de SOLAR EYES es un artefacto de timing del original y T-073 queda como feature
-opcional no bloqueante. **M6 cerrada.** Siguiente: T-072 (ingesta `.STX`).
+opcional no bloqueante. **M6 cerrada.** Ingesta `.STX`/`kult.data`: ✅ implementada.
 
 **“Ritmo global”** no es una prueba aparte: significa que cada escena y
 transición mantenga la cadencia del original. Las escenas medidas y el audio
@@ -120,8 +120,8 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
 `make package-win`). **No lleva assets.** Para validar:
 
 1. Descomprimir el ZIP en una carpeta escribible (no Program Files).
-2. Copiar **el contenido extraído de `disk_a` + `disk_b`** dentro de `data/`
-   (debe quedar `data\KULT.PRG`). La ingesta de `.STX` es T-072.
+2. Copiar `Kult.STX` y `Kult (B).STX` en `data/` o junto a `kult.exe`.
+   El primer arranque genera `data/kult.data`; después se pueden borrar los STX.
 3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con

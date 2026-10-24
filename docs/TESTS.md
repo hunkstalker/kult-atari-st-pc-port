@@ -7,7 +7,7 @@
 | Tests diferenciales del core | `lib/kult-core/test/` | 518 funciones en 44 `test_*.py` | canónicos del core |
 | Tests propios del port | `test/` | 1 función en `test_ringreport.py` | ringreport |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
-| Tests funcionales HAL | `platform/test/test_platform.c` | 22 funciones / 97 `CHECK` | backend PC |
+| Tests funcionales HAL | `platform/test/test_platform.c` | 23 funciones / 108 `CHECK` | backend PC y contenedores |
 | Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 518 | legibilidad y sincronización |
 
 `make test` ejecuta:
@@ -56,6 +56,7 @@ Hecho:
 
 Sin hacer:
 
-- Añadir tests nuevos de ingesta y contenedores; irán en `test/`.
+- Añadir tests de ingesta STX; irán en `test/`.
+- Los contenedores ya tienen cobertura en `platform/test/test_platform.c`.
 - Ejecutar los 339 tests del kit en CI; de momento siguen siendo un target
   separado del vendor.

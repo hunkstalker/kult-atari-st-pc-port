@@ -22,6 +22,7 @@
 #include "platform.h"
 #include "platform_internal.h"
 #include "boot.h"
+#include "container.h"
 
 /* Stub del core para poder probar el tick de VBL aislado (boot/vbl.c). */
 uint32_t pal_next_byte(uint8_t *img) { (void)img; return 0; }
@@ -98,6 +99,40 @@ static void test_fs(void) {
     CHECK(sf != NULL, "la escritura debe quedar en saves/, no en data/");
     if (sf) fclose(sf);
     remove(DIR "/saves/OUT.BIN");
+}
+
+/* Contenedores: formato, lectura y prioridad language.data > kult.data. */
+static void test_containers(void) {
+    char game[256], lang[256];
+    snprintf(game, sizeof game, "%s/data/kult.data", DIR);
+    snprintf(lang, sizeof lang, "%s/data/language.data", DIR);
+    const char *names[] = {"OVER.BIN"};
+    const uint8_t gdata[] = {1, 2, 3};
+    const uint8_t ldata[] = {9, 8, 7, 6};
+    const uint8_t *gblob[] = {gdata}, *lblob[] = {ldata};
+    uint32_t gsize[] = {sizeof gdata}, lsize[] = {sizeof ldata};
+
+    CHECK(kult_container_write(game, KULT_CONTAINER_GAME, names, gblob, gsize, 1) == 0,
+          "crear kult.data de prueba");
+    CHECK(kult_container_write(lang, KULT_CONTAINER_LANG, names, lblob, lsize, 1) == 0,
+          "crear language.data de prueba");
+    platform_fs_reload_containers();
+
+    uint8_t *out = NULL; size_t n = 0;
+    CHECK(platform_file_read("OVER.BIN", &out, &n) == 0, "leer OVER.BIN");
+    CHECK(n == sizeof ldata && memcmp(out, ldata, sizeof ldata) == 0,
+          "language.data debe tener prioridad sobre kult.data");
+    free(out);
+
+    remove(lang);
+    platform_fs_reload_containers();
+    out = NULL; n = 0;
+    CHECK(platform_file_read("OVER.BIN", &out, &n) == 0, "leer OVER.BIN sin language");
+    CHECK(n == sizeof gdata && memcmp(out, gdata, sizeof gdata) == 0,
+          "sin language.data debe usarse kult.data");
+    free(out);
+    remove(game);
+    platform_fs_reload_containers();
 }
 
 /* Log de diagnóstico: siempre en <base>/kult.log. */
@@ -730,6 +765,7 @@ int main(void) {
     CHECK(platform_storage_ready(), "data/ y saves/ deben ser escribibles");
 
     test_fs();
+    test_containers();
     test_log();
     test_present_hook();
     test_cpu_delay();
@@ -753,7 +789,7 @@ int main(void) {
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs, log, present por VBL, cpu_delay, cpu_cycles, disk_delay, "
+    printf("RESULTADO: OK (fs/containers, log, present por VBL, cpu_delay, cpu_cycles, disk_delay, "
            "video, entrada/botones (clic mantenido), Crawio, replay, reloj, tick VBL, "
            "loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;

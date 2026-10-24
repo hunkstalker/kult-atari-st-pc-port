@@ -18,6 +18,8 @@ int platform_base_dir(char *buf, size_t n);
 void platform_set_base_dir_for_tests(const char *dir);
 
 void platform_fs_init(void);
+void platform_fs_reload_containers(void);
+int platform_ingest_ensure(void);
 void platform_video_init(void);
 void platform_input_init(void);
 void platform_replay_init(void);

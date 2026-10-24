@@ -8,7 +8,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | id | tarea | estado |
 |---|---|---|
 | T-061 | Validación completa de la partida en Windows (checklist M6) | ✅ cerrada (2026-10-23) |
-| T-072 | Ingesta automática de imágenes `.STX`/`.ST`/`.MSA` a `data/` | ⬜ siguiente |
+| T-072 | Ingesta automática de imágenes `.STX` a `data/kult.data` | ✅ implementada |
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 
@@ -84,14 +84,13 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-090 | **SOLAR EYES (habilidad PSI) acelerada** | ✅ **cerrado (2026-10-23)**. El comando `0xa00a` (`f_014f5e`) ejecuta `palette_cycle` (`0x16310`); el ASM hace por pasada `wait_vbl` + `dbra d0=0xffff` + `set_palette`, y el C omitía los dos `dbra`. Fix solo de timing en `src/video.c`: `cpu_delay(0x10000u)` en las dos fases. Replay/save y medición: `trazas-t090-20261023/` (original 7.879.396 ciclos ≈985 ms; port 12→60 VBL, 0,24→1,2 s). Nueva `test_palette_cycle_solar_eyes_timing`; `make test` **519** y `test-port` OK; builds/ZIP actualizados. El hueco de audio de Hatari queda documentado como artefacto de timing del original, **fuera del alcance de T-090** (no es divergencia ASM↔C); ver T-073 (feature opcional). T-061 quedó cerrada y validada en Windows (2026-10-23). Detalle: **`notes/0041`**. |
 
 ## M7 — Empaquetado/release
-> Primero el **build** (T-070/T-071 hechos y validados en T-061). La **ingesta
-> `.STX`** es la siguiente tarea (T-072; el usuario tiene imágenes de disquete,
-> no `.PRG`). El contenedor `kult.data` puede ir con N3.
+> Build, paquete portable e ingesta implementados. T-072 ✅. Siguiente: M7-c
+> (idiomas/overlays) y validación de la release.
 | id | tarea | estado |
 |---|---|---|
-| T-070 | **Build**: portabilidad Windows (`platform/time.c` `_WIN32`, `platform/fs.c` `;`/data junto al exe) + CMake (`kult` headless, `kult-sdl`; en Windows → `kult.exe` GUI + `kult-headless.exe`) + `cmake/mingw-w64.cmake` + SDL3 **3.4.10** MinGW (`third_party/`, gitignored) + icono (`.rc`, RGBA, `SDL_SetWindowIcon`) + **log/diagnóstico** (`kult.log`, MessageBox, preflight de datos) | ✅ build nativo CMake verificado; cross Windows enlaza (sin ejecutar aquí) |
-| T-071 | **Empaquetado interino**: CPack ZIP Windows (`kult.exe`+`kult-headless.exe`+`SDL3.dll`+`data/`+`LEEME.txt`+`DIAGNOSTICO.txt`) y TGZ Linux; **sin assets** | ✅ interino (la ingesta va con T-072) |
-| T-072 | **Ingesta + `kult.data`**: primero extracción automática `.STX`/`.ST`/`.MSA` → `data/` (o `--ingest`); después contenedor `kult.data` (puede ir con N3) | ⬜ **siguiente** |
+| T-070 | **Build**: portabilidad Windows (`platform/time.c` `_WIN32`, `platform/fs.c` `;`/data junto al exe) + CMake (`kult` headless, `kult-sdl`; en Windows → `kult.exe` GUI + `kult-headless.exe`) + `cmake/mingw-w64.cmake` + SDL3 **3.4.10** MinGW (`third_party/`, gitignored) + icono (`.rc`, RGBA, `SDL_SetWindowIcon`) + **log/diagnóstico** (`kult.log` con timestamp, preflight de datos) | ✅ build nativo CMake verificado; cross Windows enlaza (sin ejecutar aquí) |
+| T-071 | **Empaquetado portable**: CPack ZIP Windows (`kult.exe`+`SDL3.dll`+`data/`+`saves/`+`LEEME.txt`) y TGZ Linux; **sin assets, sin headless ni DIAGNOSTICO** | ✅ |
+| T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

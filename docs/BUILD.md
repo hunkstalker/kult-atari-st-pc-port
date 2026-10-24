@@ -23,7 +23,8 @@
   core/diferencial y para `make port`/`port-sdl`/`test-port`.
 - **Empaquetado de release**: ZIP Windows y TGZ Linux con **CPack**, sin assets
   (el usuario aporta sus STX). `kult-headless` y `DIAGNOSTICO.txt` no forman
-  parte del paquete. La ingesta de STX/`kult.data` es T-072.
+  parte del paquete. En el primer arranque se ingieren los STX y se genera
+  `data/kult.data`.
 
 ## Objetivo
 - **Core** compilable aparte para las pruebas diferenciales (sin SDL).
@@ -179,9 +180,10 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 - Release portable: `data/`, `saves/` y `kult.log` viven junto al ejecutable.
   No hay `KULT_DATA_DIR`, appdata ni `/tmp`. **No** se versionan assets.
 - El **`KULT.PRG`** se busca en `data/KULT.PRG` si no se define `KULT_PRG`.
-- **Estado interino**: `data/` debe contener los ficheros **extraídos** de
-  `disk_a`+`disk_b`. Las imágenes `.STX/.MSA/.ST` aún no se leen; la ingesta
-  automática es **T-072**.
+- **Ingesta**: copia `Kult.STX` y `Kult (B).STX` en `data/` o junto al `.exe`.
+  Se identifican por SHA-256, se extraen y se genera `data/kult.data`; después
+  los `.STX` se pueden borrar. También se aceptan ficheros sueltos en `data/`
+  para desarrollo.
 
 ## Comandos del core (heredados, ya verdes)
 ```

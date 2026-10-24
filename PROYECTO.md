@@ -95,7 +95,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta | 🚧 **build ✅** (T-070) y **ZIP/TGZ interino ✅** (T-071); **ingesta `.STX` (T-072)** como siguiente tras T-061 cerrada |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta | ✅ build (T-070), paquete portable (T-071) e ingesta `.STX`/`kult.data` (T-072) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -142,8 +142,8 @@ Recogidas como ADR en `docs/adr/`:
   timing ciclo-exacto. **T-089 ✅** (final del juego: `attract`, validado en
   Windows). **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance).
   T-073 queda como **feature opcional** de calibración fina no bloqueante.
-  `0x106f2` (reinicio suave) queda **abierto/pendiente**. Siguiente: **T-072**
-  (ingesta `.STX`/`.ST`/`.MSA`).
+  `0x106f2` (reinicio suave) queda **abierto/pendiente**. Ingesta `.STX` /
+  `kult.data` (T-072): ✅ implementada.
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
   docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta) → A1
   (investigación Amiga, prerrequisito duro de N3) → N3 (motor nativo + assets
@@ -267,7 +267,7 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** **T-072** (ingesta `.STX`/`.ST`/`.MSA`) → **M7-c** → **A1** →
+- **Siguiente:** **M7-c** (idiomas/overlays) → **A1** →
   **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,
