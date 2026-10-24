@@ -13,6 +13,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
 | [`RELEASE.md`](RELEASE.md) | formato portable, contenedores y errores de release |
 | [`DATA_FORMAT.md`](DATA_FORMAT.md) | `kult.data`/`language.data` e ingesta STX |
+| [`LANGUAGE_PACKS.md`](LANGUAGE_PACKS.md) | packs español/catalán y limitaciones de fuente |
 | [`TESTS.md`](TESTS.md) | inventario y política de tests |
 | [`CORE_DELTA.md`](CORE_DELTA.md) | core importado y cambios locales del port |
 | [`adr/`](adr/README.md) | decisiones de arquitectura (ADR) |

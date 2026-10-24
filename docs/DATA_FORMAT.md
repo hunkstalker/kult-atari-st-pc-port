@@ -54,6 +54,17 @@ Cada entrada del índice ocupa 72 bytes:
 `language.data` contiene los recursos de idioma del port, empezando por
 `DRAP.PI1` y los packs que se añadan.
 
+La release incluye `assets/language.data`, generado desde `assets/lang/`:
+
+```sh
+python3 tools/build_language_data.py
+```
+
+Contiene `DRAP.PI1`, el pack español fan (`VERBS`, `DESCS`, `MOTSS`, `DIALS`,
+`CARACS`) y el pack catalán (`VERBC`, `DESCC`, `MOTSC`, `DIALC`). El catalán es
+una traducción inicial desde el español, sin tildes ni `Ç` por límites de la
+fuente, pendiente de revisión lingüística.
+
 ## Ingesta `kult.data`
 
 1. Si `data/kult.data` existe y es válido, se usa y no se miran los STX.

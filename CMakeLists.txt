@@ -106,6 +106,7 @@ install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-replay-record.bat
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-replay-play.bat
   DESTINATION .)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/language.data DESTINATION data)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets/hatari_fps DESTINATION .)
 if(WIN32)
   set(KULT_SDL3_DLL

@@ -152,6 +152,16 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     platform_log("idioma: %c", lang);
     /* Menú de idioma: escribe la letra en las 4 entradas de la lista A */
     kult_boot_apply_language(img, lang);
+    if (lang == 'S' || lang == 'C') {
+        char font_name[16];
+        snprintf(font_name, sizeof font_name, "CARAC%c.BIN", lang);
+        uint8_t *font = NULL; size_t font_len = 0;
+        if (platform_file_read(font_name, &font, &font_len) == 0 && font_len >= 0x0b * 6 + 6) {
+            memcpy(img + A_FONT_DATA + 0x0b * 6, font + 0x0b * 6, 6);
+            platform_log("fuente %s aplicada", font_name);
+        }
+        free(font);
+    }
     copy_screen(img);
     BOOT_TRACE("lang");
 

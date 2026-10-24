@@ -95,7 +95,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta | ✅ build (T-070), paquete portable (T-071) e ingesta `.STX`/`kult.data` (T-072) |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072) y `language.data` con S (fan) y C (inicial) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |

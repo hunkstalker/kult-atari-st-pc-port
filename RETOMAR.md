@@ -11,8 +11,10 @@ Tareas: `TODO.md`.
   paquete sin `kult-headless` ni `DIAGNOSTICO.txt`. Implementados contenedores
   `kult.data`/`language.data` y la ingesta T-072: detección de los dos `.STX`
   por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación
-  atómica de `data/kult.data`; los STX se pueden borrar después. `make test`
-  518 + HAL + port OK; `make package-win` OK.
+  atómica de `data/kult.data`; los STX se pueden borrar después. `language.data`
+  con DRAP, español fan (`S`) y catalán inicial (`C`) incluidos en
+  `assets/language.data`; fuente `CARACS` para español. Catalán pendiente de
+  revisión lingüística. `make test` 518 + HAL + port OK; `make package-win` OK.
 - **Sesión 54 — core importado como subtree (2026-10-24)**: el core C vive en
   `lib/kult-core/`, importado con `git subtree` desde `kult-atari-st-c`. El
   build (`Makefile`, CMake, tests, tools) compila desde el subtree; se retiraron

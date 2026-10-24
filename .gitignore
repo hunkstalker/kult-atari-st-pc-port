@@ -31,3 +31,7 @@ roms/
 *.ST
 *.PI1
 *.BIN
+
+# Pack de idioma fuente (arte/texto derivado autorizado para la release)
+!assets/lang/
+!assets/lang/**

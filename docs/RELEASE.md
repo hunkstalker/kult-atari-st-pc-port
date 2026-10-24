@@ -30,7 +30,7 @@ borrarse después de una ingesta correcta.
 ├── data/
 │   ├── Kult.STX          # entrada opcional; se puede borrar tras ingerir
 │   ├── Kult (B).STX      # entrada opcional; se puede borrar tras ingerir
-│   ├── language.data     # DRAP + packs de idioma del port
+│   ├── language.data     # DRAP + packs español/catalán del port
 │   └── kult.data         # generado desde los STX
 └── saves/                # escrituras del juego
 ```
@@ -83,9 +83,9 @@ Prioridad de recursos:
 language.data > kult.data > data/ sueltos (solo desarrollo)
 ```
 
-Si `language.data` falta o está incompleto, se usa D/E/F y el `DRAP.PI1` de
-`kult.data`. Si incluye el DRAP de cinco banderas, debe incluir español y
-catalán; si no, se rechaza.
+`language.data` incluye el DRAP de cinco banderas y los packs español (`S`) y
+catalán (`C`). Si falta, se usa D/E/F y el `DRAP.PI1` de `kult.data`. Si incluye
+el DRAP de cinco banderas, debe incluir ambos packs; si no, se rechaza.
 
 ## Errores y log
 

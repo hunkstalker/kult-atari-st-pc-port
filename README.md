@@ -41,6 +41,7 @@ git subtree pull --prefix=lib/kult-core \
 - **`docs/CORE_DELTA.md`** — core importado y cambios locales del port.
 - **`docs/RELEASE.md`** — formato portable, contenedores y errores de release.
 - **`docs/DATA_FORMAT.md`** — formato de `kult.data`/`language.data` e ingesta STX.
+- **`docs/LANGUAGE_PACKS.md`** — packs español/catalán y limitaciones de fuente.
 - **`docs/TESTS.md`** — inventario y política de tests.
 - **`notes/`** — notas de sesión (histórico).
 
@@ -48,7 +49,7 @@ git subtree pull --prefix=lib/kult-core \
 - Juego nativo en C, **sin emulador** (Musashi solo se usa como oráculo en las
   pruebas del core).
 - **Dos experiencias**: Atari ST y Amiga; perfil libre (arte/audio/ritmos).
-- **Todos los idiomas**.
+- **Español (fan) y catalán**, además de D/E/F.
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
 
 ## Datos y diagnóstico

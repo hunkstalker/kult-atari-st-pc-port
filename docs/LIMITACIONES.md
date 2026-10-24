@@ -18,7 +18,9 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   espere (T-023).
 - **`os_super` es un no-op** (en PC no hay modo supervisor).
 - **Menú de idioma fiel** (ADR 0004): se mantiene el del original (clic de título
-  y tecla D/E/F), no un menú nativo.
+  y teclas D/E/F/S/C), no un menú nativo. S y C vienen en `language.data`.
+- **Catalán**: traducción inicial automática desde el español, sin tildes/Ç por
+  límites de la fuente; pendiente de revisión lingüística.
 - **Cambio de disco omitido.** El original pide "INSERT DISK 2" (`0x918e`) antes
   de cargar los recursos del disco B (`FOND`/`PUZZL`/`BRUIT`). El port sirve
   ambos discos desde el mismo directorio, así que el aviso (y su reintento con
@@ -92,7 +94,7 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
 1. `make test` (**518**) y `make test-port` en verde.
 2. `make port-sdl` y `KULT_WINDOW=1 ./build/kult-sdl`:
-   comprobar título (clic), menú D/E/F, intro/partida, efectos y música.
+   comprobar título (clic), menú D/E/F/S, intro/partida, efectos y música.
 3. `make port` headless para arranque/estabilidad (`frames`, `fb_nonzero`,
    `audio: rms/peak/...`).
 

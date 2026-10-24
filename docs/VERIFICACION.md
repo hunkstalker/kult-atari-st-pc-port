@@ -82,7 +82,7 @@ están validados.
      (ver `notes/0014`); **no** debe verse negra. **Validar**:
      (a) el título se ve desde el principio (no negro);
      (b) una **tecla o un clic** pasa a la pantalla de **idioma (DRAP)** con el
-         menú D/E/F;
+         menú D/E/F/S/C;
      (c) los colores del título y del menú son correctos.
      **Fallo** = título negro, no reacciona a tecla/ratón, o nunca aparece el
      menú. **Estado: ✅ validado por el usuario** (título visible desde el inicio,
@@ -124,7 +124,7 @@ El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
    El primer arranque genera `data/kult.data`; después se pueden borrar los STX.
 3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
-   negro; espera **tecla o clic**) → pantalla de idioma D/E/F, juego con
+   negro; espera **tecla o clic**) → pantalla de idioma D/E/F/S/C, juego con
    **colores correctos**, guardado ✅, morir → reiniciar ✅, **audio ✅**
    (incluidas puertas).
    **Controles**:

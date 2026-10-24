@@ -11,9 +11,11 @@
  *   l_01009e: Cnecin bloqueante; se acepta D/E/F (tras pasar a mayúsculas) y se
  *             escribe la letra en 4 bytes de la lista A.
  */
+#include <stdio.h>
 #include <stdint.h>
 
 #include "os.h"
+#include "platform.h"
 #include "boot.h"
 
 uint8_t kult_boot_language(uint8_t *img) {
@@ -29,6 +31,14 @@ uint8_t kult_boot_language(uint8_t *img) {
             key -= 0x20;                      /* subi.b #$20 */
         if (key >= 'D' && key < 'G')
             return (uint8_t)key;
+        if (key == 'S' || key == 'C') {
+            char name[16];
+            snprintf(name, sizeof name, "VERB%c.BIN", key);
+            if (platform_file_exists(name))
+                return (uint8_t)key;
+            platform_log("idioma %c no instalado; se usa E", key);
+            return 'E';
+        }
     }
 }
 

@@ -183,7 +183,8 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 - **Ingesta**: copia `Kult.STX` y `Kult (B).STX` en `data/` o junto al `.exe`.
   Se identifican por SHA-256, se extraen y se genera `data/kult.data`; después
   los `.STX` se pueden borrar. También se aceptan ficheros sueltos en `data/`
-  para desarrollo.
+  para desarrollo. Los packs de idioma se generan con
+  `tools/make_language.py` (ver `docs/DATA_FORMAT.md`).
 
 ## Comandos del core (heredados, ya verdes)
 ```
