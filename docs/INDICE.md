@@ -12,6 +12,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`LIMITACIONES.md`](LIMITACIONES.md) | limitaciones conocidas y checklist de validación (M6) |
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
 | [`RELEASE.md`](RELEASE.md) | formato portable, contenedores y errores de release |
+| [`RELEASE_NOTES_1.0.0.md`](RELEASE_NOTES_1.0.0.md) | notas públicas de la release 1.0.0 |
 | [`DATA_FORMAT.md`](DATA_FORMAT.md) | `kult.data`/`language.data` e ingesta STX |
 | [`LANGUAGE_PACKS.md`](LANGUAGE_PACKS.md) | packs español/catalán y limitaciones de fuente |
 | [`TESTS.md`](TESTS.md) | inventario y política de tests |

@@ -37,13 +37,13 @@ Pruebas propias de la HAL, sin oráculo:
   CPack genera ZIP/TGZ. En Windows, `kult.exe` sale con icono y depende solo de
   `SDL3.dll` (incluida) y UCRT (Windows 10+).
 
-## Checklist de validación (M6, la ejecuta el usuario)
+## Checklist de validación (release 1.0.0, la ejecuta el usuario)
 Requiere la copia de datos del usuario (recursos de `disk_a`+`disk_b`) y, para
 ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
-**Estado actual (T-061 ✅ cerrada y validada en Windows, 2026-10-23):**
+**Estado actual (release 1.0.0; T-061 ✅ cerrada y validada en Windows, 2026-10-23):**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -116,7 +116,7 @@ están validados.
 8. Anotar cualquier fallo en `RETOMAR.md`/`docs/LIMITACIONES.md`.
 
 ### Windows (paquete de release)
-El paquete está en `build-win/kult-0.1.0-win64.zip` (generado con
+El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
 `make package-win`). **No lleva assets.** Para validar:
 
 1. Descomprimir el ZIP en una carpeta escribible (no Program Files).

@@ -42,7 +42,7 @@
 cmake -S . -B build-cmake -DCMAKE_BUILD_TYPE=Release
 cmake --build build-cmake -j          # -> build-cmake/kult (headless)
                                       #    build-cmake/kult-sdl (SDL3)
-(cd build-cmake && cpack -G TGZ)      # -> kult-0.1.0-linux-x86_64.tar.gz
+(cd build-cmake && cpack -G TGZ)      # -> kult-1.0.0-linux-x86_64.tar.gz
 ```
 Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 
@@ -70,7 +70,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
    instala `kult.exe`.
 3. Empaquetar (o `make package-win`):
    ```sh
-   (cd build-win && cpack -G ZIP)      # -> kult-0.1.0-win64.zip
+   (cd build-win && cpack -G ZIP)      # -> kult-1.0.0-win64.zip
    ```
    Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt`.
    **Sin assets, sin headless y sin DIAGNOSTICO.txt.** Requiere Windows 10+

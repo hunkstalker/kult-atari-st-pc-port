@@ -32,9 +32,9 @@ con español y catalán**— y con las licencias necesarias dentro del paquete.
 
 - `make test`: **518 core + HAL + 1 port**, todo en verde.
 - `make package-win` correcto.
-- ZIP: `build-win/kult-0.1.0-win64.zip`
+- ZIP: `build-win/kult-1.0.0-win64.zip`
 - SHA256:
-  `af48e8b421a8dce307806a5b2d61deccdfa49c65708515b2fc81342afdbbb57e`
+  `ef26b159b2a8f28a5db0a28e9938b409b7d0ec0cff995e91c786f96975414213`
 - Contenido comprobado: 11 entradas, sin `kult-headless.exe` ni scripts de
   desarrollo.
 
