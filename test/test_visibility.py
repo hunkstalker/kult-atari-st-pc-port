@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MAP = ROOT / "kult_core.map"
+MAP = ROOT / "lib" / "kult-core" / "kult_core.map"
 CORE = ROOT / "build" / "libkultcore.so"
 
 

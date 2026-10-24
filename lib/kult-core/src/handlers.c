@@ -14,6 +14,7 @@
 
 #include "machine.h"
 #include "addrs.h"
+#include "kult_port.h"
 #include "run_boundary.h"
 
 void prompt_wait(uint8_t *);
@@ -606,13 +607,16 @@ void run_command(uint8_t *img, uint32_t stack) {
     kult_run_boundary boundary;
     kult_run_boundary *volatile prev = g_kult_run_boundary_top;
     wr32(img + A_RUN_STACK, stack);
+    kult_diag_ev("run_boundary_in", img, stack, be16(img + A_THE_COMMAND), 0);
     boundary.prev = prev;
     g_kult_run_boundary_top = &boundary;
     if (setjmp(boundary.env) == 0) {
         run_command_keep_sp(img, 0);
         g_kult_run_boundary_top = prev;
+        kult_diag_ev("run_boundary_out", img, stack, be16(img + A_THE_COMMAND), 0);
     } else {
         g_kult_run_boundary_top = prev;
+        kult_diag_ev("run_unwind_out", img, stack, be16(img + A_THE_COMMAND), 0);
     }
 }
 

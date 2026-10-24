@@ -1,6 +1,6 @@
 /* platform/include/os.h — contrato de los servicios OS del port PC.
  *
- * Esta cabecera SOMBREA `tools/recreate_kit/include/os.h` en el build del
+ * Esta cabecera SOMBREA `lib/kult-core/tools/recreate_kit/include/os.h` en el build del
  * ejecutable (se pasa `-Iplatform/include` antes que el del kit). El core (`src/`)
  * no se toca: sigue escribiendo `#include "os.h"` y llamando a los mismos nombres,
  * pero las respuestas ya no son el modelo "staged-file" del diferencial, sino el

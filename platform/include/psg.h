@@ -1,6 +1,6 @@
 /* platform/include/psg.h — chip PSG/YM2149 en el port PC.
  *
- * Sombrea `tools/recreate_kit/include/psg.h` en el build del ejecutable. Mantiene
+ * Sombrea `lib/kult-core/tools/recreate_kit/include/psg.h` en el build del ejecutable. Mantiene
  * el fichero de 16 registros (determinista para las RMW del mixer) que leen las
  * reconstrucciones del core (`ym_write`, `psg_trap3`, la ISR PCM) y, desde M4,
  * además:

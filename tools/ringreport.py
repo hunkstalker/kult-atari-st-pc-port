@@ -7,7 +7,7 @@ Uso:
   python3 tools/ringreport.py kult-marcas.log --all
 
 La traza la escribe platform/cpuwork.c (`platform_diag_ev`) y la emiten
-src/commands.c (anillo) y src/dispatch.c / platform/dispatch_trace.c (despacho).
+lib/kult-core/src/commands.c (anillo) y lib/kult-core/src/dispatch.c / platform/dispatch_trace.c (despacho).
 Solo aparece con KULT_MARKS activo. No depende de F12: recoge todos los anillos.
 """
 import argparse

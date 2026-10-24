@@ -11,7 +11,7 @@ Cada fase tiene objetivo y **criterio de aceptación**.
 
 ## M0 — Repositorio y base
 **Objetivo:** repo con documentación e importación del core.
-**Aceptación:** `src/include/test/tools` importados; `make test` **499 verde** en
+**Aceptación:** core importado en `lib/kult-core/`; `make test` **519 verde** en
 este repo; `work/disk_a/KULT.PRG` disponible para el oráculo.
 
 ## M1 — HAL mínima (headless)

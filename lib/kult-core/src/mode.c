@@ -21,6 +21,7 @@
 
 #include "machine.h"
 #include "addrs.h"
+#include "kult_port.h"
 
 void walk_entry(uint8_t *, uint32_t, uint32_t, uint32_t *,
                   uint32_t *);
@@ -157,6 +158,7 @@ void copy_rows_a(uint8_t *);
 void copy_screen(uint8_t *);
 void sound_play_a(uint8_t *, uint32_t);
 void sound_stop(uint8_t *);
+void wait_vbl(uint8_t *);
 void hint_blit_2(uint8_t *, uint32_t *);
 void hint_blit_stroke(uint8_t *, uint32_t *);
 void hint_blit_3(uint8_t *, uint32_t *);
@@ -172,6 +174,17 @@ uint32_t scene_mode_apply(uint8_t *img, uint32_t script) {
         } else if (t == 8) {
             img[A_DAT_1A572] = 1;
             textform_fwd(img, script, img[A_SEL_1ACC9]);
+            /* El formulario de puerta arranca el sample del tope (0x1f) al
+             * terminar `textform_fwd`. No cambiamos de sala hasta que el ISR
+             * del Timer A llegue al final del sample: la sala actual sigue
+             * visible mientras suena. Tope de 50 VBL por seguridad. */
+            uint32_t cur = be32(img + 0x192c6);
+            uint32_t end = be32(img + 0x192ca);
+            for (int i = 0; i < 50 && cur < end; i++) {
+                wait_vbl(img);
+                cur = be32(img + 0x192c6);
+                end = be32(img + 0x192ca);
+            }
             idx = img[A_DAT_1AD0F] & 7;
         }
     }

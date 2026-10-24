@@ -1,5 +1,5 @@
 # CMake del ejecutable del port (M7/T-070). El core no se toca: este build
-# enlaza src/ (juego) + boot/ + platform/ + app/, con `platform/include` el
+# enlaza lib/kult-core/src (juego) + boot/ + platform/ + app/, con `platform/include` el
 # primero para sombrear os.h/hw.h/psg.h/sched.h con la HAL de PC. El Makefile
 # sigue siendo el build del core y del diferencial (`make test`).
 #
@@ -24,12 +24,12 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 # ---- fuentes (espejo de PORT_SRC del Makefile) ------------------------------
-file(GLOB KULT_CORE_SRC     CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
+file(GLOB KULT_CORE_SRC     CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/kult-core/src/*.c)
 file(GLOB KULT_BOOT_SRC     CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/boot/*.c)
 file(GLOB KULT_PLATFORM_SRC CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/platform/*.c)
 # La entrada/salida SDL (ventana/audio) sólo va al target `kult-sdl`; la copia
 # de traza T-073c no se compila en el build estándar. Con KULT_DIAG_TRACE=ON
-# se sustituye src/dispatch.c por platform/dispatch_trace.c: escribe Y/V de
+# se sustituye lib/kult-core/src/dispatch.c por platform/dispatch_trace.c: escribe Y/V de
 # todo el guion (sin depender de F12) para diagnosticar una run completa.
 option(KULT_DIAG_TRACE "Usar dispatch_trace.c (traza Y/V completa)" OFF)
 list(REMOVE_ITEM KULT_PLATFORM_SRC
@@ -37,7 +37,7 @@ list(REMOVE_ITEM KULT_PLATFORM_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/platform/audio_sdl.c
   ${CMAKE_CURRENT_SOURCE_DIR}/platform/dispatch_trace.c)
 if(KULT_DIAG_TRACE)
-  list(REMOVE_ITEM KULT_CORE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/dispatch.c)
+  list(REMOVE_ITEM KULT_CORE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/lib/kult-core/src/dispatch.c)
   list(APPEND KULT_PLATFORM_SRC ${CMAKE_CURRENT_SOURCE_DIR}/platform/dispatch_trace.c)
 endif()
 
@@ -52,8 +52,8 @@ target_include_directories(kultport PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
   ${CMAKE_CURRENT_SOURCE_DIR}/platform
   ${CMAKE_CURRENT_SOURCE_DIR}/boot
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/tools/recreate_kit/include)
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/kult-core/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/kult-core/tools/recreate_kit/include)
 target_compile_options(kultport PRIVATE -O2 -Wall -Wextra)
 target_compile_definitions(kultport PUBLIC KULT_VERSION="${PROJECT_VERSION}")
 if(WIN32)

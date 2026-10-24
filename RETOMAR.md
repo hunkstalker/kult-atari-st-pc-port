@@ -5,6 +5,13 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 54 — core importado como subtree (2026-10-24)**: el core C vive en
+  `lib/kult-core/`, importado con `git subtree` desde `kult-atari-st-c`. El
+  build (`Makefile`, CMake, tests, tools) compila desde el subtree; se retiraron
+  las copias locales de `src/`, `include/`, `tools/recreate_kit` y
+  `work/names.txt`. El delta propio del port (diagnóstico y shim de puerta) está
+  en 7 ficheros del core y documentado en `docs/CORE_DELTA.md`. `make test` 519,
+  `make test-port` OK, `make port`, `make port-sdl` y CMake OK.
 - **Sesión 53 — T-061 cerrada y validada en Windows (2026-10-23)**: el usuario
   da por validada la versión de Windows. Criterio de cierre: el C sigue los
   mismos caminos/comportamiento que el ASM **a nivel de experiencia del
@@ -18,7 +25,7 @@ Tareas: `TODO.md`.
   la habilidad es el poder PSI **SOLAR EYES** (`0xa00a` → `f_014f5e` →
   `palette_cycle`, `0x16310`). El ASM hace por pasada `wait_vbl` + `dbra d0`
   con `d0=0xffff` + `set_palette`; el C omitía los dos `dbra`. Es una
-  divergencia ASM↔C real y se corrigió solo el timing en `src/video.c` con
+  divergencia ASM↔C real y se corrigió solo el timing en `lib/kult-core/src/video.c` con
   `cpu_delay(0x10000u)` en fase 1 y fase 2. Replay nuevo/generico desde un save
   fuera de combate y dos reproducciones deterministas. Medición: original
   (oráculo, misma paleta) **7.879.396 ciclos ≈985 ms**, 12 pasadas; port
@@ -50,7 +57,7 @@ Tareas: `TODO.md`.
   primera pasada y el guion seguía, dejando escena/paleta corruptas. Evidencia
   en Hatari: el juego ejecuta una copia relocalizada `+0xB018`; la pila da
   `0x23CA2 = 0x18C8A + 0xB018`, retorno del `bsr f_01834a` dentro de
-  `l_018c80`. Fix en `src/screens.c`: `attract_once` + `attract_loop` +
+  `l_018c80`. Fix en `lib/kult-core/src/screens.c`: `attract_once` + `attract_loop` +
   `attract` (no retorna). `make test` **518** y `test-port` OK; builds
   nativo/Windows/ZIP. **Validado visualmente por el usuario en Windows
   (2026-10-22)**: se queda en las estrellas, sin escena/paleta corruptas.
@@ -78,13 +85,13 @@ Tareas: `TODO.md`.
   el usuario confirmó que el crash de la ficha al atacar a un personaje está
   resuelto en Windows usando el replay. Con esto T-088 queda cerrado. Causa:
   `object_info_card` no avanzaba `p` tras `text_block_build`; el ASM `0x129d6`
-  deja A5 al final del bloque de 3 bytes. Fix `p += 3` en `src/loop.c`; test
+  deja A5 al final del bloque de 3 bytes. Fix `p += 3` en `lib/kult-core/src/loop.c`; test
   `test_fun_16dec_text_block`; `make test` **517** y `test-port` OK. Detalle:
   **`notes/0038`** §9–§11. Siguiente: T-061 (validación jugada) → T-072.
 - **Sesión 46 — T-088: causa raíz corregida y replay validado**:
   `object_info_card` no avanzaba `p` tras `text_block_build`; el ASM `0x129d6`
   deja A5 al final del bloque de 3 bytes. El bucle releía el bloque y llegaba al
-  patrón inválido `idx=9`. Fix en `src/loop.c` (`p += 3`), test
+  patrón inválido `idx=9`. Fix en `lib/kult-core/src/loop.c` (`p += 3`), test
   `test_fun_16dec_text_block`; `make test` **517** y `test-port` OK. El replay
   nativo ya no hace SIGSEGV: consume todo el fichero y sigue esperando entrada.
   Logs: `trazas-t088-crash-20261021-224446/` (`replay-fixed.log`). Build:
@@ -94,7 +101,7 @@ Tareas: `TODO.md`.
 - **Sesión 45 — T-088: replay grabado, reproducido y crash localizado**:
   el usuario grabó la run con `kult-replay-record.bat`; `kult-replay.bin` se
   reproduce en Linux nativo y termina en SIGSEGV, igual que en Windows. GDB:
-  `elem_bitmap_build` (`src/element.c:186`) -> `elem_list_build` ->
+  `elem_bitmap_build` (`lib/kult-core/src/element.c:186`) -> `elem_list_build` ->
   `object_info_card`; patrón `idx=9` (`0x1a2ac`) con `width=1` y scratch
   `height=210` dispara `dest` por encima de 1 MiB. Replay y save preservados en
   `build-win/kult-0.1.0-win64/trazas-t088-crash-20261021-224446/`.
@@ -129,9 +136,9 @@ Tareas: `TODO.md`.
   `test-port` OK. Exes recompilados y copiados al paquete. **Validado en la
   sesión 43.** Detalle: **`notes/0036`** §12.
 - **Sesión 41 — T-087: fix central A7/unwind implementado (validado en sesión 43)**:
-  boundary `setjmp`/`longjmp` en `run_command` (`src/handlers.c`) y unwind
+  boundary `setjmp`/`longjmp` en `run_command` (`lib/kult-core/src/handlers.c`) y unwind
   central para `nibble == 0xf000` en `run_command_keep_sp_a6`
-  (`src/dispatch.c`), con fallback normal si no hay boundary. Trazas
+  (`lib/kult-core/src/dispatch.c`), con fallback normal si no hay boundary. Trazas
   `run_unwind`/`run_unwind_out`; `dispatch_a6` y el tail-call `c/a`/`$1abf8`
   intactos. Nuevo test diferencial `test_run_command_f000_unwind`: **515
   tests** y `test-port` OK. `kult-diag.exe` y `kult.exe` recompilados y
@@ -170,7 +177,7 @@ Tareas: `TODO.md`.
   última interrogación**, no con el nivel del botón. La HAL entregaba nivel en
   cada `wait_frame`; ahora entrega un flanco de bajada una sola vez. Clic
   mantenido = un clic, soltar y pulsar = otro, derecho = acción + skip sólo en
-  su bajada. `src/` intacto; tests `test_click_held`, `test_click_skip`,
+  su bajada. `lib/kult-core/src/` intacto; tests `test_click_held`, `test_click_skip`,
   `test_crawio_queue`. **Validado por el usuario en Windows**: el anillo se abre
   y se queda abierto para elegir. Detalle: **§ T-084** y **`notes/0032`**.
 - **Sesión 34 — T-083 resuelto y validado (fix + refactor)**: causa raíz en
@@ -252,7 +259,7 @@ del ASM.
 izquierdo/derecho; `platform_ikbd_deliver()` entrega la acción (bit0) una sola
 vez y consume el flanco (0 si sigue pulsado). El derecho además arma el skip de
 esa bajada; `platform_input_apply_skip()` lo pisa en `$1a570`. Mantener
-izquierdo/derecho ya no repite acción ni skip. `src/` intacto.
+izquierdo/derecho ya no repite acción ni skip. `lib/kult-core/src/` intacto.
 
 **Teclado:** `pc_os_crawio()` avanza `g_head` **una** vez (la sospecha de doble
 pop era de un estado anterior); prueba nueva de dos teclas = dos `Crawio`. Se
@@ -278,7 +285,7 @@ con **dos `dbra d0` de `0xffff`**. El C los transcribió como
 el inicio: nunca se ejecutaba el retardo y se perdían ~14,4 M ciclos (~1,8 s).
 El diferencial no podía verlo porque solo compara imagen/estado.
 
-**Fix (solo timing en `src/loop.c`):** los dos bloques pasan a
+**Fix (solo timing en `lib/kult-core/src/loop.c`):** los dos bloques pasan a
 `cpu_delay(0x10000u)` (65536 iteraciones), no-op en diferencial y con coste real
 en el port. No se toca `15da6`, `15ac8`, input ni otras animaciones.
 
@@ -300,7 +307,7 @@ veía; el cierre pasaba al comando siguiente casi en el mismo VBL.
 separados por **tres `dbra d0` de `0xffff`**; el C tenía los blits pero no los
 retardos (~82 ms cada uno).
 
-**Fix (solo timing en `src/commands.c`):** añadir `cpu_delay(0x10000u)` tras
+**Fix (solo timing en `lib/kult-core/src/commands.c`):** añadir `cpu_delay(0x10000u)` tras
 cada blit. No se toca el cuadro de texto, el anillo, `15da6`, `15ac8` ni el
 input.
 
@@ -381,7 +388,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 - **Estado:** **resuelto y validado en Windows**. `object_info_card` no avanzaba
   `p` tras `text_block_build`; el ASM `0x129d6` deja A5 al final del bloque de
   3 bytes. El bucle releía el bloque y llegaba al patrón inválido `idx=9`. Fix
-  en `src/loop.c` (`p += 3`), test `test_fun_16dec_text_block`; `make test` 517
+  en `lib/kult-core/src/loop.c` (`p += 3`), test `test_fun_16dec_text_block`; `make test` 517
   y `test-port` OK. El replay nativo consume todo el fichero sin SIGSEGV y el
   usuario confirmó el fix en Windows. Artefactos en
   `trazas-t088-crash-20261021-224446/` (`replay-fixed.log`).
@@ -389,10 +396,10 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 - **Sesión 32 — audio de puertas (T-082)**: log 88310: apertura 1192, sample
   del tope `0x1f` en 1321 y `sound_stop` en 1322; faltaba el trabajo de CPU
   previo a `sound_stop` (~242.030 ciclos medidos con el oráculo). Fix en
-  `src/mode.c`: la espera se movió **al final de `textform_fwd`**, antes de que
+  `lib/kult-core/src/mode.c`: la espera se movió **al final de `textform_fwd`**, antes de que
   la transición pinte/cargue la sala siguiente, hasta que el puntero de sample
   (`0x192c6`) alcanza su fin (`0x192ca`). Así la sala actual sigue visible
-  mientras suena el tope. **Validado por el usuario.** `src/` solo cambia como
+  mientras suena el tope. **Validado por el usuario.** `lib/kult-core/src/` solo cambia como
   espera de audio; tests 511, build/ZIP OK. Exe `bd3764b9…`, headless
   `0fdda9c8…`, ZIP `1396dd00…`.
   **Validado por el usuario.** Detalle: `notes/0029-audio-puertas.md`.
@@ -417,14 +424,14 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   apunta a `reveal_pixel` (`0x12f28`) ejecutándose tras una salida anticipada de
   `elem_command` (`0x128a4`, `addq.l #4,a7; rts`). El C actual no propaga el
   aborto y sigue revelando con `A_ELEM_*` viejo (log: `12f28` 4471, `12fb6`
-  hasta 4919). **No se ha tocado `src/`**: queda documentado el alcance de los
+  hasta 4919). **No se ha tocado `lib/kult-core/src/`**: queda documentado el alcance de los
   12 llamantes, el diseño del arreglo y el plan de pruebas/auditoría en
   `notes/0028-retornos-dobles-128a4.md` (T-081). Detalle: **`notes/0028`**.
 - **Sesión 28 — cursor del sistema (T-080)**: se veía el cursor de Windows
   encima del cursor del juego. `platform/video_sdl.c` oculta el cursor del
   sistema con `SDL_HideCursor()` al abrir/recuperar foco y lo muestra al perder
-  foco/cerrar; dentro de la ventana solo queda el cursor de `src/cursor.c`.
-  `src/` intacto; `make port-sdl` y `package-win` OK. Exe
+  foco/cerrar; dentro de la ventana solo queda el cursor de `lib/kult-core/src/cursor.c`.
+  `lib/kult-core/src/` intacto; `make port-sdl` y `package-win` OK. Exe
   `3237a4d7cc6d1a82423a2b95e017f814` (headless
   `68ae05eaddcb6c33f4b66da437576aa3`, ZIP
   `ad7d30dded0c1afe2fee2d4417fb5258`). Detalle:
@@ -437,7 +444,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   el `room_reset` la tapaba. Fix **solo HAL**: `platform_disk_delay(bytes)` en
   `pc_os_fread`, estimando disquete ST DD (~1,4 s por 7 pistas + búsqueda/motor
   ≈ **2,0 s**, 62,5 µs/B; usuario: >1,4 s). No-op en headless/diferencial;
-  `test_disk_delay`. `src/` intacto; 499 + `test-port`; nativo/win/ZIP OK.
+  `test_disk_delay`. `lib/kult-core/src/` intacto; 499 + `test-port`; nativo/win/ZIP OK.
   Exe `ed17588978ec5560e2024f1fa995624b` (headless
   `68ae05eaddcb6c33f4b66da437576aa3`, ZIP
   `c27a193581bec5e613af547d76b7c209`). El modelo es **global a cada Fread**:
@@ -454,7 +461,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   cobrarlo al entrar era un retardo previo, no repartido. El viaje espacial
   cobra `1834a` **2.301.836/101 ≈ 22.790 ciclos/pasada** (CPU del `icon_scale`
   menos las 101 esperas de VBL). Tabla regenerada (80 funciones con coste).
-  `src/` intacto; 499 + `test-port` verdes. Exe nuevo
+  `lib/kult-core/src/` intacto; 499 + `test-port` verdes. Exe nuevo
   `b7edc93660ea7caadd87191f8ffeee7a` (headless `7faac3d3…`, ZIP
   `97d56789…`). **Validado en Windows**: sangre perfecta; viaje espacial
   `1834a` 2373–2473 = 101 VBL (101 pasadas del ASM, ~2,02 s). Detalle:
@@ -464,7 +471,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   (inicio del bucle); el C nativo solo hacía la parte de estado y **retornaba**.
   Fix **solo `boot/` + hook**: al salir de `reset_clear`, `kult_request_restart()`
   hace `longjmp` a un `setjmp` armado y `boot_enter_game()` reproduce `0x10158`
-  (espera clic, modo 7, `0xc001`, Maestro/objeto, `game_loop`). `src/` intacto;
+  (espera clic, modo 7, `0xc001`, Maestro/objeto, `game_loop`). `lib/kult-core/src/` intacto;
   diagnóstico `KULT_RESTART_AT`; 499 + `test-port` verdes. Exe nuevo
   `b7edc93660ea7caadd87191f8ffeee7a` (headless `7faac3d3…`, ZIP `97d56789…`).
   Detalle: `notes/0022-reinicio-tras-muerte.md`.
@@ -474,18 +481,18 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   máximo **304×184** (320−16, 200−16); el port lo ignoraba y recortaba a
   319×199. Fix **solo HAL**: `platform_ikbdws()` parsea el comando 0x09,
   `platform_mouse_set()` recorta a ese máximo y `boot/boot.c` lo llama tras
-  `crt0_init`. `src/` intacto; nueva prueba `test_ikbd_mouse_max`; 499 +
+  `crt0_init`. `lib/kult-core/src/` intacto; nueva prueba `test_ikbd_mouse_max`; 499 +
   `test-port` verdes. Exe nuevo `b7edc93660ea7caadd87191f8ffeee7a`
   (headless `7faac3d3…`, ZIP `97d56789…`). Detalle:
   `notes/0021-cursor-e-ikbd.md`.
 - **Sesión 23 — input y presentación (HAL)**: el bug de puertas/A-B-C no era de
-  `src/`: el core deriva acción y skip del bit0 del IKBD y nuestra HAL lo tenía
+  `lib/kult-core/src/`: el core deriva acción y skip del bit0 del IKBD y nuestra HAL lo tenía
   invertido (izquierdo = acción+skip; derecho ignorado). Se corrige en la HAL,
   como el legacy: acción = izquierdo **o** derecho; skip = solo derecho;
   `platform_input_apply_skip()` pisa `$1a570` al salir de `wait_frame` (hook de
   instrumentación). Además, `platform_tick` ahora presenta en **cada VBL** (antes
   solo en arranque/CPU-delay), por lo que las animaciones de puerta que corren en
-  `wait_vbl` ya se ven. **`src/` intacto**; 499 + `test-port` verdes; nueva
+  `wait_vbl` ya se ven. **`lib/kult-core/src/` intacto**; 499 + `test-port` verdes; nueva
   guardia `test_click_skip`. Exe nuevo `b7edc93660ea7caadd87191f8ffeee7a`
   (headless `7faac3d3…`, ZIP `97d56789…`). Detalle:
   `notes/0020-input-hal-y-presentacion.md`.
@@ -493,7 +500,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   `object_info_card` (`0x16dec`): el guion de C deja `wait=0x0a`, que produce
   **40960 iteraciones × 18 ciclos ≈ 92 ms ≈ 4,6 VBL por entrada**; el core lo
   transcribía como bucle C normal y no lo anotaba como espera. Fix **con permiso
-  del usuario para tocar `src/`**: `src/loop.c` usa `cpu_delay_cycles()`; el
+  del usuario para tocar `lib/kult-core/src/`**: `lib/kult-core/src/loop.c` usa `cpu_delay_cycles()`; el
   diferencial sigue no-op y el port cobra ciclos por el mismo reloj de T-073b.
   Prueba nueva `test_cpu_charge_cycles`. `make test` **499**, `make test-port`
   OK, builds nativo/win y ZIP. Exe nuevo
@@ -537,10 +544,10 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   de blits). **T-073a**: `cpu_delay` deja de ser no-op (`platform/include/
   kult_port.h` sombra + `platform_cpu_delay`), coste ~10 ciclos/unidad a
   `KULT_CPU_HZ` (def. 8 MHz), durmiendo y cediendo VBLs; no-op en diferencial/
-  headless. **T-073b**: modelo **medido** por función: `src/*.c` con
+  headless. **T-073b**: modelo **medido** por función: `lib/kult-core/src/*.c` con
   `-finstrument-functions` solo en el port, `platform/cpuwork.c` cobra ciclos/
   llamada y `platform/cpuwork_costs.inc` (79 funciones; generado por
-  `tools/gen_cpuwork_costs.py` desde la referencia del oráculo + `docs/mapa` +
+  `tools/gen_cpuwork_costs.py` desde la referencia del oráculo + `lib/kult-core/docs/mapa` +
   `nm`). Excluidas esperas (`13594/13698`), `dbf` ya cobrados por `cpu_delay`
   (`15da6/12e2e/12f28`) y audio. Retardos reales de `15da6` medidos: 0/10/20/60
   → 1/3/5/13 VBLs. Efecto medido: 600 frames 26,7 s → 34,6 s. Verificado:
@@ -563,7 +570,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   pantalla B (`0x78000`) y su paleta (`0x77fe0`) cayeran dentro de los datos del
   juego (ECHE `0x64c8e..~0x88b84` + heap). **Fix HAL**: `OS_SCREEN_BASE =
   0x98000` en `platform/include/os.h` (como el predecesor); paleta = la de
-  `FOND.PI1` y frame correcto. `src/` intacto; 499 + `test-port` verdes. También
+  `FOND.PI1` y frame correcto. `lib/kult-core/src/` intacto; 499 + `test-port` verdes. También
   `make port-sdl` ahora depende de `platform/include/*.h`. **Ritmo**: medido a
   50 VBL/s (20,1 ms/tick); la aceleración es el **trabajo de CPU no modelado**
   (busy-waits descartados) → **T-073** (medir ciclos con el oráculo + reloj
@@ -680,22 +687,22 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   descripciones; C: 1 retrato del Maestro + lift + diálogo (único diálogo y
   único retrato que se mueve), después de B. La causa de la aceleración era el
   `dbf` inline de `0x16dec` (40960 iteraciones ≈ 4,6 VBL/entrada) sin anotar;
-  ahora va por `cpu_delay_cycles()` en `src/loop.c` (no-op en diferencial).
+  ahora va por `cpu_delay_cycles()` en `lib/kult-core/src/loop.c` (no-op en diferencial).
   C queda en ~7,6 VBL/frame; A/B no usan `16dec`. Detalle:
   **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8).
 - **Input/presentación (sesión 23, HAL)**: izquierdo/teclado = acción sin skip;
   derecho = acción + skip. La HAL pisa `$1a570` al salir de `wait_frame` (hook),
-  sin tocar `src/input.c`. `platform_tick` presenta en cada VBL, así se ven las
+  sin tocar `lib/kult-core/src/input.c`. `platform_tick` presenta en cada VBL, así se ven las
   animaciones de puerta que corren en `wait_vbl`. Detalle:
   **`notes/0020-input-hal-y-presentacion.md`**.
 - **Cursor (sesión 24, HAL)**: la HAL emula `Ikbdws` 0x09 y recorta el ratón al
   máximo que configura el juego (**304×184**), no a 319×199. El sprite 16×16 ya
-  no reaparece por el lado contrario. `src/` intacto; `test_ikbd_mouse_max`.
+  no reaparece por el lado contrario. `lib/kult-core/src/` intacto; `test_ikbd_mouse_max`.
   Detalle: **`notes/0021-cursor-e-ikbd.md`**.
 - **Reinicio tras morir (sesión 25, `boot/`)**: el original salta de
   `reset_clear` a `0x10158`; el port lo emula con `longjmp` y
   `boot_enter_game()`, así vuelve el Maestro/objeto en vez de repetir la muerte.
-  `src/` intacto; `KULT_RESTART_AT` para diagnóstico. Detalle:
+  `lib/kult-core/src/` intacto; `KULT_RESTART_AT` para diagnóstico. Detalle:
   **`notes/0022-reinicio-tras-muerte.md`**.
 - **Ritmo de muerte (punto 1, sesión 26)**: `reveal_line` (`13d0e`) cobra por
   línea (1063 + 198 × pasos) e `icon_scale_loop` (`1834a`) 22.790/pasada;
@@ -738,7 +745,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 **Resultado (sesión 52):** la habilidad es **SOLAR EYES** (`0xa00a` →
 `f_014f5e` → `palette_cycle`, `0x16310`). El ASM hace por pasada `wait_vbl` +
 `dbra d0` con `d0=0xffff` + `set_palette`; el C omitía los dos `dbra`. Fix solo
-de timing en `src/video.c` con `cpu_delay(0x10000u)` en las dos fases. El
+de timing en `lib/kult-core/src/video.c` con `cpu_delay(0x10000u)` en las dos fases. El
 oráculo mide **7.879.396 ciclos ≈985 ms** (12 pasadas); el port pasa de
 **12 VBL (240 ms)** a **60 VBL (1,2 s)** con el mismo frame de entrada (4983).
 Evidencia en `build-win/kult-0.1.0-win64/trazas-t090-20261023/`; detalle en
@@ -825,7 +832,7 @@ acelerada.
 
 **Trampas**
 - No usar `KULT_FRAME_GATE` ni parches por animación sin medición.
-- No tocar `src/` sin permiso explícito; una hipótesis, un cambio; revertir si
+- No tocar `lib/kult-core/src/` sin permiso explícito; una hipótesis, un cambio; revertir si
   no mejora.
 - No confundir esta tarea con T-073: si es falta de coste de CPU, se mide y se
   modela, no se “acelera/decelera a ojo”.
@@ -903,11 +910,11 @@ T-083 (objetos en serpientes) está **cerrado y validado**; detalle en
 - **`SDL_Renderer`** para lo básico; **`SDL_GPU` + shaders** solo para CRT.
 - **Audio** en hito propio (no al principio).
 - **Menú de idioma**: mantener el fiel (espera de tecla) al inicio.
-- **`boot/`** fuera de `src/` (no se toca el core verificado).
+- **`boot/`** fuera de `lib/kult-core/src/` (no se toca el core verificado).
 - **Headless primero**, luego ventana SDL.
 
 ## Trampas / notas
-- `src/` (el juego) **no se modifica**; todo lo de la máquina va en `platform/`.
+- `lib/kult-core/src/` (el juego) **no se modifica**; todo lo de la máquina va en `platform/`.
 - El arranque `_start` (0x10000) y el tick `0x160c2` **no existen en C** en el
   core; se reconstruyen aquí.
 - El juego avanza **1 paso por frame**; separar simulación (ritmo del original)

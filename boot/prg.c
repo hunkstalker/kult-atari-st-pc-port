@@ -1,6 +1,6 @@
 /* boot/prg.c — carga de un GEMDOS .PRG en la imagen plana del juego.
  *
- * Espeja `tools/recreate_kit/oracle/loader.py` y `tools/prg_dis.py`: cabecera de 28
+ * Espeja `lib/kult-core/tools/recreate_kit/oracle/loader.py` y `lib/kult-core/tools/prg_dis.py`: cabecera de 28
  * bytes, text+data en la base de carga (0x10000), y la tabla DRI de reubicación de
  * longwords (primer offset + flujo de deltas de 1 byte; 0 = fin, 1 = salto de 254).
  * La BSS no viaja en el fichero: la imagen ya es 1 MiB a cero.

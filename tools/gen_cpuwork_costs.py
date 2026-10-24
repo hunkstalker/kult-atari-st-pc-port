@@ -4,7 +4,7 @@
 Entrada:
   - tools/cpuwork/funcost_st_reference.txt: "<addr_hex> <ciclos_totales> <calls>"
     medido del oráculo (Musashi) por el predecesor sobre el binario original.
-  - docs/mapa/*.md: tabla `| 0xADDR | nombre | ...` (dirección ST ↔ símbolo C).
+  - lib/kult-core/docs/mapa/*.md: tabla `| 0xADDR | nombre | ...` (dirección ST ↔ símbolo C).
   - símbolos globales del build del port (`nm -g --defined-only <lib>`), para no
     referenciar funciones que no existen o no son enlazables.
 
@@ -29,7 +29,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(ROOT, "tools", "cpuwork", "funcost_st_reference.txt")
 OUT = os.path.join(ROOT, "platform", "cpuwork_costs.inc")
-MAP = os.path.join(ROOT, "docs", "mapa", "*.md")
+MAP = os.path.join(ROOT, "lib", "kult-core", "docs", "mapa", "*.md")
 
 # Se cobran por el reloj de VBL, por cpu_delay o por audio (no aquí).
 EXCLUDE = {0x13594, 0x13698, 0x15DA6, 0x12E2E, 0x12F28}
@@ -82,7 +82,7 @@ def main():
         rows.append((addr, name, units // calls))
 
     rows.sort()
-    # Tabla de marcas: TODAS las funciones globales con direccion en docs/mapa
+    # Tabla de marcas: TODAS las funciones globales con direccion en lib/kult-core/docs/mapa
     # (aunque no tengan coste). Permite que la ventana F12 trace todo el core.
     marks = sorted((a, n) for a, n in names.items() if n in syms)
     lines = [

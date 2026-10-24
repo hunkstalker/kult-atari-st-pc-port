@@ -2,7 +2,7 @@
 
 La VM `vm_run` despacha el byte b por la tabla de datos del binario:
 `b-1 -> offset desde 0x10000 -> direccion de la funcion`. La reconstruccion C
-usa un `switch` (`byte_handler`, en src/dispatch.c). Este test comprueba, byte a
+usa un `switch` (`byte_handler`, en lib/kult-core/src/dispatch.c). Este test comprueba, byte a
 byte (1..0x6a), que cada entrada esta cableada y que apunta a la MISMA funcion
 que la tabla del PRG original. Es el guardian del "1:1": si alguien toca el
 cableado o la tabla, esto lo detecta sin depender de fixtures por handler.
@@ -34,9 +34,9 @@ def _table_targets():
 
 
 def _name_addr():
-    """nombre de funcion -> direccion, desde work/names.txt."""
+    """nombre de funcion -> direccion, desde lib/kult-core/symbols/names.txt."""
     m = {}
-    for ln in open(os.path.join(ROOT, "work", "names.txt"), encoding="utf-8"):
+    for ln in open(os.path.join(ROOT, "lib", "kult-core", "symbols", "names.txt"), encoding="utf-8"):
         mm = re.match(r"fn\s+0x([0-9a-fA-F]+)\s+(\S+)", ln)
         if mm:
             m.setdefault(mm.group(2), int(mm.group(1), 16))
@@ -58,7 +58,7 @@ def _target_of(rest):
 
 
 def _switch_cases():
-    src = open(os.path.join(ROOT, "src", "dispatch.c"), encoding="utf-8").read()
+    src = open(os.path.join(ROOT, "lib", "kult-core", "src", "dispatch.c"), encoding="utf-8").read()
     i = src.index("static uint32_t byte_handler")
     j = src.index("uint32_t vm_run")
     body = src[i:j]

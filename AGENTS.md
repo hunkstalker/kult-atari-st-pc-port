@@ -38,13 +38,13 @@ que el ASM a nivel de experiencia del jugador. Siguiente: **T-072** (ingesta
   `0x0D` y responde con **eventos desde la última interrogación**: una pulsación
   mantenida produce **un solo clic** (no repetir el nivel). La HAL entrega el
   flanco de bajada en el bit0 del IKBD y **pisa `$1a570`** al salir de
-  `wait_frame` con el flanco del derecho. `src/input.c` no se toca. No usar
+  `wait_frame` con el flanco del derecho. `lib/kult-core/src/input.c` no se toca. No usar
   modelos de botones de otros repositorios. T-084: `notes/0032`.
 - **Presentación**: `platform_tick` presenta en **cada VBL** (arranque y bucle);
   el frame hook ya no presenta. Así se ven las animaciones que corren en
   `wait_vbl` dentro de un comando (puertas, wipes).
 - **Cursor**: la HAL emula `Ikbdws` `0x09` (el juego fija el ratón absoluto a
-  **304×184** para el sprite 16×16). No recortar a ojo a 319×199: `src/` no se
+  **304×184** para el sprite 16×16). No recortar a ojo a 319×199: `lib/kult-core/src/` no se
   toca; ver `notes/0021-cursor-e-ikbd.md`. En SDL se oculta el cursor del
   sistema (`SDL_HideCursor`) para que solo se vea el del juego; ver
   `notes/0027-cursor-sistema-sdl.md`.
@@ -81,12 +81,13 @@ que el ASM a nivel de experiencia del jugador. Siguiente: **T-072** (ingesta
 
 ## Reglas de trabajo
 1. **Reproducir/medir antes de tocar.** Una hipótesis, un cambio.
-2. **`src/` (el juego) no cambia de lógica.** Lo específico de máquina va en
+2. **El core en `lib/kult-core/` no cambia de lógica.** El delta del port está en
+   `docs/CORE_DELTA.md`; lo específico de máquina va en
    `platform/`; el arranque/tick en `boot/`; el driver en `app/`. El **timing**
    se anota con `cpu_delay`/`cpu_delay_cycles` (no-op en diferencial), como en
-   `anim.c`, `reveal.c` y `loop.c`; cualquier otro cambio en `src/` requiere
+   `anim.c`, `reveal.c` y `loop.c`; cualquier otro cambio en `lib/kult-core/src/` requiere
    permiso explícito.
-3. **Los 499 tests diferenciales del core deben seguir verdes.** Son la red de
+3. **Los 519 tests diferenciales del core deben seguir verdes.** Son la red de
    seguridad de que no cambiamos la lógica.
 4. **Toda corrección/feature deja prueba** (diferencial si aplica; funcional si es
    del backend).
@@ -99,9 +100,8 @@ que el ASM a nivel de experiencia del jugador. Siguiente: **T-072** (ingesta
 
 ## Estructura
 ```
-src/        juego en C (intacto, importado de kult-atari-st-c)
-include/    addrs.h / kult_api.h / …   (intacto)
-test/       499 diferenciales          (intacto)
+lib/kult-core/      core C importado de kult-atari-st-c (subtree)
+                    src/, include/, symbols/, test/ y tools/
 boot/       _start (0x10000), tick 0x160c2      [nuevo]
 platform/   HAL PC (os_*/hw_*/psg_*/sched_*) + render + audio  [nuevo]
 app/        main + driver + presentación         [nuevo]
@@ -111,4 +111,4 @@ docs/  adr/  notes/
 
 ## Decisiones cerradas
 SDL3; `SDL_Renderer` base y `SDL_GPU` para CRT; audio en hito propio; menú de
-idioma fiel; `boot/` fuera de `src/`; headless primero. Ver `docs/adr/`.
+idioma fiel; `boot/` fuera de `lib/kult-core/src/`; headless primero. Ver `docs/adr/`.

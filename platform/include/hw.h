@@ -1,6 +1,6 @@
 /* platform/include/hw.h — registros de hardware (MFP/shifter/ACIA) en el port PC.
  *
- * Sombrea `tools/recreate_kit/include/hw.h` en el build del ejecutable. En el
+ * Sombrea `lib/kult-core/tools/recreate_kit/include/hw.h` en el build del ejecutable. En el
  * diferencial estas escrituras se comparan por un ledger; aquí son el modelo real
  * del port (M1: MFP mínimo; el audio llega en M4). La frontera con el core es la
  * misma: el juego escribe registros por su dirección y el port decide qué hacer.

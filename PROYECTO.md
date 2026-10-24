@@ -18,7 +18,7 @@ servicios**. Esa capa es lo que se sustituye por un backend de PC.
 
 ```
               ┌───────────────────────────────┐
-App/driver → │  juego (src/, C verificado)   │  ← 415 funciones, 499 tests
+App/driver → │  juego (lib/kult-core/src/, C verificado)   │  ← 415 funciones, 518 tests del core
               └───────────────┬───────────────┘
                               │ 19 servicios (contrato fijo)
               ┌───────────────▼───────────────┐
@@ -31,15 +31,14 @@ App/driver → │  juego (src/, C verificado)   │  ← 415 funciones, 499 tes
 | repo | papel | regla |
 |---|---|---|
 | `/app/kult-atari-st-decomp` | decomp ASM del ST, byte a byte | spec congelada; no se toca |
-| `/app/kult-atari-st-c` | C verificado del ST | **base**; se copia aquí (M0) |
+| `kult-atari-st-c` | C verificado del ST | **base**; importado en `lib/kult-core` (subtree) |
 | **este repo** | la compilación (ST+Amiga, PC) | el trabajo |
 
 ## 3. Arquitectura de capas (objetivo)
 
 ```
-src/        juego en C (copiado de kult-atari-st-c) — INTACTO
-include/    addrs.h / kult_api.h / …               — INTACTO
-test/       499 pruebas diferenciales              — INTACTO
+lib/kult-core/      core C importado de kult-atari-st-c (subtree)
+                    incluye src/, include/, symbols/, test/ y tools/
 boot/       _start (0x10000) y tick VBL (0x160c2)  — NUEVO (reconstrucción)
 platform/   HAL PC: os_* / hw_* / psg_* / sched_* + render + audio — NUEVO
 app/        main + driver + presentación           — NUEVO
@@ -47,7 +46,8 @@ assets/     icono de la app (`kult_icon.ico`), recurso del .exe — NUEVO
 docs/       documentación · notes/ · adr/
 ```
 
-`src/` **no se modifica**: si algo hubiera que cambiarlo, sería señal de que la
+`lib/kult-core/` es un subtree del repo C. El port mantiene un delta mínimo
+(documentado en `docs/CORE_DELTA.md`); si algo más hay que cambiarlo, sería señal de que la
 frontera (los 19 servicios) está mal definida.
 
 ## 4. El contrato: 19 servicios que el C pide
@@ -68,7 +68,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 ## 5. Piezas: reutilizar / reconstruir / implementar
 
 ### 5.1 Se reutiliza (no se toca)
-- Los 415 funciones de `src/` y los 499 tests diferenciales.
+- Los 415 funciones de `lib/kult-core/src/` y los 518 tests diferenciales del core.
 
 ### 5.2 Se reconstruye en C (lógica del original que falta)
 | pieza | qué es |
@@ -89,7 +89,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 
 | fase | contenido | estado |
 |---|---|---|
-| **M0** | repo y documentación; importar `src/include/test/tools` | ✅ hecho |
+| **M0** | repo y documentación; importar el core en `lib/kult-core/` | ✅ hecho |
 | **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ hecho |
 | **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` **abierto**) + tick `0x160c2` |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
@@ -113,7 +113,7 @@ Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 Recogidas como ADR en `docs/adr/`:
 - SDL3 (`0001`), `SDL_Renderer` base y `SDL_GPU` para CRT (`0002`),
   audio en hito propio (`0003`), menú de idioma fiel (`0004`), `boot/` fuera de
-  `src/` (`0005`), headless primero (`0006`).
+  `lib/kult-core/src/` (`0005`), headless primero (`0006`).
 
 ## 8. Estado (punto de control)
 - **Fase M0 cerrada**: core importado y **499 diferenciales verdes** (`make test`).
@@ -169,7 +169,7 @@ Recogidas como ADR en `docs/adr/`:
   del HAL** (`OS_SCREEN_BASE = 0x98000` en `platform/include/os.h`). Con el valor
   del kit (`0x80000`), pantalla B y su paleta caían dentro de los datos del juego
   (ECHE + heap) → ruido/colores mal. Paleta de `FOND.PI1` correcta y frame
-  validado; `src/` intacto; **499 + test-port verdes**. Detalle: `notes/0014`.
+  validado; `lib/kult-core/src/` intacto; **499 + test-port verdes**. Detalle: `notes/0014`.
 - **Primera pantalla (sesión 14)**: corregida; es el **título (PRES)** visible
   con música y espera **tecla o clic**. El negro era un fallo del estado inicial
   del HAL (faltaba aplicar la paleta del PI1 antes de la espera); ahora
@@ -186,7 +186,7 @@ Recogidas como ADR en `docs/adr/`:
   (único diálogo y único retrato que se mueve), después de B. La aceleración de
   C era el `dbf` inline de `object_info_card` (`0x16dec`): `wait=0x0a` → 40960
   iteraciones × 18 ciclos ≈ 92 ms ≈ 4,6 VBL/entrada, que el core no anotaba.
-  Fix autorizado en `src/loop.c` con `cpu_delay_cycles()` (no-op en diferencial;
+  Fix autorizado en `lib/kult-core/src/loop.c` con `cpu_delay_cycles()` (no-op en diferencial;
   en el port cobra con el reloj de T-073b). C pasa de ~3 a ~7,6 VBL/frame; A/B
   no usan `16dec`. Exe actual: ver T-074. Detalle:
   **`notes/0019-fix-timing-c.md`** (resumen en `notes/0017` §8); plan
@@ -197,14 +197,14 @@ Recogidas como ADR en `docs/adr/`:
   izquierdo **o** derecho; skip = solo derecho; `platform_input_apply_skip()`
   pisa `$1a570` al salir de `wait_frame` (hook de instrumentación). Además,
   `platform_tick` presenta en **cada VBL**, así se ven las animaciones que corren
-  en `wait_vbl` (puertas, wipes). `src/` intacto; `test_click_skip` y
+  en `wait_vbl` (puertas, wipes). `lib/kult-core/src/` intacto; `test_click_skip` y
   `test_present_hook`. Exe `b7edc936…`, headless `7faac3d3…`, ZIP
   `97d56789…`. Detalle: **`notes/0020-input-hal-y-presentacion.md`**.
 - **Input mantenido (T-084, sesión 36)**: el IKBD original (`wait_frame` envía
   `0x0D`, INTERROGATE MOUSE POSITION) entrega **eventos desde la última
   interrogación**, no el nivel del botón. La HAL ahora detecta flancos de
   bajada: mantener el clic no repite, soltar y pulsar sí, y el derecho sólo pide
-  skip en su bajada. `src/` intacto; `test_click_held`, `test_click_skip` y
+  skip en su bajada. `lib/kult-core/src/` intacto; `test_click_held`, `test_click_skip` y
   `test_crawio_queue`. **Validado por el usuario en Windows** (el anillo se abre
   una vez y queda abierto para elegir). Detalle:
   **`notes/0032-input-clic-mantenido.md`**.
@@ -224,28 +224,28 @@ Recogidas como ADR en `docs/adr/`:
   lado contrario en el borde. El juego configura el ratón absoluto con
   `Ikbdws` `09 01 30 00 b8` → máximo **304×184**; la HAL lo emula con
   `platform_ikbdws()` y `platform_mouse_set()` recorta a ese máximo. `boot/boot.c`
-  lo llama tras `crt0_init`; `src/` intacto. Prueba `test_ikbd_mouse_max`.
+  lo llama tras `crt0_init`; `lib/kult-core/src/` intacto. Prueba `test_ikbd_mouse_max`.
   Detalle: **`notes/0021-cursor-e-ikbd.md`**.
 - **Reinicio tras morir (T-076, sesión 25)**: el original termina `reset_clear`
   (`0x1682a`) con `bra.w 0x10158` (inicio del bucle); el C nativo solo hacía el
   estado y retornaba, por lo que se repetía la muerte. Fix en `boot/` + hook: al
   salir de `reset_clear`, `kult_request_restart()` hace `longjmp` y
   `boot_enter_game()` reproduce `0x10158` (modo 7, `0xc001`, Maestro/objeto,
-  `game_loop`). `src/` intacto; `KULT_RESTART_AT` diagnóstico. Detalle:
+  `game_loop`). `lib/kult-core/src/` intacto; `KULT_RESTART_AT` diagnóstico. Detalle:
   **`notes/0022-reinicio-tras-muerte.md`**.
 - **Ritmo de la muerte (T-077, sesión 26, punto 1)**: sangre (`181f0`/`13d0e`)
   y viaje espacial (`1834a`/`18316`) iban acelerados por coste 0. La sangre se
   cobra **por línea** en `reveal_line` con la fórmula medida
   `1063 + 198 × pasos`; `181f0` se deja a 0 para no meter un retardo previo.
   El viaje espacial cobra `1834a` (2.301.836/101 ≈ 22.790/pasada). Tabla
-  regenerada (80 funciones). `src/` intacto. **Validado en Windows**: sangre
+  regenerada (80 funciones). `lib/kult-core/src/` intacto. **Validado en Windows**: sangre
   perfecta y espacio 101 VBL. Detalle:
   **`notes/0023-costes-sangre-espacio.md`**.
 - **Estrella final (T-079, sesión 27, punto 2)**: la animación ya era correcta
   (15 VBL); faltaba la espera posterior. El ASM no tiene un `wait`: tras
   `159e2` se lee `FOND.PI1` (`0x13568`, 0x7d22 B) y el ST bloquea en Fread con
   la estrella en pantalla. La HAL modela la lectura de disquete ST
-  (`platform_disk_delay`, ~2 s; usuario: >1,4 s) desde `pc_os_fread`. `src/`
+  (`platform_disk_delay`, ~2 s; usuario: >1,4 s) desde `pc_os_fread`. `lib/kult-core/src/`
   intacto; nativo/win/ZIP OK. Build de la estrella: exe `ed175889…`, headless
   `68ae05ea…`, ZIP `c27a1935…`; build actual: exe `c7b8dac1…`, headless
   `76e7974e…`, ZIP `787bd41d…`. El retardo se aplica a **cada Fread** (salas, reinicio,
@@ -257,7 +257,7 @@ Recogidas como ADR en `docs/adr/`:
 - **Cursor del sistema (T-080, sesión 28)**: SDL mostraba el cursor de Windows
   sobre el cursor del juego. `platform/video_sdl.c` lo oculta con
   `SDL_HideCursor()` al abrir/recuperar foco y lo restaura al perder foco/cerrar;
-  `src/` intacto. Exe `3237a4d7…`, headless `68ae05ea…`, ZIP `ad7d30dd…`.
+  `lib/kult-core/src/` intacto. Exe `3237a4d7…`, headless `68ae05ea…`, ZIP `ad7d30dd…`.
   Detalle: **`notes/0027-cursor-sistema-sdl.md`**.
 - **H-el1 (T-081, sesión 30)**: **resuelto**. Las salidas anticipadas de
   `elem_command` (`0x128a4`, `addq.l #4,a7; rts`) se propagan con

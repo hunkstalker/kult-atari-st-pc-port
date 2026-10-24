@@ -26,13 +26,13 @@
 #include "boot.h"
 
 extern uint8_t *g_kult_img;
-extern void wait_frame(void);   /* src/input.c: escribe $1a570 (skip) */
-extern void reset_clear(void);  /* src/fileio.c: 0x1682a (bra 0x10158) */
-extern void reveal_line(void);  /* src/line.c: 0x13d0e (coste por longitud) */
-extern void use_object(void);   /* src/loop.c: 0x17ca4 (usar objeto) */
-extern void scale_prep(void);   /* src/scale.c: 0x13702 (escalado/retrato) */
-extern void blit_dispatch_b(void); /* src/handlers.c: 0x11f2e */
-extern void elem_blit_rev(void);   /* src/element.c: 0x12b04 */
+extern void wait_frame(void);   /* lib/kult-core/src/input.c: escribe $1a570 (skip) */
+extern void reset_clear(void);  /* lib/kult-core/src/fileio.c: 0x1682a (bra 0x10158) */
+extern void reveal_line(void);  /* lib/kult-core/src/line.c: 0x13d0e (coste por longitud) */
+extern void use_object(void);   /* lib/kult-core/src/loop.c: 0x17ca4 (usar objeto) */
+extern void scale_prep(void);   /* lib/kult-core/src/scale.c: 0x13702 (escalado/retrato) */
+extern void blit_dispatch_b(void); /* lib/kult-core/src/handlers.c: 0x11f2e */
+extern void elem_blit_rev(void);   /* lib/kult-core/src/element.c: 0x12b04 */
 
 typedef struct {
     void *fn;

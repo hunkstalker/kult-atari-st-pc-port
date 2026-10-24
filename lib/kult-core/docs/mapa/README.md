@@ -16,7 +16,7 @@ origen), los globales `A_*` que toca y las pruebas que la cubren.
 | `fileio.c` | 17 | 14 | 17 | [fileio](fileio.md) |
 | `handlers.c` | 44 | 39 | 40 | [handlers](handlers.md) |
 | `icons.c` | 13 | 9 | 13 | [icons](icons.md) |
-| `input.c` | 2 | 3 | 2 | [input](input.md) |
+| `input.c` | 2 | 5 | 2 | [input](input.md) |
 | `line.c` | 3 | 3 | 3 | [line](line.md) |
 | `loop.c` | 74 | 81 | 74 | [loop](loop.md) |
 | `maskblit.c` | 12 | 5 | 12 | [maskblit](maskblit.md) |

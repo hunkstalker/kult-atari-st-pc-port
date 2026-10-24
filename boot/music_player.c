@@ -5,7 +5,7 @@
  * Timer A lo interrumpe cada ~3,5 ms (TACR=4 /50, TADR=0xaa) y este ISR hace un
  * tick del tracker de 3 canales + canales enlazados, vuelca la tabla sombra al
  * PSG y avanza la envolvente de ruido. Es la otra mitad del audio de M4: la ISR
- * PCM (`0x190f6`/`0x1910e`) ya está en el core (`src/sound.c`).
+ * PCM (`0x190f6`/`0x1910e`) ya está en el core (`lib/kult-core/src/sound.c`).
  *
  * Por qué vive aquí: `0x3a872` NO está en el índice de 406 funciones (Ghidra solo
  * lo ve como el puntero de dato del vector $134), así que no tiene reconstrucción

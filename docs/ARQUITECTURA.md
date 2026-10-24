@@ -9,7 +9,7 @@ app/        main, driver, presentación, perfiles         [nuevo]
 boot/       _start (0x10000), tick VBL (0x160c2)         [nuevo]
    │  (llama)
    ▼
-src/        juego en C (lógica), 415 funciones           [intacto]
+lib/kult-core/src/  juego en C (lógica), 415 funciones           [subtree]
    │  (llama a los 19 servicios)
    ▼
 platform/   HAL PC: os_*/hw_*/psg_*/sched_* + render + audio  [nuevo]
@@ -18,7 +18,7 @@ platform/   HAL PC: os_*/hw_*/psg_*/sched_* + render + audio  [nuevo]
 SDL3 + sistema operativo (Windows / Linux)
 ```
 
-- **`src/`** es el juego (copiado de `/app/kult-atari-st-c`). No conoce ni SDL ni
+- **`lib/kult-core/src/`** es el juego, importado del repo C mediante subtree. No conoce ni SDL ni
   el SO: solo llama a los servicios de `platform/`.
 - **`platform/`** es "nuestro TOS + hardware": implementa los 19 servicios y
   además pinta (render) y suena (audio).

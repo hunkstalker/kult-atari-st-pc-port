@@ -3,11 +3,11 @@
 ## Estado (M0–M7 build hecho)
 - **Core + diferencial**: operativo con el **Makefile + kit** heredado de
   `kult-atari-st-c`. `make test` compila `build/libkult.so` (candidato) y
-  `tools/recreate_kit/oracle/build/liboracle.so` (oráculo) y lanza la suite.
-- Requisitos: `project.toml`, `work/names.txt`, `work/disk_a/KULT.PRG`
+  `lib/kult-core/tools/recreate_kit/oracle/build/liboracle.so` (oráculo) y lanza la suite.
+- Requisitos: `project.toml`, `lib/kult-core/symbols/names.txt`, `work/disk_a/KULT.PRG`
   (gitignored) y `.venv` con `requirements.txt`. `CC := gcc`.
 - **Ejecutable headless**: `make port` compila
-  `core(src/) + platform/ + boot/ + app/` con `-Iplatform/include` (que sombrea
+  `core(lib/kult-core/src/) + platform/ + boot/ + app/` con `-Iplatform/include` (que sombrea
   `os.h`/`hw.h`/`psg.h`/`sched.h` con la HAL de PC) → `build/kult`.
   `make test-port` compila y corre las pruebas funcionales de la HAL (sin
   oráculo).
@@ -100,13 +100,13 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   necesita Python).
 
 ## Ritmo / CPU (T-073)
-- El build del port compila `src/*.c` con **`-finstrument-functions`** (solo ahí;
+- El build del port compila `lib/kult-core/src/*.c` con **`-finstrument-functions`** (solo ahí;
   el diferencial `make test` y `test-port` no) y enlaza `platform/cpuwork.c`,
   que cobra a cada llamada el **coste medido** del original (ciclos/llamada) y lo
   duerme contra el reloj de CPU, cediendo VBLs.
 - Tabla: `platform/cpuwork_costs.inc` (**generada** por
   `tools/gen_cpuwork_costs.py` desde `tools/cpuwork/funcost_st_reference.txt`
-  (medida del oráculo), `docs/mapa` y los símbolos de `nm`). Regenerar:
+  (medida del oráculo), `lib/kult-core/docs/mapa` y los símbolos de `nm`). Regenerar:
   ```sh
   make cmake-native
   python3 tools/gen_cpuwork_costs.py
@@ -192,7 +192,7 @@ make test                      # candidato + oráculo + 516 pruebas (paralelo)
 make test PYTEST_ARGS=-n0      # serial
 make regscan                   # ids_reg=0
 make core                      # build/libkultcore.so (API restringida)
-make mapa                      # regenera docs/mapa/
+make mapa                      # regenera lib/kult-core/docs/mapa/
 ```
 
 ## Datos

@@ -1,4 +1,4 @@
-"""Project-local harness: binds the shared kit (tools/recreate_kit) to this game.
+"""Project-local harness: binds the shared kit (lib/kult-core/tools/recreate_kit) to this game.
 
 Everything below re-exports the kit's differential driver unchanged, so every
 `from harness import differential, report` in test/ keeps working.
@@ -6,7 +6,7 @@ Everything below re-exports the kit's differential driver unchanged, so every
 import sys
 from pathlib import Path
 
-_KIT = Path(__file__).resolve().parents[1] / "tools"      # <repo>/tools
+_KIT = Path(__file__).resolve().parents[1] / "lib" / "kult-core" / "tools"
 sys.path.insert(0, str(_KIT))
 
 from recreate_kit import project                          # noqa: E402

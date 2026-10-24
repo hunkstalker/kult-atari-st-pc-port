@@ -33,7 +33,7 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 - **Physbase = 0x98000** (decisión del HAL, no un fallo): con el valor del kit
   (`0x80000`) las pantallas (`0x78000/0x80000`) y su paleta (`0x77fe0`) caían
   dentro de los datos del juego (ECHE `0x64c8e..~0x88b84` + heap) → ruido y
-  colores mal. Es la misma corrección que usó el predecesor. `src/` no se toca;
+  colores mal. Es la misma corrección que usó el predecesor. `lib/kult-core/src/` no se toca;
   el differential usa el `os.h` del kit.
 - **Audio aproximado.** El YM2149 es un modelo mínimo (no ciclo-exacto): 3 ondas
   cuadradas + ruido + envolvente + volúmenes logarítmicos. La **escucha final** la

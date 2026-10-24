@@ -1,9 +1,9 @@
 /* platform/include/sched.h — el reloj/planificador del port PC.
  *
- * Sombrea `tools/recreate_kit/include/sched.h`. En el diferencial `sched_poll8`
+ * Sombrea `lib/kult-core/tools/recreate_kit/include/sched.h`. En el diferencial `sched_poll8`
  * cuenta sondeos y aplica escrituras programadas declaradas por el test; aquí es
  * el RELOJ de la máquina: cada sondeo sobre el contador de VBL o sobre el paquete
- * IKBD avanza un frame y entrega la entrada pendiente. `src/delay.c` e `src/input.c`
+ * IKBD avanza un frame y entrega la entrada pendiente. `lib/kult-core/src/delay.c` e `lib/kult-core/src/input.c`
  * lo llaman en sus bucles de espera, así que con esto las esperas retornan.
  */
 #ifndef KULT_PLATFORM_SCHED_H

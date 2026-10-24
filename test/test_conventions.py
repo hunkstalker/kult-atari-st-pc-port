@@ -2,26 +2,26 @@
 
 Fijan las reglas acordadas en el piloto (docs/PLAN.md §4.1):
 
-1. `work/names.txt` es el **único registro de nombres**: sin nombres duplicados
+1. `lib/kult-core/symbols/names.txt` es el **único registro de nombres**: sin nombres duplicados
    (fn+var) y sin dos funciones en la misma dirección (los `var` sí pueden
    solapar: son vistas distintas de los mismos bytes).
-2. `include/addrs.h` es **generado** desde `work/names.txt` (`tools/gen_addrs.py`):
+2. `lib/kult-core/include/addrs.h` es **generado** desde `lib/kult-core/symbols/names.txt` (`lib/kult-core/tools/gen_addrs.py`):
    si no coincide, falla y dice cómo regenerarlo.
-3. Toda función definida en `src/*.c` lleva un nombre de `names.txt` (nada de
+3. Toda función definida en `lib/kult-core/src/*.c` lleva un nombre de `names.txt` (nada de
    funciones anónimas ni de nombres inventados en C).
-4. Todo macro `A_*` usado en `src/*.c` existe en `include/addrs.h`.
+4. Todo macro `A_*` usado en `lib/kult-core/src/*.c` existe en `lib/kult-core/include/addrs.h`.
 """
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "lib" / "kult-core" / "tools"))
 
 import gen_addrs  # noqa: E402
 
-NAMES = ROOT / "work" / "names.txt"
-ADDRS = ROOT / "include" / "addrs.h"
+NAMES = ROOT / "lib" / "kult-core" / "symbols" / "names.txt"
+ADDRS = ROOT / "lib" / "kult-core" / "include" / "addrs.h"
 
 _FN_RE = re.compile(r"^fn\s+0x([0-9a-fA-F]+)\s+(\S+)")
 _VAR_RE = re.compile(r"^var\s+0x([0-9a-fA-F]+)\s+(\S+)")
@@ -53,7 +53,7 @@ _ADDRS_TEXT = ADDRS.read_text()
 def test_names_have_no_duplicates():
     all_names = [n for _, n in fns] + [n for _, n in vars_]
     dupes = sorted({n for n in all_names if all_names.count(n) > 1})
-    assert not dupes, f"nombres duplicados en work/names.txt: {dupes}"
+    assert not dupes, f"nombres duplicados en lib/kult-core/symbols/names.txt: {dupes}"
 
 
 def test_fn_addresses_are_unique():
@@ -65,29 +65,29 @@ def test_fn_addresses_are_unique():
 def test_addrs_header_is_generated():
     expected = gen_addrs.generate(NAMES.read_text())
     assert _ADDRS_TEXT == expected, (
-        "include/addrs.h no coincide con work/names.txt.\n"
-        "Regenera con:  python3 tools/gen_addrs.py --write")
+        "lib/kult-core/include/addrs.h no coincide con lib/kult-core/symbols/names.txt.\n"
+        "Regenera con:  python3 lib/kult-core/tools/gen_addrs.py --write")
 
 
 def test_c_functions_are_named():
     known = {n for _, n in fns}
     unknown = {}
-    for path in sorted((ROOT / "src").glob("*.c")):
+    for path in sorted((ROOT / "lib" / "kult-core" / "src").glob("*.c")):
         for name in _C_DEF_RE.findall(path.read_text()):
             if name not in known:
                 unknown.setdefault(name, []).append(path.name)
     assert not unknown, (
-        "funciones C sin nombre en work/names.txt (añade `fn 0xADDR nombre`): "
+        "funciones C sin nombre en lib/kult-core/symbols/names.txt (añade `fn 0xADDR nombre`): "
         + ", ".join(f"{n} ({','.join(f)})" for n, f in sorted(unknown.items())))
 
 
 def test_addrs_macros_used_exist():
     defined = set(re.findall(r"#define\s+(A_[A-Z0-9_]+)", _ADDRS_TEXT))
     missing = {}
-    for path in sorted((ROOT / "src").glob("*.c")):
+    for path in sorted((ROOT / "lib" / "kult-core" / "src").glob("*.c")):
         for macro in _A_MACRO_RE.findall(path.read_text()):
             if macro not in defined:
                 missing.setdefault(macro, []).append(path.name)
     assert not missing, (
-        "macros A_* usados en src/ que no están en include/addrs.h: "
+        "macros A_* usados en lib/kult-core/src/ que no están en lib/kult-core/include/addrs.h: "
         + ", ".join(sorted(missing)))

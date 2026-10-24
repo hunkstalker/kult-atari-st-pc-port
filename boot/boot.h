@@ -1,6 +1,6 @@
 /* boot/boot.h — arranque del port (reconstrucción de `_start` y carga del PRG).
  *
- * ADR 0005: el arranque vive en `boot/`, fuera de `src/`. La pieza `_start`
+ * ADR 0005: el arranque vive en `boot/`, fuera de `lib/kult-core/src/`. La pieza `_start`
  * (0x10000) NO está en el C verificado (único nombre sin definición C); aquí se
  * reconstruye a partir de `matching/src/start.s`, encadenando las funciones que el
  * core ya aporta. En M1 es el puente para poder ejecutar headless; M2 lo valida y

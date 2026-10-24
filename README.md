@@ -3,9 +3,9 @@
 Port nativo a PC (**Windows y Linux**) de **Kult** (Exxos/ERE, 1989) que **une
 las versiones Atari ST y Amiga**, con mejoras y **todos los idiomas**.
 
-No parte de cero: parte del **C verificado** del Atari ST
-(`/app/kult-atari-st-c`, 415 funciones, 499 pruebas diferenciales) y añade un
-**backend de PC** (SDL3) para que ese mismo C corra en Windows/Linux.
+No parte de cero: el **C verificado** del Atari ST está importado en
+`lib/kult-core/` y este repo añade un **backend de PC** (SDL3) para que ese mismo
+C corra en Windows/Linux.
 
 > **Estado:** **M0–M4 hechas**, **M6 cerrada** (T-060 ✅; **T-061 ✅ validada en
 > Windows 2026-10-23**; **T-089 ✅** final del juego; **T-090 ✅** SOLAR EYES) y
@@ -16,12 +16,29 @@ No parte de cero: parte del **C verificado** del Atari ST
 > en **`TODO.md`**; el punto de retorno entre sesiones, en **`RETOMAR.md`**. Aquí
 > no se duplica: `README` solo orienta.
 
+## Core importado
+
+El núcleo vive en **`lib/kult-core/`**, importado del repo
+[`kult-atari-st-c`](https://github.com/hunkstalker/kult-atari-st-c) mediante
+`git subtree`. El build usa solo `lib/kult-core/src` e `include`; el resto de
+documentación, tests y herramientas del core quedan disponibles pero no se
+compilan.
+
+Los cambios propios del port dentro del core están documentados en
+[`docs/CORE_DELTA.md`](docs/CORE_DELTA.md). Al actualizar el core:
+
+```sh
+git subtree pull --prefix=lib/kult-core \
+  https://github.com/hunkstalker/kult-atari-st-c.git main --squash
+```
+
 ## Documentación
 - **`PROYECTO.md`** — contexto maestro, arquitectura y estado.
 - **`TODO.md`** — tareas pendientes / en curso / completadas.
 - **`RETOMAR.md`** — handoff de sesión (qué retomar y cómo).
 - **`AGENTS.md`** — reglas y arranque para agentes/colaboradores.
 - **`docs/INDICE.md`** — índice de toda la documentación.
+- **`docs/CORE_DELTA.md`** — core importado y cambios locales del port.
 - **`notes/`** — notas de sesión (histórico).
 
 ## Objetivo (resumen)
@@ -44,7 +61,7 @@ No parte de cero: parte del **C verificado** del Atari ST
 
 ## Origen y repos
 - **`/app/kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).
-- **`/app/kult-atari-st-c`** — C verificado del ST (**base de este repo**).
+- **`kult-atari-st-c`** — C verificado del ST, importado en `lib/kult-core/`.
 - **`/app/kult-atari-st-pc-port`** — este repo (la compilación).
 
 Detalle en `PROYECTO.md`.

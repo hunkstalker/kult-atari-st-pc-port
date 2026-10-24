@@ -13,7 +13,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 LIB = ROOT / "build"
-INCLUDE = ROOT / "include"
+INCLUDE = ROOT / "lib" / "kult-core" / "include"
 
 _HELPER = r"""
 #include <setjmp.h>

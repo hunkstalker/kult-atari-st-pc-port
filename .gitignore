@@ -31,7 +31,3 @@ roms/
 *.ST
 *.PI1
 *.BIN
-
-# Oráculo (clon gitignored + tablas generadas)
-tools/recreate_kit/oracle/musashi/
-tools/recreate_kit/oracle/build/

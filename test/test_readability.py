@@ -46,7 +46,7 @@ def _has_addr_comment(lines, ln):
 
 def test_every_function_has_address_comment():
     missing = []
-    for f in sorted((ROOT / "src").glob("*.c")):
+    for f in sorted((ROOT / "lib" / "kult-core" / "src").glob("*.c")):
         lines = f.read_text(encoding="utf-8").splitlines()
         for ln, name in _definitions("\n".join(lines)):
             if not _has_addr_comment(lines, ln):
@@ -56,7 +56,7 @@ def test_every_function_has_address_comment():
 
 def test_no_decompiler_identifiers():
     bad = {}
-    for f in sorted((ROOT / "src").glob("*.c")):
+    for f in sorted((ROOT / "lib" / "kult-core" / "src").glob("*.c")):
         hits = _DECOMP.findall(f.read_text(encoding="utf-8"))
         if hits:
             bad[f.name] = len(hits)

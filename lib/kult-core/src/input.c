@@ -15,6 +15,7 @@
 #include "addrs.h"
 #include "os.h"
 #include "sched.h"
+#include "kult_port.h"
 
 /* 0x13686 — copia el paquete IKBD de 5 bytes desde A0 (move.w #4,d0 + dbra). */
 void ikbd_packet_copy(uint8_t *img, uint32_t packet) {
@@ -40,4 +41,15 @@ void wait_frame(uint8_t *img) {
 
     if (os_crawio(img, 0x00ff) != 0)                 /* trap #1/$6: Crawio(0xff) */
         img[A_INPUT_BUTTONS] |= 0x04;                /* hubo movimiento -> clic */
+
+#ifndef KULT_NO_CPUWORK
+    {
+        static uint8_t prev_click;
+        uint8_t click = (uint8_t)(img[A_INPUT_BUTTONS] & 0x04);
+        if (click && !prev_click)
+            kult_diag_input("click", img, be16(img + A_CURSOR_X),
+                            be16(img + A_CURSOR_Y), img[A_INPUT_BUTTONS]);
+        prev_click = click;
+    }
+#endif
 }

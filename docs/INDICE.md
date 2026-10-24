@@ -11,6 +11,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`VERIFICACION.md`](VERIFICACION.md) | pruebas del core y del backend |
 | [`LIMITACIONES.md`](LIMITACIONES.md) | limitaciones conocidas y checklist de validación (M6) |
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
+| [`CORE_DELTA.md`](CORE_DELTA.md) | core importado y cambios locales del port |
 | [`adr/`](adr/README.md) | decisiones de arquitectura (ADR) |
 
 ## ADRs
