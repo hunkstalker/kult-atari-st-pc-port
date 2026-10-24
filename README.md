@@ -39,6 +39,8 @@ git subtree pull --prefix=lib/kult-core \
 - **`AGENTS.md`** — reglas y arranque para agentes/colaboradores.
 - **`docs/INDICE.md`** — índice de toda la documentación.
 - **`docs/CORE_DELTA.md`** — core importado y cambios locales del port.
+- **`docs/RELEASE.md`** — formato portable, contenedores y errores de release.
+- **`docs/TESTS.md`** — inventario y política de tests.
 - **`notes/`** — notas de sesión (histórico).
 
 ## Objetivo (resumen)
