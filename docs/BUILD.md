@@ -140,8 +140,8 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   `cr2` es `$1a4c2`, `abf8` el comando pendiente, `a826` el A7 guardado por
   `run_command`, `w19316` la palabra comparada con `0x2f3c` y `sel/cls` el
   objeto y clase seleccionados (con sus primeros 8 bytes). El `icono` de cada
-  `ring_entry` se traduce a verbo con `work/texts/VERBE.BIN.json` del repo
-  legacy (el índice JSON es el icono; p. ej. `0x94` = *LIE DOWN*).
+  `ring_entry` se traduce a verbo con `work/texts/VERBE.BIN.json` (el índice
+  JSON es el icono; p. ej. `0x94` = *LIE DOWN*).
   `kult-anillo.bat` activa solo esta traza (`kult-anillo.log`); el resumen se
   obtiene con `python3 tools/ringreport.py kult-anillo.log`.
   La misma linea `R` incluye `hp` (`$1ad20`), `ad03`, `ad02`, `rnd_idx`

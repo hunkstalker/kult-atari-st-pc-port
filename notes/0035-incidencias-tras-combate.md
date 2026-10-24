@@ -134,7 +134,7 @@ R <vbl> <evento> a=.. b=.. c=.. cr2=.. abf8=.. ace7=.. acf2=.. ace8=..
 
 - `ring_open`: A6 del guion, máscara y nº de acciones.
 - `ring_entry`: `a=icono`, `b=comando`, `c=bit`; el icono se traduce con
-  `kult-port-legacy/work/texts/VERBE.BIN.json` (índice JSON = icono).
+  `work/texts/VERBE.BIN.json` (índice JSON = icono).
 - `ring_pick` / `ring_return`: selección y retorno.
 - `loop_*`: `in`, `sel`, `cmd`, `after_cmd`, `threshold`, `pending`,
   `pending_tail`, `reopen`, `clear_flags`, `exit_ffff`, `tail_ac`.

@@ -3,7 +3,7 @@
 
 Uso:
   python3 tools/ringreport.py kult-marcas.log
-  python3 tools/ringreport.py kult-marcas.log --verbs ../kult-port-legacy/work/texts/VERBE.BIN.json
+  python3 tools/ringreport.py kult-marcas.log --verbs work/texts/VERBE.BIN.json
   python3 tools/ringreport.py kult-marcas.log --all
 
 La traza la escribe platform/cpuwork.c (`platform_diag_ev`) y la emiten
@@ -22,9 +22,9 @@ KV = re.compile(r"(\w+)=([0-9a-fA-F]+)")
 def load_verbs(path):
     if not path:
         for cand in (
-            "../kult-port-legacy/work/texts/VERBE.BIN.json",
-            "../../kult-port-legacy/work/texts/VERBE.BIN.json",
-            "kult-port-legacy/work/texts/VERBE.BIN.json",
+            "work/texts/VERBE.BIN.json",
+            "../work/texts/VERBE.BIN.json",
+            "../../work/texts/VERBE.BIN.json",
         ):
             if os.path.exists(cand):
                 path = cand

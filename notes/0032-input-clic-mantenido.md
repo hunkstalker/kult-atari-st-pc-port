@@ -51,7 +51,7 @@ interrogación; las siguientes reciben `BUTTONS = 0` mientras no cambie. Hatari
 lo implementa igual en `IKBD_Cmd_ReadAbsMousePos()`: compara el estado actual
 con `PrevReadAbsMouseButtons` y devuelve sólo los bits cambiados.
 
-Por eso el pestillo del legacy (`g_click_hold = 12`, `g_click_latch`,
+Por eso el pestillo de la referencia (`g_click_hold = 12`, `g_click_latch`,
 `kult_native_click_consumed`) **no es la especificación**, pero su idea de “una
 pulsación = un clic” sí es fiel. El timeout de 12 VBL es empírico; el original
 no lo tiene: el flanco queda pendiente hasta la siguiente interrogación.
@@ -74,7 +74,7 @@ volvía a ver “clic” cada 7 VBL.
   sigue mostrando `btn=05`, pero **una sola vez por pulsación**.
 - El **skip** también es de flanco: sólo la bajada del derecho lo arma. Se pisa
   `$1a570` al salir de `wait_frame` con ese evento, no con el nivel del botón.
-- No se copia el timeout de 12 VBL del legacy.
+- No se copia el timeout de 12 VBL de la referencia.
 
 ## 5. Fix aplicado (`platform/input.c`)
 
@@ -141,6 +141,6 @@ Ejecutables de esta sesión:
 - TOS: `matching/toolchain/bios/chardev.S` (`mousebuf`/`mousevec`).
 - IKBD: comando `0x0D` (Linux `atarikbd.rst`); Hatari
   `IKBD_Cmd_ReadAbsMousePos()`.
-- Legacy (sólo referencia, no fuente de verdad):
-  `/app/kult-port-legacy/runtime/native/kult_native_host.c`.
+- Referencia (sólo consulta, no fuente de verdad):
+  `runtime/native/kult_native_host.c`.
 - Notas previas de input: `notes/0020`, `notes/0021`, `notes/0027`.

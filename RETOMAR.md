@@ -5,6 +5,16 @@ exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
 ## Última sesión
+- **Sesión 56 — licencias y textos públicos de release (2026-10-24)**:
+  añadidos `LICENSE` MIT, `THIRD_PARTY_NOTICES.md` y `LICENSES/` (SDL3 y
+  GPL-2.0); el paquete instala las licencias y ya no incluye scripts de
+  desarrollo. Textos públicos unificados a “port a PC con español y catalán” y
+  retiradas las referencias a materiales ajenos al port de documentación, notas,
+  comentarios y herramientas. `language.data` intacto. `make test` 518 + HAL +
+  port OK; `make package-win` OK. ZIP:
+  `build-win/kult-0.1.0-win64.zip`, SHA256
+  `af48e8b4…`. Remoto `origin` configurado; pendiente publicar `main` y revisar
+  el catalán. Detalle: `notes/0042`.
 - **Sesión 55 — release portable + ingesta STX (2026-10-24)**: release portable
   (`data/`, `saves/`, `kult.log` junto al exe, sin appdata ni variables de ruta),
   política B de errores (solo log; diálogo únicamente si no se puede escribir),
@@ -12,7 +22,7 @@ Tareas: `TODO.md`.
   `kult.data`/`language.data` y la ingesta T-072: detección de los dos `.STX`
   por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación
   atómica de `data/kult.data`; los STX se pueden borrar después. `language.data`
-  con DRAP, español fan (`S`) y catalán inicial (`C`) incluidos en
+  con DRAP, español (`S`) y catalán inicial (`C`) incluidos en
   `assets/language.data`; fuente `CARACS` para español. Catalán pendiente de
   revisión lingüística. `make test` 518 + HAL + port OK; `make package-win` OK.
 - **Sesión 54 — core importado como subtree (2026-10-24)**: el core C vive en
@@ -260,7 +270,7 @@ acciones se abría/cerraba y no se podía elegir.
 `0x1a44f`. El byte de botones son **eventos "desde la última interrogación"**
 (bits de bajada/subida), no un nivel: un botón mantenido sólo produce el bit de
 bajada una vez. Hatari (`IKBD_Cmd_ReadAbsMousePos`) implementa ese mismo
-diferencial contra `PrevReadAbsMouseButtons`. El pestillo legacy
+diferencial contra `PrevReadAbsMouseButtons`. El pestillo de la referencia
 (`g_click_hold=12`, `g_click_latch`) es una aproximación empírica, pero su
 semántica de "una pulsación = un clic" sí es fiel; el timeout de 12 VBL no sale
 del ASM.
@@ -414,7 +424,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
   `0fdda9c8…`, ZIP `1396dd00…`.
   **Validado por el usuario.** Detalle: `notes/0029-audio-puertas.md`.
 - **Sesión 31 — documentación: retirado `PROMPT_SESION.md`**: era un duplicado
-  de `RETOMAR`/`AGENTS`/`PROYECTO`/`TODO` y había derivado. El punto de entrada
+  de `RETOMAR`/`AGENTS`/`PROYECTO`/`TODO` y había divergido. El punto de entrada
   único es **`RETOMAR.md`**; reglas en `AGENTS.md`, contexto en `PROYECTO.md` y
   tareas en `TODO.md`. Se actualizan las referencias.
 - **Sesión 30 — H-el1 resuelta (T-081)**: las salidas anticipadas de
@@ -498,7 +508,7 @@ headless `3e44ba7d…`, `kult-diag.exe` `16605768…`,
 - **Sesión 23 — input y presentación (HAL)**: el bug de puertas/A-B-C no era de
   `lib/kult-core/src/`: el core deriva acción y skip del bit0 del IKBD y nuestra HAL lo tenía
   invertido (izquierdo = acción+skip; derecho ignorado). Se corrige en la HAL,
-  como el legacy: acción = izquierdo **o** derecho; skip = solo derecho;
+  como la referencia: acción = izquierdo **o** derecho; skip = solo derecho;
   `platform_input_apply_skip()` pisa `$1a570` al salir de `wait_frame` (hook de
   instrumentación). Además, `platform_tick` ahora presenta en **cada VBL** (antes
   solo en arranque/CPU-delay), por lo que las animaciones de puerta que corren en

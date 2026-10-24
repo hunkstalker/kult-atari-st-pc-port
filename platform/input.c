@@ -18,7 +18,7 @@
  * Mantener cualquiera de los dos NO repite la acción. El core `wait_frame`
  * deriva acción y skip del bit0 del paquete IKBD; la HAL pisa `$1a570` al salir
  * de `wait_frame` (`platform_input_apply_skip`) para separar el skip del
- * derecho, igual que hacía el motor legacy. Así `src/` queda intacto.
+ * derecho, igual que hacía el motor de referencia. Así `src/` queda intacto.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -246,7 +246,8 @@ void platform_ikbdws(const uint8_t *buf, uint32_t len) {
 
 /* La HAL pisa el flag de skip que acaba de escribir `wait_frame` (core) con el
  * flanco del derecho del paquete recién entregado. Es el equivalente port-side
- * del intercept de `$1a570` del motor legacy, pero por evento (no por nivel). */
+ * del intercept de `$1a570` del motor de referencia, pero por evento (no por
+ * nivel). */
 void platform_input_apply_skip(uint8_t *img) {
     img[A_SKIP_TRANSITION] = g_skip_event ? 0xff : 0;
     g_skip_event = 0;

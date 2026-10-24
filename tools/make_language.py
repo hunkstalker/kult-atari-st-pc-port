@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Build a language.data bundle (KULTDTA1 type LANG).
 
-Ejemplo español Erbe:
+Ejemplo español:
   python3 tools/make_language.py --code S \
-      --drap temp/kult-idioma.PI1 \
-      --lang-dir /app/kult-port-legacy/work/erbe \
+      --drap assets/lang/DRAP.PI1 \
+      --lang-dir assets/lang/es \
       --out data/language.data
 
 Incluye DRAP.PI1 + VERBx/MOTSx/DESCx/DIALx + CARACx.BIN (si existe).

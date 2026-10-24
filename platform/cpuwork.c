@@ -590,7 +590,8 @@ void __cyg_profile_func_exit(void *this_fn, void *call_site) {
             bank_mark(this_fn, caller);
         /* HAL: el core `wait_frame` acaba de escribir $1a570 desde el bit0 del
          * IKBD. Lo pisamos con el flanco del botón derecho del paquete (el
-         * izquierdo es acción sin skip), como el intercept de $1a570 legacy. */
+         * izquierdo es acción sin skip), como el intercept de $1a570 de la
+         * referencia. */
         if (this_fn == (void *)wait_frame && g_kult_img)
             platform_input_apply_skip(g_kult_img);
         /* El original termina reset_clear con `bra 0x10158` (inicio del bucle).

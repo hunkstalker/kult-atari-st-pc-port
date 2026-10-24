@@ -1,7 +1,7 @@
-# Kult: The Temple of Flying Saucers — Compilación PC (Atari ST + Amiga)
+# Kult: The Temple of Flying Saucers — Port a PC (Atari ST)
 
-Port nativo a PC (**Windows y Linux**) de **Kult** (Exxos/ERE, 1989) que **une
-las versiones Atari ST y Amiga**, con mejoras y **todos los idiomas**.
+Port nativo a PC (**Windows y Linux**) de **Kult** (Exxos/ERE, 1989), con
+**español y catalán**.
 
 No parte de cero: el **C verificado** del Atari ST está importado en
 `lib/kult-core/` y este repo añade un **backend de PC** (SDL3) para que ese mismo
@@ -48,8 +48,8 @@ git subtree pull --prefix=lib/kult-core \
 ## Objetivo (resumen)
 - Juego nativo en C, **sin emulador** (Musashi solo se usa como oráculo en las
   pruebas del core).
-- **Dos experiencias**: Atari ST y Amiga; perfil libre (arte/audio/ritmos).
-- **Español (fan) y catalán**, además de D/E/F.
+- Base **Atari ST**; el trabajo sobre Amiga queda para fases posteriores.
+- **Español y catalán**, además de D/E/F.
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
 
 ## Datos y diagnóstico
@@ -65,13 +65,16 @@ git subtree pull --prefix=lib/kult-core \
   desarrollo y no forma parte de la release.
 
 ## Origen y repos
-- **`/app/kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).
+- **`kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).
 - **`kult-atari-st-c`** — C verificado del ST, importado en `lib/kult-core/`.
-- **`/app/kult-atari-st-pc-port`** — este repo (la compilación).
+- **`kult-atari-st-pc-port`** — este repo (el port).
 
 Detalle en `PROYECTO.md`.
 
-## Legal
-El juego sigue bajo copyright (Piko Interactive). **No** se distribuyen assets ni
-binarios; el usuario aporta su copia. Todo lo derivado del juego queda
-**gitignored**.
+## Licencia
+El código, las herramientas, la documentación y los packs de idioma del port se
+distribuyen bajo licencia **MIT** (ver `LICENSE`). Los componentes de terceros
+conservan sus licencias (ver `THIRD_PARTY_NOTICES.md` y `LICENSES/`).
+
+Este repositorio no incluye el juego original. El usuario aporta su copia legal;
+los assets del juego quedan **gitignored**.

@@ -98,16 +98,11 @@ endif()
 install(TARGETS kult-sdl RUNTIME DESTINATION .)
 install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME.txt
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/MEDIR_FPS.txt
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-anillo.bat
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-normal.bat
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-psi.bat
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-dano-todo.bat
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-replay-record.bat
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-replay-play.bat
+  ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
+  ${CMAKE_CURRENT_SOURCE_DIR}/THIRD_PARTY_NOTICES.md
   DESTINATION .)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/language.data DESTINATION data)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets/hatari_fps DESTINATION .)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/LICENSES DESTINATION .)
 if(WIN32)
   set(KULT_SDL3_DLL
       ${CMAKE_CURRENT_SOURCE_DIR}/third_party/SDL3-3.4.10-win32-x64/SDL3.dll)
@@ -116,11 +111,6 @@ if(WIN32)
   else()
     message(WARNING "falta ${KULT_SDL3_DLL}: el paquete no incluirá SDL3.dll")
   endif()
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-fps.bat
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-cpu-off.bat
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets/kult-marcas.bat
-    DESTINATION .)
   install(DIRECTORY DESTINATION data)
   install(DIRECTORY DESTINATION saves)
 endif()

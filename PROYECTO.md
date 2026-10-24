@@ -9,9 +9,9 @@ viven en **`TODO.md`**; el punto de retorno de sesión, en **`RETOMAR.md`**; el
 
 Port nativo a **Windows y Linux** de **Kult: The Temple of Flying Saucers**
 (Exxos/ERE, 1989) que:
-- **une las versiones Atari ST y Amiga**,
+- parte de la versión **Atari ST**,
 - corre como **C nativo sin emulador**,
-- incluye **mejoras** y **todos los idiomas**.
+- incluye **español y catalán**.
 
 **Idea central:** el juego no habla con el Atari, sino con una **capa de
 servicios**. Esa capa es lo que se sustituye por un backend de PC.
@@ -30,9 +30,9 @@ App/driver → │  juego (lib/kult-core/src/, C verificado)   │  ← 415 func
 
 | repo | papel | regla |
 |---|---|---|
-| `/app/kult-atari-st-decomp` | decomp ASM del ST, byte a byte | spec congelada; no se toca |
+| `kult-atari-st-decomp` | decomp ASM del ST, byte a byte | spec congelada; no se toca |
 | `kult-atari-st-c` | C verificado del ST | **base**; importado en `lib/kult-core` (subtree) |
-| **este repo** | la compilación (ST+Amiga, PC) | el trabajo |
+| **este repo** | el port a PC (base ST) | el trabajo |
 
 ## 3. Arquitectura de capas (objetivo)
 
@@ -95,7 +95,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072) y `language.data` con S (fan) y C (inicial) |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072) y `language.data` con español y catalán |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -193,8 +193,8 @@ Recogidas como ADR en `docs/adr/`:
   anti-fallo: **`notes/0018-plan-c.md`**; guardia: **`test_click_skip`**.
 - **Input/presentación (T-074, sesión 23)**: bug de puertas/A-B-C. El core
   deriva acción y skip del bit0 del IKBD; la HAL lo tenía invertido (izquierdo =
-  acción+skip; derecho ignorado). Se corrige en la HAL, como el legacy: acción =
-  izquierdo **o** derecho; skip = solo derecho; `platform_input_apply_skip()`
+  acción+skip; derecho ignorado). Se corrige en la HAL: acción = izquierdo
+  **o** derecho; skip = solo derecho; `platform_input_apply_skip()`
   pisa `$1a570` al salir de `wait_frame` (hook de instrumentación). Además,
   `platform_tick` presenta en **cada VBL**, así se ven las animaciones que corren
   en `wait_vbl` (puertas, wipes). `lib/kult-core/src/` intacto; `test_click_skip` y

@@ -22,7 +22,7 @@ la carpeta debe ser escribible.
 4) Al arrancar la pantalla puede verse NEGRA (es fiel al original: PRES se
    muestra antes de fijar la paleta). Haz clic con el botón izquierdo; aparece
    el título con el menú de idioma. Elige D (alemán), E (inglés) o F (francés).
-   También S (español fan) y C (catalán), incluidos en `data/language.data`.
+   También S (español) y C (catalán), incluidos en `data/language.data`.
    El port usa los dos discos juntos y no pide cambiar de disco.
 
 5) ESC cierra la ventana.
@@ -34,3 +34,8 @@ Carpetas
 - `kult.log` se crea junto a kult.exe con timestamp y errores.
 
 Si algo falla, revisa `kult.log`. No hay appdata ni rutas alternativas.
+
+Licencias
+---------
+El port y sus packs de idioma se distribuyen bajo licencia MIT. Las licencias
+completas están en `LICENSE`, `THIRD_PARTY_NOTICES.md` y `LICENSES/`.

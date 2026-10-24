@@ -68,3 +68,5 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0038-replay-input-t088.md`](../notes/0038-replay-input-t088.md)
 - [`notes/0039-handoff-endgame-titulo.md`](../notes/0039-handoff-endgame-titulo.md)
 - [`notes/0040-t089-final-attract-loop.md`](../notes/0040-t089-final-attract-loop.md)
+- [`notes/0041-t090-solar-eyes-palette-cycle.md`](../notes/0041-t090-solar-eyes-palette-cycle.md)
+- [`notes/0042-release-licencias-y-textos.md`](../notes/0042-release-licencias-y-textos.md)

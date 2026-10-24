@@ -19,8 +19,8 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
 - **`os_super` es un no-op** (en PC no hay modo supervisor).
 - **Menú de idioma fiel** (ADR 0004): se mantiene el del original (clic de título
   y teclas D/E/F/S/C), no un menú nativo. S y C vienen en `language.data`.
-- **Catalán**: traducción inicial automática desde el español, sin tildes/Ç por
-  límites de la fuente; pendiente de revisión lingüística.
+- **Catalán**: pack inicial, sin tildes/Ç por límites de la fuente; pendiente de
+  revisión lingüística.
 - **Cambio de disco omitido.** El original pide "INSERT DISK 2" (`0x918e`) antes
   de cargar los recursos del disco B (`FOND`/`PUZZL`/`BRUIT`). El port sirve
   ambos discos desde el mismo directorio, así que el aviso (y su reintento con
@@ -57,8 +57,8 @@ Lista de limitaciones conocidas de la compilación PC, para el cierre de **M6**
   el reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba
   en el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — build/empaquetado**: **build hecho** (T-070): CMake nativo y cross
-  MinGW; el paquete de release lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/` y
-  `LEEME.txt`; **no** lleva headless ni `DIAGNOSTICO.txt`. Requiere **Windows
+  MinGW; el paquete de release lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
+  `LEEME.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`. Requiere **Windows
   10+** (UCRT). El `.exe` quedó validado en el checklist de **T-061**
   (2026-10-23).
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se

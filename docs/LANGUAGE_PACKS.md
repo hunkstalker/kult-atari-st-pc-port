@@ -5,7 +5,7 @@
 La release incluye `data/language.data` con:
 
 - pantalla de selección `DRAP.PI1` de cinco banderas;
-- pack español fan;
+- pack español;
 - pack catalán inicial.
 
 El juego acepta `S` y `C`; si un pack falta o no está instalado, registra el
@@ -28,8 +28,8 @@ aviso y usa `E`.
 | `MOTSC.BIN` | catalán: nombres |
 | `DIALC.BIN` | catalán: diálogos |
 
-El español usa la **traducción fan** de Legacy (no la Erbe). El catalán es una
-traducción inicial generada desde el español fan.
+La release incluye el pack español y un pack catalán inicial. Ambos se cargan
+desde `language.data`.
 
 ## Limitación de la fuente catalana
 

@@ -2,7 +2,7 @@
 
 > Cierra el bug de puertas/A-B-C detectado durante la validación de T-061. **No
 > se toca `src/`**: el core verificado se queda intacto. La solución replica la
-> del motor legacy, que ya interceptaba `$1a570` en la HAL.
+> del motor de referencia, que ya interceptaba `$1a570` en la HAL.
 
 ## 1. Síntoma
 
@@ -42,7 +42,7 @@ el **izquierdo** como `bit0` y **ignoraba el derecho**: por eso el izquierdo
 hacía acción + skip y el derecho no hacía nada. El modelo correcto del original
 necesita separar acción (izquierdo/derecho/teclado) de skip (solo derecho).
 
-El legacy ya lo resolvía en la HAL (`runtime/kult_engine.c`):
+El motor de referencia ya lo resolvía en la HAL (`runtime/kult_engine.c`):
 
 ```c
 ram[0x1a44f] = g_mouse_btn ? 1 : 0;          /* izquierdo = acción */
@@ -87,7 +87,7 @@ bucle presentaba ya la sala nueva. De ahí “se oye pero no se ve”.
     `g_mouse_skip ? 0xff : 0`.
 - `platform/cpuwork.c`: en `__cyg_profile_func_exit`, si la función que sale es
   `wait_frame`, se llama a `platform_input_apply_skip()`. Es el equivalente
-  port-side del intercept `m68k_write_memory_8($1a570)` del legacy: el core
+  port-side del intercept `m68k_write_memory_8($1a570)` de la referencia: el core
   acaba de escribir el flag y la HAL lo corrige antes de que el llamante lo lea.
 - El paquete IKBD sigue llevando la acción en `bit0`; el skip va aparte.
 - `src/input.c` **no se modifica**.
@@ -145,7 +145,7 @@ Validación visual pendiente del usuario:
 
 ## 6. Referencias
 
-- `/app/kult-port-legacy/runtime/kult_engine.c`: intercept de `$1a570` y
-  separación `g_mouse_btn`/`g_mouse_skip`.
+- `runtime/kult_engine.c` de la referencia: intercept de `$1a570` y separación
+  `g_mouse_btn`/`g_mouse_skip`.
 - TOS `vdi/mouse.S`: `IKBD <00>:rt btn <01>:lf btn`.
 - `notes/0017-retomar-maestro.md` y `notes/0019-fix-timing-c.md`.

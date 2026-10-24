@@ -142,15 +142,14 @@ Herramientas disponibles en este entorno:
 
 - Hatari 2.5.0 compilado:
   `/tmp/opencode/hatari-2.5.0/build/src/hatari`
-- TOS: `/app/kult-port-legacy/tos/tos.img`
-- EmuTOS: `/app/kult-port-legacy/tos/emutos-512k-1.4/etos512us.img`
-- Imágenes raw del juego:
-  `/app/kult-port-legacy/work/kult_a.img`, `kult_b.img`
+- TOS: `tos/tos.img`
+- EmuTOS: `tos/emutos-512k-1.4/etos512us.img`
+- Imágenes raw del juego: `work/kult_a.img`, `work/kult_b.img`
 - `Xvfb` y `xdotool` disponibles (`/usr/bin/Xvfb`, `/usr/bin/xdotool`).
-- El repo legacy ya advierte que los `.stx` montan en Hatari pero no arrancan;
+- La referencia ya advierte que los `.stx` montan en Hatari pero no arrancan;
   con GEMDOS/autostart arranca pero el input del ST es el problema. Por eso la
   vía preferente es una **imagen raw writable** y `xdotool`, no `.stx`.
-- `tools/fat12.py` del legacy es **solo lectura**; no hay `mcopy`/mtools
+- `tools/fat12.py` de la referencia es **solo lectura**; no hay `mcopy`/mtools
   instalado. Para añadir `SCENA.BIN` a una imagen mayor hará falta un escritor
   FAT12 mínimo (o una alternativa equivalente). `mkdosfs` sí está disponible.
 - Hatari flags útiles: `cpu_all`, `cpu_disasm`, `cpu_regs`, `os_all`,
@@ -209,7 +208,7 @@ No elegir una hipótesis antes de tracear el original.
 ### Paso 0 — Verificar evidencia
 
 ```sh
-cd /app/kult-atari-st-pc-port/build-win/kult-0.1.0-win64/trazas-endgame-20261022-125714
+cd build-win/kult-0.1.0-win64/trazas-endgame-20261022-125714
 sha256sum -c SHA256SUMS
 ```
 
@@ -232,8 +231,7 @@ Consideraciones:
   3. Fallback: usar el **oráculo Musashi** del repo core, que permite
      `stage_files` y ejecutar el binario original sin las limitaciones de
      disquete. Es más preciso para traza de PC.
-- No modificar las imágenes originales de `/app/kult-port-legacy/work/`; copiar
-  a `/tmp/opencode/`.
+- No modificar las imágenes originales de `work/`; copiar a `/tmp/opencode/`.
 
 Con Hatari:
 
@@ -322,7 +320,6 @@ Informe en `notes/0039` o nota nueva:
 ## 8. Primeros comandos de la próxima sesión
 
 ```sh
-cd /app/kult-atari-st-pc-port
 git status --short
 git log --oneline -3
 cat notes/0039-handoff-endgame-titulo.md

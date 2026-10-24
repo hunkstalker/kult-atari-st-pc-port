@@ -7,7 +7,7 @@ Cada fase tiene objetivo y **criterio de aceptación**.
 - **No se reescribe el core verificado**: se reutiliza (415 funciones, 518 tests).
 - **El core no conoce SDL ni hardware**: los 19 servicios se inyectan.
 - **Nada a medias**: una fase se cierra con su criterio cumplido y pruebas.
-- **Todo derivado del juego, gitignored**: el usuario aporta su copia.
+- **Los assets del juego quedan gitignored**: el usuario aporta su copia.
 
 ## M0 — Repositorio y base
 **Objetivo:** repo con documentación e importación del core.

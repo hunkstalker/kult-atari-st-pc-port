@@ -5,10 +5,10 @@ Documento de arranque para un agente/colaborador que retoma. Empieza por
 **`PROYECTO.md`**; tareas en **`TODO.md`**.
 
 ## Qué es este repo
-Port nativo a **Windows/Linux** de **Kult** (Atari ST + Amiga, todos los
-idiomas), a partir del **C verificado** de `/app/kult-atari-st-c`. El juego no
-habla con el Atari: llama a **19 servicios**; el port implementa esos servicios
-para PC (SDL3). Ver `docs/PORTING.md`.
+Port nativo a **Windows/Linux** de **Kult** (Atari ST, con español y catalán), a
+partir del **C verificado** de `kult-atari-st-c`. El juego no habla con el Atari:
+llama a **19 servicios**; el port implementa esos servicios para PC (SDL3). Ver
+`docs/PORTING.md`.
 
 ## Estado
 **M0–M4 hechas**, **M6 cerrada** (T-060 ✅; T-061 ✅ validada en Windows 2026-10-23; T-073 feature opcional) y

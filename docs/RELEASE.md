@@ -26,6 +26,9 @@ borrarse después de una ingesta correcta.
 ├── kult.exe
 ├── SDL3.dll
 ├── LEEME.txt
+├── LICENSE
+├── THIRD_PARTY_NOTICES.md
+├── LICENSES/
 ├── kult.log              # se crea al ejecutar
 ├── data/
 │   ├── Kult.STX          # entrada opcional; se puede borrar tras ingerir
@@ -121,6 +124,9 @@ La release contiene:
 kult.exe
 SDL3.dll
 LEEME.txt
+LICENSE
+THIRD_PARTY_NOTICES.md
+LICENSES/
 data/language.data
 saves/ (vacía)
 ```
