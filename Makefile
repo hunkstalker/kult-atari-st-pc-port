@@ -47,8 +47,14 @@ test-core:
 test-tools:
 	$(PY) -m pytest -q test
 
+# Suite completa, explícita: core diferencial + HAL/ingesta/packs + herramientas.
+# kit.mk define una receta para `test` que ejecutaría también `pytest test/`;
+# se sustituye por un no-op para que cada suite tenga un único responsable y no
+# se ejecute dos veces. Sus prerrequisitos del kit (candidato/oráculo) siguen
+# siendo necesarios para `test-core`.
 .PHONY: test
-test: test-core test-port
+test: test-core test-port test-tools
+	@:
 
 # ---------------------------------------------------------------------------
 # Port PC: core + boot/ + platform/ + app/. Este build NO usa el modelo del kit:
