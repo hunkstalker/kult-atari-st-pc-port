@@ -62,7 +62,7 @@ datos.
   el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
   completados. El paquete lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
-  `LEEME.txt`, `Instrucciones - Atajos de teclado.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
+  `LEEME.txt`, `Kult Settings.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
   Requiere **Windows 10+** (UCRT). Los tests automatizados de ingesta/packs
   (T-095) ya están integrados, T-022 y T-101 están cerradas. Pendientes:
   validación visual final sobre el ZIP regenerado y publicación; el CI va al final.

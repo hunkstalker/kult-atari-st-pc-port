@@ -1,6 +1,7 @@
 # 0084 — T-131: instrucciones de atajos y F12 en release
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-132 lo renombra a `Kult Settings.txt`.
+Siguiente: T-094 sobre el ZIP final.
 
 ## Archivo
 

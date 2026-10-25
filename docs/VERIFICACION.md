@@ -50,9 +50,9 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-131
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-132
 (2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save`,
-el OSD con la fuente del juego y la terminología catalana de T-119/T-131 (`GOT`, `XARXA TUNER`, `DAGA`,
+el OSD con la fuente del juego y la terminología catalana de T-119/T-132 (`GOT`, `XARXA TUNER`, `DAGA`,
 `FESOL`, `COMERCIANT`, `Ç`) y el diálogo deformado en clave fonética catalana.**
 
 - ✅ Título, menú de idioma y colores.
@@ -133,7 +133,7 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
 1. Descomprimir el ZIP en una carpeta escribible (no Program Files).
 2. Copiar `Kult.STX` y `Kult (B).STX` en `data/` o junto a `kult.exe`.
    El primer arranque genera `data/kult.data`; después se pueden borrar los STX.
-3. Comprobar que `Kult Settings.png` y `Instrucciones - Atajos de teclado.txt` están junto a `kult.exe`; después, doble clic
+3. Comprobar que `Kult Settings.png` y `Kult Settings.txt` están junto a `kult.exe`; después, doble clic
    en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F/S/C, juego con
