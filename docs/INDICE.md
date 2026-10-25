@@ -111,3 +111,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0078-t125-dialogo-clave-completo.md`](../notes/0078-t125-dialogo-clave-completo.md)
 - [`notes/0079-t126-erratas-verbos-catalan.md`](../notes/0079-t126-erratas-verbos-catalan.md)
 - [`notes/0080-t127-cedilla-catalana.md`](../notes/0080-t127-cedilla-catalana.md)
+- [`notes/0081-t128-correcciones-textos.md`](../notes/0081-t128-correcciones-textos.md)

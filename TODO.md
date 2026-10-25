@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-127) |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-128) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -48,6 +48,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-125 | Revisión completa de todo el diálogo en clave fonética | ✅ cerrada (2026-10-25; `notes/0078`) |
 | T-126 | Erratas de verbos catalanes (`LLENCAR`/`LLANCAR`, cambios y duplicados) | ✅ cerrada (2026-10-25; `notes/0079`) |
 | T-127 | Añadir la `Ç` catalana a la fuente y a todos los textos | ✅ cerrada (2026-10-25; `notes/0080`) |
+| T-128 | Correcciones de textos catalanes (`BARRIGA`, `ATRAVIESES`, `NAVE`, `ATREUS`) | ✅ cerrada (2026-10-25; `notes/0081`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -132,7 +133,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-127 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-128 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -166,6 +167,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-125 | **Diálogo en clave completo** | ✅ **sesión 71**: 75 entradas pasan a clave fonética catalana usando EN/FR/DE; solo quedan sonidos, nombres y control. `language.data` 77.904 B, `2e83f042…`; ZIP `295465c6…`; 5 herramientas. Detalle: **`notes/0078`** |
 | T-126 | **Erratas de verbos catalanes** | ✅ **sesión 71**: `60 ESTIRAR`, `81 LLANÇAR SOBRE`, `164 TIRAR`; además 1, 13/17, 52, 71/83 y 145. `language.data` 77.916 B, `99a1816e…`; ZIP `466ae50b…`; 5 herramientas. Detalle: **`notes/0079`** |
 | T-127 | **Ç catalana** | ✅ **sesión 71**: `CARACC.BIN` con glifo `1C 10 10 10 1C 04`, código `0x0b`; conversión de todas las palabras con cedilla. `language.data` 78.513 B, `1809189c…`; ZIP `1c1e8f6f…`; 5 herramientas. Detalle: **`notes/0080`** |
+| T-128 | **Correcciones de textos catalanes** | ✅ **sesión 71**: `BARRIGA`→`VENTRE`, `ATRAVIESES`→`TRAVESSES`, `NAVE`→`NAU`, `T'ATREUS`→`T'ATREVEIXES`, `S'ATREVE`→`S'ATREVEIX` y `DIALC 176` acortado; `130` en tres líneas. `language.data` 78.511 B, `38ff7f70…`; ZIP `435df4be…`; 5 herramientas. Detalle: **`notes/0081`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

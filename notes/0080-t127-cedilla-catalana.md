@@ -1,6 +1,7 @@
 # 0080 — T-127: Ç catalana en la fuente
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-128 corrige textos. Siguiente: T-094
+sobre el ZIP final.
 
 ## Glifo
 

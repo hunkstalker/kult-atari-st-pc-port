@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102–T-127 cerradas (2026-10-25). El port arranca
+**Estado:** T-022, T-101, T-102–T-128 cerradas (2026-10-25). El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -23,13 +23,13 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 único fichero no versionado aparte de la documentación es el backup local
 `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación del ZIP de T-127.**
+**Siguiente tarea: T-094 — validación del ZIP de T-128.**
 
 - **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo arranque en Estirar
   a pantalla, persistencia en `kult.ini`, F1/F2, ratón, F5/F6/F7, volumen,
-  `Kult Settings.png`, textos ES/CA (ERBE y catalán con terminología T-119/T-127 y `Ç`) y OSD.
+  `Kult Settings.png`, textos ES/CA (ERBE y catalán con terminología T-119/T-128 y `Ç`) y OSD.
 - **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `1c1e8f6f80668e4b9dca2ddd3c78ba805d82005f13ed663e3e5e9d395fcbaf15`.
+  `435df4be54c371883f0e988a9957ea3a888b9ff7008b8ed364a2ed5122ef5fed`.
 - **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -47,6 +47,15 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
+**T-128 — cerrada (sesión 71, 2026-10-25):**
+
+- `BARRIGA`→`VENTRE` (69, 127), `ATRAVIESES`→`TRAVESSES` (174), `NAVE`→`NAU`
+  (292), `T'ATREUS`→`T'ATREVEIXES` (130, 134), `S'ATREVE`→`S'ATREVEIX` (117)
+  y `DIALC 176` acortado; `130` en tres líneas.
+- `language.data` 78.511 B, `38ff7f70…`; ZIP
+  `435df4be54c371883f0e988a9957ea3a888b9ff7008b8ed364a2ed5122ef5fed`; 12
+  entradas. Detalle: `notes/0081`.
+
 **T-127 — cerrada (sesión 71, 2026-10-25):**
 
 - `CARACC.BIN` añade `Ç` en `0x0b` con glifo `1C 10 10 10 1C 04`.
@@ -54,7 +63,7 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
   `DIALC`; `FORCA` de `DESCC 180` se mantiene como objeto.
 - `language.data` 78.513 B, `1809189c…`; ZIP
   `1c1e8f6f80668e4b9dca2ddd3c78ba805d82005f13ed663e3e5e9d395fcbaf15`; 12
-  entradas. Detalle: `notes/0080`.
+  entradas. T-128 corrige textos. Detalle: `notes/0080`.
 
 **T-126 — cerrada (sesión 71, 2026-10-25):**
 
@@ -298,21 +307,21 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `1c1e8f6f80668e4b9dca2ddd3c78ba805d82005f13ed663e3e5e9d395fcbaf15`
-  (T-127; pendiente de T-094, no es aún el artefacto de release).
-- `assets/language.data` regenerado en T-127: 78.513 B,
-  SHA256 `1809189c19fe9aeb9595d48c8bab8831bdcad37c8faf0bb4910c1f9ce2cfbb68`.
+  SHA256 `435df4be54c371883f0e988a9957ea3a888b9ff7008b8ed364a2ed5122ef5fed`
+  (T-128; pendiente de T-094, no es aún el artefacto de release).
+- `assets/language.data` regenerado en T-128: 78.511 B,
+  SHA256 `38ff7f705bb51a06abf02b0e9fcd4cc7b8cebf6409933bcc611a12a4ed342f1f`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 519 core + HAL (36 funciones / 256 `CHECK`) + diagnóstico
   off/on + 5 herramientas OK.
-- `make package-win`: OK después de T-127 (12 entradas).
+- `make package-win`: OK después de T-128 (12 entradas).
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP de T-127.
+   `docs/VERIFICACION.md` sobre el ZIP de T-128.
 2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
 3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin

@@ -131,15 +131,22 @@ def test_catalan_differential():
         ("DESCC.BIN", 368): "QRIICH CAU A TERRA I COMEN[0b]A A CRIDAR.",
         ("DESCC.BIN", 404): "AMPLIFICADOR HITACHI-GAUSS, CONEGUT COM A GAUSS O FET. EL TEU ENLLA[0b] TELEPATIC AMB LA XARXA TUNER",
         ("DESCC.BIN", 50): "QUEDES ATRAPAT A LA\nTERANYINA!",
+        ("DESCC.BIN", 69): "S'OBRE EL VENTRE DE L'ESTATUA.",
         ("DESCC.BIN", 73): "UN CURIOS HOMENET AL REVES.",
         ("DESCC.BIN", 126): "EL CAMINANT\nSALVARA ALGU I INDICARA\nLA SEVA ELECCIO AL REPTIL.",
+        ("DESCC.BIN", 174): "TRAVESSES AMB FACILITAT UNA SERIE DE SALES COM LES QUE ACABES DE DEIXAR.",
         ("DESCC.BIN", 261): "MENTRE AVANCES, ACTIVES UN MECANISME HORRIPILANT!\nEL SOSTRE ET CAU A SOBRE!",
+        ("DESCC.BIN", 292): "AMB SCI FI, DECIDIU DEIXAR AQUEST PLANETA DESTROSSAT PER L'ODI. LA NAU DE QRIICH US PORTARA CAP A NOUS MONS.",
         ("DESCC.BIN", 339): "UN GOT DE METALL.",
         ("DESCC.BIN", 350): "QUEDA 1 GLOP.",
         ("DESCC.BIN", 356): "SELECCIONA EL GOT QUE CONTE EL CRANI.",
         ("DESCC.BIN", 378): "[04][04][04][04][04]UNA\nDAGA [04][04][04][04][04][04][04][04][04][04][04][04]",
         ("DIALC.BIN", 15): "PORTA'M UN CRANI. DESPRES PODRAS PROVAR AMB EL COMERCIANT. SI EM DONES 5 EN MENYS D'UNA HORA, SERAS UN DIVO!",
         ("DIALC.BIN", 23): "AVANCA, AMIC, ES LA TEVA UNICA ESPERAN[0b]A!",
+        ("DIALC.BIN", 117): "ALERTA! UN DIVO S'ATREVEIX A TORNAR! SOCORS!",
+        ("DIALC.BIN", 127): "FES-HO ARA, OH SAURA! EL VENTRE DE DEILOS RUGUEIX!",
+        ("DIALC.BIN", 130): "VIL PROFANADOR,\nT'ATREVEIXES A EMBRUTAR\nLA CAMBRA DE L'EXPIACIO!",
+        ("DIALC.BIN", 134): "T'ATREVEIXES A MIRAR EL ROSTRE DE SAURA! SACRILEGI!",
         ("DIALC.BIN", 70): "CREU-ME, AMIC, LA TEVA UNICA ESPERAN[0b]A ARA...",
         ("DIALC.BIN", 227): "EL COS PROTOZORQ ES MASSA DEBIL PER A MI. LA RA[0b]A ZORQ S'EXTINGEIX. NECESSITO UNA NOVA RA[0b]A ESCLAVA.",
         ("DIALC.BIN", 282): "OH DEILOS, CONCEDEIX-ME FOR[0b]A!",
@@ -150,6 +157,7 @@ def test_catalan_differential():
         ("DIALC.BIN", 156): "PRE SISI.\nAI TA UN KIT TANT.",
         ("DIALC.BIN", 157): "PORTA\nRONGA.",
         ("DIALC.BIN", 162): "LASIT UAC IOESDES\nEMBOLUPA AM NORMA LYTAT",
+        ("DIALC.BIN", 176): "PER FI UN TUNER QUE NO VOL ATRAPAR-NOS!",
         ("DIALC.BIN", 164): "AKETS SON KLASI FIKATS\nDEFEK TUOSOS.\nDES BRAN XEU LOS ARA.",
         ("DIALC.BIN", 165): "NO MES SA MOR\nUNA BE GADA.",
         ("DIALC.BIN", 166): "LA SITU ACIO\nIN KLE RA.",
@@ -197,6 +205,10 @@ def test_catalan_differential():
     assert cedilla.read_bytes()[0x0b * 6:0x0b * 6 + 6] == bytes((0x1c, 0x10, 0x10, 0x10, 0x1c, 0x04))
     assert _from_container("CARACC.BIN")
     assert any("[0b]" in text for text in dict(_entries(_from_container("DESCC.BIN"))).values())
+    for bank, old in (("DESCC.BIN", "BARRIGA"), ("DESCC.BIN", "ATRAVIESES"),
+                      ("DIALC.BIN", "T'ATREUS"), ("DIALC.BIN", "S'ATREVE A"),
+                      ("DESCC.BIN", "NAVE")):
+        assert not any(old in text for text in dict(_entries(next((ROOT / "assets" / "lang").rglob(bank)).read_bytes())).values()), (bank, old)
     coded = {8, 10, 11, 31, 36, 37, 40, 41, 42, 43, 46, 48, 74, 75, 77, 80, 81,
              100, 101, 102, 105, 119, 121, 122, 123, 124, 129, 177, 180, 184,
              188, 210, 215, 219, 220, 235, 236, 237, 238, 239, 242, 243, 244,
