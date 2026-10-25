@@ -51,6 +51,15 @@ static void frame_hook(uint8_t *img) {
           done = 1;
           kult_request_restart();
       } }
+    /* Diagnóstico: fuerza l_0101a8 (reinicio suave) en un VBL concreto. */
+    { static long at = -2; static int done;
+      if (at == -2) { const char *e = getenv("KULT_SOFT_RESTART_AT");
+                      at = (e && *e) ? strtol(e, NULL, 0) : -1; }
+      if (!done && at >= 0 && (long)platform_frame_count() >= at) {
+          done = 1;
+          platform_log("reinicio suave: KULT_SOFT_RESTART_AT=%ld", at);
+          longjmp(g_jmp, 3);
+      } }
     if (g_stop)
         longjmp(g_jmp, 1);
     if (g_max && ++g_frame >= g_max)
@@ -85,6 +94,68 @@ static void boot_enter_game(uint8_t *img) {
     BOOT_TRACE("hint_icons");
     wait_frame_cursor(img);
     BOOT_TRACE("entrando game_loop");
+}
+
+/* l_0100ec del original: FOND, lista B, bancos ECHE, paleta, copia a pantalla A,
+ * CLEAR y parada de música/sonido. El aviso de cambio al disco 2 (0x918e) se
+ * omite: el port sirve ambos discos desde el mismo directorio y el preflight de
+ * app/main.c ya lista los ficheros que faltan. Devuelve <0 si FOND o la lista B
+ * no cargan (mismo error que el arranque en frío). */
+static int boot_load_0100ec(uint8_t *img) {
+    load_fond(img);
+    if ((int16_t)be16(img + A_FILE_HANDLE) < 0) {
+        BOOT_TRACE("fond falló");
+        return -1;
+    }
+    BOOT_TRACE("fond");
+    if (load_resource_list_b(img) < 0) {
+        BOOT_TRACE("lista_b falló");
+        return -1;
+    }
+    BOOT_TRACE("lista_b");
+
+    /* Bancos ECHE 0..7 contiguos desde 0x64c8e (l_01011a): carga cada banco y
+     * guarda su puntero en la tabla 0x1a4e8. */
+    if (be32(img + A_SCREEN_PTR_A) >= 0x78001u) {
+        uint32_t dst = 0x64c8eu;
+        for (uint32_t d = 0; d <= 7; d++) {
+            wr32(img + 0x1a4e8 + d * 4, dst);
+            load_eche_bank(img, d, dst);
+            dst += be32(img + A_LOAD_LENGTH);
+        }
+        img[0x1a57c] = 0xff;
+    }
+    BOOT_TRACE("eche");
+
+    platform_disk_timing(1);       /* desde aquí sí: salas, estrella, reinicio */
+    set_palette(img);
+    copy_screen(img);
+    save_clear_bin(img);
+    music_stop(img, 0);
+    sound_stop_supexec(img);
+    BOOT_TRACE("clear/music");
+    return 0;
+}
+
+/* l_0101a8 del original: reinicio suave. Carga la lista C, rehace crt0, recarga
+ * la lista A y salta a l_0100ec. Los fallos de las listas C/A se ignoran, como
+ * en el original; el retorno de l_0100ec sí decide si se puede entrar al juego.
+ * No se escribe A7 (STACK=0x1d1fe es la pila del 68000): la pila de
+ * instrumentación se vacía aparte. No repite init_hardware, menú ni parches de
+ * idioma/MOTS: la imagen ya los conserva. */
+static int boot_l0101a8(uint8_t *img) {
+    platform_cpuwork_reset_stack();
+    platform_disk_timing(1);
+    if (load_resource_list_c(img) < 0)
+        platform_log("reinicio suave: lista C no disponible; se continúa");
+    BOOT_TRACE("lista_c");
+    crt0_init(img);
+    platform_ikbdws(img + 0x1a459, 5);
+    BOOT_TRACE("crt0 (reinicio)");
+    if (load_resource_list_a(img) < 0)
+        platform_log("reinicio suave: lista A no disponible; se continúa");
+    BOOT_TRACE("lista_a (reinicio)");
+    return boot_load_0100ec(img);
 }
 
 int kult_boot(uint8_t *img, uint32_t max_frames) {
@@ -177,48 +248,14 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     (void)load_resource_list_a(img);
     BOOT_TRACE("lista_a");
 
-    /* l_0100e0 del original: pide cambiar al disco 2 (`cmd 0x918e`,
-     * "INSERT DISK 2... PRESS ANY KEY") porque FOND/PUZZL/BRUIT viven en el
-     * disco B, y espera. El port sirve ambos discos desde el mismo directorio
-     * de datos, así que el cambio físico no existe: se omite el aviso (y el
-     * bucle de reintento con 0x918e). Si faltara algún fichero, el preflight de
-     * `app/main.c` ya lo lista con claridad. */
-    load_fond(img);
-    if ((int16_t)be16(img + A_FILE_HANDLE) < 0) {
-        BOOT_TRACE("fond falló");
+    if (boot_load_0100ec(img) < 0)
         return -1;
-    }
-    BOOT_TRACE("fond");
-    if (load_resource_list_b(img) < 0) {
-        BOOT_TRACE("lista_b falló");
-        return -1;
-    }
-    BOOT_TRACE("lista_b");
-
-    /* Bancos ECHE 0..7 contiguos desde 0x64c8e (l_01011a): carga cada banco y
-     * guarda su puntero en la tabla 0x1a4e8. */
-    if (be32(img + A_SCREEN_PTR_A) >= 0x78001u) {
-        uint32_t dst = 0x64c8eu;
-        for (uint32_t d = 0; d <= 7; d++) {
-            wr32(img + 0x1a4e8 + d * 4, dst);
-            load_eche_bank(img, d, dst);
-            dst += be32(img + A_LOAD_LENGTH);
-        }
-        img[0x1a57c] = 0xff;
-    }
-    BOOT_TRACE("eche");
-
-    platform_disk_timing(1);       /* desde aquí sí: salas, estrella, reinicio */
-    set_palette(img);
-    copy_screen(img);
-    save_clear_bin(img);
-    music_stop(img, 0);
-    sound_stop_supexec(img);
-    BOOT_TRACE("clear/music");
 
     /* Bucle principal, con corte por número de frames. `setjmp` también recibe el
      * longjmp de `reset_clear` (valor 2): en ese caso se vuelve a 0x10158
-     * (`boot_enter_game`) en vez de repetir el guion de muerte. */
+     * (`boot_enter_game`) en vez de repetir el guion de muerte. El valor 3 es el
+     * reinicio suave de diagnóstico (l_0101a8), que recarga las listas antes de
+     * volver al mismo 0x10158. */
     g_frame = 0;
     g_max = max_frames;
     g_stop = 0;
@@ -227,16 +264,22 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
     /* Ya presentará el hook del bucle; el tick deja de presentar en arranque. */
     platform_log("game_loop: inicio");
     platform_set_loop(1);
+    int rc = 0;
     for (;;) {
         int reason = setjmp(g_jmp);
         if (reason == 1)                 /* stop o límite de frames */
             break;
         g_restart_armed = 0;             /* no reiniciar durante 0x10158 */
+        if (reason == 3 && boot_l0101a8(img) < 0) {
+            platform_log("reinicio suave: fallo en l_0100ec");
+            rc = -1;
+            break;
+        }
         boot_enter_game(img);
         g_restart_armed = 1;
         game_loop(img, 0);               /* solo sale por longjmp */
     }
     platform_set_loop(0);
     hook_loop_top = 0;
-    return 0;
+    return rc;
 }
