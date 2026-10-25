@@ -35,7 +35,9 @@ la carpeta debe ser escribible.
 Carpetas
 --------
 - `data/`   entrada de los STX + `kult.data` generado + `language.data`.
-- `saves/`  escrituras del juego (CLEAR.BIN, SCENA.BIN...).
+- `saves/`  escrituras del juego (CLEAR.BIN, SCENA.BIN...) y las ranuras
+            `partida-0.bin`…`partida-9.bin`.
+- `kult.ini` recuerda la ranura de guardado activa.
 - `kult.log` se crea junto a kult.exe con timestamp y errores.
 
 Si algo falla, revisa `kult.log`. No hay appdata ni rutas alternativas.

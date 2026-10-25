@@ -117,7 +117,9 @@ Sin fallback a appdata, `/tmp` ni directorios alternativos. `KULT_DATA_DIR` y
 ## Escrituras del juego
 
 `CLEAR.BIN`, `SCENA.BIN` y cualquier estado modificable van a `saves/`, nunca al
-contenedor ni a `data/`.
+contenedor ni a `data/`. Las ranuras F5/F6/F7 se guardan como
+`saves/partida-0.bin`…`partida-9.bin`; `kult.ini`, junto al ejecutable, recuerda
+la ranura activa.
 
 ## Empaquetado
 

@@ -85,3 +85,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0052-plan-t022.md`](../notes/0052-plan-t022.md)
 - [`notes/0053-t022-reinicio-suave.md`](../notes/0053-t022-reinicio-suave.md)
 - [`notes/0054-t101-die-dado-dau.md`](../notes/0054-t101-die-dado-dau.md)
+- [`notes/0055-t102-pantalla-f1-f2.md`](../notes/0055-t102-pantalla-f1-f2.md)
+- [`notes/0056-t103-slots.md`](../notes/0056-t103-slots.md)
+- [`notes/0057-t104-atajos-f5-f6-f7.md`](../notes/0057-t104-atajos-f5-f6-f7.md)
+- [`notes/0058-t105-release-f1-f2-slots.md`](../notes/0058-t105-release-f1-f2-slots.md)

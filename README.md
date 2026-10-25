@@ -9,12 +9,13 @@ C corra en Windows/Linux.
 
 > **Estado:** el port es jugable de principio a fin en Windows y Linux. Incluye
 > la ingesta de los discos originales, el selector de idioma, los packs español y
-> catalán, guardado/carga y audio. Los textos catalanes están validados y las
+> catalán, guardado/carga y audio, además de **fullscreen nativo**, **F1**
+> ventana/fullscreen, **F2** escala Auto/×1–×6 y **F5/F6/F7** para ranuras de
+> savestate (`saves/partida-N.bin`). Los textos catalanes están validados y las
 > incidencias de texto de objetos y de La Horca están corregidas. Los tests de
-> ingesta y packs están integrados en `make test`. T-022 (`0x106f2` y el
-> reinicio suave `l_0101a8`) y T-101 («DIE» → DADO/DAU en ES/CA) están cerradas;
-> la release 1.0.0 no se publica hasta cerrar la validación visual final sobre el
-> ZIP regenerado. Después vienen la publicación y el CI.
+> ingesta y packs están integrados en `make test`. T-022, T-101 y T-102–T-105
+> están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
+> visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.
 
@@ -61,10 +62,18 @@ git subtree pull --prefix=lib/kult-core \
   `Kult.STX` y `Kult (B).STX`. Los nombres no importan; se identifican por
   SHA-256.
 
+## Controles
+- **Ratón**: izquierdo/teclado = acción; derecho = acción + skip.
+- **F1**: pantalla completa/ventana.
+- **F2**: escala entera Auto/×1–×6.
+- **F5**: cambia de ranura 0–9; **F6**: guarda; **F7**: carga.
+- **ESC**: cierra la ventana.
+
 ## Datos y diagnóstico
 - Release **portable**: todo vive junto al `.exe`. `data/` contiene los assets
-  del usuario y `saves/` las escrituras del juego. No hay appdata ni rutas de
-  datos alternativas.
+  del usuario y `saves/` las escrituras del juego. Las ranuras F5/F6/F7 van a
+  `saves/partida-0.bin`…`partida-9.bin`; `kult.ini` recuerda la ranura activa.
+  No hay appdata ni rutas de datos alternativas.
 - Copia `Kult.STX` y `Kult (B).STX` en `data/` o junto al `.exe`. En el primer
   arranque se extraen, se validan por SHA-256 y se genera `data/kult.data`.
   Después puedes borrar los `.STX`.

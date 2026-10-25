@@ -7,7 +7,7 @@
 | Tests diferenciales del core | `lib/kult-core/test/` | 519 funciones en 44 `test_*.py` | canónicos del core |
 | Tests de herramientas del port | `test/` | 2 funciones en 2 ficheros | ringreport y packs de idioma |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
-| Tests funcionales HAL | `platform/test/test_platform.c` | 30 funciones / 163 `CHECK` | backend PC, contenedores, ingesta y packs |
+| Tests funcionales HAL | `platform/test/test_platform.c` | 33 funciones / 209 `CHECK` | backend PC, contenedores, ingesta, packs, display/OSD y ranuras |
 | Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
 | Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 519 | legibilidad y sincronización |
 
@@ -69,6 +69,14 @@ Hecho:
 - Eliminada la copia duplicada de los tests del core en `test/`.
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
+
+Hecho (T-102–T-104):
+
+- `test_display_viewport`: escala Auto/×1–×6, viewport centrado y ciclos de F2.
+- `test_osd`: texto y caducidad de los avisos.
+- `test_slots`: roundtrip de 1 MiB + paleta + base visible, ficheros truncados,
+  ranura ausente, rango inválido, persistencia de `kult.ini` y peticiones
+  F6/F7 dentro/fuera del bucle.
 
 Hecho (T-095):
 

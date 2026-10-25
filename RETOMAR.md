@@ -6,21 +6,22 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102, T-103 y T-104 cerradas (2026-10-25). El port
-arranca en **fullscreen sin bordes a resolución nativa**, con **F1**
+**Estado:** T-022, T-101, T-102, T-103, T-104 y T-105 cerradas (2026-10-25).
+El port arranca en **fullscreen sin bordes a resolución nativa**, con **F1**
 ventana/fullscreen, **F2** escala Auto/1x–6x y **F5/F6/F7** para ranuras de
 savestate en `saves/partida-0.bin`…`partida-9.bin` (ranura activa en
-`kult.ini`). Queda T-105 (documentación, ZIP y hashes) y después **T-094**
-(validación visual final). La release 1.0.0 sigue sin push ni tag y **se
+`kult.ini`). El ZIP está regenerado y documentado; queda **T-094** (validación
+visual/funcional final). La release 1.0.0 sigue sin push ni tag y **se
 publicará al final** (T-092). El único fichero no versionado aparte de la
 documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-105 — documentación de release y ZIP.**
+**Siguiente tarea: T-094 — validación del ZIP de T-105.**
 
-- **Alcance:** LEEME/README/notas/verificación, contadores de tests, `make
-  package-win`, SHA256 nuevo y estado de T-094.
-- **Después:** **T-094** (validación visual final sobre el ZIP nuevo), T-092
-  (publicar) y T-096 (CI).
+- **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo F1/F2, ratón en
+  ventana/fullscreen, F5/F6/F7, ranura recordada y errores.
+- **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
+  `66bd1af5cb1deafff569fd527a48b7c923ef9ab4f7914a099faa33d43e5951c4`.
+- **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -36,6 +37,15 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-105 — cerrada (sesión 71, 2026-10-25):**
+
+- Documentación de release actualizada con fullscreen/F1/F2, ranuras F5/F6/F7,
+  `kult.ini`, limitaciones y checklist.
+- ZIP `build-win/kult-1.0.0-win64.zip` regenerado, 11 entradas, SHA256
+  `66bd1af5cb1deafff569fd527a48b7c923ef9ab4f7914a099faa33d43e5951c4`.
+- `make test` 519 core + 33 funciones / 209 `CHECK` + diag + 2 herramientas.
+  Detalle: `notes/0058`.
 
 **T-104 — cerrada (sesión 71, 2026-10-25):**
 
@@ -90,22 +100,22 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `aba7eca812cdd49c334c46658d3a52d645fb9395a9ea5f59f0d65936b0b1643c`
-  (regenerado después de T-101; pendiente de la validación visual T-094, no es
-  aún el artefacto de release).
+  SHA256 `66bd1af5cb1deafff569fd527a48b7c923ef9ab4f7914a099faa33d43e5951c4`
+  (regenerado en T-105 con F1/F2 y ranuras; pendiente de la validación T-094,
+  no es aún el artefacto de release).
 - `assets/language.data` SHA256
   `e69cae5a6ac0832415f9a4e4086609fb89b6577bcb6fced6cb998c82e608629b`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
-- `make test`: 519 core + HAL (30 funciones / 163 `CHECK`) + diagnóstico
-  off/on + 1 port + 2 herramientas OK.
-- `make package-win`: OK después de T-101.
+- `make test`: 519 core + HAL (33 funciones / 209 `CHECK`) + diagnóstico
+  off/on + 2 herramientas OK.
+- `make package-win`: OK después de T-105.
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP regenerado en T-101.
+   `docs/VERIFICACION.md` sobre el ZIP de T-105.
 2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
 3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin

@@ -83,9 +83,9 @@ para que el usuario valide.
 **Aceptación:** doble clic + copia del usuario → funciona.
 **Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. El
 catalán está validado y T-097/T-098 están corregidos y validados por el usuario.
-T-022 (`0x106f2` + `l_0101a8`) y T-101 («DIE» → DADO/DAU) están cerradas.
-Antes de publicar quedan la validación visual final sobre el ZIP regenerado
-(T-094). Después: publicación
+T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-105
+(fullscreen/F1/F2 + ranuras F5/F6/F7) están cerradas. Antes de publicar queda
+la validación visual final sobre el ZIP de T-105 (T-094). Después: publicación
 (T-092) y CI (T-096).
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
