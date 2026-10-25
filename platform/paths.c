@@ -1,10 +1,12 @@
-/* platform/paths.c — rutas del ejecutable (M7/T-070).
+/* platform/paths.c — rutas del ejecutable y base de datos (M7/T-070).
  *
- * `platform_exe_dir` devuelve el directorio del ejecutable sin barra final. Lo
- * usan `platform/fs.c` (data/ junto al exe) y `platform/log.c` (kult.log). Se
- * implementa con la API del sistema, sin depender de SDL (el build headless no
- * enlaza SDL).
+ * `platform_exe_dir` devuelve el directorio del ejecutable. `platform_base_dir`
+ * usa la carpeta del ejecutable en Windows/Linux y Application Support en
+ * macOS. No depende de SDL (el build headless no enlaza SDL).
  */
+#if defined(__APPLE__) && !defined(_XOPEN_SOURCE)
+#define _XOPEN_SOURCE 700
+#endif
 #if !defined(_WIN32) && !defined(_POSIX_C_SOURCE)
 #define _POSIX_C_SOURCE 200809L
 #endif
@@ -15,6 +17,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+#include <limits.h>
 #else
 #include <unistd.h>
 #endif
@@ -40,6 +45,13 @@ int platform_base_dir(char *buf, size_t n) {
         snprintf(buf, n, "%s", g_test_base);
         return 0;
     }
+#ifdef __APPLE__
+    const char *home = getenv("HOME");
+    if (home && home[0]) {
+        snprintf(buf, n, "%s/Library/Application Support/Kult", home);
+        return 0;
+    }
+#endif
     return platform_exe_dir(buf, n);
 }
 
@@ -49,6 +61,19 @@ int platform_exe_dir(char *buf, size_t n) {
     if (len == 0 || len >= n) return -1;
     char *s = strrchr(buf, '\\');
     if (!s) s = strrchr(buf, '/');
+    if (!s) return -1;
+    *s = '\0';
+    return 0;
+#elif defined(__APPLE__)
+    char raw[PATH_MAX];
+    uint32_t len = (uint32_t)sizeof raw;
+    if (_NSGetExecutablePath(raw, &len) != 0) return -1;
+    char resolved[PATH_MAX];
+    const char *path = realpath(raw, resolved);
+    if (!path) path = raw;
+    if (strlen(path) >= n) return -1;
+    snprintf(buf, n, "%s", path);
+    char *s = strrchr(buf, '/');
     if (!s) return -1;
     *s = '\0';
     return 0;

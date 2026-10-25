@@ -1,9 +1,9 @@
 /* platform/log.c — log de diagnóstico del port.
  *
- * Release portable: `kult.log` vive siempre en la carpeta del ejecutable. No
- * hay KULT_LOG, appdata ni /tmp. Política B: los errores se registran con
- * timestamp; solo se muestra un diálogo de emergencia si el log no se pudo
- * abrir/escribir.
+ * `kult.log` vive en la base de datos: junto al ejecutable en Windows/Linux y
+ * en ~/Library/Application Support/Kult en macOS. No hay KULT_LOG ni /tmp.
+ * Política B: los errores se registran con timestamp; en macOS se muestra un
+ * diálogo fatal visible.
  */
 #include <stdarg.h>
 #include <stdio.h>
@@ -13,6 +13,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#elif defined(__APPLE__)
+#include <sys/stat.h>
 #endif
 
 #include "platform.h"
@@ -24,6 +26,7 @@
 
 static FILE *g_log;
 static char  g_log_path[2048];
+static void (*g_error_dialog)(const char *msg);
 
 static void log_stamp(char *out, size_t n) {
     time_t t = time(NULL);
@@ -43,6 +46,9 @@ void platform_log_init(void) {
 
     char base[1024];
     if (platform_base_dir(base, sizeof base) == 0) {
+#ifdef __APPLE__
+        (void)mkdir(base, 0755);
+#endif
         char path[1200];
         snprintf(path, sizeof path, "%s/kult.log", base);
         g_log = open_log_at(path);
@@ -75,6 +81,10 @@ void platform_log(const char *fmt, ...) {
     fprintf(stderr, "[kult] %s\n", msg);
 }
 
+void platform_set_error_dialog(void (*fn)(const char *msg)) {
+    g_error_dialog = fn;
+}
+
 void platform_fatal(const char *fmt, ...) {
     char msg[2048];
     va_list ap;
@@ -88,6 +98,10 @@ void platform_fatal(const char *fmt, ...) {
      * diálogo permitido. Si el log existe, el error solo va a kult.log. */
     if (!g_log && GetConsoleWindow() == NULL)
         MessageBoxA(NULL, msg, "Kult — error", MB_OK | MB_ICONERROR);
+#elif defined(__APPLE__)
+    /* En un .app lanzado desde Finder no hay stderr visible: muestra el error. */
+    if (g_error_dialog)
+        g_error_dialog(msg);
 #endif
 }
 

@@ -62,7 +62,7 @@ test: test-core test-port
 #   make port-sdl   -> build/kult-sdl  con ventana SDL3 (-DHAVE_SDL3)
 #   make test-port  -> pruebas de la HAL (sin oráculo)
 #   make test       -> core + HAL + tests propios del port
-PLATFORM_SRC := $(filter-out platform/video_sdl.c platform/audio_sdl.c platform/dispatch_trace.c,$(wildcard platform/*.c))
+PLATFORM_SRC := $(filter-out platform/video_sdl.c platform/audio_sdl.c platform/mac_dialog.c platform/dispatch_trace.c,$(wildcard platform/*.c))
 PORT_CORE_SRC := $(wildcard lib/kult-core/src/*.c)
 PORT_SRC     := $(PORT_CORE_SRC) $(PLATFORM_SRC) $(wildcard boot/*.c) $(wildcard app/*.c)
 PORT_INC     := -Iplatform -Iplatform/include -Iboot -Ilib/kult-core/include -Iassets -I$(KIT)/include
@@ -141,7 +141,10 @@ CMAKE      ?= cmake
 BUILD_NAT  := build-cmake
 BUILD_WIN  := build-win
 BUILD_WIN_DIAG := build-win-diag
+BUILD_MACOS := build-macos
 SDL3_MINGW := $(CURDIR)/third_party/SDL3-3.4.10/x86_64-w64-mingw32
+SDL3_MACOS := $(CURDIR)/third_party/sdl3-macos
+KULT_VERSION ?= 1.1.0
 
 .PHONY: deps-win
 deps-win:
@@ -151,6 +154,10 @@ deps-win:
 deps-linux:
 	sh tools/fetch_sdl3_linux.sh
 	sh tools/fetch_appimagetool.sh
+
+.PHONY: deps-macos
+deps-macos:
+	sh tools/fetch_sdl3_macos.sh
 
 .PHONY: cmake-native
 cmake-native:
@@ -179,3 +186,18 @@ package-native: cmake-native
 .PHONY: package-win
 package-win: cmake-win
 	cpack --config $(BUILD_WIN)/CPackConfig.cmake -G ZIP -B $(BUILD_WIN)
+
+.PHONY: cmake-macos
+cmake-macos:
+	$(CMAKE) -S . -B $(BUILD_MACOS) -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+	  -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+	  -DCMAKE_PREFIX_PATH=$(SDL3_MACOS) \
+	  -DKULT_SDL3_LIB=$(SDL3_MACOS)/lib/libSDL3.0.dylib
+	$(CMAKE) --build $(BUILD_MACOS) -j
+
+.PHONY: package-macos
+package-macos: cmake-macos
+	rm -rf build/macos-stage
+	$(CMAKE) --install $(BUILD_MACOS) --prefix build/macos-stage
+	KULT_VERSION=$(KULT_VERSION) tools/build_macos.sh build/macos-stage dist

@@ -1,0 +1,54 @@
+Kult: The Temple of Flying Saucers — macOS
+==========================================
+
+Requisitos: macOS 11 o superior. Esta build es Universal 2: funciona en Macs
+Intel y Apple Silicon. No incluye el juego: aporta tu copia legal.
+
+1) Descomprime el ZIP o abre el DMG y copia `Kult.app` a una carpeta normal
+   (por ejemplo, Aplicaciones o Escritorio).
+
+2) Primera ejecución: abre `Kult.app`.
+   Si macOS avisa de que la aplicación no está verificada, usa clic derecho >
+   Abrir o Ajustes del Sistema > Privacidad y seguridad > Abrir igualmente.
+   Esta versión no está notarizada por Apple.
+
+3) Si no hay `kult.data`, la app pide seleccionar los dos discos:
+   `Kult.STX` y `Kult (B).STX`. Selecciona ambos. Se copian y procesan en:
+
+       ~/Library/Application Support/Kult/data/
+
+   La primera ejecución ingiere los discos y arranca el juego en el mismo
+   proceso; no hace falta ejecutarlo dos veces. Después puedes borrar los STX.
+
+4) Los datos del usuario quedan en:
+
+       ~/Library/Application Support/Kult/
+       ├── data/          language.data y kult.data
+       ├── saves/         partidas slot-N.save
+       ├── kult.ini       pantalla, escala, volumen y ranura
+       └── kult.log       diagnóstico
+
+   Si quieres empezar de cero, cierra la app y borra esa carpeta.
+
+5) Siguientes ejecuciones: abre `Kult.app` otra vez. Si existe
+   `data/kult.data`, no se piden los STX.
+
+Controles
+---------
+- Ratón: izquierdo/teclado = acción; derecho = acción + skip.
+- F1: pantalla completa/ventana.
+- F2: escala (Estirar a pantalla, x1..x6, Auto).
+- F5: muestra la ranura; otra pulsación mientras se ve el aviso la cambia.
+- F6: guarda; F7: carga.
+- F9/F11: bajan/suben el volumen; F10: silencia/restaura.
+- ESC: cierra.
+- Lista completa en `Kult Settings.txt`.
+
+Notas
+-----
+- Es una release Universal 2 (`arm64` + `x86_64`) firmada en modo ad-hoc, no
+  notarizada. Gatekeeper puede mostrar un aviso; es esperado. La verificación
+  manual inicial es en Mac Intel; Apple Silicon se comprueba en CI.
+- No muevas `Kult.app` sin conservar la carpeta de Application Support si
+  quieres mantener partidas y datos.
+- Licencias: `LICENSE`, `THIRD_PARTY_NOTICES.md` y `LICENSES/`.

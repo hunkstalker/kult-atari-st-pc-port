@@ -1,8 +1,9 @@
 /* platform/fs.c — servicio de ficheros portable (GEMDOS sobre el SO real).
  *
  * Orden de lectura: saves/ > language.data > kult.data > data/ sueltos.
- * Escrituras: siempre saves/. La base es la carpeta del ejecutable; no hay
- * variables de entorno ni fallback a appdata/tmp.
+ * Escrituras: siempre saves/. En Windows/Linux la base es la carpeta del
+ * ejecutable; en macOS es ~/Library/Application Support/Kult. KULT_BASE_DIR
+ * permite sobrescribirla.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,6 +78,40 @@ static int path_in(const char *dir, const char *name, char *out, size_t out_size
     return 0;
 }
 
+#ifdef __APPLE__
+static int copy_file(const char *src, const char *dst) {
+    FILE *in = fopen(src, "rb");
+    if (!in) return -1;
+    FILE *out = fopen(dst, "wb");
+    if (!out) { fclose(in); return -1; }
+    uint8_t buf[8192];
+    size_t n;
+    while ((n = fread(buf, 1, sizeof buf, in)) > 0) {
+        if (fwrite(buf, 1, n, out) != n) { fclose(in); fclose(out); return -1; }
+    }
+    int ok = !ferror(in);
+    fclose(in);
+    if (fclose(out) != 0) ok = 0;
+    return ok ? 0 : -1;
+}
+
+/* El .app es de solo lectura. Copia el language.data empaquetado a la carpeta
+ * escribible de Application Support antes de cargar los contenedores. */
+static void seed_bundled_language(void) {
+    char exe[1024], src[1200], dst[1300];
+    if (platform_exe_dir(exe, sizeof exe) != 0) return;
+    snprintf(src, sizeof src, "%s/../Resources/data/language.data", exe);
+    snprintf(dst, sizeof dst, "%s/language.data", g_data_dir);
+    FILE *f = fopen(src, "rb");
+    if (!f) return;
+    fclose(f);
+    if (copy_file(src, dst) == 0)
+        platform_log("language.data: copiado desde el bundle");
+    else
+        platform_log("ERROR: no se pudo copiar language.data del bundle");
+}
+#endif
+
 static void load_containers(void) {
     kult_container_free(&g_lang);
     kult_container_free(&g_game);
@@ -106,6 +141,7 @@ void platform_fs_init(void) {
     snprintf(g_data_dir, sizeof g_data_dir, "%s/data", g_base_dir);
     snprintf(g_saves_dir, sizeof g_saves_dir, "%s/saves", g_base_dir);
 
+    ensure_dir(g_base_dir);
     int ok_data = ensure_dir(g_data_dir) == 0;
     int ok_saves = ensure_dir(g_saves_dir) == 0;
     int wr_data = ok_data && dir_writable(g_data_dir);
@@ -117,6 +153,10 @@ void platform_fs_init(void) {
     platform_log("saves: %s", g_saves_dir);
     if (!g_storage_ok)
         platform_log("ERROR: la carpeta del juego no es escribible: %s", g_base_dir);
+#ifdef __APPLE__
+    if (ok_data)
+        seed_bundled_language();
+#endif
     load_containers();
 }
 

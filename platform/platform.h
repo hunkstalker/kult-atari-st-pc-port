@@ -10,8 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* Inicia la HAL. Release portable: data/ y saves/ viven junto al ejecutable,
- * sin variables de entorno ni fallback fuera de esa carpeta. */
+/* Inicia la HAL. En Windows/Linux, data/ y saves/ viven junto al ejecutable;
+ * en macOS, en ~/Library/Application Support/Kult. KULT_BASE_DIR permite
+ * sobrescribir la base (pruebas/portable). */
 void platform_init(void);
 
 /* Busca un fichero de datos (p. ej. "KULT.PRG") solo en `<exe>/data/` y copia
@@ -31,13 +32,21 @@ int platform_ingest_ensure(void);
 void platform_fs_reload_containers(void);
 
 /* ---- diagnóstico --------------------------------------------------------- */
-/* Log a fichero y stderr en `<exe>/kult.log`, con timestamp. Política B: los
- * errores no abren diálogos; solo si el log no se pudo escribir se muestra un
- * MessageBox de emergencia en la build GUI de Windows. */
+/* Log a fichero y stderr en la base (kult.log), con timestamp. En Windows los
+ * errores solo abren un diálogo de emergencia si no se pudo escribir el log;
+ * en macOS los errores fatales muestran un diálogo visible. */
 void platform_log_init(void);
 void platform_log(const char *fmt, ...);
 void platform_fatal(const char *fmt, ...);
 void platform_log_close(void);
+/* Diálogo de error visible (macOS .app/Finder). NULL lo desactiva. */
+void platform_set_error_dialog(void (*fn)(const char *msg));
+
+#if defined(__APPLE__)
+/* Primer arranque del .app: pide los dos .STX y los copia a data/. */
+int  platform_mac_select_stx(void);
+void platform_mac_show_error(const char *msg);
+#endif
 
 /* Fija la imagen plana (1 MiB) que comparten los servicios. */
 void platform_set_image(uint8_t *img);
@@ -71,7 +80,7 @@ void platform_replay_shutdown(void);
 uint32_t platform_frame_count(void);
 int platform_in_loop(void);
 
-/* kult.ini junto al ejecutable: ajustes persistentes de las teclas F. */
+/* kult.ini en la base de datos: ajustes persistentes de las teclas F. */
 int  platform_config_get_int(const char *key, int def);
 void platform_config_set_int(const char *key, int value);
 

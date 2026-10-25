@@ -69,7 +69,7 @@ static int check_game_files(void) {
     if (nmiss == 0) return 0;
     platform_fatal(
         "Faltan %d fichero(s) del juego en data/ o kult.data:\n%s\n"
-        "Coloca los dos .STX junto al ejecutable o en data/, o revisa kult.log.",
+        "Coloca los dos .STX en la carpeta de datos o revisa kult.log.",
         nmiss, missing);
     return -1;
 }
@@ -126,6 +126,9 @@ static void tick_cb(uint8_t *img) {
 
 int main(int argc, char **argv) {
     (void)argc; (void)argv;    /* SDL3 (Windows) exige la firma con argumentos */
+#if defined(__APPLE__) && defined(HAVE_SDL3)
+    platform_set_error_dialog(platform_mac_show_error);
+#endif
     platform_log_init();
     platform_log("Kult %s — inicio", KULT_VERSION);
 
@@ -165,20 +168,28 @@ int main(int argc, char **argv) {
         platform_audio_toggle_mute();
     if (!platform_storage_ready()) {
         platform_fatal(
-            "No se puede escribir en la carpeta del juego:\n%s\n\n"
-            "Descomprime el port en una carpeta con permisos de escritura "
-            "(por ejemplo, Documentos o Escritorio). No lo ejecutes desde "
-            "Program Files.", platform_storage_path());
+            "No se puede escribir en la carpeta de datos del juego:\n%s\n\n"
+            "Revisa los permisos de esa carpeta o define KULT_BASE_DIR.",
+            platform_storage_path());
         platform_log_close();
         free(img);
         return 5;
     }
     platform_set_tick(kult_vbl_tick);
 
-    if (platform_ingest_ensure() != 0) {
+    int ingested = platform_ingest_ensure() == 0;
+#if defined(__APPLE__) && defined(HAVE_SDL3)
+    if (!ingested && window) {
+        for (int attempt = 0; attempt < 2 && !ingested; attempt++) {
+            if (platform_mac_select_stx() <= 0) break;
+            ingested = platform_ingest_ensure() == 0;
+        }
+    }
+#endif
+    if (!ingested) {
         platform_fatal(
             "No se encontró kult.data ni los discos del juego.\n\n"
-            "Coloca Kult.STX y Kult (B).STX en data/ o junto al ejecutable.\n"
+            "Coloca Kult.STX y Kult (B).STX en data/ o selecciónalos al arrancar.\n"
             "Los nombres no importan: se identifican por SHA-256.");
         platform_log_close();
         free(img);
