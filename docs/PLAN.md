@@ -83,10 +83,11 @@ para que el usuario valide.
 **Aceptación:** doble clic + copia del usuario → funciona.
 **Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. El
 catalán está validado y T-097/T-098 están corregidos y validados por el usuario.
-T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-134
+T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-135
 (fullscreen/F1/F2, ranuras `slot-N.save`, OSD original y terminología catalana)
 están cerradas. Antes de publicar queda la validación visual final sobre el ZIP
-de T-134 (T-094). Después: publicación (T-092) y CI (T-096).
+de T-135 (T-094, cerrada). Después: publicación (T-092, pendiente de
+credenciales); CI (T-096) implementado y pendiente de ejecutarse con el tag; Linux TGZ + AppImage incluidos.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
 `saves/`, `LEEME.txt` y licencias; sin headless ni `DIAGNOSTICO.txt`), ingesta

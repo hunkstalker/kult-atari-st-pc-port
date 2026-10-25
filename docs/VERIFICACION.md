@@ -49,11 +49,9 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
-**Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-134
-(2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save`,
-el OSD con la fuente del juego y la terminología catalana de T-119/T-134 (`GOT`, `XARXA TUNER`, `DAGA`,
-`FESOL`, `COMERCIANT`, `Ç`) y el diálogo deformado en clave fonética catalana.**
+**Estado actual: release 1.0.0 validada por el usuario. T-094 cerrada el
+2026-10-25 sobre el ZIP de T-134 (`5ed0e019…`), incluyendo F1/F2, Estirar a
+pantalla, F5/F6/F7, OSD, textos ES/CA con `Ç` y el diálogo deformado.**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -173,6 +171,14 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    corregido y validado. Si aún se notara acelerado, calibrar
    `KULT_CPU_HZ`/`KULT_ST_CONTEND`, no parchear la animación.
 5. **Si algo falla**: mirar **`kult.log`** junto al `.exe`, con timestamp.
+
+### Cierre T-094
+
+- ✅ Validación final del usuario sobre `build-win/kult-1.0.0-win64.zip`,
+  SHA256 `5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`
+  (13 entradas), 2026-10-25.
+- Release 1.0.0 preparada y etiquetada localmente como `v1.0.0`; la publicación
+  remota queda pendiente de T-092.
    Códigos: `0` ok, `2` PRG/datos ausentes, `3` fallo de arranque, `4` fallo de
    ventana, `5` carpeta del juego no escribible. Sin diálogos normales; solo si
    no se pudo escribir el log aparece uno de emergencia.

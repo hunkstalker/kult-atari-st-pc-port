@@ -69,7 +69,7 @@ static int check_game_files(void) {
     if (nmiss == 0) return 0;
     platform_fatal(
         "Faltan %d fichero(s) del juego en data/ o kult.data:\n%s\n"
-        "Coloca los dos .STX junto a kult.exe o en data/, o revisa kult.log.",
+        "Coloca los dos .STX junto al ejecutable o en data/, o revisa kult.log.",
         nmiss, missing);
     return -1;
 }
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
     if (platform_ingest_ensure() != 0) {
         platform_fatal(
             "No se encontró kult.data ni los discos del juego.\n\n"
-            "Coloca Kult.STX y Kult (B).STX en data/ o junto a kult.exe.\n"
+            "Coloca Kult.STX y Kult (B).STX en data/ o junto al ejecutable.\n"
             "Los nombres no importan: se identifican por SHA-256.");
         platform_log_close();
         free(img);
@@ -264,7 +264,7 @@ int main(int argc, char **argv) {
             /* En GUI no hay consola: si la ventana falla hay que avisar y salir
              * (antes se seguía en headless con frames=0, invisible). */
             platform_fatal("No se pudo abrir la ventana SDL.\n"
-                           "Detalle en kult.log (junto a kult.exe).");
+                           "Detalle en kult.log (junto al ejecutable).");
             platform_log_close();
             free(img);
             return 4;

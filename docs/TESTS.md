@@ -50,9 +50,10 @@ diferencial, las convenciones y las garantías del port. No deben borrarse para
 
 - **Repositorio**: los tests se conservan; son la fuente de verdad.
 - **Artefactos binarios** (ZIP Windows / TGZ Linux): no incluyen tests. El
-  `install()` de CMake solo copia el ejecutable, SDL3, `data/language.data`,
-  licencias, `Kult Settings.png`, `Kult Settings.txt` y las carpetas `data/`/`saves/`.
-  Verificado con el ZIP 1.0.0: 13 entradas, ninguna de test.
+  `install()` de CMake copia el ejecutable, SDL3, `data/language.data`,
+  licencias, `Kult Settings.png`, `Kult Settings.txt`, `LEEME_LINUX.txt` en
+  Linux y las carpetas `data/`/`saves/`. El ZIP Windows 1.0.0 tiene 13
+  entradas; Linux añade TGZ y AppImage.
 - **Archivos fuente de GitHub**: los ZIP/TAR de código que genera GitHub
   incluyen todo el repositorio, tests incluidos. Es lo esperado en una fuente.
 - No se genera un paquete de fuentes propio. Si algún día se añade, habrá que

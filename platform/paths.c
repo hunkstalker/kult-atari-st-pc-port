@@ -10,6 +10,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef _WIN32
@@ -28,6 +29,13 @@ void platform_set_base_dir_for_tests(const char *dir) {
 }
 
 int platform_base_dir(char *buf, size_t n) {
+#ifndef _WIN32
+    const char *override = getenv("KULT_BASE_DIR");
+    if (override && override[0]) {
+        snprintf(buf, n, "%s", override);
+        return 0;
+    }
+#endif
     if (g_test_base[0]) {
         snprintf(buf, n, "%s", g_test_base);
         return 0;

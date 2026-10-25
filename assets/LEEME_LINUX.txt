@@ -1,0 +1,27 @@
+Kult: The Temple of Flying Saucers — Linux
+==========================================
+
+Requisitos: Linux x86_64 con X11 o Wayland y audio (ALSA/Pulse). SDL3 va
+incluida en el paquete; no hace falta instalarla.
+
+1) Descomprime el TGZ en una carpeta escribible.
+2) Copia Kult.STX y Kult (B).STX en data/ o junto a kult.
+3) Ejecuta:
+
+       ./kult
+
+   Si el permiso de ejecución se ha perdido:
+
+       chmod +x kult
+
+El primer arranque genera data/kult.data. Después puedes borrar los STX.
+Las partidas van a saves/slot-N.save; kult.ini recuerda pantalla, escala,
+ranura, volumen y silencio.
+
+Si usas el AppImage, coloca los STX junto al AppImage y ejecútalo desde una
+carpeta escribible. El AppImage crea data/ y saves/ a su lado. Si el sistema no
+tiene FUSE, usa:
+
+       ./kult-1.0.0-x86_64.AppImage --appimage-extract-and-run
+
+Los atajos están en Kult Settings.txt. Errores y diagnóstico: kult.log.

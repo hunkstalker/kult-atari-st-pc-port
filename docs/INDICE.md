@@ -118,3 +118,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0085-t132-kult-settings-txt.md`](../notes/0085-t132-kult-settings-txt.md)
 - [`notes/0086-t133-limpieza-repositorio.md`](../notes/0086-t133-limpieza-repositorio.md)
 - [`notes/0087-t134-deps-win.md`](../notes/0087-t134-deps-win.md)
+- [`notes/0088-t094-cierre-release-1.0.0.md`](../notes/0088-t094-cierre-release-1.0.0.md)
+- [`notes/0089-t096-ci-release.md`](../notes/0089-t096-ci-release.md)
+- [`notes/0090-t096-ci-fix.md`](../notes/0090-t096-ci-fix.md)
+- [`notes/0091-t135-linux-tgz-appimage.md`](../notes/0091-t135-linux-tgz-appimage.md)

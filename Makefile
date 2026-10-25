@@ -92,8 +92,8 @@ $(PORT_BIN): $(PORT_CORE_O) $(PORT_OBJS)
 	$(CC) $^ -o $@
 
 # Ventana SDL3 (M3). Requiere `sdl3` (pkg-config).
-SDL3_CFLAGS := $(shell pkg-config --cflags sdl3)
-SDL3_LIBS   := $(shell pkg-config --libs sdl3)
+SDL3_CFLAGS := $(shell pkg-config --cflags sdl3 2>/dev/null)
+SDL3_LIBS   := $(shell pkg-config --libs sdl3 2>/dev/null)
 PORT_SDL_BIN := build/kult-sdl
 SDL_OBJDIR  := build/port-sdl-obj
 SDL_CORE_O  := $(patsubst lib/kult-core/src/%.c,$(SDL_OBJDIR)/lib/kult-core/src/%.o,$(PORT_CORE_SRC))
@@ -146,6 +146,11 @@ SDL3_MINGW := $(CURDIR)/third_party/SDL3-3.4.10/x86_64-w64-mingw32
 .PHONY: deps-win
 deps-win:
 	sh tools/fetch_sdl3.sh
+
+.PHONY: deps-linux
+deps-linux:
+	sh tools/fetch_sdl3_linux.sh
+	sh tools/fetch_appimagetool.sh
 
 .PHONY: cmake-native
 cmake-native:

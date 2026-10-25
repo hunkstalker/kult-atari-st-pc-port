@@ -46,13 +46,30 @@
   `mingw-w64-gcc`).
 
 ## CMake (Linux nativo)
+Con SDL3 del sistema:
+
 ```sh
 cmake -S . -B build-cmake -DCMAKE_BUILD_TYPE=Release
-cmake --build build-cmake -j          # -> build-cmake/kult (headless)
-                                      #    build-cmake/kult-sdl (SDL3)
-(cd build-cmake && cpack -G TGZ)      # -> kult-1.0.0-linux-x86_64.tar.gz
+cmake --build build-cmake -j
+(cd build-cmake && cpack -G TGZ)
 ```
-Envoltorios equivalentes: `make cmake-native` y `make package-native`.
+
+Para un paquete Linux autosuficiente y AppImage, usar SDL3 3.4.10 local:
+`fetch_sdl3_linux.sh` compila SDL3 con `SDL_X11_XSCRNSAVER=OFF` y
+`SDL_X11_XTEST=OFF`, de modo que no hacen falta las cabeceras de XScrnSaver
+(`libxss-dev`) ni XTest (`libxtst-dev`).
+
+```sh
+make deps-linux
+cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release   -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-linux"   -DKULT_SDL3_LIB="$PWD/third_party/sdl3-linux/lib/libSDL3.so.0"
+cmake --build build-linux -j
+(cd build-linux && cpack -G TGZ)
+cmake --install build-linux --prefix dist/linux-stage
+tools/build_appimage.sh dist/linux-stage dist/kult-1.0.0-x86_64.AppImage
+```
+
+Envoltorios equivalentes: `make cmake-native` y `make package-native` para el
+build con SDL3 del sistema.
 
 ## CMake + MinGW (Windows x64, cross)
 1. Obtener SDL3 **3.4.10**:

@@ -1,0 +1,138 @@
+name: Build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Tests HAL y herramientas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Instalar dependencias Python
+        run: python -m pip install -r requirements.txt
+      - name: Tests del backend y herramientas
+        run: |
+          make test-port
+          make test-tools PY=python
+
+  windows:
+    name: Paquete Windows x64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake zip unzip wget \
+            gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+      - name: Cache de SDL3
+        uses: actions/cache@v4
+        with:
+          path: third_party
+          key: sdl3-3.4.10-${{ hashFiles('tools/fetch_sdl3.sh') }}
+      - name: Obtener SDL3
+        run: make deps-win
+      - name: Compilar y empaquetar
+        run: make package-win
+      - name: Preparar artefactos
+        run: |
+          mkdir -p dist
+          cp build-win/kult-1.0.0-win64.zip dist/
+          sha256sum dist/kult-1.0.0-win64.zip > dist/kult-1.0.0-win64.zip.sha256
+          cat dist/kult-1.0.0-win64.zip.sha256
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: kult-windows-x64
+          path: dist/
+          if-no-files-found: error
+
+  linux:
+    name: Paquetes Linux x86_64 (TGZ + AppImage)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends             build-essential cmake ninja-build pkg-config             libasound2-dev libpulse-dev libx11-dev libxext-dev             libxrandr-dev libxi-dev libxcursor-dev libxfixes-dev             libudev-dev libdbus-1-dev             wget unzip file
+      - name: Cache de SDL3 Linux y appimagetool
+        uses: actions/cache@v4
+        with:
+          path: |
+            third_party/sdl3-linux
+            third_party/appimagetool-x86_64.AppImage
+          key: sdl3-linux-3.4.10-${{ hashFiles('tools/fetch_sdl3_linux.sh', 'tools/fetch_appimagetool.sh') }}
+      - name: Obtener SDL3 Linux y appimagetool
+        run: make deps-linux
+      - name: Configurar y compilar
+        run: |
+          cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release             -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-linux"             -DKULT_SDL3_LIB="$PWD/third_party/sdl3-linux/lib/libSDL3.so.0"
+          cmake --build build-linux -j
+      - name: Empaquetar TGZ y AppImage
+        run: |
+          mkdir -p dist
+          (cd build-linux && cpack -G TGZ)
+          cp build-linux/kult-1.0.0-linux-x86_64.tar.gz dist/
+          rm -rf dist/linux-stage
+          cmake --install build-linux --prefix dist/linux-stage
+          tools/build_appimage.sh dist/linux-stage dist/kult-1.0.0-x86_64.AppImage
+          sha256sum dist/kult-1.0.0-linux-x86_64.tar.gz > dist/kult-1.0.0-linux-x86_64.tar.gz.sha256
+          sha256sum dist/kult-1.0.0-x86_64.AppImage > dist/kult-1.0.0-x86_64.AppImage.sha256
+          cat dist/*.sha256
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: kult-linux-x64
+          path: dist/
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    needs: [test, windows, linux]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: kult-windows-x64
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: kult-linux-x64
+          path: dist
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Kult PC ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          body_path: docs/RELEASE_NOTES_1.0.0.md
+          files: |
+            dist/kult-1.0.0-win64.zip
+            dist/kult-1.0.0-win64.zip.sha256
+            dist/kult-1.0.0-linux-x86_64.tar.gz
+            dist/kult-1.0.0-linux-x86_64.tar.gz.sha256
+            dist/kult-1.0.0-x86_64.AppImage
+            dist/kult-1.0.0-x86_64.AppImage.sha256
+          fail_on_unmatched_files: true
+          draft: false
+          prerelease: false

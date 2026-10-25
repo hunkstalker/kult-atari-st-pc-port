@@ -42,6 +42,31 @@ borrarse después de una ingesta correcta.
 
 No se incluyen `kult-headless.exe` ni `DIAGNOSTICO.txt` en la release.
 
+## Linux
+
+El TGZ Linux contiene:
+
+```text
+kult
+lib/libSDL3.so.0
+LEEME.txt
+LEEME_LINUX.txt
+Kult Settings.txt
+Kult Settings.png
+LICENSE
+THIRD_PARTY_NOTICES.md
+LICENSES/
+data/language.data
+saves/
+```
+
+`kult` lleva RUNPATH `$ORIGIN/lib`; el usuario solo aporta los dos STX. También
+se publica un AppImage: `kult-1.0.0-x86_64.AppImage`. Su `AppRun` usa
+`KULT_BASE_DIR` para crear `data/` y `saves/` junto al AppImage.
+
+Dependencias base: glibc/musl del sistema, X11 o Wayland y audio
+ALSA/Pulse. SDL3 va incluida.
+
 ## Arranque
 
 1. Crear/verificar `data/` y `saves/` junto al `.exe`.
@@ -141,6 +166,18 @@ saves/ (vacía)
 ```
 
 `Kult Settings.png` es una imagen de referencia del port, no un asset del juego.
+
+## CI y release automática
+
+`.github/workflows/release.yml` se ejecuta en `main` y en tags `v*`:
+
+- `test`: `make test-port` + `make test-tools`.
+- `windows`: `make deps-win` + `make package-win`, ZIP y `.sha256`.
+- `linux`: `make deps-linux`, CMake, TGZ, AppImage y sus `.sha256`.
+- `release`: en tags `v*`, adjunta ZIP, TGZ, AppImage y checksums.
+
+Los artefactos de CI pueden no ser byte-idénticos al ZIP validado localmente;
+cada paquete incluye su `.sha256`.
 
 No contiene:
 

@@ -45,8 +45,10 @@ datos.
 - **Música de intro solo en las esperas.** En `headless` el port salta el título y
   el menú de idioma, así que `music_isr=0`; en ventana con entrada real la música
   suena mientras el título espera una tecla.
-- **Escucha/ventana requieren SDL3 y un equipo con display+audio.** En un
-  contenedor sin `/dev/snd`/`DISPLAY` no suena (y el ejecutable cae a headless).
+- **Escucha/ventana requieren SDL3 y un equipo con display+audio.** En Windows
+  SDL3 va incluida; en Linux va dentro del TGZ/AppImage. Sigue haciendo falta un
+  equipo con X11/Wayland y audio (ALSA/Pulse); en un contenedor sin
+  `/dev/snd`/`DISPLAY` no suena.
 
 ## Pendientes / futuros
 - **M5 — filtros CRT** (`SDL_GPU` + shaders): **extra opcional, no prioritario**,
@@ -61,11 +63,15 @@ datos.
   reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba en
   el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
-  completados. El paquete lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
-  `LEEME.txt`, `Kult Settings.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
-  Requiere **Windows 10+** (UCRT). Los tests automatizados de ingesta/packs
-  (T-095) ya están integrados, T-022 y T-101 están cerradas. Pendientes:
-  validación visual final sobre el ZIP regenerado y publicación; el CI va al final.
+  completados. Windows lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
+  `LEEME.txt`, `Kult Settings.txt` y las licencias. Linux lleva `kult`,
+  `lib/libSDL3.so.0`, `LEEME_LINUX.txt`, datos y ajustes, además de un AppImage.
+  **No** llevan headless ni `DIAGNOSTICO.txt`. Windows requiere **Windows 10+**
+  (UCRT); Linux requiere X11/Wayland y audio base. Los tests automatizados de ingesta/packs
+  (T-095) ya están integrados, T-022 y T-101 están cerradas. La validación
+  visual final (T-094) está cerrada y la release 1.0.0 está etiquetada
+  localmente como `v1.0.0`; falta la publicación remota (T-092). El CI (T-096)
+está implementado y se ejecutará al publicar el tag.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a

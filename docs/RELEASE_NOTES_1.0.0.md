@@ -3,6 +3,8 @@
 Primera release pública del port nativo a PC de **Kult: The Temple of Flying
 Saucers** (Exxos/ERE, 1989), con **español y catalán**.
 
+Fecha: 2026-10-25. Tag: `v1.0.0`.
+
 El port ejecuta el C verificado del Atari ST sobre un backend SDL3, sin emulador.
 No incluye el juego original: el usuario aporta su propia copia legal.
 
@@ -38,12 +40,19 @@ No incluye el juego original: el usuario aporta su propia copia legal.
 
 ## Paquete
 
-ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`,
-`Kult Settings.txt`, `Kult Settings.png`, `LICENSE`, avisos de terceros,
-`data/language.data` y `saves/`.
+La release incluye:
 
-SHA256 del ZIP:
-`5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`
+- Windows x64: `kult-1.0.0-win64.zip` (`kult.exe`, `SDL3.dll`, datos y ajustes).
+- Linux x86_64: `kult-1.0.0-linux-x86_64.tar.gz` (`kult`, `lib/libSDL3.so.0`,
+  datos, `LEEME_LINUX.txt` y ajustes).
+- Linux AppImage: `kult-1.0.0-x86_64.AppImage`.
 
-Las instrucciones de uso están en `LEEME.txt`, `Kult Settings.txt` y el `README.md`; la licencia del
+El usuario solo aporta `Kult.STX` y `Kult (B).STX`. El ZIP Windows validado en
+T-094 tiene SHA256
+`5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`;
+la GitHub Release adjunta los `.sha256` generados en CI. Los artefactos de CI
+pueden no ser byte-idénticos por los timestamps del empaquetado.
+
+Las instrucciones de uso están en `LEEME.txt`, `LEEME_LINUX.txt`,
+`Kult Settings.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.

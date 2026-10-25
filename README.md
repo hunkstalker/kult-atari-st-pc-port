@@ -3,6 +3,8 @@
 Port nativo a PC (**Windows y Linux**) de **Kult** (Exxos/ERE, 1989), con
 **español y catalán**.
 
+![Kult Settings](assets/Kult%20Settings.png)
+
 No parte de cero: el **C verificado** del Atari ST está importado en
 `lib/kult-core/` y este repo añade un **backend de PC** (SDL3) para que ese mismo
 C corra en Windows/Linux.
@@ -12,12 +14,7 @@ C corra en Windows/Linux.
 > catalán, guardado/carga y audio, además de **fullscreen nativo**, **F1**
 > ventana/fullscreen, **F2** escala Estirar a pantalla/×1–×6/Auto y **F5/F6/F7** para
 > ranuras de savestate (`saves/slot-N.save`), con avisos OSD en la **fuente original del
-> juego**. Los textos catalanes están validados y alineados con la terminología
-> ERBE (`GOT`, `XARXA TUNER`, etc.), con `DAGA`, `FESOL` y `COMERCIANT` conservados y el diálogo deformado
-> traducido en clave fonética catalana y con `Ç` propia; las incidencias de texto de objetos y de La
-> Horca están corregidas. Los tests de ingesta y packs están integrados en
-> `make test`. T-022, T-101 y T-102–T-134 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
-> visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
+> juego**.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.
 

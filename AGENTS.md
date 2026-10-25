@@ -17,12 +17,13 @@ catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
 El catalán está validado por el usuario. **T-022 está cerrada (2026-10-25):**
 `0x106f2` (lista C) está portado en el core con prueba diferencial (519 verdes)
 y `l_0101a8` reconstruido en `boot/` como ruta latente verificada
-(`KULT_SOFT_RESTART_AT`). T-102–T-134 añaden fullscreen nativo, F1/F2 (Estirar a pantalla), las
+(`KULT_SOFT_RESTART_AT`). T-102–T-135 añaden fullscreen nativo, F1/F2 (Estirar a pantalla), las
 ranuras F5/F6/F7 (`slot-N.save`), el OSD con la fuente original del juego y la
-terminología catalana T-119/T-134 (`GOT`, `XARXA TUNER`, `DAGA`, `FESOL`,
+terminología catalana T-119/T-132 (`GOT`, `XARXA TUNER`, `DAGA`, `FESOL`,
 `COMERCIANT`, `Ç`) y el diálogo deformado en clave fonética catalana; el ZIP
-final está regenerado en T-134. La release **1.0.0** queda pendiente de la
-validación visual final (T-094); después publicación (T-092) y CI (T-096).
+final está regenerado en T-135 con Linux. La release **1.0.0** está validada (T-094) y etiquetada localmente como
+`v1.0.0`; el CI de release está implementado en `.github/workflows/release.yml`.
+Falta el force-push (T-092); la primera ejecución la lanza el tag y genera ZIP, TGZ y AppImage.
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
@@ -31,8 +32,8 @@ corrigió «DIE» (objeto) a **DADO**/**DAU** en los packs y dejó regresión de
 textos. T-106 usa la fuente original del juego para el OSD, T-107/T-108 dejan
 las ranuras en `slot-N.save` sin migración y T-109/T-110 añaden Estirar a
 pantalla. T-073 es opcional. Sin bloqueantes de código. Detalle:
-`notes/0053`–`notes/0087`. Ver `notes/0011`–`notes/0014`, `notes/0041`,
-`notes/0042`, `notes/0049`–`notes/0087`.
+`notes/0053`–`notes/0091`. Ver `notes/0011`–`notes/0014`, `notes/0041`,
+`notes/0042`, `notes/0049`–`notes/0091`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**

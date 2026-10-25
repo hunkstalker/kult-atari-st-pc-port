@@ -17,6 +17,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(kult VERSION 1.0.0 LANGUAGES C)
 
+# Ruta a la SDL3 compartida que se empaqueta en Linux (se puede pasar con
+# -DKULT_SDL3_LIB=...). En Windows se usa third_party/SDL3-.../SDL3.dll.
+set(KULT_SDL3_LIB "" CACHE FILEPATH "SDL3 shared library to bundle on Linux")
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -115,6 +119,25 @@ if(WIN32)
   endif()
   install(DIRECTORY DESTINATION data)
   install(DIRECTORY DESTINATION saves)
+endif()
+
+if(UNIX AND NOT APPLE)
+  install(DIRECTORY DESTINATION data)
+  install(DIRECTORY DESTINATION saves)
+  set_target_properties(kult PROPERTIES OUTPUT_NAME kult-headless)
+  set_target_properties(kult-sdl PROPERTIES OUTPUT_NAME kult)
+  if(KULT_SDL3_LIB)
+    set(KULT_SDL3_RUNTIME_LIB "${KULT_SDL3_LIB}")
+  else()
+    find_library(KULT_SDL3_RUNTIME_LIB NAMES SDL3 libSDL3.so.0)
+  endif()
+  if(NOT KULT_SDL3_RUNTIME_LIB OR NOT EXISTS "${KULT_SDL3_RUNTIME_LIB}")
+    message(FATAL_ERROR "Linux: define -DKULT_SDL3_LIB=<ruta a libSDL3.so.0>")
+  endif()
+  get_filename_component(KULT_SDL3_RUNTIME_REAL "${KULT_SDL3_RUNTIME_LIB}" REALPATH)
+  install(FILES "${KULT_SDL3_RUNTIME_REAL}" DESTINATION lib RENAME "libSDL3.so.0")
+  set_target_properties(kult-sdl PROPERTIES INSTALL_RPATH "$ORIGIN/lib")
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME_LINUX.txt DESTINATION .)
 endif()
 
 set(CPACK_PACKAGE_NAME "kult")
