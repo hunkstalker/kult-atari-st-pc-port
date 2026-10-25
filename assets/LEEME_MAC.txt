@@ -59,7 +59,7 @@ La app no tiene instalador ni deja servicios, LaunchAgents ni archivos en
 
    Opcionalmente, si existe:
 
-       rm -rf "$HOME/Library/Saved Application State/com.hunkstalker.kult.savedState"
+       rm -rf "$HOME/Library/Saved Application State/com.kultport.kult.savedState"
 
    Esto elimina `data/`, `saves/`, `kult.ini` y `kult.log`.
 

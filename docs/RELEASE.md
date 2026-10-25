@@ -120,7 +120,7 @@ la app muestra un diálogo para seleccionar los dos discos y los copia a
   `kult.ini` y `kult.log`. Hacer copia de `saves/` antes si se quieren conservar
   las partidas.
 - El estado opcional de ventanas de macOS puede quedar en
-  `~/Library/Saved Application State/com.hunkstalker.kult.savedState`; se puede
+  `~/Library/Saved Application State/com.kultport.kult.savedState`; se puede
   borrar si existe.
 - El DMG es de solo lectura: expulsarlo no elimina la app instalada.
 
