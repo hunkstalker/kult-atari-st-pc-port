@@ -47,8 +47,9 @@ caracteres existentes:
 - `NY` para el sonido de `Ñ`, si apareciera.
 
 La ortografía está revisada dentro de esas limitaciones y el pack está validado
-por el usuario. Quedan dos incidencias de integración pendientes (T-097/T-098),
-no de traducción. Si se quiere ortografía completa con tildes y `Ç`, hace falta
+por el usuario. T-101 corrigió `VERB 116` («DIE», el objeto) a **DADO**/**DAU**;
+los usos verbales de «die» en `DIAL` se mantienen como «morir». T-097/T-098
+quedaron cerradas; si se quiere ortografía completa con tildes y `Ç`, hace falta
 una fuente catalana con esos glifos.
 
 ## Generación

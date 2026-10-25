@@ -12,9 +12,9 @@ C corra en Windows/Linux.
 > catalán, guardado/carga y audio. Los textos catalanes están validados y las
 > incidencias de texto de objetos y de La Horca están corregidas. Los tests de
 > ingesta y packs están integrados en `make test`. T-022 (`0x106f2` y el
-> reinicio suave `l_0101a8`) está cerrada; la release 1.0.0 no se publica hasta
-> cerrar la validación visual final sobre el ZIP regenerado. Después vienen la
-> publicación y el CI.
+> reinicio suave `l_0101a8`) y T-101 («DIE» → DADO/DAU en ES/CA) están cerradas;
+> la release 1.0.0 no se publica hasta cerrar la validación visual final sobre el
+> ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.
 

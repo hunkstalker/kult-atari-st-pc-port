@@ -4,20 +4,20 @@
 
 | conjunto | ubicación | cantidad | uso |
 |---|---|---:|---|
-| Tests diferenciales del core | `lib/kult-core/test/` | 518 funciones en 44 `test_*.py` | canónicos del core |
-| Tests de herramientas del port | `test/` | 1 función en `test_ringreport.py` | ringreport |
+| Tests diferenciales del core | `lib/kult-core/test/` | 519 funciones en 44 `test_*.py` | canónicos del core |
+| Tests de herramientas del port | `test/` | 2 funciones en 2 ficheros | ringreport y packs de idioma |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
 | Tests funcionales HAL | `platform/test/test_platform.c` | 30 funciones / 163 `CHECK` | backend PC, contenedores, ingesta y packs |
 | Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
-| Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 518 | legibilidad y sincronización |
+| Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 519 | legibilidad y sincronización |
 
 `make test` ejecuta las tres suites, una sola vez cada una:
 
-- `test-core` → 518 tests del subtree (`lib/kult-core/test/`);
+- `test-core` → 519 tests del subtree (`lib/kult-core/test/`);
 - `test-port` → binario C de la HAL (`platform/test/test_platform.c`) y humo
   del diagnóstico (`platform/test/test_diag.c`, target `test-diag`);
 - la receta de `test` heredada de `kit.mk` ejecuta `pytest test/`, equivalente
-  a `test-tools` (`test_ringreport.py`).
+  a `test-tools` (`test_ringreport.py` y `test_language_banks.py`).
 
 `test-tools` no se añade como prerrequisito porque la receta del kit ya ejecuta
 esa misma suite; duplicarla o sobreescribir la receta generaría dobles pasadas o
@@ -27,14 +27,14 @@ forman parte de ninguna de estas suites.
 ## Dónde va cada test
 
 1. **Core**
-   - Los 518 tests viven solo en `lib/kult-core/test/`.
+   - Los 519 tests viven solo en `lib/kult-core/test/`.
    - Son la fuente canónica y se ejecutan contra el core del subtree.
 2. **HAL, ingesta y packs**
    - `platform/test/test_platform.c`.
    - `make test-port` es su entrada.
    - Los fixtures sintéticos se generan en `/tmp`; no se versionan.
 3. **Herramientas del port**
-   - `test/` (por ahora `test_ringreport.py`).
+   - `test/` (`test_ringreport.py` y `test_language_banks.py`).
    - `make test-tools` es su entrada.
 4. **Kit vendor**
    - Los 339 tests del kit se quedan en el subtree como tests del vendor.
@@ -66,7 +66,7 @@ diferencial, las convenciones y las garantías del port. No deben borrarse para
 Hecho:
 
 - Añadido `make test-core`.
-- Eliminada la copia de los 518 tests del core en `test/`.
+- Eliminada la copia duplicada de los tests del core en `test/`.
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
 

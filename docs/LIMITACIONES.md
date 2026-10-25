@@ -64,8 +64,8 @@ datos.
   completados. El paquete lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
   `LEEME.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
   Requiere **Windows 10+** (UCRT). Los tests automatizados de ingesta/packs
-  (T-095) ya están integrados y T-022 está cerrada. Pendientes: validación
-  visual final sobre el ZIP regenerado y publicación; el CI va al final.
+  (T-095) ya están integrados, T-022 y T-101 están cerradas. Pendientes:
+  validación visual final sobre el ZIP regenerado y publicación; el CI va al final.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a
@@ -97,7 +97,7 @@ datos.
   en el core) pueden seguir rápidos.
 
 ## Cómo validar (resumen; detalle en `docs/VERIFICACION.md`)
-1. `make test` (**518**) y `make test-port` en verde.
+1. `make test` (**519**) y `make test-port` en verde.
 2. `make port-sdl` y `KULT_WINDOW=1 ./build/kult-sdl`:
    comprobar título (clic), menú D/E/F/S, intro/partida, efectos y música.
 3. `make port` headless para arranque/estabilidad (`frames`, `fb_nonzero`,

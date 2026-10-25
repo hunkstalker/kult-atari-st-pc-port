@@ -9,7 +9,7 @@ app/        main, driver, presentación, perfiles         [nuevo]
 boot/       _start (0x10000), tick VBL (0x160c2)         [nuevo]
    │  (llama)
    ▼
-lib/kult-core/src/  juego en C (lógica), 415 funciones           [subtree]
+lib/kult-core/src/  juego en C (lógica), 424 funciones           [subtree]
    │  (llama a los 19 servicios)
    ▼
 platform/   HAL PC: os_*/hw_*/psg_*/sched_* + render + audio  [nuevo]

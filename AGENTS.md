@@ -22,9 +22,11 @@ de la validación visual final (T-094); después publicación (T-092) y CI (T-09
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
-separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). T-073 es
-opcional. Sin bloqueantes de código. Detalle: `notes/0053-t022-reinicio-suave.md`.
-Ver `notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`notes/0053`.
+separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). T-101
+corrigió «DIE» (objeto) a **DADO**/**DAU** en los packs y dejó regresión de
+textos. T-073 es opcional. Sin bloqueantes de código. Detalle:
+`notes/0053-t022-reinicio-suave.md` y `notes/0054-t101-die-dado-dau.md`.
+Ver `notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`notes/0054`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
@@ -81,7 +83,7 @@ Ver `notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`not
    se anota con `cpu_delay`/`cpu_delay_cycles` (no-op en diferencial), como en
    `anim.c`, `reveal.c` y `loop.c`; cualquier otro cambio en `lib/kult-core/src/` requiere
    permiso explícito.
-3. **Los 518 tests diferenciales del core deben seguir verdes.** Se ejecutan
+3. **Los 519 tests diferenciales del core deben seguir verdes.** Se ejecutan
    con `make test-core`; son la red de seguridad de que no cambiamos la lógica.
 4. **Toda corrección/feature deja prueba** (diferencial si aplica; funcional si es
    del backend).

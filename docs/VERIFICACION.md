@@ -1,7 +1,7 @@
 # VERIFICACIÓN
 
 ## Core (heredado, no se toca)
-- **518 pruebas diferenciales** contra el oráculo (Musashi): dan la misma entrada
+- **519 pruebas diferenciales** contra el oráculo (Musashi): dan la misma entrada
   al original (emulado) y al C, y comparan memoria + registros + ledger.
 - Son la **red de seguridad** de que el porte **no cambia la lógica**. Deben
   seguir verdes al importar el core (M0/T-002).
@@ -51,7 +51,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
 2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP
-regenerado en T-022 (2026-10-25).**
+regenerado en T-101 (2026-10-25).**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -79,7 +79,7 @@ opcional no bloqueante. **M6 cerrada.** Ingesta `.STX`/`kult.data`: ✅ implemen
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**518 core + HAL + diagnóstico + herramientas**) y `make test-port`/`make test-diag` (verde).
+1. ✅ **Automático:** `make test` (**519 core + HAL + diagnóstico + herramientas**) y `make test-port`/`make test-diag` (verde).
 2. ✅ **Arranque headless:** `KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y `./build/kult-sdl`

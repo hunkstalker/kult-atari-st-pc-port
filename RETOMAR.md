@@ -6,21 +6,22 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022 cerrada (2026-10-25). `0x106f2` (lista C) está en el core
-con prueba diferencial (519 verdes) y `l_0101a8` reconstruido en `boot/` como
-ruta latente verificada. El ZIP se ha regenerado. La siguiente tarea es
+**Estado:** T-022 y T-101 cerradas (2026-10-25). `0x106f2` (lista C) está en el
+core con prueba diferencial (519 verdes) y `l_0101a8` reconstruido en `boot/`
+como ruta latente verificada. T-101 corrigió «DIE» (objeto) a **DADO**/**DAU**
+en los packs ES/CA y regeneró `language.data` y el ZIP. La siguiente tarea es
 **T-094** (validación visual final). La release 1.0.0 sigue sin push ni tag y
 **se publicará al final** (T-092). El único fichero no versionado aparte de la
 documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación visual final del ZIP de T-022.**
+**Siguiente tarea: T-094 — validación visual final del ZIP de T-101.**
 
 - **Alcance:** DRAP, fuentes, textos y menús en Windows; checklist
   `docs/VERIFICACION.md`.
 - **No sustituye** la validación funcional de T-095/T-100; se hace sobre el
   paquete nuevo, no sobre el anterior.
 - **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `ca6eec877d8ef8e75c6c9918c1d08fdffb0dc5a084b920a8a30a9fe58bfa252b` (fijado en esta sesión).
+  `aba7eca812cdd49c334c46658d3a52d645fb9395a9ea5f59f0d65936b0b1643c`.
 - **Después:** T-092 (publicar 1.0.0) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -38,9 +39,20 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
+**T-101 — cerrada (sesión 70, 2026-10-25):**
+
+- `VERB 116` («DIE») es el sustantivo **dado**, no el verbo «morir». Corregido
+  a **DADO** en español (bytes oficiales Erbe `e4 24 2f`) y **DAU** en catalán
+  (`e4 35`).
+- `assets/language.data` regenerado: 77.747 B,
+  SHA256 `e69cae5a6ac0832415f9a4e4086609fb89b6577bcb6fced6cb998c82e608629b`.
+- Nueva regresión `test/test_language_banks.py` para BIN y contenedor; los
+  «die» verbales de `DIAL` no se tocan. Detalle: `notes/0054`.
+
 **Ya cerrado y validado:**
 
 - T-022: `0x106f2`/`l_0101a8` portados y verificados (2026-10-25).
+- T-101: «DIE» (objeto) corregido a DADO/DAU; regresión y ZIP nuevos (2026-10-25).
 - Catalán validado por el usuario (2026-10-25).
 - T-097: cajas de los textos de objeto catalanas, validadas.
 - T-098: bloqueo de La Horca en español, validado.
@@ -54,21 +66,22 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `ca6eec877d8ef8e75c6c9918c1d08fdffb0dc5a084b920a8a30a9fe58bfa252b` (regenerado después de T-022; pendiente de la
-  validación visual T-094, no es aún el artefacto de release).
+  SHA256 `aba7eca812cdd49c334c46658d3a52d645fb9395a9ea5f59f0d65936b0b1643c`
+  (regenerado después de T-101; pendiente de la validación visual T-094, no es
+  aún el artefacto de release).
 - `assets/language.data` SHA256
-  `cc8981aee93cfed520250caf9e338d5f1480504617c02af6a3e312e0f6682e13`.
+  `e69cae5a6ac0832415f9a4e4086609fb89b6577bcb6fced6cb998c82e608629b`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 519 core + HAL (30 funciones / 163 `CHECK`) + diagnóstico
-  off/on + 1 port OK.
-- `make package-win`: OK después de T-022.
+  off/on + 1 port + 2 herramientas OK.
+- `make package-win`: OK después de T-101.
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP regenerado en T-022.
+   `docs/VERIFICACION.md` sobre el ZIP regenerado en T-101.
 2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
 3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
@@ -98,6 +111,12 @@ No hay fixes de texto pendientes. Si aparece una regresión visual, usar
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 70 — T-101 cerrada (2026-10-25)**: «DIE» (objeto) corregido a
+  **DADO**/**DAU** en `VERBS.BIN`/`VERBC.BIN`; `language.data` regenerado
+  (`e69cae5a…`, 77.747 B), ZIP `aba7eca8…`, regresión
+  `test/test_language_banks.py`; `make test` 519 + HAL + diag + 2 herramientas.
+  Siguiente: **T-094** sobre el ZIP de T-101. Detalle:
+  `notes/0054-t101-die-dado-dau.md`.
 - **Sesión 69 — T-022 cerrada (2026-10-25)**: repo C `94c0be1`
   (`load_resource_list_c`, lista C; 519 diferenciales verdes, `ids_reg=0`).
   Core importado en el port (`fbeaff3`) y `boot_load_0100ec`/`boot_l0101a8` en

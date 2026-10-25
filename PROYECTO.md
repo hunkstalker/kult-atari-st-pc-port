@@ -18,7 +18,7 @@ servicios**. Esa capa es lo que se sustituye por un backend de PC.
 
 ```
               ┌───────────────────────────────┐
-App/driver → │  juego (lib/kult-core/src/, C verificado)   │  ← 415 funciones, 518 tests del core
+App/driver → │  juego (lib/kult-core/src/, C verificado)   │  ← 424 funciones, 519 tests del core
               └───────────────┬───────────────┘
                               │ 19 servicios (contrato fijo)
               ┌───────────────▼───────────────┐
@@ -95,7 +95,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022 cerrada; release 1.0.0 pendiente de T-094 y publicación (T-092) |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022 y T-101 cerradas; release 1.0.0 pendiente de T-094 y publicación (T-092) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -272,9 +272,9 @@ Recogidas como ADR en `docs/adr/`:
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
 - **Siguiente:** **T-094** (validación visual final sobre el ZIP regenerado tras
-  T-022). Después, publicar la release **1.0.0** (T-092); el CI (T-096) va
+  T-101). Después, publicar la release **1.0.0** (T-092); el CI (T-096) va
   después de publicar. T-022 (reinicio suave/ruta latente), T-095 (tests de
-  ingesta/packs) y T-097/T-098 ya están cerrados. Después
+  ingesta/packs), T-097/T-098 y T-101 («DIE» → DADO/DAU) ya están cerrados. Después
   **A1** → **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,

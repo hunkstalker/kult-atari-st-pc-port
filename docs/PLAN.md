@@ -4,14 +4,14 @@ Plan de la compilación por hitos. Estado vivo en `PROYECTO.md`/`TODO.md`.
 Cada fase tiene objetivo y **criterio de aceptación**.
 
 ## Principios
-- **No se reescribe el core verificado**: se reutiliza (415 funciones, 518 tests).
+- **No se reescribe el core verificado**: se reutiliza (424 funciones, 519 tests).
 - **El core no conoce SDL ni hardware**: los 19 servicios se inyectan.
 - **Nada a medias**: una fase se cierra con su criterio cumplido y pruebas.
 - **Los assets del juego quedan gitignored**: el usuario aporta su copia.
 
 ## M0 — Repositorio y base
 **Objetivo:** repo con documentación e importación del core.
-**Aceptación:** core importado en `lib/kult-core/`; `make test` **518 core + test propio** en
+**Aceptación:** core importado en `lib/kult-core/`; `make test` **519 core + test propio** en
 este repo; `work/disk_a/KULT.PRG` disponible para el oráculo.
 
 ## M1 — HAL mínima (headless)
@@ -83,8 +83,9 @@ para que el usuario valide.
 **Aceptación:** doble clic + copia del usuario → funciona.
 **Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. El
 catalán está validado y T-097/T-098 están corregidos y validados por el usuario.
-T-022 (`0x106f2` + `l_0101a8`) está cerrada. Antes de publicar quedan la
-validación visual final sobre el ZIP regenerado (T-094). Después: publicación
+T-022 (`0x106f2` + `l_0101a8`) y T-101 («DIE» → DADO/DAU) están cerradas.
+Antes de publicar quedan la validación visual final sobre el ZIP regenerado
+(T-094). Después: publicación
 (T-092) y CI (T-096).
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
