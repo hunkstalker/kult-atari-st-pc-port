@@ -29,7 +29,8 @@ aviso y usa `E`.
 | `DIALC.BIN` | catalán: diálogos |
 
 La release incluye el pack español y el pack catalán revisado y validado por el
-usuario. Ambos se cargan desde `language.data`.
+usuario. Ambos se cargan desde `language.data`. La selección y la carga de `S`/`C`
+están cubiertas por `platform/test/test_platform.c` (T-095, `notes/0049`).
 
 ## Revisión y limitación de la fuente
 

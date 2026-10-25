@@ -4,11 +4,72 @@ Punto de entrada al retomar. **Mantener al día al cerrar cada sesión**: estado
 exacto, siguiente tarea, comandos y trampas. Contexto maestro: `PROYECTO.md`.
 Tareas: `TODO.md`.
 
+## Punto de retomar (nueva sesión)
+
+**Estado:** `main` en `656b4d8` más **T-095 sin commit**; el único fichero no
+versionado es el backup local `docs/REVISION_CATALAN.original.xlsx`. Release
+1.0.0 preparada, sin push ni tag.
+
+**Ya cerrado y validado:**
+
+- Catalán validado por el usuario (2026-10-25).
+- T-097: cajas de los textos de objeto catalanas, validadas.
+- T-098: bloqueo de La Horca en español, validado.
+- T-099: pasada de textos ingleses; 240/241 traducidos.
+- T-095: tests automatizados de ingesta (STX/Pasti/FAT12), validación de
+  `KULT.PRG`, `kult.data` atómico y packs `S`/`C`; integrados en `make test`.
+
+**Artefactos actuales:**
+
+- ZIP: `build-win/kult-1.0.0-win64.zip`
+  SHA256 `0fe3118a61afcfa0e5f2d4c7165183b2884d9ab78d90f96f8f28909aa7328d82`
+  (previo a T-095; el refactor no cambia comportamiento, pero regenerarlo en
+  T-092 antes de publicar).
+- `assets/language.data` SHA256
+  `cc8981aee93cfed520250caf9e338d5f1480504617c02af6a3e312e0f6682e13`.
+- Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
+  `build-win/trazas-lang-20261025-ca/`.
+- Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
+- `make test`: 518 core + HAL (30 funciones / 163 `CHECK`) + 1 port OK.
+- `make package-win`: OK.
+
+**Pendiente, en este orden:**
+
+1. **T-094 — validación visual final de la release Windows.** Arrancar desde el
+   ZIP en carpeta limpia, con los STX, y revisar: DRAP, menú D/E/F/S/C, título,
+   textos español/catalán, fuentes, cajas de objeto, La Horca, guardado/carga,
+   audio y menús. Es la última pasada visual global, no una revisión de
+   traducción.
+2. **T-092 — publicación 1.0.0.** Push de `main`, tag/Release `1.0.0` y adjuntar
+   el ZIP Windows con las notas de release. `origin` ya está configurado.
+3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
+   assets; el core diferencial necesita `KULT.PRG` y queda local/opcional.
+
+**Comandos de arranque:**
+
+```sh
+make test
+make package-win
+```
+
+No hay fixes de texto pendientes. Si aparece una regresión visual, usar
+`build-win/kult-diagnostico.bat` y guardar el log en `build-win/`.
+
 ## Última sesión
 > Las entradas de sesiones anteriores son histórico; el estado vigente es la
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 65 — tests de ingesta y packs (T-095) (2026-10-25)**: extraída la
+  parte pura de `platform/ingest.c` a `platform/diskimage.{h,c}` (STX Pasti,
+  FAT12, validación de `KULT.PRG` y discos conocidos) y añadidas 7 pruebas en
+  `platform/test/test_platform.c` (30 funciones / 163 `CHECK`): STX sin y con
+  compresión, FAT12 con cadenas/entradas ignoradas, validación y pipeline
+  condicional con los STX reales, contenedor atómico, selección/lectura de
+  `S`/`C` y comprobación de `assets/language.data`. `make test` 518 core + HAL +
+  1 port OK; `make port` y CMake nativo OK. Además, `make test` queda explícito
+  (`test-core test-port test-tools`) y se documenta la política de tests/release
+  (los binarios no llevan tests; las fuentes de GitHub sí). Detalle: `notes/0049`.
 - **Sesión 64 — validación de T-097/T-098 (2026-10-25)**: el usuario confirma
   que los espacios extra de las cajas de objetos catalanas desaparecieron y que
   La Horca en español ya no se congela. Ambas incidencias quedan cerradas.

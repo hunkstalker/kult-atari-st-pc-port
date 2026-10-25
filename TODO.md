@@ -13,12 +13,12 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
 | T-094 | Validación visual final de la release Windows | ⬜ pendiente |
-| T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ⬜ pendiente |
+| T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
 | T-099 | Pasada de textos ingleses sin traducir | ✅ 240/241 corregidos (`notes/0047`) |
-| T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y ZIP | ⬜ pendiente tras T-094/T-095 |
-| T-096 | CI en GitHub: core + HAL + paquete sin assets | ⬜ pendiente tras publicar |
+| T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y ZIP | ⬜ pendiente tras T-094 |
+| T-096 | CI en GitHub: HAL + paquete sin assets (core diferencial aparte) | ⬜ pendiente tras publicar |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -104,11 +104,11 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
 | T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos y menús | ⬜ pendiente |
-| T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ⬜ pendiente |
+| T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
-| T-092 | **Publicación 1.0.0**: push de `main`, tag, GitHub Release y ZIP Windows | ⬜ pendiente tras T-094/T-095 |
-| T-096 | **CI en GitHub**: core + HAL + paquete sin assets | ⬜ pendiente tras publicar |
+| T-092 | **Publicación 1.0.0**: push de `main`, tag, GitHub Release y ZIP Windows | ⬜ pendiente tras T-094 |
+| T-096 | **CI en GitHub**: `test-port` + build/paquete sin assets. El core diferencial requiere `work/disk_a/KULT.PRG` (no versionado): queda como ejecución local o con un fixture privado, no como gate del CI público. | ⬜ pendiente tras publicar |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para
