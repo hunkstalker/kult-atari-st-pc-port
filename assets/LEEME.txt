@@ -30,7 +30,8 @@ la carpeta debe ser escribible.
    F11 sube volumen y ESC cierra la ventana. Al arrancar se usa Estirar a
    pantalla salvo que kult.ini indique otra escala.
 
-6) Guardado rápido: F5 cambia de ranura (0-9), F6 guarda y F7 carga. Las
+6) Guardado rápido: F5 muestra la ranura actual; si se vuelve a pulsar
+   mientras se ve el aviso, cambia de ranura (0-9). F6 guarda y F7 carga. Las
    partidas van a `saves/slot-N.save`; la ranura activa se recuerda en
    `kult.ini`. Solo se guarda/carga durante la partida.
 

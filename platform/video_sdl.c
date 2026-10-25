@@ -292,7 +292,7 @@ int platform_sdl_pump(void) {
             } else if (e.key.key == SDLK_F2) {
                 cycle_scale();
             } else if (e.key.key == SDLK_F5) {
-                platform_slots_select_next();
+                platform_slots_f5();
             } else if (e.key.key == SDLK_F6) {
                 platform_slots_request_save();
             } else if (e.key.key == SDLK_F7) {

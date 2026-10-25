@@ -163,6 +163,7 @@ void platform_video_restore(uint32_t visible, const uint16_t *palette);
 void platform_slots_init(void);
 int  platform_slots_current(void);
 void platform_slots_select_next(void);
+void platform_slots_f5(void);
 int  platform_slots_save(const uint8_t *img, int slot);
 int  platform_slots_load(uint8_t *img, int slot);
 void platform_slots_request_save(void);

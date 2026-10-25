@@ -1,6 +1,7 @@
 # 0081 — T-128: correcciones de textos catalanes
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-129 añade F5 en dos pasos.
+Siguiente: T-094 sobre el ZIP final.
 
 ## Cambios
 

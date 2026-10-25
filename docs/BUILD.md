@@ -19,7 +19,7 @@
   `kult.ini` (`scale`); si no existe, **Estirar a pantalla**. `KULT_SCALE`
   (`0` Auto, `1..6` fijo, `7` Estirar) y `KULT_FULLSCREEN` fuerzan el arranque.
   **F1** alterna fullscreen/ventana; **F2**
-  cicla Estirar a pantalla/×1–×6/Auto; **F5** cicla ranuras 0–9; **F6** guarda y
+  cicla Estirar a pantalla/×1–×6/Auto; **F5** muestra la ranura actual y, si se repite con el aviso visible, la cambia; **F6** guarda y
   **F7** carga (`saves/slot-N.save`, ranura en `kult.ini`); **F9/F11** bajan/suben
   el volumen 10%; **F10** silencia/restaura; ESC sale. Entrada real y ritmo 50 Hz
   por defecto

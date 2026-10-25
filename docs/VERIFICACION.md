@@ -50,9 +50,9 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-128
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-129
 (2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save`,
-el OSD con la fuente del juego y la terminología catalana de T-119/T-128 (`GOT`, `XARXA TUNER`, `DAGA`,
+el OSD con la fuente del juego y la terminología catalana de T-119/T-129 (`GOT`, `XARXA TUNER`, `DAGA`,
 `FESOL`, `COMERCIANT`, `Ç`) y el diálogo deformado en clave fonética catalana.**
 
 - ✅ Título, menú de idioma y colores.
@@ -144,7 +144,7 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    (Estirar a pantalla, ×1–×6, Auto); comprobar que el ratón sigue apuntando bien,
    que Estirar a pantalla llena la salida y que el OSD se ve discreto. Al
    arrancar debe usarse Estirar a pantalla si `kult.ini` no indica otra escala.
-   **F5** cicla ranuras 0–9, **F6** guarda y **F7** carga; probar una ranura
+   **F5** muestra la ranura actual y, si se repite con el aviso visible, cicla 0–9; **F6** guarda y **F7** carga; probar una ranura
    vacía/corrupta (error visible), reiniciar y comprobar que se recuerda la
    ranura. El aviso debe verse con la **fuente 4×6 del juego**, no con una
    fuente externa. El savestate no rebobina la música.

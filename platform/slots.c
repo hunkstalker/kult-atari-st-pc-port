@@ -73,6 +73,18 @@ void platform_slots_select_next(void) {
     platform_log("slot activo: %d", g_slot);
 }
 
+void platform_slots_f5(void) {
+    const char *text = platform_osd_text();
+    if (platform_osd_active() && text && strncmp(text, "RANURA ", 7) == 0) {
+        platform_slots_select_next();
+        return;
+    }
+    char msg[32];
+    snprintf(msg, sizeof msg, "RANURA %d", g_slot);
+    platform_osd_show(msg);
+    platform_log("F5: ranura actual %d", g_slot);
+}
+
 void platform_slots_request_save(void) {
     if (!platform_in_loop()) {
         platform_osd_show("SOLO EN PARTIDA");

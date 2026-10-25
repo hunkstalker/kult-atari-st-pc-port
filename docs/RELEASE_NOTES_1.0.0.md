@@ -24,7 +24,7 @@ No incluye el juego original: el usuario aporta su propia copia legal.
   **Estirar a pantalla** por defecto; **F1** alterna ventana/fullscreen; **F2**
   cicla **Estirar a pantalla → ×1 → … → ×6 → Auto**. La configuración de las
   teclas F se guarda en `kult.ini`.
-- **Ranuras de guardado**: **F5** cicla 0–9, **F6** guarda y **F7** carga
+- **Ranuras de guardado**: **F5** muestra la ranura actual; si se repite mientras se ve el aviso, cicla 0–9. **F6** guarda y **F7** carga
   savestates completos en `saves/slot-N.save`; la ranura activa se recuerda en
   `kult.ini`. Los avisos usan la fuente original del juego.
 - **Volumen**: **F9/F11** bajan/suben el volumen 10% y **F10** silencia/restaura,
@@ -43,7 +43,7 @@ ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`,
 `saves/`.
 
 SHA256 del ZIP:
-`435df4be54c371883f0e988a9957ea3a888b9ff7008b8ed364a2ed5122ef5fed`
+`2a127b579caad642bd9a393e991d475008bbe1a2ca2c914393c5a19fecf633c9`
 
 Las instrucciones de uso están en `LEEME.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.

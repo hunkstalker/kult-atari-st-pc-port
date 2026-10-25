@@ -16,7 +16,7 @@ C corra en Windows/Linux.
 > ERBE (`GOT`, `XARXA TUNER`, etc.), con `DAGA`, `FESOL` y `COMERCIANT` conservados y el diálogo deformado
 > traducido en clave fonética catalana y con `Ç` propia; las incidencias de texto de objetos y de La
 > Horca están corregidas. Los tests de ingesta y packs están integrados en
-> `make test`. T-022, T-101 y T-102–T-128 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
+> `make test`. T-022, T-101 y T-102–T-129 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
 > visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.
@@ -68,7 +68,7 @@ git subtree pull --prefix=lib/kult-core \
 - **Ratón**: izquierdo/teclado = acción; derecho = acción + skip.
 - **F1**: pantalla completa/ventana.
 - **F2**: escala **Estirar a pantalla**, ×1–×6 o Auto; Estirar llena toda la salida.
-- **F5**: cambia de ranura 0–9; **F6**: guarda; **F7**: carga.
+- **F5**: muestra la ranura actual; otra pulsación mientras se ve el aviso cambia de ranura; **F6**: guarda; **F7**: carga.
 - **F9/F11**: bajan/suben el volumen 10%; **F10**: silencia/restaura.
 - **ESC**: cierra la ventana.
 

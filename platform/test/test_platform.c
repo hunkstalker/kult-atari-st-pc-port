@@ -840,7 +840,7 @@ static void test_slots(void) {
     CHECK(platform_slots_current() == 0, "sin kult.ini la ranura inicial es 0");
     for (int i = 0; i < 3; i++)
         platform_slots_select_next();
-    CHECK(platform_slots_current() == 3, "F5 debe ciclar las ranuras");
+    CHECK(platform_slots_current() == 3, "select_next debe ciclar las ranuras");
     FILE *ini = fopen(DIR "/kult.ini", "rb");
     CHECK(ini != NULL, "la ranura debe persistirse en kult.ini");
     if (ini) {
@@ -852,6 +852,30 @@ static void test_slots(void) {
     }
     platform_slots_init();
     CHECK(platform_slots_current() == 3, "kult.ini debe recordar la ranura");
+
+    platform_osd_clear();
+    platform_slots_f5();
+    CHECK(platform_slots_current() == 3 &&
+          strcmp(platform_osd_text(), "RANURA 3") == 0,
+          "el primer F5 muestra la ranura actual sin rotar");
+    platform_slots_f5();
+    CHECK(platform_slots_current() == 4 &&
+          strcmp(platform_osd_text(), "RANURA 4") == 0,
+          "el segundo F5 con el aviso visible rota la ranura");
+    platform_osd_clear();
+    platform_slots_f5();
+    CHECK(platform_slots_current() == 4 &&
+          strcmp(platform_osd_text(), "RANURA 4") == 0,
+          "F5 tras desaparecer el aviso vuelve a mostrar la actual");
+    platform_osd_show("VOLUMEN 50");
+    platform_slots_f5();
+    CHECK(platform_slots_current() == 4 &&
+          strcmp(platform_osd_text(), "RANURA 4") == 0,
+          "F5 con otro OSD no rota la ranura");
+
+    platform_config_set_int("save_slot", 3);
+    platform_slots_init();
+    CHECK(platform_slots_current() == 3, "la prueba F6 vuelve a la ranura 3");
 
     CHECK(platform_slots_save(a, slot) == 0, "guardar una ranura");
     FILE *sf = fopen(path4, "rb");
