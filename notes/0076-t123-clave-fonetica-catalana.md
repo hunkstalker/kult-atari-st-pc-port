@@ -1,6 +1,7 @@
 # 0076 — T-123: clave fonética catalana creativa
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-124 ajusta `DIALC 162`.
+Siguiente: T-094 sobre el ZIP final.
 
 ## Criterio
 
