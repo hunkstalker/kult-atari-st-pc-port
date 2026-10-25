@@ -29,14 +29,15 @@ la carpeta debe ser escribible.
    (Auto, x1..x6) y ESC cierra la ventana.
 
 6) Guardado rápido: F5 cambia de ranura (0-9), F6 guarda y F7 carga. Las
-   partidas van a `saves/partida-N.bin`; la ranura activa se recuerda en
-   `kult.ini`. Solo se guarda/carga durante la partida.
+   partidas van a `saves/slot-N.save`; la ranura activa se recuerda en
+   `kult.ini`. Las antiguas `partida-N.bin` se convierten automáticamente al
+   arrancar. Solo se guarda/carga durante la partida.
 
 Carpetas
 --------
 - `data/`   entrada de los STX + `kult.data` generado + `language.data`.
 - `saves/`  escrituras del juego (CLEAR.BIN, SCENA.BIN...) y las ranuras
-            `partida-0.bin`…`partida-9.bin`.
+            `slot-0.save`…`slot-9.save`.
 - `kult.ini` recuerda la ranura de guardado activa.
 - `kult.log` se crea junto a kult.exe con timestamp y errores.
 

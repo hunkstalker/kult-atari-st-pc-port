@@ -95,7 +95,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022, T-101 y T-102–T-106 cerradas (fullscreen/F1/F2, ranuras F5/F6/F7, OSD con fuente original); release 1.0.0 pendiente de T-094 y publicación (T-092) |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022, T-101 y T-102–T-107 cerradas (fullscreen/F1/F2, ranuras F5/F6/F7 en `slot-N.save`, OSD con fuente original); release 1.0.0 pendiente de T-094 y publicación (T-092) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -105,9 +105,9 @@ Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 
 > **Orden acordado:** `arreglos (portabilidad Windows + docs) → M7 build → T-061
 > (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta + idiomas) ✅ →
-> T-022 (`0x106f2` + `l_0101a8`) ✅ → T-102–T-106 (fullscreen/F1/F2 + ranuras
-> + OSD original) ✅ → validación final (T-094) → publicación de la release
-> 1.0.0 (T-092) → CI (T-096) → A1 → N3 → A2 → M5.
+> T-022 (`0x106f2` + `l_0101a8`) ✅ → T-102–T-107 (fullscreen/F1/F2 + ranuras
+> `slot-N.save` + OSD original) ✅ → validación final (T-094) → publicación de
+> la release 1.0.0 (T-092) → CI (T-096) → A1 → N3 → A2 → M5.
 > **M5** es un extra de presentación independiente (no se junta con A). **A1** es
 > **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
 > **T-022/`0x106f2`** quedó cerrada en la **sesión 69**; detalle: `notes/0053`.
@@ -149,10 +149,10 @@ Recogidas como ADR en `docs/adr/`:
   detalle `notes/0053`. Ingesta `.STX` / `kult.data` (T-072): ✅ implementada.
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
   docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta +
-  idiomas) ✅ → T-022 ✅ → T-102–T-106 (fullscreen/F1/F2 + ranuras + OSD) ✅ →
-  T-094 → publicación 1.0.0 → A1 (investigación Amiga, prerrequisito duro de N3)
-  → N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) → M5
-  (opcional)`. Detalle: **`notes/0011`**.
+  idiomas) ✅ → T-022 ✅ → T-102–T-107 (fullscreen/F1/F2 + ranuras `slot-N.save`
+  + OSD) ✅ → T-094 → publicación 1.0.0 → A1 (investigación Amiga, prerrequisito
+  duro de N3) → N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) →
+  M5 (opcional)`. Detalle: **`notes/0011`**.
 - **M7 build hecho (sesión 12, T-070)**: portabilidad Windows (`platform/time.c`
   reloj/espera, `platform/fs.c` `;` + `data/` junto al exe, `KULT_PRG` del dir de
   datos), **CMake** nativo (`kult`, `kult-sdl`) y **cross MinGW**
@@ -273,11 +273,12 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** **T-094** (validación visual final sobre el ZIP de T-106, con
-  F1/F2, F5/F6/F7 y OSD original). Después, publicar la release **1.0.0**
-  (T-092); el CI (T-096) va después de publicar. T-022 (reinicio suave/ruta
-  latente), T-095 (tests de ingesta/packs), T-097/T-098, T-101 («DIE» →
-  DADO/DAU) y T-102–T-106 ya están cerrados. Después
+- **Siguiente:** **T-094** (validación visual final sobre el ZIP de T-107, con
+  F1/F2, F5/F6/F7, `slot-N.save`, migración de `partida-N.bin` y OSD original).
+  Después, publicar la release **1.0.0** (T-092); el CI (T-096) va después de
+  publicar. T-022 (reinicio suave/ruta latente), T-095 (tests de ingesta/packs),
+  T-097/T-098, T-101 («DIE» → DADO/DAU) y T-102–T-107 ya están cerrados.
+  Después
   **A1** → **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,

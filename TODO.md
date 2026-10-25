@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-106) |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-107) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -27,6 +27,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-104 | Atajos F5/F6/F7 integrados en el bucle | ✅ cerrada (2026-10-25; `notes/0057`) |
 | T-105 | Documentación de release, ZIP y hashes tras los atajos | ✅ cerrada (2026-10-25; `notes/0058`) |
 | T-106 | OSD con la fuente original del juego | ✅ cerrada (2026-10-25; `notes/0059`) |
+| T-107 | Ranuras `slot-N.save` con migración de `partida-N.bin` | ✅ cerrada (2026-10-25; `notes/0060`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -111,7 +112,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP regenerado en T-106 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP regenerado en T-107 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -120,10 +121,11 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-100 | **Diagnósticos separados del timing y guía de uso** | ✅ **sesión 66**: `platform/diag.{c,h}` con todos los logs opcionales; `cpuwork.c` solo timing/hooks; buffer F12 de 2 MiB ahora perezoso (BSS 2.225.448 → 128.328 B en `build/kult`). Nuevo `make test-diag` (off/on) integrado en `test-port`. Guía `docs/DIAGNOSTICO.md`. Validación funcional del usuario (2026-10-25), sin cerrar T-094. Detalle: **`notes/0050`**, **`notes/0051`** |
 | T-101 | **«DIE» (objeto) mal traducido como MORIR**: el verbo 116 es el sustantivo «dado», no «morir» | ✅ **sesión 70**: `VERB 116` corregido a **DADO** (bytes oficiales Erbe `e4 24 2f`) y a **DAU** en catalán (`e4 35`); `language.data` regenerado (77.747 B, `e69cae5a…`). Nueva regresión `test/test_language_banks.py` (BIN + contenedor); `make test` 519 core + HAL + diagnóstico + 2 herramientas; ZIP `aba7eca8…`. Los «die» verbales de `DIAL` no se tocan. Detalle: **`notes/0054`** |
 | T-102 | **Arranque fullscreen nativo + F1/F2**: fullscreen sin bordes a resolución nativa, F1 alterna ventana/fullscreen y F2 cicla Auto/1x–6x con viewport entero propio | ✅ **sesión 71**: `platform/display.c` (escala/viewport puro), `platform/osd.c` (aviso breve), `platform/video_sdl.c` sin presentación lógica y con ratón corregido por viewport, `app/main.c` con `KULT_SCALE=0` Auto y `KULT_FULLSCREEN=0`; tests de display/OSD en `test-port`; `make port`/`port-sdl` OK. Detalle: **`notes/0055`** |
-| T-103 | **Savestate completo por ranura (0-9)**: `KSLOTP01` (1 MiB + paleta + base visible), `saves/partida-N.bin`, persistencia en `kult.ini`, OSD y ciclo de ranura | ✅ **sesión 71**: `platform/slots.c`, `platform_video_restore()`, `platform_saves_dir()`, `kult.ini` con `save_slot`; tests de roundtrip, corrupción, ausencia, rango y persistencia en `test-port`. Detalle: **`notes/0056`** |
+| T-103 | **Savestate completo por ranura (0-9)**: `KSLOTP01` (1 MiB + paleta + base visible), `saves/slot-N.save`, persistencia en `kult.ini`, OSD y ciclo de ranura | ✅ **sesión 71**: `platform/slots.c`, `platform_video_restore()`, `platform_saves_dir()`, `kult.ini` con `save_slot`; tests de roundtrip, corrupción, ausencia, rango y persistencia en `test-port`. Detalle: **`notes/0056`** |
 | T-104 | **Atajos F5/F6/F7**: F5 cicla ranuras, F6 guarda y F7 carga en el tope del bucle | ✅ **sesión 71**: F5/F6/F7 interceptadas en `platform_sdl_pump`, `platform_in_loop()`, peticiones y `platform_slots_apply()` en `present_cb`; guardado con cursor restaurado y carga con `sound_stop`/`cursor_draw`; tests de solicitud dentro/fuera del bucle y avisos. Detalle: **`notes/0057`** |
 | T-105 | **Documentación y ZIP** con F1/F2 y ranuras | ✅ **sesión 71**: LEEME/README/BUILD/TESTS/VERIFICACION/LIMITACIONES/RELEASE_NOTES actualizados; ZIP regenerado con 11 entradas; `make test` 519 core + 33 funciones / 209 `CHECK` + diag + 2 herramientas. ZIP SHA256 `66bd1af5…` (sustituido por T-106). Detalle: **`notes/0058`** |
-| T-106 | **OSD con la fuente original del juego** | ✅ **sesión 71**: `platform_osd_draw_rgba()` lee los glifos 4×6 de `A_FONT_DATA` (`0x1d202`) y pinta en el RGBA del juego; se elimina `SDL_RenderDebugText`; nueva prueba de fuente/fondo/mapeo. ZIP `cf4d9f48…`; `make test` 519 core + 34 funciones / 218 `CHECK`. Detalle: **`notes/0059`** |
+| T-106 | **OSD con la fuente original del juego** | ✅ **sesión 71**: `platform_osd_draw_rgba()` lee los glifos 4×6 de `A_FONT_DATA` (`0x1d202`) y pinta en el RGBA del juego; se elimina `SDL_RenderDebugText`; nueva prueba de fuente/fondo/mapeo. ZIP `cf4d9f48…` (sustituido por T-107); `make test` 519 core + 34 funciones / 218 `CHECK`. Detalle: **`notes/0059`** |
+| T-107 | **Ranuras `slot-N.save`** con migración automática de `partida-N.bin` | ✅ **sesión 71**: guardado en `saves/slot-0.save`…`slot-9.save`; migración al arrancar y fallback en carga; `kult.ini` intacto; nuevas pruebas de migración. ZIP `1589185f…`; `make test` 519 core + 34 funciones / 223 `CHECK`. Detalle: **`notes/0060`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

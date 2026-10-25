@@ -7,7 +7,7 @@ Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: **T-094** sobre este ZIP.
 - **T-102**: fullscreen sin bordes a resolución nativa; F1 fullscreen/ventana;
   F2 escala Auto/×1–×6 con viewport entero y ratón corregido.
 - **T-103**: savestates `KSLOTP01` (1 MiB + paleta + base visible) en
-  `saves/partida-0.bin`…`partida-9.bin`; `kult.ini` recuerda la ranura.
+  `saves/slot-0.save`…`slot-9.save`; `kult.ini` recuerda la ranura.
 - **T-104**: F5 cicla ranuras, F6 guarda y F7 carga en el tope del bucle; OSD
   discreto y avisos de error.
 

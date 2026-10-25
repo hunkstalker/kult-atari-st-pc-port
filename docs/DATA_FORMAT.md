@@ -23,7 +23,7 @@ Las escrituras del juego van siempre a `saves/`.
 
 ## Savestates del port (T-103)
 
-Las ranuras F5/F6/F7 viven en `saves/partida-0.bin`…`partida-9.bin`:
+Las ranuras F5/F6/F7 viven en `saves/slot-0.save`…`slot-9.save`:
 
 ```text
 offset  tamaño  contenido
@@ -39,7 +39,8 @@ offset  tamaño  contenido
 ```
 
 `kult.ini` (junto al ejecutable) guarda `save_slot = 0..9`. La carga valida
-magia, versión, ranura y tamaño antes de modificar la partida.
+magia, versión, ranura y tamaño antes de modificar la partida. Los antiguos
+`partida-N.bin` se migran automáticamente a `slot-N.save`.
 
 ## Contenedor `KULTDTA1`
 

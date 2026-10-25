@@ -7,7 +7,7 @@
 | Tests diferenciales del core | `lib/kult-core/test/` | 519 funciones en 44 `test_*.py` | canónicos del core |
 | Tests de herramientas del port | `test/` | 2 funciones en 2 ficheros | ringreport y packs de idioma |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
-| Tests funcionales HAL | `platform/test/test_platform.c` | 34 funciones / 218 `CHECK` | backend PC, contenedores, ingesta, packs, display/OSD y ranuras |
+| Tests funcionales HAL | `platform/test/test_platform.c` | 34 funciones / 223 `CHECK` | backend PC, contenedores, ingesta, packs, display/OSD y ranuras |
 | Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
 | Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 519 | legibilidad y sincronización |
 
@@ -77,8 +77,8 @@ Hecho (T-102–T-104):
 - `test_osd_font`: glifos 4×6 de `A_FONT_DATA`, fondo, mapeo de caracteres y
   ausencia de fuente.
 - `test_slots`: roundtrip de 1 MiB + paleta + base visible, ficheros truncados,
-  ranura ausente, rango inválido, persistencia de `kult.ini` y peticiones
-  F6/F7 dentro/fuera del bucle.
+  ranura ausente, rango inválido, persistencia de `kult.ini`, peticiones
+  F6/F7 dentro/fuera del bucle y migración de `partida-N.bin` a `slot-N.save`.
 
 Hecho (T-095):
 

@@ -36,7 +36,7 @@ glifo, 4×6 píxeles.
   OK.
 - ZIP `build-win/kult-1.0.0-win64.zip`
   SHA256 `cf4d9f487b4edd7582745002326306be0b7a861c7023b55246520e54a591b975`
-  (11 entradas).
+  (11 entradas; sustituido por T-107).
 
 ## Pendiente
 
