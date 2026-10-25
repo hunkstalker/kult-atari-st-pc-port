@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 void platform_osd_show(const char *text);
-void platform_osd_show_frames(const char *text, uint32_t frames);
+void platform_osd_show_ms(const char *text, uint32_t ms);
 void platform_osd_clear(void);
 int  platform_osd_active(void);
 const char *platform_osd_text(void);

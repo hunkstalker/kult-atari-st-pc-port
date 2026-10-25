@@ -1,4 +1,4 @@
-/* platform/osd.c — texto breve y caducidad por VBL (sin SDL). */
+/* platform/osd.c — texto breve y caducidad por tiempo real (sin SDL). */
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -7,28 +7,27 @@
 #include "osd.h"
 #include "platform.h"
 
-#define OSD_DEFAULT_FRAMES 125u   /* 2,5 s a 50 Hz */
+#define OSD_DEFAULT_MS 2500u   /* 2,5 s reales */
 
 static char g_text[64];
-static uint32_t g_until;
+static uint64_t g_until_ns;
 
-void platform_osd_show_frames(const char *text, uint32_t frames) {
+void platform_osd_show_ms(const char *text, uint32_t ms) {
     snprintf(g_text, sizeof g_text, "%s", text ? text : "");
-    g_until = platform_frame_count() + frames;
+    g_until_ns = platform_now_ns() + (uint64_t)ms * 1000000ull;
 }
 
 void platform_osd_show(const char *text) {
-    platform_osd_show_frames(text, OSD_DEFAULT_FRAMES);
+    platform_osd_show_ms(text, OSD_DEFAULT_MS);
 }
 
 void platform_osd_clear(void) {
     g_text[0] = '\0';
-    g_until = 0;
+    g_until_ns = 0;
 }
 
 int platform_osd_active(void) {
-    return g_text[0] != '\0' &&
-           (int32_t)(g_until - platform_frame_count()) > 0;
+    return g_text[0] != '\0' && platform_now_ns() < g_until_ns;
 }
 
 const char *platform_osd_text(void) {

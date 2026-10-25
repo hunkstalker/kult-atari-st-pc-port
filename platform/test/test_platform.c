@@ -712,13 +712,19 @@ static void test_osd(void) {
     platform_osd_clear();
     CHECK(!platform_osd_active(), "OSD vacio no debe estar activo");
 
-    platform_osd_show_frames("RANURA 3", 1000);
+    platform_osd_show_ms("RANURA 3", 1000);
     CHECK(platform_osd_active(), "OSD con margen debe estar activo");
     CHECK(strcmp(platform_osd_text(), "RANURA 3") == 0,
           "OSD debe conservar el texto");
 
-    platform_osd_show_frames("X", 0);
-    CHECK(!platform_osd_active(), "OSD con 0 frames debe caducar");
+    platform_osd_show_ms("X", 0);
+    CHECK(!platform_osd_active(), "OSD con 0 ms debe caducar");
+
+    platform_osd_show_ms("X", 2);
+    struct timespec ts = { 0, 10000000L };   /* 10 ms, sin avanzar VBL */
+    nanosleep(&ts, NULL);
+    CHECK(!platform_osd_active(),
+          "el OSD debe caducar por tiempo real aunque no corran VBLs");
     platform_osd_clear();
     CHECK(!platform_osd_active(), "clear debe apagar el OSD");
 }
