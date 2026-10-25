@@ -50,10 +50,10 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-119
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-120
 (2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save`,
-el OSD con la fuente del juego y la terminología catalana de T-119 (`GOT`,
-`XARXA TUNER`).**
+el OSD con la fuente del juego y la terminología catalana de T-119/T-120 (`GOT`,
+`XARXA TUNER`, `DAGA`, `FESOL`, `COMERCIANT`).**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).

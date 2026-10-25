@@ -1,6 +1,7 @@
 # 0072 — T-119: terminología catalana alineada con ERBE
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-120 recupera `DAGA`, `FESOL` y
+`COMERCIANT` por preferencia del usuario. Siguiente: T-094 sobre el ZIP final.
 
 ## Motivo
 
