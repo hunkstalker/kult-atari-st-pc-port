@@ -10,9 +10,10 @@ C corra en Windows/Linux.
 > **Estado:** el port es jugable de principio a fin en Windows y Linux. Incluye
 > la ingesta de los discos originales, el selector de idioma, los packs español y
 > catalán, guardado/carga y audio. La release 1.0.0 está preparada como ZIP
-> portable de Windows; la revisión lingüística del catalán, la validación visual
-> y los tests automatizados de ingesta siguen en curso. La publicación y el CI
-> serán los últimos pasos. El seguimiento técnico del desarrollo está en
+> portable de Windows; los textos catalanes están validados. Quedan por revisar
+> dos incidencias de integración (texto descuadrado al recibir objetos y bloqueo
+> en “La Horca”), la validación visual final y los tests automatizados. La
+> publicación y el CI serán los últimos pasos. El seguimiento técnico del desarrollo está en
 > **`PROYECTO.md`**, **`TODO.md`** y **`RETOMAR.md`**.
 
 ## Core importado

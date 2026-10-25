@@ -19,8 +19,9 @@ datos.
 - **`os_super` es un no-op** (en PC no hay modo supervisor).
 - **Menú de idioma fiel** (ADR 0004): se mantiene el del original (clic de título
   y teclas D/E/F/S/C), no un menú nativo. S y C vienen en `language.data`.
-- **Catalán**: pack inicial, sin tildes/Ç por límites de la fuente; pendiente de
-  revisión lingüística.
+- **Catalán**: pack validado por el usuario; sin tildes/Ç por límites de la fuente.
+- **Pendiente T-097**: el texto de entrega de objetos puede salir descuadrado.
+- **Pendiente T-098**: la prueba “La Horca” se bloquea con `kult.data` + `language.data`.
 - **Cambio de disco omitido.** El original pide "INSERT DISK 2" (`0x918e`) antes
   de cargar los recursos del disco B (`FOND`/`PUZZL`/`BRUIT`). El port sirve
   ambos discos desde el mismo directorio, así que el aviso (y su reintento con
@@ -59,9 +60,8 @@ datos.
 - **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
   completados. El paquete lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
   `LEEME.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
-  Requiere **Windows 10+** (UCRT). Pendientes: revisión lingüística del catalán,
-  validación visual final, tests automatizados y, después, publicación. El CI va
-  al final.
+  Requiere **Windows 10+** (UCRT). Pendientes: T-097/T-098, validación visual
+  final, tests automatizados y, después, publicación. El CI va al final.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a

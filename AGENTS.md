@@ -14,10 +14,10 @@ llama a **19 servicios**; el port implementa esos servicios para PC (SDL3). Ver
 El port es jugable de principio a fin en Windows y Linux. **M0–M7 funcionalmente cerradas**:
 incluye ingesta de los discos originales, selector de idioma, packs español y
 catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
-La release **1.0.0** está preparada. El orden de cierre es: revisión lingüística
-del catalán, validación visual final de Windows, tests automatizados de ingesta y,
-después, publicación (`main`, tag y GitHub Release). El CI va al final, ya con el
-repo publicado. `0x106f2` sigue abierto y T-073 es opcional. Sin bloqueantes de
+La release **1.0.0** está preparada y el catalán está validado por el usuario.
+Antes de publicar hay que revisar dos incidencias: texto descuadrado al recibir
+objetos (T-097) y bloqueo en “La Horca” (T-098). Después: validación visual final,
+tests automatizados y publicación; CI al final. `0x106f2` sigue abierto y T-073 es opcional. Sin bloqueantes de
 código. Ver `notes/0011`–`notes/0014`, `notes/0041` y
 `notes/0042`.
 

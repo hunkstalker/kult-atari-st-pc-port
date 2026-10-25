@@ -11,10 +11,12 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | Ingesta automática de imágenes `.STX` a `data/kult.data` | ✅ implementada |
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
-| T-093 | Revisión lingüística del catalán | ⬜ pendiente |
+| T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
 | T-094 | Validación visual final de la release Windows | ⬜ pendiente |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ⬜ pendiente |
-| T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y ZIP | ⬜ pendiente tras T-093/T-094/T-095 |
+| T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ⬜ pendiente |
+| T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ⬜ pendiente |
+| T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y ZIP | ⬜ pendiente tras T-094/T-095 |
 | T-096 | CI en GitHub: core + HAL + paquete sin assets | ⬜ pendiente tras publicar |
 
 ## M0 — Repositorio y base
@@ -90,18 +92,21 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 
 ## M7 — Empaquetado/release
 > Build, paquete portable, ingesta, idiomas y licencias completados. La release
-> 1.0.0 está preparada. Orden de cierre: **revisar catalán → validación visual →
-> tests automatizados → publicar → CI**.
+> 1.0.0 está preparada. Orden de cierre: **incidencias T-097/T-098 →
+> validación visual → tests automatizados → publicar → CI**. El catalán ya está
+> validado por el usuario (`notes/0043`).
 | id | tarea | estado |
 |---|---|---|
 | T-070 | **Build**: portabilidad Windows (`platform/time.c` `_WIN32`, `platform/fs.c` `;`/data junto al exe) + CMake (`kult` headless, `kult-sdl`; en Windows → `kult.exe` GUI + `kult-headless.exe`) + `cmake/mingw-w64.cmake` + SDL3 **3.4.10** MinGW (`third_party/`, gitignored) + icono (`.rc`, RGBA, `SDL_SetWindowIcon`) + **log/diagnóstico** (`kult.log` con timestamp, preflight de datos) | ✅ build nativo CMake verificado; cross Windows enlaza (sin ejecutar aquí) |
 | T-071 | **Empaquetado portable**: CPack ZIP Windows (`kult.exe`+`SDL3.dll`+`data/`+`saves/`+`LEEME.txt`+licencias) y TGZ Linux; **sin assets, sin headless ni DIAGNOSTICO** | ✅ |
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
-| T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán inicial incluidos | ✅ |
-| T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ⬜ pendiente |
+| T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
+| T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
 | T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos y menús | ⬜ pendiente |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ⬜ pendiente |
-| T-092 | **Publicación 1.0.0**: push de `main`, tag, GitHub Release y ZIP Windows | ⬜ pendiente tras T-093/T-094/T-095 |
+| T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ⬜ pendiente |
+| T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ⬜ pendiente |
+| T-092 | **Publicación 1.0.0**: push de `main`, tag, GitHub Release y ZIP Windows | ⬜ pendiente tras T-094/T-095 |
 | T-096 | **CI en GitHub**: core + HAL + paquete sin assets | ⬜ pendiente tras publicar |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)

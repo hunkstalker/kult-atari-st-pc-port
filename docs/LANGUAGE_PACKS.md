@@ -6,7 +6,7 @@ La release incluye `data/language.data` con:
 
 - pantalla de selección `DRAP.PI1` de cinco banderas;
 - pack español;
-- pack catalán inicial.
+- pack catalán revisado.
 
 El juego acepta `S` y `C`; si un pack falta o no está instalado, registra el
 aviso y usa `E`.
@@ -28,22 +28,27 @@ aviso y usa `E`.
 | `MOTSC.BIN` | catalán: nombres |
 | `DIALC.BIN` | catalán: diálogos |
 
-La release incluye el pack español y un pack catalán inicial. Ambos se cargan
-desde `language.data`.
+La release incluye el pack español y el pack catalán revisado y validado por el
+usuario. Ambos se cargan desde `language.data`.
 
-## Limitación de la fuente catalana
+## Revisión y limitación de la fuente
 
-La fuente original es de 4×6 y solo tiene mayúsculas. El pack catalán se ha
-plegado a caracteres existentes:
+Se revisaron las 1.051 entradas catalanas y se corrigieron 404. El detalle está en
+`notes/0043-revision-catalan.md`.
+
+La fuente original es de 4×6 y solo tiene mayúsculas. El pack catalán se pliega a
+caracteres existentes:
 
 - sin tildes ni diéresis;
 - `Ç` → `C`;
 - `·` → `.`;
+- `L·L` se conserva como `L.L`;
 - `NY` para el sonido de `Ñ`, si apareciera.
 
-Por eso el catalán es legible pero **no está ortográficamente revisado**. Queda
-pendiente una revisión lingüística y, si se quiere, una fuente con `À Ç È Ï Ò`
-y el punto volat.
+La ortografía está revisada dentro de esas limitaciones y el pack está validado
+por el usuario. Quedan dos incidencias de integración pendientes (T-097/T-098),
+no de traducción. Si se quiere ortografía completa con tildes y `Ç`, hace falta
+una fuente catalana con esos glifos.
 
 ## Generación
 

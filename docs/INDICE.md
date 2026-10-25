@@ -13,6 +13,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
 | [`RELEASE.md`](RELEASE.md) | formato portable, contenedores y errores de release |
 | [`RELEASE_NOTES_1.0.0.md`](RELEASE_NOTES_1.0.0.md) | notas públicas de la release 1.0.0 |
+| [`REVISION_CATALAN.xlsx`](REVISION_CATALAN.xlsx) | tabla español/catalán: todas las frases y solo cambios |
 | [`DATA_FORMAT.md`](DATA_FORMAT.md) | `kult.data`/`language.data` e ingesta STX |
 | [`LANGUAGE_PACKS.md`](LANGUAGE_PACKS.md) | packs español/catalán y limitaciones de fuente |
 | [`TESTS.md`](TESTS.md) | inventario y política de tests |
@@ -71,3 +72,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0040-t089-final-attract-loop.md`](../notes/0040-t089-final-attract-loop.md)
 - [`notes/0041-t090-solar-eyes-palette-cycle.md`](../notes/0041-t090-solar-eyes-palette-cycle.md)
 - [`notes/0042-release-licencias-y-textos.md`](../notes/0042-release-licencias-y-textos.md)
+- [`notes/0043-revision-catalan.md`](../notes/0043-revision-catalan.md)

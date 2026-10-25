@@ -9,6 +9,20 @@ Tareas: `TODO.md`.
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 58 — catalán validado (2026-10-25)**: el usuario valida el idioma
+  catalán. Aplicadas sus correcciones del Excel: 79 cambios en `Todas`, 2 en
+  `Correcciones` y las 6 dudas de “LA TRAMPILLA” resueltas como `PORTELLA`.
+  Total: 404 correcciones. `language.data` 77.742 B, SHA256 `855df7c6…`; ZIP
+  1.0.0 SHA256 `a11a6948…`. `make test` y `make package-win` OK. Pendientes de
+  revisar: T-097 (texto descuadrado al recibir objetos) y T-098 (bloqueo en “La
+  Horca”). El Excel queda en `docs/REVISION_CATALAN.xlsx`.
+- **Sesión 57 — revisión completa del catalán (2026-10-24)**: revisadas las
+  1.051 entradas de `VERBC`, `MOTSC`, `DESCC` y `DIALC`; 404 correcciones de
+  gramática, vocabulario y nombres propios. `language.data` queda en 77.742 B,
+  SHA256 `855df7c6…`; ZIP `build-win/kult-1.0.0-win64.zip`, SHA256
+  `a11a6948…`. `make test` 518 + HAL + port OK; `make package-win` OK. Queda la
+  validación visual de la release, los tests automatizados y la publicación.
+  Detalle: `notes/0043-revision-catalan.md`.
 - **Sesión 56 — licencias y textos públicos de release (2026-10-24)**:
   añadidos `LICENSE` MIT, `THIRD_PARTY_NOTICES.md` y `LICENSES/` (SDL3 y
   GPL-2.0); el paquete instala las licencias y ya no incluye scripts de
