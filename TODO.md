@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-132) |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-134) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -53,6 +53,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-130 | Añadir `TECLAS_FN.txt` a la release/CI | ✅ cerrada (2026-10-25; `notes/0083`; renombrado en T-131) |
 | T-131 | Instrucciones de atajos y F12 inerte en release | ✅ cerrada (2026-10-25; `notes/0084`; renombrado en T-132) |
 | T-132 | Renombrar las instrucciones a `Kult Settings.txt` | ✅ cerrada (2026-10-25; `notes/0085`) |
+| T-133 | Limpieza de artefactos y fuentes de diseño | ✅ cerrada (2026-10-25; `notes/0086`) |
+| T-134 | `make deps-win` reproducible | ✅ cerrada (2026-10-25; `notes/0087`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -137,7 +139,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-132 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-134 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -176,6 +178,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-130 | **`TECLAS_FN.txt` en release/CI** | ✅ **sesión 71**: hoja F1–F12 instalada por CMake; paquete de 13 entradas. ZIP `2316f64a…`; 5 herramientas. Detalle: **`notes/0083`** |
 | T-131 | **Instrucciones y F12 en release** | ✅ **sesión 71**: archivo renombrado a `Instrucciones - Atajos de teclado.txt`, sin teclas inútiles ni F12; F12 solo con `KULT_MARKS`. ZIP `d45392a3…`; 13 entradas. Detalle: **`notes/0084`** |
 | T-132 | **`Kult Settings.txt`** | ✅ **sesión 71**: el archivo de atajos pasa a `Kult Settings.txt`; contenido sin cambios. ZIP `5ed0e019…`; 13 entradas. Detalle: **`notes/0085`** |
+| T-133 | **Limpieza y fuentes** | ✅ **sesión 71**: `.af` en `assets/design/`, xlsx fuera del índice, `temp/` y builds limpiados; ZIP/trazas conservados. Detalle: **`notes/0086`** |
+| T-134 | **`make deps-win`** | ✅ **sesión 71**: SDL3 3.4.10 con hashes y extracción idempotente; ZIP sin cambios. Detalle: **`notes/0087`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

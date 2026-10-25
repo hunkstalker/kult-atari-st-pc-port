@@ -55,17 +55,13 @@ cmake --build build-cmake -j          # -> build-cmake/kult (headless)
 Envoltorios equivalentes: `make cmake-native` y `make package-native`.
 
 ## CMake + MinGW (Windows x64, cross)
-1. Descargar SDL3 **3.4.10** a `third_party/` (gitignored):
-   - build: `SDL3-devel-3.4.10-mingw.zip` (GitHub: libsdl-org/SDL, release
-     `release-3.4.10`) — headers, `libSDL3.dll.a` y config de CMake;
-   - paquete: `SDL3-3.4.10-win32-x64.zip` (de ahí sale el `SDL3.dll`).
+1. Obtener SDL3 **3.4.10**:
    ```sh
-   mkdir -p third_party && cd third_party
-   wget https://github.com/libsdl-org/SDL/releases/download/release-3.4.10/SDL3-devel-3.4.10-mingw.zip
-   wget https://github.com/libsdl-org/SDL/releases/download/release-3.4.10/SDL3-3.4.10-win32-x64.zip
-   unzip SDL3-devel-3.4.10-mingw.zip
-   unzip -d SDL3-3.4.10-win32-x64 SDL3-3.4.10-win32-x64.zip
+   make deps-win
    ```
+   El script descarga los dos ZIP de libsdl-org/SDL, verifica sus hashes
+   SHA-256 y los descomprime en `third_party/`. Detalle:
+   `third_party/README.md`.
 2. Configurar y compilar (o `make cmake-win`):
    ```sh
    cmake -S . -B build-win -DCMAKE_BUILD_TYPE=Release \

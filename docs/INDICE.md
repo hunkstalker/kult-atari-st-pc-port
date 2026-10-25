@@ -116,3 +116,5 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0083-t130-teclas-fn-release.md`](../notes/0083-t130-teclas-fn-release.md)
 - [`notes/0084-t131-instrucciones-atajos.md`](../notes/0084-t131-instrucciones-atajos.md)
 - [`notes/0085-t132-kult-settings-txt.md`](../notes/0085-t132-kult-settings-txt.md)
+- [`notes/0086-t133-limpieza-repositorio.md`](../notes/0086-t133-limpieza-repositorio.md)
+- [`notes/0087-t134-deps-win.md`](../notes/0087-t134-deps-win.md)

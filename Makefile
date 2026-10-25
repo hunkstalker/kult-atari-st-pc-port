@@ -143,6 +143,10 @@ BUILD_WIN  := build-win
 BUILD_WIN_DIAG := build-win-diag
 SDL3_MINGW := $(CURDIR)/third_party/SDL3-3.4.10/x86_64-w64-mingw32
 
+.PHONY: deps-win
+deps-win:
+	sh tools/fetch_sdl3.sh
+
 .PHONY: cmake-native
 cmake-native:
 	$(CMAKE) -S . -B $(BUILD_NAT) -DCMAKE_BUILD_TYPE=Release

@@ -16,7 +16,7 @@ C corra en Windows/Linux.
 > ERBE (`GOT`, `XARXA TUNER`, etc.), con `DAGA`, `FESOL` y `COMERCIANT` conservados y el diálogo deformado
 > traducido en clave fonética catalana y con `Ç` propia; las incidencias de texto de objetos y de La
 > Horca están corregidas. Los tests de ingesta y packs están integrados en
-> `make test`. T-022, T-101 y T-102–T-132 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
+> `make test`. T-022, T-101 y T-102–T-134 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
 > visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.
@@ -41,6 +41,7 @@ git subtree pull --prefix=lib/kult-core \
 - **`PROYECTO.md`** — contexto maestro, arquitectura y estado.
 - **`TODO.md`** — tareas pendientes / en curso / completadas.
 - **`RETOMAR.md`** — handoff de sesión (qué retomar y cómo).
+- **`docs/REPOSITORIO.md`** — qué se versiona y qué queda fuera.
 - **`AGENTS.md`** — reglas y arranque para agentes/colaboradores.
 - **`docs/INDICE.md`** — índice de toda la documentación.
 - **`docs/CORE_DELTA.md`** — core importado y cambios locales del port.
