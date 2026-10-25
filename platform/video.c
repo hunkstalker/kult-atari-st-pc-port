@@ -52,6 +52,13 @@ uint32_t platform_visible_base(void) {
 
 const uint16_t *platform_palette(void) { return g_palette; }
 
+void platform_video_restore(uint32_t visible, const uint16_t *palette) {
+    if (visible)
+        g_visible = visible;
+    if (palette)
+        memcpy(g_palette, palette, sizeof g_palette);
+}
+
 /* Color (0..15) del píxel (x,y) en el framebuffer planar `base`. */
 static unsigned fb_pixel(uint32_t base, int x, int y) {
     const uint8_t *row = g_kult_img + base + (uint32_t)y * FB_ROW_BYTES;

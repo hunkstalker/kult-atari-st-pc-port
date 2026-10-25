@@ -690,6 +690,94 @@ static void test_osd(void) {
     CHECK(!platform_osd_active(), "clear debe apagar el OSD");
 }
 
+/* T-103: savestate completo, validación de fichero y persistencia de ranura. */
+static void test_slots(void) {
+    const int slot = 4;
+    const char *path4 = DIR "/saves/partida-4.bin";
+    uint8_t *a = malloc(PLATFORM_IMAGE_SIZE);
+    uint8_t *b = malloc(PLATFORM_IMAGE_SIZE);
+    uint16_t oldpal[16];
+    CHECK(a && b, "reservar buffers de ranura");
+    if (!a || !b) { free(a); free(b); return; }
+
+    for (size_t i = 0; i < PLATFORM_IMAGE_SIZE; i++)
+        a[i] = (uint8_t)(i * 37u + 11u);
+    memcpy(oldpal, platform_palette(), sizeof oldpal);
+    uint32_t oldvis = platform_visible_base();
+    pc_os_setscreen(0x98000, 0x98000, 0);
+    for (int i = 0; i < 16; i++)
+        pc_os_setcolor((int16_t)i, (int16_t)(0x100 + i * 0x11));
+
+    remove(DIR "/kult.ini");
+    platform_slots_init();
+    CHECK(platform_slots_current() == 0, "sin kult.ini la ranura inicial es 0");
+    for (int i = 0; i < 3; i++)
+        platform_slots_select_next();
+    CHECK(platform_slots_current() == 3, "F5 debe ciclar las ranuras");
+    FILE *ini = fopen(DIR "/kult.ini", "rb");
+    CHECK(ini != NULL, "la ranura debe persistirse en kult.ini");
+    if (ini) {
+        char txt[256] = {0};
+        fread(txt, 1, sizeof txt - 1, ini);
+        fclose(ini);
+        CHECK(strstr(txt, "save_slot = 3") != NULL,
+              "kult.ini debe contener la ranura activa");
+    }
+    platform_slots_init();
+    CHECK(platform_slots_current() == 3, "kult.ini debe recordar la ranura");
+
+    CHECK(platform_slots_save(a, slot) == 0, "guardar una ranura");
+    FILE *sf = fopen(path4, "rb");
+    CHECK(sf != NULL, "debe existir saves/partida-4.bin");
+    if (sf) {
+        fseek(sf, 0, SEEK_END);
+        long sz = ftell(sf);
+        fclose(sf);
+        CHECK(sz == (long)(64u + PLATFORM_IMAGE_SIZE),
+              "la ranura debe tener cabecera + 1 MiB");
+    }
+
+    memset(a, 0, PLATFORM_IMAGE_SIZE);
+    pc_os_setscreen(0x90000, 0x90000, 0);
+    for (int i = 0; i < 16; i++)
+        pc_os_setcolor((int16_t)i, 0);
+    CHECK(platform_slots_load(a, slot) == 0, "cargar una ranura");
+    int ok = 1;
+    for (size_t i = 0; i < PLATFORM_IMAGE_SIZE; i++)
+        if (a[i] != (uint8_t)(i * 37u + 11u)) { ok = 0; break; }
+    CHECK(ok, "la carga debe restaurar la imagen completa");
+    CHECK(platform_visible_base() == 0x98000,
+          "la carga debe restaurar la base visible");
+    ok = 1;
+    for (int i = 0; i < 16; i++)
+        if (platform_palette()[i] != (uint16_t)(0x100 + i * 0x11)) ok = 0;
+    CHECK(ok, "la carga debe restaurar la paleta");
+
+    memset(b, 0x5a, PLATFORM_IMAGE_SIZE);
+    remove(DIR "/saves/partida-9.bin");
+    CHECK(platform_slots_load(b, 9) != 0, "una ranura ausente debe fallar");
+    CHECK(b[0] == 0x5a, "una ranura ausente no debe tocar la imagen");
+
+    const char *bad = DIR "/saves/partida-8.bin";
+    FILE *bf = fopen(bad, "wb");
+    if (bf) {
+        fwrite("KSLOTP01", 1, 8, bf);
+        fclose(bf);
+    }
+    CHECK(platform_slots_load(b, 8) != 0, "una ranura truncada debe fallar");
+    CHECK(b[0] == 0x5a, "una ranura truncada no debe tocar la imagen");
+
+    CHECK(platform_slots_save(a, -1) != 0, "slot negativo invalido");
+    CHECK(platform_slots_load(a, 10) != 0, "slot fuera de rango invalido");
+
+    remove(path4);
+    remove(bad);
+    remove(DIR "/kult.ini");
+    platform_video_restore(oldvis, oldpal);
+    free(a);
+    free(b);
+}
+
 /* Retardo de CPU (cpu_delay de los bucles dbf): no-op sin tiempo real; con
  * tiempo real duerme el equivalente (~10 ciclos/unidad a 8 MHz) y cede VBLs. */
 static void test_cpu_delay(void) {
@@ -1284,6 +1372,7 @@ int main(void) {
     test_present_hook();
     test_display_viewport();
     test_osd();
+    test_slots();
     test_cpu_delay();
     test_cpu_charge_cycles();
     test_disk_delay();
@@ -1306,8 +1395,8 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs/containers, ingesta STX/FAT12 y validacion PRG, "
-           "contenedor atomico, packs S/C, log, present por VBL, display/OSD, cpu_delay, "
-           "cpu_cycles, disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
+           "contenedor atomico, packs S/C, log, present por VBL, display/OSD, ranuras, "
+           "cpu_delay, cpu_cycles, disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
            "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }

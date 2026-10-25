@@ -124,6 +124,7 @@ void platform_fs_reload_containers(void) { load_containers(); }
 int platform_storage_ready(void) { return g_storage_ok; }
 const char *platform_storage_path(void) { return g_base_dir; }
 const char *platform_data_dir(void) { return g_data_dir; }
+const char *platform_saves_dir(void) { return g_saves_dir; }
 
 static const uint8_t *mem_get(const char *name, uint32_t *size) {
     const uint8_t *p = kult_container_get(&g_lang, name, size);

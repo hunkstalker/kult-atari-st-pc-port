@@ -22,6 +22,7 @@ int platform_data_resolve(const char *name, char *out, size_t out_size);
 int platform_storage_ready(void);
 const char *platform_storage_path(void);
 const char *platform_data_dir(void);
+const char *platform_saves_dir(void);
 int platform_file_exists(const char *name);
 int platform_file_read(const char *name, uint8_t **out, size_t *out_size);
 
@@ -147,6 +148,18 @@ void platform_fb_to_rgba(uint8_t *dst);
 
 /* Cuenta de píxeles no-negro del framebuffer visible (para comprobaciones). */
 uint32_t platform_fb_nonzero(void);
+
+/* Restaura el estado de presentación tras cargar una ranura (T-103). */
+void platform_video_restore(uint32_t visible, const uint16_t *palette);
+
+/* ---- ranuras de guardado (T-103) ---------------------------------------- */
+#define PLATFORM_IMAGE_SIZE 0x100000u
+#define PLATFORM_SLOT_COUNT 10
+void platform_slots_init(void);
+int  platform_slots_current(void);
+void platform_slots_select_next(void);
+int  platform_slots_save(const uint8_t *img, int slot);
+int  platform_slots_load(uint8_t *img, int slot);
 
 /* Ventana SDL3 (sólo se enlaza en el build `make port-sdl`, -DHAVE_SDL3).
  * `scale_mode`: 0 = Auto, 1..6 = multiplicador entero. `fullscreen` activa el

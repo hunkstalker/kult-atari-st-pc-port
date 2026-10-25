@@ -8,6 +8,7 @@
 
 void platform_init(void) {
     platform_fs_init();
+    platform_slots_init();
     platform_video_init();
     platform_input_init();
     platform_time_init();

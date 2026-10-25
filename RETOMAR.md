@@ -6,21 +6,21 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101 y T-102 cerradas (2026-10-25). El port arranca en
-**fullscreen sin bordes a resolución nativa**, con **F1** ventana/fullscreen y
-**F2** escala Auto/1x–6x. T-101 corrigió «DIE» (objeto) a **DADO**/**DAU** en
-los packs ES/CA y regeneró `language.data` y el ZIP. Ahora se implementan los
-slots (T-103), los atajos F5/F6/F7 (T-104) y la documentación/ZIP (T-105) antes
-de **T-094** (validación visual final). La release 1.0.0 sigue sin push ni tag y
-**se publicará al final** (T-092). El único fichero no versionado aparte de la
-documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
+**Estado:** T-022, T-101, T-102 y T-103 cerradas (2026-10-25). El port arranca
+en **fullscreen sin bordes a resolución nativa**, con **F1** ventana/fullscreen,
+**F2** escala Auto/1x–6x y savestates completos en `saves/partida-0.bin`…
+`partida-9.bin` con la ranura activa en `kult.ini`. Ahora falta cablear los
+atajos F5/F6/F7 (T-104), la documentación/ZIP (T-105) y la **T-094** (validación
+visual final). La release 1.0.0 sigue sin push ni tag y **se publicará al final**
+(T-092). El único fichero no versionado aparte de la documentación es el backup
+local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-103 — savestate completo por ranura.**
+**Siguiente tarea: T-104 — atajos F5/F6/F7.**
 
-- **Alcance:** formato `KSLOTP01`, `saves/partida-0.bin`…`partida-9.bin`,
-  paleta/base visible, `kult.ini` con la ranura activa y avisos OSD.
-- **Después:** T-104 (F5/F6/F7), T-105 (documentación/ZIP) y **T-094**
-  (validación visual final sobre el ZIP nuevo).
+- **Alcance:** F5 cicla 0–9, F6 guarda y F7 carga en el tope del bucle; OSD y
+  errores; solo durante la partida.
+- **Después:** T-105 (documentación/ZIP) y **T-094** (validación visual final
+  sobre el ZIP nuevo).
 - **Publicación:** T-092 y T-096 al final.
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -37,6 +37,15 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-103 — cerrada (sesión 71, 2026-10-25):**
+
+- Savestate `KSLOTP01` de 1 MiB + paleta + base visible en
+  `saves/partida-0.bin`…`partida-9.bin`; `kult.ini` recuerda `save_slot`.
+- Validación de magia/versión/ranura/tamaño antes de tocar la imagen; escritura
+  con `.tmp` + reemplazo.
+- Tests de roundtrip, paleta/base visible, ausencia, truncado, rango y
+  persistencia. Detalle: `notes/0056`.
 
 **T-102 — cerrada (sesión 71, 2026-10-25):**
 

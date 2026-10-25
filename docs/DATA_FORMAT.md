@@ -21,6 +21,26 @@ saves/ > language.data > kult.data > data/ sueltos
 
 Las escrituras del juego van siempre a `saves/`.
 
+## Savestates del port (T-103)
+
+Las ranuras F5/F6/F7 viven en `saves/partida-0.bin`…`partida-9.bin`:
+
+```text
+offset  tamaño  contenido
+0       8       "KSLOTP01"
+8       4       versión = 1 (u32 BE)
+12      4       ranura 0..9 (u32 BE)
+16      32      paleta: 16 words ST (u16 BE)
+48      4       base visible (u32 BE)
+52      4       frame/VBL (u32 BE)
+56      4       0x100000 (u32 BE)
+60      4       reservado
+64      1 MiB   imagen completa del motor
+```
+
+`kult.ini` (junto al ejecutable) guarda `save_slot = 0..9`. La carga valida
+magia, versión, ranura y tamaño antes de modificar la partida.
+
 ## Contenedor `KULTDTA1`
 
 `kult.data` y `language.data` comparten formato:
