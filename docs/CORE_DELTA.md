@@ -26,7 +26,9 @@ Estos ficheros del core llevan cambios propios del port:
 
 Los cambios son:
 
-1. Instrumentación de diagnóstico (`kult_diag_*`).
+1. Instrumentación de diagnóstico (`kult_diag_*`/`kult_text_ev`): llamadas
+   acotadas en el core; la implementación vive en `platform/diag.c` y en
+   el diferencial son no-op. Ver `DIAGNOSTICO.md`.
 2. Espera del sample 0x1f al final de la puerta (`mode.c`), específica del
    timing del port.
 3. Hooks/declaraciones no-op para que el core siga compilando sin el port.

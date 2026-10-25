@@ -19,6 +19,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-099 | Pasada de textos ingleses sin traducir | ✅ 240/241 corregidos (`notes/0047`) |
 | T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y ZIP | ⬜ pendiente tras T-094 |
 | T-096 | CI en GitHub: HAL + paquete sin assets (core diferencial aparte) | ⬜ pendiente tras publicar |
+| T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -109,6 +110,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
 | T-092 | **Publicación 1.0.0**: push de `main`, tag, GitHub Release y ZIP Windows | ⬜ pendiente tras T-094 |
 | T-096 | **CI en GitHub**: `test-port` + build/paquete sin assets. El core diferencial requiere `work/disk_a/KULT.PRG` (no versionado): queda como ejecución local o con un fixture privado, no como gate del CI público. | ⬜ pendiente tras publicar |
+| T-100 | **Diagnósticos separados del timing y guía de uso** | ✅ **sesión 66**: `platform/diag.{c,h}` con todos los logs opcionales; `cpuwork.c` solo timing/hooks; buffer F12 de 2 MiB ahora perezoso (BSS 2.225.448 → 128.328 B en `build/kult`). Nuevo `make test-diag` (off/on) integrado en `test-port`. Guía `docs/DIAGNOSTICO.md`. Detalle: **`notes/0050`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

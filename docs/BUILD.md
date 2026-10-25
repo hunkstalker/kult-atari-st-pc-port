@@ -77,6 +77,9 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
    (UCRT: `api-ms-win-crt-*`).
 
 ## Diagnóstico en ejecución (M7)
+
+Arquitectura, variables y pruebas: [`DIAGNOSTICO.md`](DIAGNOSTICO.md).
+
 - **`kult.log`** se escribe **junto al `.exe`** y también va a stderr. Contiene:
   versión, directorios de datos, ruta de `KULT.PRG`, resultado de
   SDL/ventana/audio, frames, volcados y **exit code**. Lleva timestamp.

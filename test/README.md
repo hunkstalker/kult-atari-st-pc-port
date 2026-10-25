@@ -8,7 +8,9 @@ make test-core
 ```
 
 Las pruebas de la HAL, la ingesta y los packs `S`/`C` tampoco viven aquí:
-están en `platform/test/test_platform.c` y se ejecutan con `make test-port`.
+están en `platform/test/test_platform.c`. El humo del diagnóstico está en
+`platform/test/test_diag.c`. Ambos se ejecutan con `make test-port` (el segundo
+también por separado con `make test-diag`).
 
 En esta carpeta quedan solo las pruebas de herramientas propias del port. Ahora
 mismo:

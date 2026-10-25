@@ -11,6 +11,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`VERIFICACION.md`](VERIFICACION.md) | pruebas del core y del backend |
 | [`LIMITACIONES.md`](LIMITACIONES.md) | limitaciones conocidas y checklist de validación (M6) |
 | [`BUILD.md`](BUILD.md) | compilación (CMake + SDL3), Windows/Linux |
+| [`DIAGNOSTICO.md`](DIAGNOSTICO.md) | arquitectura y uso de logs, marcas y trazas |
 | [`RELEASE.md`](RELEASE.md) | formato portable, contenedores y errores de release |
 | [`RELEASE_NOTES_1.0.0.md`](RELEASE_NOTES_1.0.0.md) | notas públicas de la release 1.0.0 |
 | [`REVISION_CATALAN.xlsx`](REVISION_CATALAN.xlsx) | tabla español/catalán: todas las frases y solo cambios |
@@ -79,3 +80,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0047-pasada-textos-ingles.md`](../notes/0047-pasada-textos-ingles.md)
 - [`notes/0048-resumen-incidencias-texto.md`](../notes/0048-resumen-incidencias-texto.md)
 - [`notes/0049-tests-ingesta-packs.md`](../notes/0049-tests-ingesta-packs.md)
+- [`notes/0050-diagnostico-separado.md`](../notes/0050-diagnostico-separado.md)

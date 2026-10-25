@@ -47,14 +47,12 @@ test-core:
 test-tools:
 	$(PY) -m pytest -q test
 
-# Suite completa, explícita: core diferencial + HAL/ingesta/packs + herramientas.
-# kit.mk define una receta para `test` que ejecutaría también `pytest test/`;
-# se sustituye por un no-op para que cada suite tenga un único responsable y no
-# se ejecute dos veces. Sus prerrequisitos del kit (candidato/oráculo) siguen
-# siendo necesarios para `test-core`.
+# Suite completa: core diferencial + HAL/ingesta/packs. La receta que kit.mk
+# aporta a `test` ejecuta también `pytest test/`, es decir, la suite de
+# test-tools. No se añade test-tools como prerrequisito ni otra receta: así cada
+# suite se ejecuta una sola vez y Make no emite warnings por recetas repetidas.
 .PHONY: test
-test: test-core test-port test-tools
-	@:
+test: test-core test-port
 
 # ---------------------------------------------------------------------------
 # Port PC: core + boot/ + platform/ + app/. Este build NO usa el modelo del kit:
@@ -119,12 +117,22 @@ $(PORT_SDL_BIN): $(SDL_CORE_O) $(SDL_OBJS) $(SDL_EXTRA_O)
 PLATFORM_TEST_SRC := $(filter-out platform/cpuwork.c platform/dispatch_trace.c,$(PLATFORM_SRC))
 PLATFORM_TEST := build/test_platform
 .PHONY: test-port
-test-port: $(PLATFORM_TEST)
+test-port: $(PLATFORM_TEST) test-diag
 	$(PLATFORM_TEST)
 $(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c lib/kult-core/src/music.c lib/kult-core/src/input.c $(PLATFORM_TEST_SRC) \
                   $(wildcard platform/include/*.h) $(wildcard platform/*.h) $(wildcard lib/kult-core/include/*.h)
 	@mkdir -p build
 	$(CC) $(PORT_CFLAGS) -DKULT_NO_CPUWORK platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c lib/kult-core/src/music.c lib/kult-core/src/input.c $(PLATFORM_TEST_SRC) -o $@
+
+# Humo del diagnóstico: dos procesos para probar los logs desactivados/activados.
+PLATFORM_DIAG_TEST := build/test_diag
+.PHONY: test-diag
+test-diag: $(PLATFORM_DIAG_TEST)
+	$(PLATFORM_DIAG_TEST) off
+	$(PLATFORM_DIAG_TEST) on
+$(PLATFORM_DIAG_TEST): platform/test/test_diag.c platform/diag.c $(PORT_HDRS)
+	@mkdir -p build
+	$(CC) $(PORT_CFLAGS) -DKULT_NO_CPUWORK platform/test/test_diag.c platform/diag.c -o $@
 
 # ---------------------------------------------------------------------------
 # M7/T-070: build CMake (nativo Linux y cross Windows MinGW). Son envoltorios

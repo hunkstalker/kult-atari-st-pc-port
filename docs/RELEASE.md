@@ -92,6 +92,9 @@ el DRAP de cinco banderas, debe incluir ambos packs; si no, se rechaza.
 
 ## Errores y log
 
+Las trazas opcionales (`KULT_MARKS`, anillo, F12, etc.) se describen en
+`DIAGNOSTICO.md`; no se incluye un binario de diagnóstico separado.
+
 Política **B**:
 
 - todos los errores se registran en `kult.log` con timestamp y prefijo `ERROR:`;

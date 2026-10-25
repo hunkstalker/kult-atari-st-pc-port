@@ -8,20 +8,21 @@
 | Tests de herramientas del port | `test/` | 1 función en `test_ringreport.py` | ringreport |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
 | Tests funcionales HAL | `platform/test/test_platform.c` | 30 funciones / 163 `CHECK` | backend PC, contenedores, ingesta y packs |
+| Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
 | Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 518 | legibilidad y sincronización |
 
-`make test` es la suite completa y explícita:
-
-```make
-test: test-core test-port test-tools
-```
+`make test` ejecuta las tres suites, una sola vez cada una:
 
 - `test-core` → 518 tests del subtree (`lib/kult-core/test/`);
-- `test-port` → binario C de la HAL (`platform/test/test_platform.c`);
-- `test-tools` → suite de `test/` (`test_ringreport.py`).
+- `test-port` → binario C de la HAL (`platform/test/test_platform.c`) y humo
+  del diagnóstico (`platform/test/test_diag.c`, target `test-diag`);
+- la receta de `test` heredada de `kit.mk` ejecuta `pytest test/`, equivalente
+  a `test-tools` (`test_ringreport.py`).
 
-Cada target se puede lanzar por separado. Los tests del kit no forman parte de
-ninguna de estas suites.
+`test-tools` no se añade como prerrequisito porque la receta del kit ya ejecuta
+esa misma suite; duplicarla o sobreescribir la receta generaría dobles pasadas o
+warnings de Make. Cada target se puede lanzar por separado. Los tests del kit no
+forman parte de ninguna de estas suites.
 
 ## Dónde va cada test
 
@@ -67,7 +68,7 @@ Hecho:
 - Añadido `make test-core`.
 - Eliminada la copia de los 518 tests del core en `test/`.
 - `test/` reducido a `test_ringreport.py` + README.
-- `make test` compone core + HAL + herramientas con dependencias explícitas.
+- `make test` compone core + HAL + herramientas sin duplicar suites.
 
 Hecho (T-095):
 

@@ -17,10 +17,11 @@ catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
 La release **1.0.0** está preparada y el catalán está validado por el usuario.
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
-packs (T-095) están integrados en `make test`. Después: validación visual final
-y publicación; CI al final. `0x106f2` sigue abierto y T-073 es opcional. Sin
-bloqueantes de código. Ver `notes/0011`–`notes/0014`, `notes/0041`,
-`notes/0042` y `notes/0049`.
+packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
+separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). Después:
+validación visual final y publicación; CI al final. `0x106f2` sigue abierto y
+T-073 es opcional. Sin bloqueantes de código. Ver `notes/0011`–`notes/0014`,
+`notes/0041`, `notes/0042`, `notes/0049` y `notes/0050`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
@@ -93,7 +94,8 @@ bloqueantes de código. Ver `notes/0011`–`notes/0014`, `notes/0041`,
 lib/kult-core/      core C importado de kult-atari-st-c (subtree)
                     src/, include/, symbols/, test/ y tools/
 boot/       _start (0x10000), tick 0x160c2      [nuevo]
-platform/   HAL PC (os_*/hw_*/psg_*/sched_*) + render + audio  [nuevo]
+platform/   HAL PC (os_*/hw_*/psg_*/sched_*) + render + audio;
+            diag.c para diagnóstico opcional, cpuwork.c solo timing  [nuevo]
 app/        main + driver + presentación         [nuevo]
 assets/     icono (kult_icon.ico)                [nuevo]
 docs/  adr/  notes/

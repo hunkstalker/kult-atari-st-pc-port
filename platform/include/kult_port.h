@@ -41,7 +41,7 @@ static inline void cpu_delay_cycles(uint64_t cycles) {
 /* Logger de diagnostico del motor nativo: no-op en el port. */
 static inline FILE *kult_dbgfile(void) { return NULL; }
 
-/* Traza de diagnostico del anillo de acciones (platform/cpuwork.c). */
+/* Traza de diagnostico del anillo de acciones (platform/diag.c). */
 void platform_diag_ev(const char *tag, uint8_t *img,
                       uint32_t a, uint32_t b, uint32_t c);
 static inline void kult_diag_ev(const char *tag, uint8_t *img,

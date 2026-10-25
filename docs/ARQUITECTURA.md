@@ -58,6 +58,11 @@ alimenta el paquete IKBD en `A_IKBD_PACKET` para que se actualicen
   así se ven las animaciones que corren en `wait_vbl` dentro de un comando
   (puertas, wipes). Ver `notes/0020`.
 
+## Diagnóstico
+- Los logs opcionales viven en `platform/diag.c`; el timing de CPU queda en
+  `platform/cpuwork.c`. El core solo usa hooks que el diferencial compila como
+  no-op. Variables, F12 y traza de la VM: `docs/DIAGNOSTICO.md`.
+
 ## Audio
 - El juego programa el **MFP Timer A** y escribe el **PSG** por
   `hw_write8`/`psg_port_write`.

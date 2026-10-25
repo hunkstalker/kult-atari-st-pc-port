@@ -25,6 +25,12 @@ Pruebas propias de la HAL, sin oráculo:
   del **Timer A** del MFP y el bombeo en modo tiempo real. Todo en `make test-port`
   (`test_music_player_golden`, `test_mfp_timer_a`, `test_audio_pump`,
   `test_audio_rms`, `test_integration_music`).
+- **Ingesta y packs:** STX/Pasti y FAT12 sintéticos, validación de `KULT.PRG`,
+  contenedor atómico, pipeline condicional con los STX reales y selección/carga
+  de `S`/`C` (`platform/test/test_platform.c`, T-095).
+- **Diagnóstico:** `make test-diag` comprueba en dos procesos que sin variables
+  no se crean logs y que con ellas aparecen las trazas y el volcado F12
+  (`platform/test/test_diag.c`, T-100). También forma parte de `make test-port`.
 
 ## Integración (hitos)
 - **M1:** el arranque headless avanza N frames y el framebuffer es coherente.
@@ -71,7 +77,7 @@ opcional no bloqueante. **M6 cerrada.** Ingesta `.STX`/`kult.data`: ✅ implemen
 transición mantenga la cadencia del original. Las escenas medidas y el audio
 están validados.
 
-1. ✅ **Automático:** `make test` (**518 core + test propio**) y `make test-port` (verde).
+1. ✅ **Automático:** `make test` (**518 core + HAL + diagnóstico + herramientas**) y `make test-port`/`make test-diag` (verde).
 2. ✅ **Arranque headless:** `KULT_FRAMES=400 ./build/kult`
    → llega al bucle, `fb_nonzero>0`, y `audio:` con `rms/peak/samples/isr`.
 3. ✅ **Ventana + entrada:** `make port-sdl` y `./build/kult-sdl`

@@ -6,9 +6,9 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** `main` en `656b4d8` más **T-095 sin commit**; el único fichero no
-versionado es el backup local `docs/REVISION_CATALAN.original.xlsx`. Release
-1.0.0 preparada, sin push ni tag.
+**Estado:** T-100 cerrada y verificada; documentación y artefactos actualizados.
+Release 1.0.0 preparada, sin push ni tag. El único fichero no versionado es el
+backup local `docs/REVISION_CATALAN.original.xlsx`.
 
 **Ya cerrado y validado:**
 
@@ -18,19 +18,21 @@ versionado es el backup local `docs/REVISION_CATALAN.original.xlsx`. Release
 - T-099: pasada de textos ingleses; 240/241 traducidos.
 - T-095: tests automatizados de ingesta (STX/Pasti/FAT12), validación de
   `KULT.PRG`, `kult.data` atómico y packs `S`/`C`; integrados en `make test`.
+- T-100: diagnósticos separados en `platform/diag.c`, buffer F12 perezoso,
+  `make test-diag` y guía `docs/DIAGNOSTICO.md`.
 
 **Artefactos actuales:**
 
 - ZIP: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `0fe3118a61afcfa0e5f2d4c7165183b2884d9ab78d90f96f8f28909aa7328d82`
-  (previo a T-095; el refactor no cambia comportamiento, pero regenerarlo en
-  T-092 antes de publicar).
+  SHA256 `b959d76ad0aa2a1a4175a00ac2a0705efa567c13d3abe63c7ab7509ba334bec3`
+  (regenerado tras T-100; candidato para T-094/T-092).
 - `assets/language.data` SHA256
   `cc8981aee93cfed520250caf9e338d5f1480504617c02af6a3e312e0f6682e13`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
-- `make test`: 518 core + HAL (30 funciones / 163 `CHECK`) + 1 port OK.
+- `make test`: 518 core + HAL (30 funciones / 163 `CHECK`) + diagnóstico
+  off/on + 1 port OK.
 - `make package-win`: OK.
 
 **Pendiente, en este orden:**
@@ -60,6 +62,13 @@ No hay fixes de texto pendientes. Si aparece una regresión visual, usar
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 66 — diagnósticos separados (T-100) (2026-10-25)**: toda la salida
+  opcional de logs sale de `platform/cpuwork.c` a `platform/diag.{c,h}`; el
+  timing y los hooks de HAL quedan en `cpuwork.c`. El buffer F12 de 2 MiB se
+  reserva solo al activar `KULT_MARKS` (BSS de `build/kult`: 2.225.448 →
+  128.328 B). Nuevo `make test-diag` off/on integrado en `test-port`; humo real
+  headless con `KULT_MARKS`/`KULT_AUTOLOG` OK. Guía `docs/DIAGNOSTICO.md`.
+  Detalle: `notes/0050`.
 - **Sesión 65 — tests de ingesta y packs (T-095) (2026-10-25)**: extraída la
   parte pura de `platform/ingest.c` a `platform/diskimage.{h,c}` (STX Pasti,
   FAT12, validación de `KULT.PRG` y discos conocidos) y añadidas 7 pruebas en
@@ -67,9 +76,9 @@ No hay fixes de texto pendientes. Si aparece una regresión visual, usar
   compresión, FAT12 con cadenas/entradas ignoradas, validación y pipeline
   condicional con los STX reales, contenedor atómico, selección/lectura de
   `S`/`C` y comprobación de `assets/language.data`. `make test` 518 core + HAL +
-  1 port OK; `make port` y CMake nativo OK. Además, `make test` queda explícito
-  (`test-core test-port test-tools`) y se documenta la política de tests/release
-  (los binarios no llevan tests; las fuentes de GitHub sí). Detalle: `notes/0049`.
+  1 port OK; `make port` y CMake nativo OK. Además, se documenta `make test` sin
+  duplicar suites y la política de tests/release (los binarios no llevan tests;
+  las fuentes de GitHub sí). Detalle: `notes/0049`.
 - **Sesión 64 — validación de T-097/T-098 (2026-10-25)**: el usuario confirma
   que los espacios extra de las cajas de objetos catalanas desaparecieron y que
   La Horca en español ya no se congela. Ambas incidencias quedan cerradas.

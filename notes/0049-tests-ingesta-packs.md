@@ -71,9 +71,9 @@ Todo en verde. `platform/ingest.c` real genera 28 ficheros desde los STX del
 
 ## Organización (ajuste posterior)
 
-- `make test` declara explícitamente `test-core test-port test-tools`; se
-  sustituye la receta implícita heredada de `kit.mk` por un no-op para evitar
-  ejecutar `test/` dos veces.
+- `make test` queda documentado: `test-core` + `test-port` y la receta heredada
+  de `kit.mk` que ejecuta `test/` (equivalente a `test-tools`). No se añade una
+  segunda receta ni otra dependencia, para no duplicar suites ni emitir warnings.
 - `test/README.md` y `docs/TESTS.md` fijan dónde vive cada suite.
 - La política queda documentada: los tests permanecen en el repositorio, los
   binarios de release no los incluyen y las fuentes de GitHub sí.
