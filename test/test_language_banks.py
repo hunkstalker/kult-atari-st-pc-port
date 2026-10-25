@@ -70,3 +70,14 @@ def test_verbo_die_es_el_objeto_dado_no_morir():
         assert dict(_entries(source))[116] == expected
         assert dict(_entries(_from_container(bank)))[116] == expected
         assert dict(_entries(source))[116] != "MORIR"
+
+
+def test_desc_126_passerby():
+    expected = {
+        "DESCS.BIN": "EL CAMINANTE SALVA A ALGUNOS E INDICA SU ELECCION AL REPTIL.",
+        "DESCC.BIN": "EL CAMINANT SALVA ALGUNS I INDICA LA SEVA ELECCIO AL REPTIL.",
+    }
+    for bank, text in expected.items():
+        source = next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()
+        assert dict(_entries(source))[126] == text
+        assert dict(_entries(_from_container(bank)))[126] == text

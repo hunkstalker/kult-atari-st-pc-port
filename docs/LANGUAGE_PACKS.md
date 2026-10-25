@@ -48,9 +48,10 @@ caracteres existentes:
 
 La ortografía está revisada dentro de esas limitaciones y el pack está validado
 por el usuario. T-101 corrigió `VERB 116` («DIE», el objeto) a **DADO**/**DAU**;
-los usos verbales de «die» en `DIAL` se mantienen como «morir». T-097/T-098
-quedaron cerradas; si se quiere ortografía completa con tildes y `Ç`, hace falta
-una fuente catalana con esos glifos.
+los usos verbales de «die» en `DIAL` se mantienen como «morir». T-115 corrigió
+`DESC 126` en ES/CA (“salva a algunos” en vez de “guarda algo/alguna cosa”).
+T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
+`Ç`, hace falta una fuente catalana con esos glifos.
 
 ## Generación
 

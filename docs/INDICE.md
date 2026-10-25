@@ -98,3 +98,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0065-t112-volumen.md`](../notes/0065-t112-volumen.md)
 - [`notes/0066-t113-kult-settings-png.md`](../notes/0066-t113-kult-settings-png.md)
 - [`notes/0067-t114-estirar-y-config.md`](../notes/0067-t114-estirar-y-config.md)
+- [`notes/0068-t115-desc-126-caminante.md`](../notes/0068-t115-desc-126-caminante.md)
