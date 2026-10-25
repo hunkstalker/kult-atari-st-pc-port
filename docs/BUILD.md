@@ -80,7 +80,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
    ```sh
    (cd build-win && cpack -G ZIP)      # -> kult-1.0.0-win64.zip
    ```
-   Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt` + `Kult Settings.png`.
+   Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt` + `TECLAS_FN.txt` + `Kult Settings.png`.
    **Sin assets, sin headless y sin DIAGNOSTICO.txt.** Requiere Windows 10+
    (UCRT: `api-ms-win-crt-*`).
 

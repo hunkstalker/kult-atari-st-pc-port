@@ -1,0 +1,33 @@
+Kult: The Temple of Flying Saucers — teclas de función
+=======================================================
+
+F1   Pantalla completa / ventana.
+
+F2   Cambia la escala de imagen:
+     Estirar a pantalla → x1 → x2 → x3 → x4 → x5 → x6 → Auto.
+
+F3   Sin función.
+F4   Sin función.
+
+F5   Muestra la ranura de guardado actual (RANURA N).
+     Si se vuelve a pulsar mientras se ve ese aviso, cambia a la
+     siguiente ranura 0-9. La ranura activa se recuerda en kult.ini.
+
+F6   Guarda la partida en la ranura actual.
+     Solo funciona durante la partida.
+
+F7   Carga la partida de la ranura actual.
+     Solo funciona durante la partida.
+
+F8   Sin función.
+
+F9   Baja el volumen un 10 %.
+
+F10  Silencia / restaura el sonido.
+
+F11  Sube el volumen un 10 %.
+
+F12  Marca de diagnóstico opcional. No es necesaria para jugar; solo
+     genera información si el diagnóstico está activado.
+
+ESC  Cierra la ventana.

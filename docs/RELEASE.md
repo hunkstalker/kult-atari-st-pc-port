@@ -26,6 +26,7 @@ borrarse después de una ingesta correcta.
 ├── kult.exe
 ├── SDL3.dll
 ├── LEEME.txt
+├── TECLAS_FN.txt
 ├── Kult Settings.png
 ├── LICENSE
 ├── THIRD_PARTY_NOTICES.md
@@ -130,6 +131,7 @@ La release contiene:
 kult.exe
 SDL3.dll
 LEEME.txt
+TECLAS_FN.txt
 Kult Settings.png
 LICENSE
 THIRD_PARTY_NOTICES.md

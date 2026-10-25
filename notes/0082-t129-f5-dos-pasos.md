@@ -1,6 +1,7 @@
 # 0082 — T-129: F5 en dos pasos
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-130 añade TECLAS_FN.txt.
+Siguiente: T-094 sobre el ZIP final.
 
 ## Comportamiento
 

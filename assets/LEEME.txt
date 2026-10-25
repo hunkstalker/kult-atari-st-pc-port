@@ -34,6 +34,7 @@ la carpeta debe ser escribible.
    mientras se ve el aviso, cambia de ranura (0-9). F6 guarda y F7 carga. Las
    partidas van a `saves/slot-N.save`; la ranura activa se recuerda en
    `kult.ini`. Solo se guarda/carga durante la partida.
+   Tienes la lista completa de teclas F1-F12 en `TECLAS_FN.txt`.
 
 Carpetas
 --------
