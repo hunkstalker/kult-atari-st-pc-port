@@ -52,8 +52,11 @@ diferencial, las convenciones y las garantías del port. No deben borrarse para
 - **Artefactos binarios** (ZIP Windows / TGZ Linux): no incluyen tests. El
   `install()` de CMake copia el ejecutable, SDL3, `data/language.data`,
   licencias, `Kult Settings.png`, `Kult Settings.txt`, `LEEME.txt` (Windows en
-  el ZIP, Linux en el TGZ) y las carpetas `data/`/`saves/`. El ZIP Windows 1.0.0 tiene 13
-  entradas; Linux añade TGZ y AppImage.
+  el ZIP, Linux en el TGZ) y las carpetas `data/`/`saves/`. El ZIP Windows
+  1.1.0 tiene 13 entradas; Linux añade TGZ/AppImage y macOS `Kult.app` + ZIP/DMG.
+- **macOS**: `make test-port CC=clang` y `make test-tools PY=python` en CI.
+  `make test` no se ejecuta (oráculo `.so`/`KULT.PRG` Linux); la app Universal 2
+  se comprueba con `lipo`, `otool` y un smoke test sin STX.
 - **Archivos fuente de GitHub**: los ZIP/TAR de código que genera GitHub
   incluyen todo el repositorio, tests incluidos. Es lo esperado en una fuente.
 - No se genera un paquete de fuentes propio. Si algún día se añade, habrá que

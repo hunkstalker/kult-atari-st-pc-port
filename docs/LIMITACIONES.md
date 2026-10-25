@@ -1,6 +1,6 @@
-# LIMITACIONES — release 1.0.0
+# LIMITACIONES — release 1.1.0
 
-Lista de limitaciones conocidas del port a PC para la release **1.0.0**. La
+Lista de limitaciones conocidas del port para la release **1.1.0**. La
 validación final de juego, textos y audio la hace el usuario con su copia de
 datos.
 
@@ -46,9 +46,9 @@ datos.
   el menú de idioma, así que `music_isr=0`; en ventana con entrada real la música
   suena mientras el título espera una tecla.
 - **Escucha/ventana requieren SDL3 y un equipo con display+audio.** En Windows
-  SDL3 va incluida; en Linux va dentro del TGZ/AppImage. Sigue haciendo falta un
-  equipo con X11/Wayland y audio (ALSA/Pulse); en un contenedor sin
-  `/dev/snd`/`DISPLAY` no suena.
+  SDL3 va incluida; en Linux va dentro del TGZ/AppImage y en macOS dentro de
+  `Kult.app`. Linux necesita X11/Wayland y audio (ALSA/Pulse); macOS usa CoreAudio.
+  En un contenedor sin `/dev/snd`/`DISPLAY` no suena.
 
 ## Pendientes / futuros
 - **M5 — filtros CRT** (`SDL_GPU` + shaders): **extra opcional, no prioritario**,
@@ -62,18 +62,28 @@ datos.
   FOND/lista B/ECHE antes de volver a `0x10158`. **No confundir** con el
   reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba en
   el C nativo ya se emula en `boot/` (`notes/0022`).
-- **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
+- **M7 — release 1.1.0**: build, paquete, ingesta, idiomas y licencias
   completados. Windows lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
-  `LEEME.txt` (Windows), `Kult Settings.txt` y las licencias. Linux lleva `kult`,
-  `lib/libSDL3.so.0`, `LEEME.txt` (Linux), datos y ajustes, además de un AppImage.
-  **No** llevan headless ni `DIAGNOSTICO.txt`. Windows requiere **Windows 10+**
-  (UCRT); Linux requiere X11/Wayland y audio base. Los tests automatizados de ingesta/packs
-  (T-095) ya están integrados, T-022 y T-101 están cerradas. La validación
-  visual final (T-094) está cerrada y la release 1.0.0 está publicada como
-  `v1.0.0` con ZIP Windows, TGZ Linux y AppImage; el CI (T-096) terminó en
-  `success`. Detalle: `notes/0092`.
+  `LEEME.txt`, ajustes y licencias. Linux lleva `kult`, `lib/libSDL3.so.0`,
+  `LEEME.txt`, datos y ajustes, además de un AppImage. macOS lleva `Kult.app`
+  Universal 2, `LEEME.txt`, ajustes y licencias, en ZIP y DMG. **No** llevan
+  headless ni `DIAGNOSTICO.txt`. Windows requiere **Windows 10+** (UCRT);
+  Linux requiere X11/Wayland y audio base; macOS requiere **11+** (Intel o
+  Apple Silicon). Los tests automatizados de ingesta/packs (T-095) ya están
+  integrados, T-022 y T-101 están cerradas. La release 1.0.0 está publicada
+  (detalle: `notes/0092`); la 1.1.0 añade macOS y está en preparación.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
+- **macOS sin notarizar**: `Kult.app` se firma en modo ad-hoc, no con Developer
+  ID; Gatekeeper puede pedir clic derecho > Abrir o Permitir en Ajustes. No hay
+  cuenta Apple Developer en este proyecto.
+- **macOS Apple Silicon**: la build Universal 2 se verifica en CI (`arm64` y
+  `x86_64`), pero la validación visual manual prevista es en un Mac Intel. Si
+  aparece un fallo específico de Apple Silicon, habrá que corregirlo en una
+  revisión posterior.
+- **macOS: datos fuera de la app**: `data/`, `saves/`, `kult.ini` y `kult.log`
+  están en `~/Library/Application Support/Kult/`; no se guardan dentro de
+  `Kult.app`.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a
   **`kult.log`** junto al exe, con timestamp. Solo si no se puede escribir el
   log aparece un diálogo de emergencia.

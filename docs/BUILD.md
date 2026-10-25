@@ -1,6 +1,6 @@
 # BUILD
 
-## Estado (M0–M7 build hecho)
+## Estado (M0–M7 build + macOS 1.1.0)
 - **Core + diferencial**: operativo con el **Makefile + kit** heredado de
   `kult-atari-st-c`. `make test` compila `build/libkult.so` (candidato) y
   `lib/kult-core/tools/recreate_kit/oracle/build/liboracle.so` (oráculo) y lanza la suite.
@@ -26,13 +26,13 @@
   (`KULT_AUTOINPUT=1` y `KULT_REALTIME=0` los desactivan, p. ej. sin display).
   `KULT_AUDIO=0` apaga el sonido. Sin display: `SDL_VIDEODRIVER=dummy`
   (y `SDL_AUDIODRIVER=dummy`).
-- **CMake (M7/T-070)**: build alternativo del ejecutable para **Linux y
-  Windows** (cross MinGW). Ver abajo; el **Makefile se mantiene** para
-  core/diferencial y para `make port`/`port-sdl`/`test-port`.
-- **Empaquetado de release**: ZIP Windows y TGZ Linux con **CPack**, sin assets
-  (el usuario aporta sus STX). `kult-headless` y `DIAGNOSTICO.txt` no forman
-  parte del paquete. En el primer arranque se ingieren los STX y se genera
-  `data/kult.data`.
+- **CMake (M7/T-070)**: build alternativo del ejecutable para **Linux**,
+  **Windows** (cross MinGW) y **macOS Universal 2**. Ver abajo; el **Makefile
+  se mantiene** para core/diferencial y para `make port`/`port-sdl`/`test-port`.
+- **Empaquetado de release**: ZIP Windows, TGZ Linux/AppImage y ZIP/DMG macOS
+  Universal 2, sin assets (el usuario aporta sus STX). `kult-headless` y
+  `DIAGNOSTICO.txt` no forman parte del paquete. En el primer arranque se
+  ingieren los STX y se genera `data/kult.data`.
 
 ## Objetivo
 - **Core** compilable aparte para las pruebas diferenciales (sin SDL).
@@ -41,9 +41,12 @@
 ## Herramientas
 - **CMake** (≥3.16) para el ejecutable; el core/tests siguen con el Makefile.
 - **SDL3**: en Linux el paquete del sistema (`apk add sdl3-dev`, pkg-config
-  `sdl3` 3.4.10); para Windows, SDL3 3.4.10 MinGW en `third_party/`.
+  `sdl3` 3.4.10); para Windows, SDL3 3.4.10 MinGW en `third_party/`; para macOS,
+  SDL3 universal desde fuente con `make deps-macos`.
 - **Cross a Windows**: `x86_64-w64-mingw32-gcc` + `windres` (paquete
   `mingw-w64-gcc`).
+- **macOS**: macOS 11+, Xcode Command Line Tools, CMake y Python. Para
+  Universal 2 se compila con `arm64` y `x86_64` en el mismo build.
 
 ## CMake (Linux nativo)
 Con SDL3 del sistema:
@@ -64,8 +67,8 @@ make deps-linux
 cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release   -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-linux"   -DKULT_SDL3_LIB="$PWD/third_party/sdl3-linux/lib/libSDL3.so.0"
 cmake --build build-linux -j
 (cd build-linux && cpack -G TGZ)
-cmake --install build-linux --prefix dist/linux-stage
-tools/build_appimage.sh dist/linux-stage dist/kult-1.0.0-x86_64.AppImage
+cmake --install build-linux --prefix build/linux-stage
+tools/build_appimage.sh build/linux-stage dist/kult-1.1.0-x86_64.AppImage
 ```
 
 Envoltorios equivalentes: `make cmake-native` y `make package-native` para el
@@ -91,17 +94,46 @@ build con SDL3 del sistema.
    instala `kult.exe`.
 3. Empaquetar (o `make package-win`):
    ```sh
-   (cd build-win && cpack -G ZIP)      # -> kult-1.0.0-win64.zip
+   (cd build-win && cpack -G ZIP)      # -> kult-1.1.0-win64.zip
    ```
    Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt` + `Kult Settings.txt` + `Kult Settings.png`.
    **Sin assets, sin headless y sin DIAGNOSTICO.txt.** Requiere Windows 10+
    (UCRT: `api-ms-win-crt-*`).
 
+## CMake + macOS Universal 2
+
+1. Obtener SDL3 universal (mismo SHA que Linux):
+   ```sh
+   make deps-macos
+   ```
+   El script descarga SDL3 3.4.10 y lo compila para `arm64;x86_64` con
+   deployment target macOS 11.0.
+2. Configurar y compilar (o `make cmake-macos`):
+   ```sh
+   cmake -S . -B build-macos -DCMAKE_BUILD_TYPE=Release      -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"      -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0      -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-macos"      -DKULT_SDL3_LIB="$PWD/third_party/sdl3-macos/lib/libSDL3.0.dylib"
+   cmake --build build-macos -j
+   ```
+   Salida: `build-macos/Kult.app`. El bundle incluye `language.data`, icono,
+   `LEEME.txt` y SDL3 en `Contents/Frameworks`.
+3. Empaquetar (o `make package-macos`):
+   ```sh
+   cmake --install build-macos --prefix build/macos-stage
+   KULT_VERSION=1.1.0 tools/build_macos.sh build/macos-stage dist
+   ```
+   Genera `kult-1.1.0-macos-universal.zip` y `.dmg`, firma ad-hoc (o con
+   `MACOS_SIGN_IDENTITY`) y crea los `.sha256`. Si existen `APPLE_ID`,
+   `APPLE_TEAM_ID` y `APPLE_APP_PASSWORD`, notariza el DMG; sin esos secretos
+   queda una build ad-hoc no notarizada.
+4. Tests: `make test-port CC=clang` y `make test-tools PY=python`. El
+   diferencial completo no se ejecuta en macOS porque depende de `.so`,
+   `KULT.PRG` y el oráculo Linux.
+
 ## Diagnóstico en ejecución (M7)
 
 Arquitectura, variables y pruebas: [`DIAGNOSTICO.md`](DIAGNOSTICO.md).
 
-- **`kult.log`** se escribe **junto al `.exe`** y también va a stderr. Contiene:
+- **`kult.log`** se escribe junto al ejecutable/AppImage (en macOS, en
+  `~/Library/Application Support/Kult/`) y también va a stderr. Contiene:
   versión, directorios de datos, ruta de `KULT.PRG`, resultado de
   SDL/ventana/audio, frames, volcados y **exit code**. Lleva timestamp.
 - Política B: los errores no abren ventanas; solo si no se puede escribir el log
@@ -116,12 +148,14 @@ Arquitectura, variables y pruebas: [`DIAGNOSTICO.md`](DIAGNOSTICO.md).
 - `KULT_DUMP_TITLE=<ruta.ppm>` vuelca el **frame del título** (PRES) antes de la
   espera de tecla/clic; útil para validar su paleta sin ventana.
 
-## Icono (Windows)
-- `assets/kult_icon.ico` (16..256) + `assets/kult_icon.rc`
+## Iconos
+- **Windows**: `assets/kult_icon.ico` (16..256) + `assets/kult_icon.rc`
   (`101 ICON "kult_icon.ico"`); windres lo incrusta en el `.exe`.
-- `assets/kult_icon_rgba.h` (48x48 RGBA) para `SDL_SetWindowIcon`; se regenera
-  con `python3 tools/make_icon_rgba.py` (el `.h` está versionado; el build no
-  necesita Python).
+- **macOS**: `assets/kult.icns`, generado desde `assets/kult_icon.ico` con
+  `python3 tools/make_icns.py` (el `.icns` está versionado).
+- **Ventana**: `assets/kult_icon_rgba.h` (48x48 RGBA) para `SDL_SetWindowIcon`;
+  se regenera con `python3 tools/make_icon_rgba.py` (el `.h` está versionado; el
+  build no necesita Python).
 
 ## Ritmo / CPU (T-073)
 - El build del port compila `lib/kult-core/src/*.c` con **`-finstrument-functions`** (solo ahí;

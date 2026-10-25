@@ -1,17 +1,20 @@
 # Kult: The Temple of Flying Saucers — Port a PC (Atari ST)
 
-Port nativo a PC (**Windows y Linux**) de **Kult** (Exxos/ERE, 1989), con
+Port nativo (**Windows, Linux y macOS**) de **Kult** (Exxos/ERE, 1989), con
 **español y catalán**.
 
 ![Kult Settings](assets/Kult%20Settings.png)
 
 No parte de cero: el **C verificado** del Atari ST está importado en
 `lib/kult-core/` y este repo añade un **backend de PC** (SDL3) para que ese mismo
-C corra en Windows/Linux.
+C corra en Windows, Linux y macOS.
 
-> **Estado:** el port es jugable de principio a fin en Windows y Linux. Incluye
-> la ingesta de los discos originales, el selector de idioma, los packs español y
-> catalán, guardado/carga y audio, además de **fullscreen nativo**, **F1**
+> **Estado:** el port es jugable de principio a fin en Windows y Linux. La
+> versión **1.1.0** añade macOS Universal 2 (Intel + Apple Silicon), firmado en
+> modo ad-hoc y no notarizado; la validación visual manual en Mac Intel está
+> pendiente. Incluye la ingesta de los discos originales, el selector de idioma,
+> los packs español y catalán, guardado/carga y audio, además de **fullscreen
+> nativo**, **F1**
 > ventana/fullscreen, **F2** escala Estirar a pantalla/×1–×6/Auto y **F5/F6/F7** para
 > ranuras de savestate (`saves/slot-N.save`), con avisos OSD en la **fuente original del
 > juego**.
@@ -56,9 +59,10 @@ git subtree pull --prefix=lib/kult-core \
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
 
 ## Requisitos
-- **Windows 10 o superior, 64 bits**, o **Linux x86_64** para los paquetes
-  precompilados. Linux también se puede compilar desde el código fuente.
-  Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.0.0>.
+- **Windows 10 o superior, 64 bits**, **Linux x86_64** o **macOS 11 o superior**
+  (Intel o Apple Silicon) para los paquetes precompilados. Linux y macOS también
+  se pueden compilar desde el código fuente.
+  Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases>.
 - Una copia legal del juego con los dos discos en formato `.STX`:
   `Kult.STX` y `Kult (B).STX`. Los nombres no importan; se identifican por
   SHA-256.
@@ -71,12 +75,13 @@ continúa arrancando en esa misma ejecución. **No hace falta ejecutarlo dos
 veces.** En las siguientes ejecuciones, si existe `data/kult.data`, los `.STX`
 ya no son necesarios y puedes borrarlos.
 
-No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
-`data/`, `saves/`, `kult.ini` y `kult.log` junto al ejecutable o al AppImage.
+En Windows y Linux no uses una carpeta de solo lectura (`Program Files`,
+`/opt`): el juego escribe `data/`, `saves/`, `kult.ini` y `kult.log` junto al
+ejecutable o al AppImage. En macOS escribe en Application Support.
 
 ### Windows ZIP
 
-1. Descomprime `kult-1.0.0-win64.zip` en una carpeta escribible.
+1. Descomprime `kult-1.1.0-win64.zip` en una carpeta escribible.
 2. Copia `Kult.STX` y `Kult (B).STX` junto a `kult.exe` o dentro de `data/`.
 3. Ejecuta `kult.exe` con doble clic.
 4. La primera ejecución crea `data/` y `saves/`, ingiere los discos y genera
@@ -86,7 +91,7 @@ No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
 
 ### Linux TGZ
 
-1. Descomprime `kult-1.0.0-linux-x86_64.tar.gz` en una carpeta escribible.
+1. Descomprime `kult-1.1.0-linux-x86_64.tar.gz` en una carpeta escribible.
 2. Copia los `.STX` junto a `kult` o dentro de `data/`.
 3. Ejecuta el juego:
 
@@ -103,10 +108,10 @@ No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
 
 ### Linux AppImage
 
-1. Copia `kult-1.0.0-x86_64.AppImage` a una carpeta escribible y dale permiso:
+1. Copia `kult-1.1.0-x86_64.AppImage` a una carpeta escribible y dale permiso:
 
    ```sh
-   chmod +x kult-1.0.0-x86_64.AppImage
+   chmod +x kult-1.1.0-x86_64.AppImage
    ```
 
 2. Copia los `.STX` junto al AppImage. También puedes ponerlos en `data/` si ya
@@ -114,7 +119,7 @@ No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
 3. Ejecuta:
 
    ```sh
-   ./kult-1.0.0-x86_64.AppImage
+   ./kult-1.1.0-x86_64.AppImage
    ```
 
 4. El AppImage es un único archivo: su contenido interno es de solo lectura y se
@@ -126,8 +131,22 @@ No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
 6. Si el sistema no tiene FUSE:
 
    ```sh
-   ./kult-1.0.0-x86_64.AppImage --appimage-extract-and-run
+   ./kult-1.1.0-x86_64.AppImage --appimage-extract-and-run
    ```
+
+### macOS (Universal 2)
+
+1. Descomprime `kult-1.1.0-macos-universal.zip` o abre
+   `kult-1.1.0-macos-universal.dmg` y copia `Kult.app` a una carpeta normal,
+   por ejemplo `Aplicaciones` o `Escritorio`.
+2. Arranca `Kult.app` con doble clic. Si macOS avisa de que no está verificada,
+   usa clic derecho > **Abrir** o **Ajustes del Sistema > Privacidad y
+   seguridad > Abrir igualmente**. La build es ad-hoc, no está notarizada.
+3. Si no hay `kult.data`, la app pide seleccionar `Kult.STX` y `Kult (B).STX`.
+   Selecciona los dos. Se copian a `~/Library/Application Support/Kult/data/`,
+   se procesan y el juego arranca en esa misma ejecución.
+4. Los datos y partidas quedan en `~/Library/Application Support/Kult/`. Las
+   siguientes ejecuciones usan `data/kult.data` y no piden los STX.
 
 ## Controles
 - **Ratón**: izquierdo/teclado = acción; derecho = acción + skip.
@@ -141,14 +160,16 @@ No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
 ## Datos y diagnóstico
 - Release **portable**: `data/` contiene los assets del usuario y `saves/` las
   escrituras del juego. En Windows y Linux TGZ viven junto al ejecutable; en el
-  AppImage, junto al propio AppImage. Las ranuras F5/F6/F7 van a
+  AppImage, junto al propio AppImage; en macOS, en
+  `~/Library/Application Support/Kult/`. Las ranuras F5/F6/F7 van a
   `saves/slot-0.save`…`slot-9.save`; `kult.ini` recuerda pantalla, escala,
   ranura, volumen y silencio. La escala inicial por defecto es Estirar a
-  pantalla. No hay appdata ni rutas de datos alternativas.
-- **`kult.log`** se escribe junto al ejecutable o al AppImage, con timestamp. Los
-  errores no abren ventanas; solo si el log no se puede escribir aparece un
-  diálogo de emergencia. `kult-headless.exe` es solo una herramienta de
-  desarrollo y no forma parte de la release.
+  pantalla.
+- **`kult.log`** se escribe junto al ejecutable/AppImage o en Application
+  Support en macOS, con timestamp. En macOS los errores fatales se muestran en
+  un diálogo; en Windows/Linux van al log (salvo fallo del propio log).
+  `kult-headless.exe` es solo una herramienta de desarrollo y no forma parte de
+  la release.
 
 ## Origen y repos
 - **`kult-atari-st-decomp`** — decomp ASM del ST, byte a byte (spec, no se toca).

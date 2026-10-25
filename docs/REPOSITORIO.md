@@ -11,10 +11,13 @@ artefactos de release quedan fuera.
 - `docs/`, `notes/`, `README.md`, `PROYECTO.md`, `TODO.md`, `RETOMAR.md` y `AGENTS.md`.
 - `assets/lang/` y `assets/language.data`.
 - Recursos de release: `assets/LEEME.txt` (Windows), `assets/LEEME_LINUX.txt`
-  (Linux; se instala como `LEEME.txt`), `assets/Kult Settings.txt`,
-  `assets/Kult Settings.png`, icono y `.rc`.
+  (Linux; se instala como `LEEME.txt`), `assets/LEEME_MAC.txt` (macOS; se
+  instala como `LEEME.txt`), `assets/Kult Settings.txt`,
+  `assets/Kult Settings.png`, `assets/kult_icon.ico`, `assets/kult.icns`,
+  `assets/kult_icon.rc` y `cmake/macos/Info.plist.in`.
 - Fuentes de diseño: `assets/design/*.af`.
 - `third_party/README.md`.
+- `tools/fetch_sdl3_macos.sh`, `tools/build_macos.sh` y `tools/make_icns.py`.
 
 ## No se versiona
 

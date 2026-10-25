@@ -15,6 +15,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`DIAGNOSTICO.md`](DIAGNOSTICO.md) | arquitectura y uso de logs, marcas y trazas |
 | [`RELEASE.md`](RELEASE.md) | formato portable, contenedores y errores de release |
 | [`RELEASE_NOTES_1.0.0.md`](RELEASE_NOTES_1.0.0.md) | notas públicas de la release 1.0.0 |
+| [`RELEASE_NOTES_1.1.0.md`](RELEASE_NOTES_1.1.0.md) | notas públicas de la release 1.1.0 (macOS) |
 | [`DATA_FORMAT.md`](DATA_FORMAT.md) | `kult.data`/`language.data` e ingesta STX |
 | [`LANGUAGE_PACKS.md`](LANGUAGE_PACKS.md) | packs español/catalán y limitaciones de fuente |
 | [`TESTS.md`](TESTS.md) | inventario y política de tests |
@@ -123,3 +124,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0090-t096-ci-fix.md`](../notes/0090-t096-ci-fix.md)
 - [`notes/0091-t135-linux-tgz-appimage.md`](../notes/0091-t135-linux-tgz-appimage.md)
 - [`notes/0092-publicacion-1.0.0.md`](../notes/0092-publicacion-1.0.0.md)
+- [`notes/0093-macos-universal-1.1.0.md`](../notes/0093-macos-universal-1.1.0.md)

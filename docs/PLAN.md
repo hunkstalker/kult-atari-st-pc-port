@@ -86,14 +86,24 @@ catalán está validado y T-097/T-098 están corregidos y validados por el usuar
 T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-135
 (fullscreen/F1/F2, ranuras `slot-N.save`, OSD original y terminología catalana)
 están cerradas. T-094 (validación del ZIP Windows), T-092 (publicación 1.0.0) y
-T-096 (CI) están cerradas; la GitHub Release incluye ZIP Windows, TGZ Linux y
-AppImage. Siguiente hito: **A1 — investigación Amiga**.
+T-096 (CI) están cerradas; la GitHub Release 1.0.0 incluye ZIP Windows, TGZ
+Linux y AppImage. Siguiente hito: **M8 — macOS Universal 2 y release 1.1.0**.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
 `saves/`, `LEEME.txt` y licencias; sin headless ni `DIAGNOSTICO.txt`), ingesta
 `.STX`/`kult.data` (T-072) y `language.data` con español y catalán (T-091). El
 `.exe` quedó validado en el checklist de **T-061** (cerrada el 2026-10-23).
 Detalle: `notes/0012`, `notes/0013`.
+
+## M8 — macOS Universal 2 y release 1.1.0
+**Objetivo:** publicar Windows/Linux/macOS con un único `Kult.app` Universal 2,
+sin cuenta Apple Developer.
+**Contenido:** `Kult.app` + `Info.plist` + `.icns`; SDL3 universal; selector de
+STX; datos en `~/Library/Application Support/Kult`; ZIP/DMG; firma ad-hoc;
+CI macOS; `LEEME.txt` por plataforma.
+**Aceptación:** CI macOS en verde, artifact probado en Mac Intel, Apple Silicon
+verificado por arquitectura/CI, y GitHub Release 1.1.0 con checksums.
+**Nota:** no se notariza; Gatekeeper se documenta. Detalle: `notes/0093`.
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 **Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a

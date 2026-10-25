@@ -7,7 +7,7 @@ viven en **`TODO.md`**; el punto de retorno de sesión, en **`RETOMAR.md`**; el
 
 ## 1. Qué es
 
-Port nativo a **Windows y Linux** de **Kult: The Temple of Flying Saucers**
+Port nativo a **Windows, Linux y macOS** de **Kult: The Temple of Flying Saucers**
 (Exxos/ERE, 1989) que:
 - parte de la versión **Atari ST**,
 - corre como **C nativo sin emulador**,
@@ -95,7 +95,8 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022, T-101 y T-102–T-135 cerradas (fullscreen/F1/F2, ranuras F5/F6/F7 en `slot-N.save`, OSD con fuente original, terminología catalana T-119/T-132); release 1.0.0 publicada (T-092; commit `8eb079a`, ZIP/TGZ/AppImage); CI de release ejecutado con éxito (T-096); Linux TGZ + AppImage (T-135); siguiente hito A1 |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022, T-101 y T-102–T-135 cerradas (fullscreen/F1/F2, ranuras F5/F6/F7 en `slot-N.save`, OSD con fuente original, terminología catalana T-119/T-132); release 1.0.0 publicada (T-092; commit `8eb079a`, ZIP/TGZ/AppImage); CI de release ejecutado con éxito (T-096); Linux TGZ + AppImage (T-135) |
+| **M8** | **macOS Universal 2 + release 1.1.0** | 🚧 T-136 implementado en local: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP/DMG y CI; falta CI macOS y QA Intel. T-137 pendiente de tag/release. Sin notarizar (ad-hoc) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -107,7 +108,7 @@ Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 > (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta + idiomas) ✅ →
 > T-022 (`0x106f2` + `l_0101a8`) ✅ → T-102–T-135 (fullscreen/F1/F2/Estirar a pantalla + ranuras
 > `slot-N.save` + OSD original + terminología catalana T-119/T-132) ✅ → validación final (T-094) → publicación de
-> la release 1.0.0 y CI (T-092/T-096) ✅ → A1 → N3 → A2 → M5.
+> la release 1.0.0 y CI (T-092/T-096) ✅ → T-136 macOS → T-137 release 1.1.0 → A1 → N3 → A2 → M5.
 > **M5** es un extra de presentación independiente (no se junta con A). **A1** es
 > **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
 > **T-022/`0x106f2`** quedó cerrada en la **sesión 69**; detalle: `notes/0053`.
@@ -150,7 +151,7 @@ Recogidas como ADR en `docs/adr/`:
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
   docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta +
   idiomas) ✅ → T-022 ✅ → T-102–T-135 (fullscreen/F1/F2/Estirar a pantalla + ranuras `slot-N.save`
-  + OSD + terminología catalana T-119/T-132) ✅ → T-094 ✅ → publicación 1.0.0 y CI (T-092/T-096) ✅ → A1 (investigación Amiga, prerrequisito
+  + OSD + terminología catalana T-119/T-132) ✅ → T-094 ✅ → publicación 1.0.0 y CI (T-092/T-096) ✅ → T-136 macOS → T-137 release 1.1.0 → A1 (investigación Amiga, prerrequisito
   duro de N3) → N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) →
   M5 (opcional)`. Detalle: **`notes/0011`**.
 - **M7 build hecho (sesión 12, T-070)**: portabilidad Windows (`platform/time.c`
@@ -160,7 +161,7 @@ Recogidas como ADR en `docs/adr/`:
   SDL3 **3.4.10** MinGW en `third_party/` (gitignored) e icono (`.rc` + RGBA +
   `SDL_SetWindowIcon`). Detalle: **`notes/0012`**.
 - **Paquete portable**: CPack → ZIP Windows
-  (`build-win/kult-1.0.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`saves/`+
+  (`build-win/kult-1.1.0-win64.zip`: `kult.exe`+`SDL3.dll`+`data/`+`saves/`+
   `LEEME.txt`+licencias) y TGZ Linux; sin assets, sin headless y sin
   `DIAGNOSTICO.txt`.
 - **Datos + diagnóstico (sesión 13)**: el `.exe` "no hacía nada" porque en
@@ -273,11 +274,12 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** **A1 — investigación Amiga (`T-A00`/`T-A01`)**, prerrequisito
-  duro de N3. La release 1.0.0 y el CI (T-092/T-096) están cerrados; T-094 se
-  validó con el ZIP de T-135. T-022 (reinicio suave/ruta latente), T-095 (tests
-  de ingesta/packs), T-097/T-098, T-101 («DIE» → DADO/DAU) y T-102–T-135 ya están
-  cerrados. Después **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
+- **Siguiente:** **T-136 — macOS Universal 2** y **T-137 — release 1.1.0**;
+  después A1 (investigación Amiga, prerrequisito duro de N3). La release 1.0.0
+  y el CI (T-092/T-096) están cerrados; T-094 se validó con el ZIP de T-135.
+  T-022 (reinicio suave/ruta latente), T-095 (tests de ingesta/packs),
+  T-097/T-098, T-101 («DIE» → DADO/DAU) y T-102–T-135 ya están cerrados.
+  Después **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,
   guardado/carga, muerte → reinicio, **audio** T-082, input/anillo T-084,

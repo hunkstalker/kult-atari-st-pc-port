@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** release 1.0.0 publicada (2026-10-25). T-022, T-092, T-096, T-101 y T-102–T-135 cerradas. El port arranca
+**Estado:** release 1.0.0 publicada (2026-10-25); **v1.1.0 en preparación** con macOS Universal 2 (T-136). T-022, T-092, T-096, T-101 y T-102–T-135 cerradas. El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -30,7 +30,13 @@ AppImage; el CI terminó en `success`. La copia local de revisión
   ambos en `success`.
 - Hashes y detalle: `notes/0092`.
 
-**Siguiente tarea: A1 — investigación Amiga (`T-A00`/`T-A01`), prerrequisito de N3.**
+**Siguiente tarea: T-136 — macOS Universal 2 y release 1.1.0.**
+
+- Implementación local: `notes/0093`.
+- Pendiente: ejecutar CI macOS, probar el artifact en un Mac Intel y publicar
+  `v1.1.0` (T-137). Apple Silicon queda validado solo por CI.
+- macOS va firmado en modo ad-hoc y no notarizado; Gatekeeper se documenta en
+  `LEEME_MAC.txt`.
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -62,6 +68,16 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 - La suite diferencial del core queda fuera del CI público porque requiere
   `KULT.PRG`.
 - Primera ejecución correcta en `main` y `v1.0.0`. Detalle: `notes/0089`, `notes/0092`.
+
+**T-136 — implementado en local (2026-10-25):**
+
+- macOS Universal 2: `Kult.app` con SDL3, icono, `Info.plist` y `LEEME.txt`.
+- Datos en `~/Library/Application Support/Kult`; selector de STX en el primer
+  arranque y errores visibles desde Finder.
+- `make deps-macos`, `make cmake-macos`, `make package-macos`; ZIP/DMG con firma
+  ad-hoc y sin notarizar.
+- CI `macos-15` añadido; falta ejecutarlo y probar el artifact en Mac Intel.
+- Detalle: `notes/0093`.
 
 **T-094 — cerrada (2026-10-25):**
 
@@ -390,12 +406,12 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 
 **Pendiente, en este orden:**
 
-1. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: censo Amiga↔ST y decomp ASM;
-   prerrequisito duro de N3.
-2. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
-3. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
-4. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
-5. **macOS**: no hay tarea abierta; si se decide, planificar como 1.1.0.
+1. **T-136 — macOS Universal 2**: CI macOS, artifact y QA visual en Mac Intel.
+2. **T-137 — release 1.1.0**: Windows/Linux/macOS, checksums y GitHub Release.
+3. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
+4. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
+5. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
+6. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
 
 **Antes de tocar código:**
 

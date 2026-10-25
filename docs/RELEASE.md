@@ -4,16 +4,18 @@ Documento de decisión para la release del port. Prevalece sobre las partes de
 `docs/BUILD.md`, `LEEME.txt` o notas antiguas que describan `data/`, appdata,
 `kult-headless.exe` o `DIAGNOSTICO.txt` de forma distinta.
 
-## Estado publicado
+## Estado
 
-La release **1.0.0** está publicada en
-<https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.0.0>
-con ZIP Windows, TGZ Linux y AppImage. Detalle y hashes: `notes/0092`.
+La release **1.0.0** está publicada con ZIP Windows, TGZ Linux y AppImage
+(detalle: `notes/0092`). La **1.1.0** está en preparación y añade macOS
+Universal 2; el ZIP/DMG de macOS se firma en modo ad-hoc y no se notariza.
 
 ## Objetivo
 
-Release **portable**: todo vive en la carpeta donde el usuario descomprime el
-`.exe`. No hay instalador, appdata, `/tmp` ni rutas de datos configurables.
+Release **portable** en Windows/Linux: todo vive en la carpeta donde el usuario
+descomprime el paquete. En macOS, por ser un `.app`, los datos escribibles viven
+en `~/Library/Application Support/Kult/`. No hay instalador, appdata de Windows,
+`/tmp` ni rutas de datos configurables.
 
 El usuario aporta únicamente sus dos imágenes de disquete:
 
@@ -66,21 +68,57 @@ saves/
 ```
 
 `kult` lleva RUNPATH `$ORIGIN/lib`; el usuario solo aporta los dos STX. También
-se publica un AppImage: `kult-1.0.0-x86_64.AppImage`. Su `AppRun` usa
+se publica un AppImage: `kult-1.1.0-x86_64.AppImage`. Su `AppRun` usa
 `KULT_BASE_DIR` para crear `data/` y `saves/` junto al AppImage, y copia
 `language.data` y `LEEME.txt` a esa misma carpeta.
 
 Dependencias base: glibc/musl del sistema, X11 o Wayland y audio
 ALSA/Pulse. SDL3 va incluida.
 
+## macOS
+
+La release macOS es Universal 2 (Intel `x86_64` + Apple Silicon `arm64`),
+requiere macOS 11+ y se publica como ZIP y DMG:
+
+```text
+kult-1.1.0-macos-universal.zip
+kult-1.1.0-macos-universal.dmg
+```
+
+Contenido:
+
+```text
+Kult.app/
+├── Contents/MacOS/Kult
+├── Contents/Frameworks/libSDL3.0.dylib
+├── Contents/Resources/LEEME.txt
+├── Contents/Resources/kult.icns
+├── Contents/Resources/data/language.data
+├── Contents/Info.plist
+└── Contents/Resources/{settings,licencias}
+LEEME.txt
+Kult Settings.txt
+Kult Settings.png
+LICENSE
+THIRD_PARTY_NOTICES.md
+LICENSES/
+```
+
+`Kult.app` va firmada en modo ad-hoc si no se configura
+`MACOS_SIGN_IDENTITY`; no está notarizada. Si faltan `data/kult.data` y los STX,
+la app muestra un diálogo para seleccionar los dos discos y los copia a
+`~/Library/Application Support/Kult/data/`. Los datos, partidas, `kult.ini` y
+`kult.log` viven en esa carpeta.
+
 ## Arranque
 
-1. Crear/verificar `data/` y `saves/` junto al `.exe`.
-2. Escribir `kult.log` en la raíz, junto al `.exe`.
+1. Crear/verificar `data/` y `saves/` en la base de datos (carpeta del
+   ejecutable/AppImage o Application Support en macOS).
+2. Escribir `kult.log` en esa base.
 3. Si existe `data/kult.data` válido, usarlo y no mirar los `.STX`.
 4. Si no existe:
-   - buscar `Kult.STX` y `Kult (B).STX` primero en `data/` y después junto al
-     `.exe`;
+   - buscar `Kult.STX` y `Kult (B).STX` primero en `data/` y después en la base;
+   - en macOS, pedir los discos con el diálogo nativo si no aparecen;
    - ingerir, validar y generar `data/kult.data` de forma atómica;
    - no borrar los `.STX` automáticamente.
 5. Si no hay `kult.data` ni `.STX`, registrar el error y salir con código 2.
@@ -132,8 +170,9 @@ Política **B**:
 
 - todos los errores se registran en `kult.log` con timestamp y prefijo `ERROR:`;
 - no se muestran ventanas por errores normales;
-- solo se muestra un diálogo de emergencia si **no se puede escribir**
-  `kult.log`.
+- en Windows solo se muestra un diálogo de emergencia si **no se puede escribir**
+  `kult.log`; en macOS los errores fatales lanzados desde Finder muestran un
+  diálogo visible.
 
 Códigos de salida:
 
@@ -144,15 +183,16 @@ Códigos de salida:
 5 = carpeta no escribible
 ```
 
-Sin fallback a appdata, `/tmp` ni directorios alternativos. `KULT_DATA_DIR` y
-`KULT_LOG` se eliminan.
+En Windows/Linux no hay fallback a appdata ni `/tmp`; en macOS el fallback es
+`~/Library/Application Support/Kult`. `KULT_DATA_DIR` y `KULT_LOG` se eliminan.
 
 ## Escrituras del juego
 
 `CLEAR.BIN`, `SCENA.BIN` y cualquier estado modificable van a `saves/`, nunca al
 contenedor ni a `data/`. Las ranuras F5/F6/F7 se guardan como
-`saves/slot-0.save`…`slot-9.save`; `kult.ini`, junto al ejecutable, recuerda
-la pantalla, escala, ranura, volumen y silencio.
+`saves/slot-0.save`…`slot-9.save`; `kult.ini` recuerda la pantalla, escala,
+ranura, volumen y silencio. En macOS, `saves/`, `kult.ini` y `kult.log` están en
+`~/Library/Application Support/Kult/`.
 
 ## Empaquetado
 
@@ -180,7 +220,10 @@ saves/ (vacía)
 - `test`: `make test-port` + `make test-tools`.
 - `windows`: `make deps-win` + `make package-win`, ZIP y `.sha256`.
 - `linux`: `make deps-linux`, CMake, TGZ, AppImage y sus `.sha256`.
-- `release`: en tags `v*`, adjunta ZIP, TGZ, AppImage y checksums.
+- `macos`: `make deps-macos`, CMake Universal 2, ZIP/DMG, firma ad-hoc y
+  `.sha256`.
+- `release`: en tags `v*`, adjunta ZIP Windows, TGZ/AppImage Linux y ZIP/DMG
+  macOS con sus checksums.
 
 Los artefactos de CI pueden no ser byte-idénticos al ZIP validado localmente;
 cada paquete incluye su `.sha256`.
@@ -194,4 +237,6 @@ No contiene:
 - `DIAGNOSTICO.txt`;
 - tests ni documentación de desarrollo.
 
-`LEEME.txt` debe explicar el flujo STX → `kult.data`, el log y los errores.
+Cada bundle lleva su `LEEME.txt`: Windows, Linux TGZ y macOS lo instalan como
+`LEEME.txt`; el AppImage lo lleva dentro y su `AppRun` lo copia al lado del
+AppImage. Debe explicar el flujo STX → `kult.data`, el log y los errores.

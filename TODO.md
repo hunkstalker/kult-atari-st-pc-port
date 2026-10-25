@@ -21,6 +21,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y paquetes Windows/Linux | ✅ publicada (2026-10-25; CI OK; `notes/0092`) |
 | T-135 | Paquetes Linux TGZ + AppImage | ✅ cerrada; CI generó TGZ/AppImage (`notes/0091`, `notes/0092`) |
 | T-096 | CI en GitHub: HAL + paquetes Windows/Linux | ✅ cerrada; primera ejecución OK (`notes/0092`) |
+| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 implementado; CI/QA pendientes (`notes/0093`) |
+| T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de tag y GitHub Release |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
 | T-102 | Arranque fullscreen nativo, F1 fullscreen/ventana y F2 escala entera | ✅ cerrada (2026-10-25; `notes/0055`) |
@@ -182,6 +184,12 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-133 | **Limpieza y fuentes** | ✅ **sesión 71**: `.af` en `assets/design/`, xlsx fuera del índice, `temp/` y builds limpiados; ZIP/trazas conservados. Detalle: **`notes/0086`** |
 | T-134 | **`make deps-win`** | ✅ **sesión 71**: SDL3 3.4.10 con hashes y extracción idempotente; ZIP sin cambios. Detalle: **`notes/0087`** |
 | T-135 | **Linux TGZ + AppImage** | ✅ **cerrada (2026-10-25)**: `kult` + `libSDL3.so.0` con RPATH, `LEEME.txt` Linux, AppRun con `KULT_BASE_DIR`, `make deps-linux`; CI generó TGZ y AppImage. Detalle: **`notes/0091`**, **`notes/0092`** |
+
+## M8 — macOS y release 1.1.0
+| id | tarea | estado |
+|---|---|---|
+| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP/DMG y CI | 🚧 **implementación local**; falta ejecutar CI macOS, artifact y QA Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
+| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP/DMG, checksums y notas | ⬜ pendiente de tag/publicación |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para
