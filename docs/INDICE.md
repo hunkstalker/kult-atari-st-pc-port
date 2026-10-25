@@ -100,3 +100,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0067-t114-estirar-y-config.md`](../notes/0067-t114-estirar-y-config.md)
 - [`notes/0068-t115-desc-126-caminante.md`](../notes/0068-t115-desc-126-caminante.md)
 - [`notes/0069-t116-desc-126-erbe.md`](../notes/0069-t116-desc-126-erbe.md)
+- [`notes/0070-t117-es-erbe.md`](../notes/0070-t117-es-erbe.md)

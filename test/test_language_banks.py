@@ -72,6 +72,30 @@ def test_verbo_die_es_el_objeto_dado_no_morir():
         assert dict(_entries(source))[116] != "MORIR"
 
 
+def test_erbe_es_import():
+    counts = {"VERBS.BIN": 176, "DESCS.BIN": 407, "MOTSS.BIN": 131, "DIALS.BIN": 337}
+    for bank, count in counts.items():
+        source = next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()
+        entries = dict(_entries(source))
+        assert len(entries) == count
+        assert dict(_entries(_from_container(bank))) == entries
+
+    verbs = dict(_entries(_from_container("VERBS.BIN")))
+    descs = dict(_entries(_from_container("DESCS.BIN")))
+    mots = dict(_entries(_from_container("MOTSS.BIN")))
+    dials = dict(_entries(_from_container("DIALS.BIN")))
+    assert verbs[116] == "DADO"
+    assert mots[11] == "LOS GEMELOS"
+    assert mots[47] == "PAVO"
+    assert mots[92] == "DESAGÜE"
+    assert mots[129] == "SCI FI"
+    assert "SCI FI" in descs[202]
+    assert descs[406] == "[1a]"
+    assert "VICTORIA\nDE\nZORQ." in dials[333]
+    for entries in (descs, dials):
+        assert not any("SHEIFED" in t or "SAI FAI" in t for t in entries.values())
+
+
 def test_desc_126_passerby():
     expected = {
         "DESCS.BIN": "EL CAMINANTE\nSALVARA A ALGUIEN E INDICARA\nSU ELECCION AL REPTIL.",

@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101 y T-102–T-116 cerradas (2026-10-25). El port arranca
+**Estado:** T-022, T-101, T-102–T-117 cerradas (2026-10-25). El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -14,21 +14,19 @@ defecto, con **F1** ventana/fullscreen, **F2** ciclo
 **fuente original del juego**. `kult.ini` guarda pantalla, escala, ranura,
 volumen y silencio. El OSD caduca por tiempo real. La migración de
 `partida-N.bin` se retiró en T-108. El paquete incluye `Kult Settings.png` junto
-al ejecutable. DESC 126 usa la base ERBE en ES y una traducción catalana
-derivada. El ZIP está regenerado; queda **T-094** (validación visual/funcional
-final). La release 1.0.0 sigue sin push ni tag y **se publicará al final**
-(T-092). El único fichero no versionado aparte de la documentación es el backup
-local `docs/REVISION_CATALAN.original.xlsx`.
+al ejecutable. El español ya usa ERBE + correcciones; queda **T-118**
+(migración diferencial del catalán) y después **T-094**. La release 1.0.0 sigue
+sin push ni tag y **se publicará al final** (T-092). El único fichero no
+versionado aparte de la documentación es el backup local
+`docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación del ZIP de T-116.**
+**Siguiente tarea: T-118 — catalán diferencial desde ERBE.**
 
-- **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo arranque en Estirar
-  a pantalla, persistencia en `kult.ini`, F1/F2, ratón en ventana/fullscreen,
-  F5/F6/F7, volumen F9/F10/F11, `Kult Settings.png`, textos ES/CA, errores y OSD
-  con la fuente del juego.
-- **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `e0e2993b3975505990708139a0c0d0a8cbfffc6c15fa80c721726820c79c2427`.
-- **Después:** T-092 (publicar) y T-096 (CI).
+- **Alcance:** conservar el catalán validado donde el sentido no cambie; revisar
+  y retraducir solo las entradas afectadas por el nuevo español ERBE; mantener
+  las correcciones T-093 y los términos propios.
+- **Después:** regenerar `language.data`, empaquetar y **T-094** sobre el ZIP
+  final. Después T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -45,7 +43,20 @@ local `docs/REVISION_CATALAN.original.xlsx`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
-**T-116 — cerrada (sesión 71, 2026-10-25):**
+**T-117 — cerrada (sesión 71, 2026-10-25):**
+
+- Los cuatro bancos ES se sustituyen por ERBE + correcciones de
+  `make_es_fixed`, con `SAI FAI`→`SCI FI`; DADO se mantiene y DESC 406 conserva
+  el centinela `[1a]`.
+- `language.data` 77.881 B, `72d7f234…`; `test_erbe_es_import` añadido.
+- `make test` 519 core + 36 funciones / 255 `CHECK` + 4 herramientas; ZIP
+  final pendiente de T-118. Detalle: `notes/0070`.
+
+**T-116 — parcial (sesión 71, 2026-10-25):**
+
+- Solo se cambió DESC 126; alcance completo asumido por T-117/T-118.
+
+**T-115 — cerrada (sesión 71, 2026-10-25):**
 
 - DESC 126 usa la base ERBE en ES y la traducción catalana derivada:
   `EL CAMINANTE / SALVARA A ALGUIEN E INDICARA / SU ELECCION AL REPTIL.` y
@@ -191,26 +202,27 @@ local `docs/REVISION_CATALAN.original.xlsx`.
 
 **Artefactos actuales:**
 
-- ZIP actual: `build-win/kult-1.0.0-win64.zip`
+- Último ZIP empaquetado: `build-win/kult-1.0.0-win64.zip`
   SHA256 `e0e2993b3975505990708139a0c0d0a8cbfffc6c15fa80c721726820c79c2427`
-  (regenerado en T-116 con DESC 126 ERBE; pendiente de la validación T-094, no
-  es aún el artefacto de release).
+  (T-116; **obsoleto** tras T-117/T-118).
 - `assets/language.data` regenerado en T-116: 77.717 B,
   SHA256 `6d20cd132d58001a78d5c66901594cd78cd783ce338c13daba7baab02f05d72f`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 519 core + HAL (36 funciones / 255 `CHECK`) + diagnóstico
-  off/on + 3 herramientas OK.
-- `make package-win`: OK después de T-116 (12 entradas).
+  off/on + 4 herramientas OK.
+- `make package-win`: pendiente de T-118.
 
 **Pendiente, en este orden:**
 
-1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP de T-116.
-2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
+1. **T-118 — catalán diferencial.** Revisar las entradas afectadas por ERBE y
+   regenerar `language.data`.
+2. **T-094 — validación visual final.** Ejecutar la checklist
+   `docs/VERIFICACION.md` sobre el ZIP de T-118.
+3. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
-3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
+4. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
    assets; el core diferencial necesita `KULT.PRG` y queda local/opcional.
 
 **Antes de tocar código:**
