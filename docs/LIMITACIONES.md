@@ -79,9 +79,9 @@ datos.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
   Fwrite); **validado por el usuario**.
 - **Ranuras F5/F6/F7 (T-104)**: savestates del port (1 MiB + paleta + base
-  visible) en `saves/slot-0.save`…`slot-9.save`. Los `partida-N.bin`
-  anteriores se migran automáticamente. Solo se guarda/carga durante la partida.
-  **No** incluyen el estado del MFP/PSG: la música no rebobina al punto guardado.
+  visible) en `saves/slot-0.save`…`slot-9.save`. Solo se guarda/carga durante
+  la partida. **No** incluyen el estado del MFP/PSG: la música no rebobina al
+  punto guardado.
 - **Final del juego (T-089)**: intencionadamente **no vuelve al título**. El
   original entra en el bucle infinito de `attract` (`0x18c80`) y se queda en la
   animación de estrellas; el port ya lo reproduce. Para salir hay que cerrar la

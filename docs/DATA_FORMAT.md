@@ -39,8 +39,7 @@ offset  tamaño  contenido
 ```
 
 `kult.ini` (junto al ejecutable) guarda `save_slot = 0..9`. La carga valida
-magia, versión, ranura y tamaño antes de modificar la partida. Los antiguos
-`partida-N.bin` se migran automáticamente a `slot-N.save`.
+magia, versión, ranura y tamaño antes de modificar la partida.
 
 ## Contenedor `KULTDTA1`
 

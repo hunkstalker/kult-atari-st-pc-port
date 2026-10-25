@@ -745,7 +745,6 @@ static void test_osd_font(void) {
 static void test_slots(void) {
     const int slot = 4;
     const char *path4 = DIR "/saves/slot-4.save";
-    const char *legacy4 = DIR "/saves/partida-4.bin";
     uint8_t *a = malloc(PLATFORM_IMAGE_SIZE);
     uint8_t *b = malloc(PLATFORM_IMAGE_SIZE);
     uint16_t oldpal[16];
@@ -805,22 +804,8 @@ static void test_slots(void) {
         if (platform_palette()[i] != (uint16_t)(0x100 + i * 0x11)) ok = 0;
     CHECK(ok, "la carga debe restaurar la paleta");
 
-    CHECK(rename(path4, legacy4) == 0, "preparar partida-4.bin anterior");
-    platform_slots_init();
-    CHECK(fopen(path4, "rb") != NULL && fopen(legacy4, "rb") == NULL,
-          "el arranque debe migrar partida-N.bin a slot-N.save");
-
-    CHECK(rename(path4, legacy4) == 0, "preparar fallback de carga");
-    memset(a, 0, PLATFORM_IMAGE_SIZE);
-    CHECK(platform_slots_load(a, slot) == 0,
-          "la carga debe aceptar partida-N.bin si falta slot-N.save");
-    CHECK(a[0] == 11 && fopen(path4, "rb") != NULL &&
-          fopen(legacy4, "rb") == NULL,
-          "la carga debe migrar el nombre anterior");
-
     memset(b, 0x5a, PLATFORM_IMAGE_SIZE);
     remove(DIR "/saves/slot-9.save");
-    remove(DIR "/saves/partida-9.bin");
     CHECK(platform_slots_load(b, 9) != 0, "una ranura ausente debe fallar");
     CHECK(b[0] == 0x5a, "una ranura ausente no debe tocar la imagen");
 
@@ -869,9 +854,7 @@ static void test_slots(void) {
 
     remove(path3);
     remove(path4);
-    remove(legacy4);
     remove(bad);
-    remove(DIR "/saves/partida-8.bin");
     remove(DIR "/kult.ini");
     platform_video_restore(oldvis, oldpal);
     free(a);

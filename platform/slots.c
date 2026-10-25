@@ -27,10 +27,6 @@ static void slot_path(int slot, char *out, size_t out_size) {
     snprintf(out, out_size, "%s/slot-%d.save", platform_saves_dir(), slot);
 }
 
-static void legacy_slot_path(int slot, char *out, size_t out_size) {
-    snprintf(out, out_size, "%s/partida-%d.bin", platform_saves_dir(), slot);
-}
-
 static void ini_path(char *out, size_t out_size) {
     snprintf(out, out_size, "%s/kult.ini", platform_storage_path());
 }
@@ -127,31 +123,8 @@ static int ini_guardar_slot(int slot) {
     return 0;
 }
 
-static void migrar_ranuras_legacy(void) {
-    for (int slot = 0; slot < PLATFORM_SLOT_COUNT; slot++) {
-        char legacy[1300], path[1300];
-        legacy_slot_path(slot, legacy, sizeof legacy);
-        slot_path(slot, path, sizeof path);
-
-        FILE *f = fopen(legacy, "rb");
-        if (!f)
-            continue;
-        fclose(f);
-        f = fopen(path, "rb");
-        if (f) {
-            fclose(f);
-            continue;
-        }
-        if (rename(legacy, path) == 0)
-            platform_log("slot %d: migrado %s -> %s", slot, legacy, path);
-        else
-            platform_log("slot %d: no se pudo migrar %s", slot, legacy);
-    }
-}
-
 void platform_slots_init(void) {
     g_slot = ini_leer_slot();
-    migrar_ranuras_legacy();
     platform_log("slot activo: %d", g_slot);
 }
 
@@ -266,18 +239,10 @@ int platform_slots_load(uint8_t *img, int slot) {
         return -1;
 
     char path[1300];
-    int legacy = 0;
     slot_path(slot, path, sizeof path);
     FILE *f = fopen(path, "rb");
     if (!f) {
-        legacy_slot_path(slot, path, sizeof path);
-        f = fopen(path, "rb");
-        if (f)
-            legacy = 1;
-    }
-    if (!f) {
-        platform_log("slot %d: no existe (slot-%d.save ni partida-%d.bin)",
-                     slot, slot, slot);
+        platform_log("slot %d: no existe %s", slot, path);
         return -1;
     }
 
@@ -316,14 +281,6 @@ int platform_slots_load(uint8_t *img, int slot) {
     memcpy(img, tmp, PLATFORM_IMAGE_SIZE);
     platform_video_restore(get_be32(hdr + 48), pal);
     free(tmp);
-    if (legacy) {
-        char canonical[1300];
-        slot_path(slot, canonical, sizeof canonical);
-        if (rename(path, canonical) == 0)
-            platform_log("slot %d: migrado %s -> %s", slot, path, canonical);
-        else
-            platform_log("slot %d: no se pudo migrar %s", slot, path);
-    }
     platform_log("slot %d: cargado", slot);
     return 0;
 }
