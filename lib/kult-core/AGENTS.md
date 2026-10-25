@@ -20,7 +20,7 @@ Reimplementación en **C legible** de *Kult: The Temple of Flying Saucers*
 
 ## Estado (a día de hoy)
 
-- **Todo el juego portado:** 33 módulos, ~12.5k líneas, 518 pruebas
+- **Todo el juego portado:** 33 módulos, ~12.5k líneas, 519 pruebas
   diferenciales verdes, 0 warnings, `make regscan` `ids_reg=0`, `make core` OK.
 - **Revisión del C: cerrada y validada.** P0 (§7), P1 (§9) y P2 (§11)
   auditados; 0 ALTA/MEDIA abiertos. Base validada en Windows (2026-10-23) y
@@ -50,7 +50,7 @@ legibilidad).
 Desde la raíz del repo:
 
 ```sh
-make test                      # ejecuta el diferencial (518)
+make test                      # ejecuta el diferencial (519)
 make test PYTEST_ARGS=-n0      # serial (depuración)
 make regscan                   # debe dar ids_reg=0
 make core                      # build on-target con la API restringida

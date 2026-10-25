@@ -82,6 +82,7 @@ fn 0x162d8 set_palette_advance       # addq.l #1,a6 + set_palette_current
 fn 0x11014 noop_11014                # `rts` (stub sin efecto)
 fn 0x106e2 load_resource_list_a      # A5=0x1a3aa -> load_resource_list
 fn 0x106ea load_resource_list_b      # A5=0x1a3e4 -> load_resource_list
+fn 0x106f2 load_resource_list_c      # A5=0x1a2c8 -> load_resource_list (lista C)
 
 # ==== fichas por subsistema (docs/mapa/, 2026-09-15) ====
 # --- bucle / pacing ---

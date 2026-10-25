@@ -23,6 +23,7 @@
     load_named_screen;
     load_resource_list_a;
     load_resource_list_b;
+    load_resource_list_c;
     load_scena;
     music_stop;
     music_tick;

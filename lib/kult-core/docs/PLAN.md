@@ -39,7 +39,7 @@ Dos repos, con papeles distintos (fuente canónica: **`docs/PROYECTOS.md`**):
 - **Índice y nombres:** `work/decomp.c` del repo decomp (índice de funciones) y
   `symbols/names.txt` (registro de nombres).
 - **Verificación:** `tools/recreate_kit/` (arnés diferencial + oráculo Musashi).
-- **Pruebas:** `test/` (518 pruebas diferenciales).
+- **Pruebas:** `test/` (519 pruebas diferenciales).
 
 ## 3. Método (por cada pieza)
 
