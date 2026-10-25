@@ -11,9 +11,10 @@ C corra en Windows/Linux.
 > la ingesta de los discos originales, el selector de idioma, los packs español y
 > catalán, guardado/carga y audio, además de **fullscreen nativo**, **F1**
 > ventana/fullscreen, **F2** escala Auto/×1–×6 y **F5/F6/F7** para ranuras de
-> savestate (`saves/partida-N.bin`). Los textos catalanes están validados y las
+> savestate (`saves/partida-N.bin`), con avisos OSD en la **fuente original del
+> juego**. Los textos catalanes están validados y las
 > incidencias de texto de objetos y de La Horca están corregidas. Los tests de
-> ingesta y packs están integrados en `make test`. T-022, T-101 y T-102–T-105
+> ingesta y packs están integrados en `make test`. T-022, T-101 y T-102–T-106
 > están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
 > visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y

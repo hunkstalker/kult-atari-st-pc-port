@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "platform.h"
 #include "display.h"
@@ -129,30 +128,6 @@ static void mouse_to_game(float wx, float wy, int *x, int *y) {
     *y = gy;
 }
 
-static void draw_osd(void) {
-    if (!g_ren || !platform_osd_active())
-        return;
-    const char *text = platform_osd_text();
-    size_t n = strlen(text);
-    if (n == 0)
-        return;
-
-    int scale = g_vp.scale < 1 ? 1 : g_vp.scale;
-    float ox = (float)g_vp.x / (float)scale + 4.0f;
-    float oy = (float)g_vp.y / (float)scale + 185.0f;
-
-    SDL_SetRenderScale(g_ren, (float)scale, (float)scale);
-    SDL_SetRenderDrawBlendMode(g_ren, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(g_ren, 0, 0, 0, 180);
-    SDL_FRect bg = { ox - 2.0f, oy - 2.0f,
-                     (float)n * 8.0f + 4.0f, 12.0f };
-    SDL_RenderFillRect(g_ren, &bg);
-    SDL_SetRenderDrawColor(g_ren, 255, 255, 255, 255);
-    SDL_RenderDebugText(g_ren, ox, oy, text);
-    SDL_SetRenderDrawBlendMode(g_ren, SDL_BLENDMODE_NONE);
-    SDL_SetRenderScale(g_ren, 1.0f, 1.0f);
-}
-
 int platform_sdl_open(const char *title, int scale_mode, int fullscreen) {
     if (scale_mode < PLATFORM_SCALE_AUTO || scale_mode > PLATFORM_SCALE_MAX)
         scale_mode = PLATFORM_SCALE_AUTO;
@@ -216,7 +191,6 @@ int platform_sdl_open(const char *title, int scale_mode, int fullscreen) {
 }
 
 void platform_sdl_present(uint8_t *img) {
-    (void)img;
     if (!g_tex || !g_ren) return;
     update_viewport();
     /* KULT_VBL_TITLE=1: muestra el VBL actual en la barra de titulo (marcas). */
@@ -233,6 +207,8 @@ void platform_sdl_present(uint8_t *img) {
         }
     }
     platform_fb_to_rgba(g_rgba);
+    if (platform_osd_active())
+        platform_osd_draw_rgba(g_rgba, img, platform_osd_text());
     SDL_UpdateTexture(g_tex, NULL, g_rgba, FB_W * 4);
     SDL_SetRenderViewport(g_ren, NULL);
     SDL_SetRenderScale(g_ren, 1.0f, 1.0f);
@@ -241,7 +217,6 @@ void platform_sdl_present(uint8_t *img) {
     SDL_FRect dst = { (float)g_vp.x, (float)g_vp.y,
                       (float)g_vp.w, (float)g_vp.h };
     SDL_RenderTexture(g_ren, g_tex, NULL, &dst);
-    draw_osd();
     SDL_RenderPresent(g_ren);
 }
 

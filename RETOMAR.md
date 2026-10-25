@@ -6,21 +6,22 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102, T-103, T-104 y T-105 cerradas (2026-10-25).
-El port arranca en **fullscreen sin bordes a resolución nativa**, con **F1**
-ventana/fullscreen, **F2** escala Auto/1x–6x y **F5/F6/F7** para ranuras de
-savestate en `saves/partida-0.bin`…`partida-9.bin` (ranura activa en
-`kult.ini`). El ZIP está regenerado y documentado; queda **T-094** (validación
-visual/funcional final). La release 1.0.0 sigue sin push ni tag y **se
-publicará al final** (T-092). El único fichero no versionado aparte de la
-documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
+**Estado:** T-022, T-101, T-102, T-103, T-104, T-105 y T-106 cerradas
+(2026-10-25). El port arranca en **fullscreen sin bordes a resolución nativa**,
+con **F1** ventana/fullscreen, **F2** escala Auto/1x–6x, **F5/F6/F7** para
+ranuras de savestate en `saves/partida-0.bin`…`partida-9.bin` (ranura activa en
+`kult.ini`) y OSD con la **fuente original del juego**. El ZIP está regenerado;
+queda **T-094** (validación visual/funcional final). La release 1.0.0 sigue sin
+push ni tag y **se publicará al final** (T-092). El único fichero no versionado
+aparte de la documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación del ZIP de T-105.**
+**Siguiente tarea: T-094 — validación del ZIP de T-106.**
 
 - **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo F1/F2, ratón en
-  ventana/fullscreen, F5/F6/F7, ranura recordada y errores.
+  ventana/fullscreen, F5/F6/F7, ranura recordada, errores y OSD con la fuente
+  del juego.
 - **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `66bd1af5cb1deafff569fd527a48b7c923ef9ab4f7914a099faa33d43e5951c4`.
+  `cf4d9f487b4edd7582745002326306be0b7a861c7023b55246520e54a591b975`.
 - **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -37,6 +38,15 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-106 — cerrada (sesión 71, 2026-10-25):**
+
+- El OSD deja de usar `SDL_RenderDebugText` y pinta los glifos originales
+  (4×6) de `A_FONT_DATA` (`0x1d202`) en el RGBA del juego.
+- Nueva `test_osd_font` (fondo, bits, dígitos, minúsculas, carácter no
+  soportado y fuente ausente).
+- ZIP `cf4d9f487b4edd7582745002326306be0b7a861c7023b55246520e54a591b975`;
+  `make test` 519 core + 34 funciones / 218 `CHECK`. Detalle: `notes/0059`.
 
 **T-105 — cerrada (sesión 71, 2026-10-25):**
 
@@ -100,22 +110,22 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `66bd1af5cb1deafff569fd527a48b7c923ef9ab4f7914a099faa33d43e5951c4`
-  (regenerado en T-105 con F1/F2 y ranuras; pendiente de la validación T-094,
-  no es aún el artefacto de release).
+  SHA256 `cf4d9f487b4edd7582745002326306be0b7a861c7023b55246520e54a591b975`
+  (regenerado en T-106 con OSD de fuente original; pendiente de la validación
+  T-094, no es aún el artefacto de release).
 - `assets/language.data` SHA256
   `e69cae5a6ac0832415f9a4e4086609fb89b6577bcb6fced6cb998c82e608629b`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
-- `make test`: 519 core + HAL (33 funciones / 209 `CHECK`) + diagnóstico
+- `make test`: 519 core + HAL (34 funciones / 218 `CHECK`) + diagnóstico
   off/on + 2 herramientas OK.
-- `make package-win`: OK después de T-105.
+- `make package-win`: OK después de T-106.
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP de T-105.
+   `docs/VERIFICACION.md` sobre el ZIP de T-106.
 2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
 3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin

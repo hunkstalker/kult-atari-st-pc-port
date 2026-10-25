@@ -19,6 +19,7 @@ Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: **T-094** sobre este ZIP.
   `make package-win` OK.
 - ZIP: `build-win/kult-1.0.0-win64.zip`
   SHA256 `66bd1af5cb1deafff569fd527a48b7c923ef9ab4f7914a099faa33d43e5951c4`
+  (sustituido por T-106 al cambiar el OSD a la fuente del juego).
 - El ZIP contiene 11 entradas, sin tests, sin `kult-headless.exe` y sin
   `DIAGNOSTICO.txt`; `saves/` va vacía.
 

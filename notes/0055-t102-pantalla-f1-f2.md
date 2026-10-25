@@ -29,7 +29,8 @@ monitor y mantiene el juego a 320×200 con escalado entero y nearest-neighbour.
     con el viewport y la escala;
   - F1/F2 no se envían a la cola GEMDOS;
   - los eventos de resize/display/fullscreen recalculan el viewport;
-  - OSD discreto con `SDL_RenderDebugText` escalado con el juego.
+  - OSD discreto; la versión inicial de T-102 usó `SDL_RenderDebugText` (fuente
+  8×8 de SDL), sustituido en T-106 por los glifos originales de `A_FONT_DATA`.
 - `app/main.c`: `platform_sdl_open(title, scale_mode, fullscreen)`.
 
 ## Verificación

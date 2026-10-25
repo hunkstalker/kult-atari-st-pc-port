@@ -50,8 +50,8 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-105
-(2026-10-25), incluyendo F1/F2 y F5/F6/F7.**
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-106
+(2026-10-25), incluyendo F1/F2, F5/F6/F7 y el OSD con la fuente del juego.**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -141,7 +141,8 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    ve discreto.
    **F5** cicla ranuras 0–9, **F6** guarda y **F7** carga; probar una ranura
    vacía/corrupta (error visible), reiniciar y comprobar que se recuerda la
-   ranura. El savestate no rebobina la música.
+   ranura. El aviso debe verse con la **fuente 4×6 del juego**, no con una
+   fuente externa. El savestate no rebobina la música.
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
    **derecho** = acción + skip (puertas y A/B/C). **Clic mantenido ✅ (T-084)**:
    una pulsación mantenida = **un** clic; el anillo de acciones se abre una vez y

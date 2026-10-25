@@ -698,6 +698,50 @@ static void test_osd(void) {
 }
 
 /* T-103: savestate completo, validación de fichero y persistencia de ranura. */
+static void test_osd_font(void) {
+    uint8_t *rgba = malloc(320u * 200u * 4u);
+    uint8_t *img = calloc(1, PLATFORM_IMAGE_SIZE);
+    CHECK(rgba && img, "reservar buffers del OSD");
+    if (!rgba || !img) { free(rgba); free(img); return; }
+
+    const uint8_t glyph_a[6] = { 0x10, 0x08, 0x04, 0x02, 0x10, 0x00 };
+    const uint8_t glyph_1[6] = { 0x08, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    memcpy(img + A_FONT_DATA + 0x21 * 6, glyph_a, 6);
+    memcpy(img + A_FONT_DATA + 0x11 * 6, glyph_1, 6);
+
+    memset(rgba, 0x11, 320u * 200u * 4u);
+    platform_osd_draw_rgba(rgba, img, "A1");
+    const uint8_t *bg = rgba + ((189u * 320u + 3u) * 4u);
+    const uint8_t *pa = rgba + ((190u * 320u + 4u) * 4u);
+    const uint8_t *pa2 = rgba + ((191u * 320u + 5u) * 4u);
+    const uint8_t *p1 = rgba + ((190u * 320u + 9u) * 4u);
+    CHECK(bg[0] == 0 && bg[1] == 0 && bg[2] == 0 && bg[3] == 255,
+          "el OSD debe pintar fondo negro");
+    CHECK(pa[0] == 255 && pa[1] == 255 && pa[2] == 255 && pa[3] == 255,
+          "el glifo A debe salir blanco en su bit");
+    CHECK(pa2[0] == 255, "el segundo bit del glifo A debe salir blanco");
+    CHECK(p1[0] == 255, "el digito 1 debe usar el glifo del juego");
+    CHECK(rgba[0] == 0x11, "el OSD no debe tocar fuera de su caja");
+
+    memset(rgba, 0x11, 320u * 200u * 4u);
+    platform_osd_draw_rgba(rgba, img, "a");
+    pa = rgba + ((190u * 320u + 4u) * 4u);
+    CHECK(pa[0] == 255, "las minusculas deben mapearse a mayusculas");
+
+    memset(rgba, 0x11, 320u * 200u * 4u);
+    platform_osd_draw_rgba(rgba, img, "?");
+    pa = rgba + ((190u * 320u + 4u) * 4u);
+    CHECK(pa[0] == 0, "un caracter no soportado debe caer a espacio");
+
+    memset(img + A_FONT_DATA + 0x21 * 6, 0, 6);
+    memset(rgba, 0x11, 320u * 200u * 4u);
+    platform_osd_draw_rgba(rgba, img, "A");
+    CHECK(rgba[0] == 0x11, "sin fuente cargada no debe pintarse el OSD");
+
+    free(rgba);
+    free(img);
+}
+
 static void test_slots(void) {
     const int slot = 4;
     const char *path4 = DIR "/saves/partida-4.bin";
@@ -1411,6 +1455,7 @@ int main(void) {
     test_present_hook();
     test_display_viewport();
     test_osd();
+    test_osd_font();
     test_slots();
     test_cpu_delay();
     test_cpu_charge_cycles();
@@ -1434,7 +1479,7 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs/containers, ingesta STX/FAT12 y validacion PRG, "
-           "contenedor atomico, packs S/C, log, present por VBL, display/OSD, ranuras, "
+           "contenedor atomico, packs S/C, log, present por VBL, display/OSD (fuente del juego), ranuras, "
            "cpu_delay, cpu_cycles, disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
            "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;

@@ -17,18 +17,18 @@ catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
 El catalán está validado por el usuario. **T-022 está cerrada (2026-10-25):**
 `0x106f2` (lista C) está portado en el core con prueba diferencial (519 verdes)
 y `l_0101a8` reconstruido en `boot/` como ruta latente verificada
-(`KULT_SOFT_RESTART_AT`). T-102–T-105 añaden fullscreen nativo, F1/F2 y las
-ranuras F5/F6/F7; el ZIP está regenerado en T-105. La release **1.0.0** queda
-pendiente de la validación visual final (T-094); después publicación (T-092) y
-CI (T-096).
+(`KULT_SOFT_RESTART_AT`). T-102–T-106 añaden fullscreen nativo, F1/F2, las
+ranuras F5/F6/F7 y el OSD con la fuente original del juego; el ZIP está
+regenerado en T-106. La release **1.0.0** queda pendiente de la validación
+visual final (T-094); después publicación (T-092) y CI (T-096).
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
 separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). T-101
 corrigió «DIE» (objeto) a **DADO**/**DAU** en los packs y dejó regresión de
-textos. T-073 es opcional. Sin bloqueantes de código. Detalle:
-`notes/0053`–`notes/0058`.
-Ver `notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`notes/0058`.
+textos. T-106 usa la fuente original del juego para el OSD. T-073 es opcional.
+Sin bloqueantes de código. Detalle: `notes/0053`–`notes/0059`.
+Ver `notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`notes/0059`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
