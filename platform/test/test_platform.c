@@ -23,6 +23,8 @@
 #include "platform_internal.h"
 #include "boot.h"
 #include "container.h"
+#include "diskimage.h"
+#include "sha256.h"
 
 /* Stub del core para poder probar el tick de VBL aislado (boot/vbl.c). */
 uint32_t pal_next_byte(uint8_t *img) { (void)img; return 0; }
@@ -44,6 +46,13 @@ static int g_fail;
 #define CHECK(cond, msg) do { \
     if (!(cond)) { fprintf(stderr, "FALLO: %s\n", msg); g_fail = 1; } \
 } while (0)
+
+/* Inyecta una cadena de teclas la primera vez que lo llama Cnecin bloqueante. */
+static const char *g_inject;
+static void inject_idle(uint8_t *img) {
+    (void)img;
+    if (g_inject) { platform_key_push_str(g_inject); g_inject = NULL; }
+}
 
 /* --- utilidades --- */
 static void put_name(uint32_t addr, const char *s) {
@@ -133,6 +142,458 @@ static void test_containers(void) {
     free(out);
     remove(game);
     platform_fs_reload_containers();
+}
+
+/* --- T-095: imágenes de disco (STX/Pasti y FAT12) --- */
+static void wr16le(uint8_t *p, uint16_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
+static void wr32le(uint8_t *p, uint32_t v) {
+    p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8);
+    p[2] = (uint8_t)(v >> 16); p[3] = (uint8_t)(v >> 24);
+}
+
+static uint8_t *read_whole(const char *path, size_t *len) {
+    FILE *f = fopen(path, "rb");
+    if (!f) return NULL;
+    if (fseek(f, 0, SEEK_END) != 0) { fclose(f); return NULL; }
+    long n = ftell(f);
+    if (n < 0 || fseek(f, 0, SEEK_SET) != 0) { fclose(f); return NULL; }
+    uint8_t *b = malloc((size_t)n ? (size_t)n : 1);
+    if (!b) { fclose(f); return NULL; }
+    if (n && fread(b, 1, (size_t)n, f) != (size_t)n) { free(b); fclose(f); return NULL; }
+    fclose(f);
+    *len = (size_t)n;
+    return b;
+}
+
+static int write_whole(const char *path, const uint8_t *b, size_t n) {
+    FILE *f = fopen(path, "wb");
+    if (!f) return -1;
+    int ok = fwrite(b, 1, n, f) == n;
+    if (fclose(f) != 0) ok = 0;
+    return ok ? 0 : -1;
+}
+
+#define TEST_RAW_SIZE (2u * 80u * 9u * 512u)
+
+static void test_diskimage_stx(void) {
+    const char *p = DIR "/TESTU.STX";
+    /* Pista 0 sin comprimir: 9 sectores de 512 B. */
+    size_t n = 16 + 16 + 9 * 512;
+    uint8_t *stx = calloc(1, n);
+    CHECK(stx != NULL, "crear STX sintetico");
+    if (stx) {
+        memcpy(stx, "RSY", 3);
+        wr32le(stx + 16, (uint32_t)(16 + 9 * 512));
+        wr16le(stx + 16 + 8, 9);
+        wr16le(stx + 16 + 10, 0);
+        stx[16 + 14] = 0;
+        for (int i = 0; i < 9; i++)
+            memset(stx + 16 + 16 + i * 512, 0x10 + i, 512);
+
+        CHECK(write_whole(p, stx, n) == 0, "escribir STX sin comprimir");
+        uint8_t *raw = calloc(1, TEST_RAW_SIZE);
+        CHECK(raw != NULL, "reservar imagen raw");
+        if (raw) {
+            CHECK(kult_stx_to_raw(p, raw, TEST_RAW_SIZE) == 0,
+                  "extraer STX sin comprimir");
+            for (int i = 0; i < 9; i++)
+                CHECK(raw[i * 512] == (uint8_t)(0x10 + i) &&
+                      raw[i * 512 + 511] == (uint8_t)(0x10 + i),
+                      "los 9 sectores de la pista 0 caen en su LBA");
+            CHECK(raw[9 * 512] == 0, "la pista 1 no se toca");
+            free(raw);
+        }
+        free(stx);
+    }
+
+    /* Pista 1 comprimida (tabla de cabeceras + datos). */
+    p = DIR "/TESTC.STX";
+    n = 16 + 16 + 9 * 16 + 9 * 512;
+    stx = calloc(1, n);
+    CHECK(stx != NULL, "crear STX comprimido");
+    if (stx) {
+        memcpy(stx, "RSY", 3);
+        wr32le(stx + 16, (uint32_t)(16 + 9 * 16 + 9 * 512));
+        wr16le(stx + 16 + 8, 9);
+        wr16le(stx + 16 + 10, 1);
+        stx[16 + 14] = 1;                       /* pista 1, cara 0 */
+        for (int i = 0; i < 9; i++) {
+            uint8_t *h = stx + 16 + 16 + i * 16;
+            wr32le(h, (uint32_t)(i * 512));
+            h[8] = 1;                           /* stn */
+            h[9] = 0;                           /* sid */
+            h[10] = (uint8_t)(i + 1);           /* snum (1-based) */
+            h[11] = 2;                          /* 128 << 2 = 512 B */
+            memset(stx + 16 + 16 + 9 * 16 + i * 512, 0x40 + i, 512);
+        }
+        CHECK(write_whole(p, stx, n) == 0, "escribir STX comprimido");
+        uint8_t *raw = calloc(1, TEST_RAW_SIZE);
+        if (raw) {
+            CHECK(kult_stx_to_raw(p, raw, TEST_RAW_SIZE) == 0,
+                  "extraer STX comprimido");
+            for (int i = 0; i < 9; i++)
+                CHECK(raw[(9 + i) * 512] == (uint8_t)(0x40 + i),
+                      "la tabla de cabeceras coloca cada sector en su LBA");
+            free(raw);
+        }
+        free(stx);
+    }
+
+    /* Cabecera Pasti inválida. */
+    p = DIR "/BAD.STX";
+    const uint8_t bad[16] = {'N', 'O', 'P', 'E'};
+    CHECK(write_whole(p, bad, sizeof bad) == 0, "escribir STX invalido");
+    uint8_t raw[512] = {0};
+    CHECK(kult_stx_to_raw(p, raw, sizeof raw) != 0,
+          "un STX con cabecera no Pasti debe rechazarse");
+
+    CHECK(kult_stx_name("Kult.STX") && kult_stx_name("kult.stx") &&
+          !kult_stx_name("Kult.ST") && !kult_stx_name("Kult.STX.bak") &&
+          !kult_stx_name(".stx"),
+          "deteccion de extension .stx");
+
+    remove(DIR "/TESTU.STX");
+    remove(DIR "/TESTC.STX");
+    remove(DIR "/BAD.STX");
+}
+
+static void fat12_set(uint8_t *img, uint32_t fat_start, uint16_t n, uint16_t v) {
+    size_t off = fat_start + (size_t)(n * 3u) / 2u;
+    uint16_t cur = (uint16_t)(img[off] | (img[off + 1] << 8));
+    if (n & 1u) cur = (uint16_t)((cur & 0x000fu) | ((v & 0x0fffu) << 4));
+    else        cur = (uint16_t)((cur & 0xf000u) | (v & 0x0fffu));
+    img[off] = (uint8_t)cur; img[off + 1] = (uint8_t)(cur >> 8);
+}
+
+static void fat12_root(uint8_t *img, size_t off, const char name[8],
+                       const char ext[3], uint8_t attr, uint16_t cluster,
+                       uint32_t size) {
+    memcpy(img + off, name, 8);
+    memcpy(img + off + 8, ext, 3);
+    img[off + 11] = attr;
+    wr16le(img + off + 26, cluster);
+    wr32le(img + off + 28, size);
+}
+
+static void test_diskimage_fat12(void) {
+    enum { IMG = 32768, FAT_START = 512, ROOT_START = 1024, DATA_START = 1536 };
+    uint8_t *img = calloc(1, IMG);
+    CHECK(img != NULL, "crear imagen FAT12");
+    if (!img) return;
+
+    wr16le(img + 0x0b, 512);                    /* bytes por sector */
+    img[0x0d] = 1;                              /* sectores por cluster */
+    wr16le(img + 0x0e, 1);                      /* reservados */
+    img[0x10] = 1;                              /* FATs */
+    wr16le(img + 0x11, 16);                     /* entradas de root */
+    wr16le(img + 0x16, 1);                      /* sectores por FAT */
+
+    fat12_set(img, FAT_START, 1, 0xfff);
+    fat12_set(img, FAT_START, 2, 3);            /* FOO: 2 -> 3 -> fin */
+    fat12_set(img, FAT_START, 3, 0xfff);
+    fat12_set(img, FAT_START, 4, 0xfff);        /* BAR: 4 -> fin */
+
+    /* FOO.BIN: 600 B (cluster 2 completo + 88 B del 3). */
+    fat12_root(img, ROOT_START + 0 * 32, "FOO     ", "BIN", 0x20, 2, 600);
+    memset(img + DATA_START, 0x11, 512);
+    memset(img + DATA_START + 512, 0x22, 88);
+    /* Entrada borrada (0xE5), LFN (0x0F) y directorio (0x10): se ignoran. */
+    fat12_root(img, ROOT_START + 1 * 32, "DEL     ", "BIN", 0x20, 2, 100);
+    img[ROOT_START + 1 * 32] = 0xe5;
+    fat12_root(img, ROOT_START + 2 * 32, "LFN     ", "   ", 0x0f, 0, 0);
+    fat12_root(img, ROOT_START + 3 * 32, "DIR     ", "   ", 0x10, 2, 0);
+    /* Duplicado (mismo nombre sin distinguir mayúsculas): gana el primero. */
+    fat12_root(img, ROOT_START + 4 * 32, "foo     ", "bin", 0x20, 4, 512);
+    /* BAR.DAT desde el cluster 4. */
+    fat12_root(img, ROOT_START + 5 * 32, "BAR     ", "DAT", 0x20, 4, 512);
+    memset(img + DATA_START + 2 * 512, 0x33, 512);
+
+    kult_filelist fl = {0};
+    CHECK(kult_fat12_extract(img, IMG, &fl) == 0, "extraer FAT12 sintetica");
+    CHECK(fl.n == 2, "solo se extraen FOO.BIN y BAR.DAT");
+    const kult_memfile *foo = kult_filelist_find(&fl, "foo.bin");
+    CHECK(foo != NULL && foo->size == 600, "FOO.BIN debe tener 600 B");
+    if (foo && foo->size == 600) {
+        CHECK(foo->data[0] == 0x11 && foo->data[511] == 0x11 &&
+              foo->data[512] == 0x22 && foo->data[599] == 0x22,
+              "FOO.BIN sigue la cadena de clusters 2 -> 3");
+    }
+    const kult_memfile *bar = kult_filelist_find(&fl, "BAR.DAT");
+    CHECK(bar != NULL && bar->size == 512 && bar->data[0] == 0x33,
+          "BAR.DAT se extrae del cluster 4");
+    kult_filelist_free(&fl);
+    CHECK(fl.n == 0 && fl.v[0].data == NULL, "la lista queda vacia al liberar");
+
+    uint8_t zero[512] = {0};
+    CHECK(kult_fat12_extract(zero, sizeof zero, &fl) != 0,
+          "un BPB invalido debe rechazarse");
+    free(img);
+}
+
+static const char *const k_required[] = {
+    "KULT.PRG","PRES.PI1","DRAP.PI1","FOND.PI1","BRUIT.BIN","PUZZL.BIN","CLEAR.BIN",
+    "ECHE0.BIN","ECHE1.BIN","ECHE2.BIN","ECHE3.BIN","ECHE4.BIN","ECHE5.BIN","ECHE6.BIN","ECHE7.BIN",
+    "DESCD.BIN","DESCE.BIN","DESCF.BIN","DIALD.BIN","DIALE.BIN","DIALF.BIN",
+    "MOTSD.BIN","MOTSE.BIN","MOTSF.BIN","VERBD.BIN","VERBE.BIN","VERBF.BIN"
+};
+
+static void add_list_file(kult_filelist *fl, const char *name,
+                          const uint8_t *data, uint32_t size) {
+    kult_memfile *m = &fl->v[fl->n++];
+    snprintf(m->name, sizeof m->name, "%s", name);
+    m->data = malloc(size ? size : 1);
+    if (m->data && size) memcpy(m->data, data, size);
+    m->size = size;
+}
+
+static void test_ingest_validate(void) {
+    const uint8_t dummy[4] = {1, 2, 3, 4};
+    kult_filelist fl = {0};
+    for (size_t i = 0; i < sizeof k_required / sizeof k_required[0]; i++)
+        add_list_file(&fl, k_required[i], dummy, sizeof dummy);
+    CHECK(kult_ingest_validate(&fl) != 0,
+          "un KULT.PRG con hash desconocido debe rechazarse");
+    kult_filelist_free(&fl);
+
+    /* Falta un fichero obligatorio. */
+    for (size_t i = 0; i < sizeof k_required / sizeof k_required[0] - 1; i++)
+        add_list_file(&fl, k_required[i], dummy, sizeof dummy);
+    CHECK(kult_ingest_validate(&fl) != 0,
+          "la falta de un fichero obligatorio debe rechazarse");
+    kult_filelist_free(&fl);
+
+    /* Camino positivo condicional con el PRG real del oráculo. */
+    static const char *const prg_paths[] = {
+        "work/disk_a/KULT.PRG", "build/data/KULT.PRG", "build-win/data/KULT.PRG"
+    };
+    uint8_t *prg = NULL; size_t prg_len = 0;
+    for (size_t i = 0; i < sizeof prg_paths / sizeof prg_paths[0] && !prg; i++)
+        prg = read_whole(prg_paths[i], &prg_len);
+    if (!prg) {
+        fprintf(stderr, "nota: sin KULT.PRG; se omite la validacion positiva\n");
+        return;
+    }
+    for (size_t i = 0; i < sizeof k_required / sizeof k_required[0]; i++)
+        add_list_file(&fl, k_required[i], dummy, sizeof dummy);
+    kult_memfile *kp = (kult_memfile *)kult_filelist_find(&fl, "KULT.PRG");
+    if (kp) {
+        free(kp->data);
+        kp->data = prg;
+        kp->size = (uint32_t)prg_len;
+        prg = NULL;
+    }
+    CHECK(kult_ingest_validate(&fl) == 0,
+          "el KULT.PRG real debe validar por SHA-256");
+    kult_filelist_free(&fl);
+    free(prg);
+}
+
+/* Discos conocidos y pipeline completo (detección + Pasti + FAT12 + escritura
+ * atómica de kult.data). Condicional: usa los STX reales si están presentes. */
+static void test_ingest_pipeline(void) {
+    static const char *const dirs[] = { "build/data", "build-win/data", "data" };
+    char a[256] = {0}, b[256] = {0};
+    for (size_t i = 0; i < sizeof dirs / sizeof dirs[0] && !a[0]; i++) {
+        char pa[256], pb[256];
+        snprintf(pa, sizeof pa, "%s/Kult.STX", dirs[i]);
+        snprintf(pb, sizeof pb, "%s/Kult (B).STX", dirs[i]);
+        FILE *fa = fopen(pa, "rb"), *fb = fopen(pb, "rb");
+        if (fa && fb) { snprintf(a, sizeof a, "%s", pa); snprintf(b, sizeof b, "%s", pb); }
+        if (fa) fclose(fa);
+        if (fb) fclose(fb);
+    }
+
+    if (!a[0]) {
+        fprintf(stderr, "nota: sin STX reales; se omite el pipeline de ingesta\n");
+    } else {
+        size_t la = 0, lb = 0;
+        uint8_t *ba = read_whole(a, &la), *bb = read_whole(b, &lb);
+        CHECK(ba && bb, "leer los STX reales");
+        if (ba && bb) {
+            kult_sha256 s; uint8_t h[32]; int role = -1;
+            kult_sha256_init(&s); kult_sha256_update(&s, ba, la); kult_sha256_final(&s, h);
+            CHECK(kult_ingest_known_disk(h, &role) == 1 && role == 0,
+                  "el STX A se detecta por SHA-256");
+            kult_sha256_init(&s); kult_sha256_update(&s, bb, lb); kult_sha256_final(&s, h);
+            role = -1;
+            CHECK(kult_ingest_known_disk(h, &role) == 1 && role == 1,
+                  "el STX B se detecta por SHA-256");
+            h[0] ^= 0xff;
+            CHECK(kult_ingest_known_disk(h, &role) == 0,
+                  "un SHA-256 alterado no es un disco conocido");
+
+            CHECK(write_whole(DIR "/data/A.STX", ba, la) == 0 &&
+                  write_whole(DIR "/data/B.STX", bb, lb) == 0,
+                  "copiar los STX a la carpeta de prueba");
+            remove(DIR "/data/kult.data");
+            CHECK(platform_ingest_ensure() == 0,
+                  "la ingesta completa debe generar kult.data");
+            CHECK(fopen(DIR "/data/kult.data.tmp", "rb") == NULL,
+                  "no debe quedar el temporal tras el rename atomico");
+
+            kult_container c;
+            if (kult_container_load(DIR "/data/kult.data", KULT_CONTAINER_GAME,
+                                    &c) == 0) {
+                CHECK(c.count >= sizeof k_required / sizeof k_required[0],
+                      "kult.data contiene todos los ficheros");
+                uint32_t sz = 0;
+                CHECK(kult_container_get(&c, "KULT.PRG", &sz) != NULL && sz > 0,
+                      "kult.data contiene KULT.PRG");
+                CHECK(kult_container_get(&c, "PRES.PI1", &sz) != NULL,
+                      "kult.data contiene PRES.PI1");
+                kult_container_free(&c);
+            } else {
+                CHECK(0, "kult.data generado debe cargar como tipo GAME");
+            }
+
+            platform_fs_reload_containers();
+            uint8_t *rd = NULL; size_t rn = 0;
+            CHECK(platform_file_read("KULT.PRG", &rd, &rn) == 0 && rn > 0,
+                  "kult.data generado se sirve por la capa de ficheros");
+            free(rd);
+        }
+        free(ba); free(bb);
+    }
+
+    /* Sin STX ni kult.data, la ingesta debe fallar de forma limpia. */
+    remove(DIR "/data/A.STX");
+    remove(DIR "/data/B.STX");
+    remove(DIR "/data/kult.data");
+    platform_fs_reload_containers();
+    CHECK(platform_ingest_ensure() != 0,
+          "sin discos conocidos la ingesta debe fallar");
+}
+
+/* Escritura atómica y validación del contenedor. */
+static void test_container_atomic(void) {
+    const char *path = DIR "/data/atomic.data";
+    const char *names[] = {"A.BIN", "B.BIN"};
+    const uint8_t da[] = {1, 2, 3}, db[] = {4, 5};
+    const uint8_t *blobs[] = {da, db};
+    const uint32_t sizes[] = {sizeof da, sizeof db};
+
+    CHECK(kult_container_write(path, KULT_CONTAINER_GAME, names, blobs, sizes, 2) == 0,
+          "escribir contenedor atomico");
+    size_t before = 0;
+    uint8_t *orig = read_whole(path, &before);
+    CHECK(orig != NULL, "leer contenedor escrito");
+    CHECK(fopen(DIR "/data/atomic.data.tmp", "rb") == NULL,
+          "el temporal debe desaparecer tras el rename");
+
+    CHECK(kult_container_write(path, KULT_CONTAINER_GAME, NULL, NULL, NULL, 4097) != 0,
+          "un contenedor con demasiadas entradas debe rechazarse");
+    size_t after = 0;
+    uint8_t *now = read_whole(path, &after);
+    CHECK(now && before == after && memcmp(orig, now, before) == 0,
+          "un fallo de escritura no debe tocar el contenedor anterior");
+    free(now);
+
+    kult_container c;
+    CHECK(kult_container_load(path, KULT_CONTAINER_LANG, &c) != 0,
+          "cargar un tipo distinto debe fallar");
+    CHECK(kult_container_load(path, KULT_CONTAINER_GAME, &c) == 0,
+          "el contenedor propio debe cargar");
+    if (c.data) {
+        uint32_t sz = 0;
+        const uint8_t *p = kult_container_get(&c, "b.bin", &sz);
+        CHECK(p && sz == 2 && p[0] == 4 && p[1] == 5,
+              "lectura sin distinguir mayusculas");
+        kult_container_free(&c);
+    }
+
+    uint8_t bad[32] = {'X'};
+    CHECK(write_whole(path, bad, sizeof bad) == 0, "escribir contenedor invalido");
+    CHECK(kult_container_load(path, KULT_CONTAINER_GAME, &c) != 0,
+          "un magic invalido debe rechazarse");
+
+    free(orig);
+    remove(path);
+}
+
+/* --- T-095: selección y carga de los packs S/C --- */
+static void test_language_packs(void) {
+    const char *lang = DIR "/data/language.data";
+    const char *names[] = {"VERBS.BIN", "VERBC.BIN"};
+    const uint8_t es[] = {0x53, 0x01, 0x02};
+    const uint8_t ca[] = {0x43, 0x03, 0x04};
+    const uint8_t *blobs[] = {es, ca};
+    const uint32_t sizes[] = {sizeof es, sizeof ca};
+
+    CHECK(kult_container_write(lang, KULT_CONTAINER_LANG, names, blobs, sizes, 2) == 0,
+          "crear language.data sintetico con S y C");
+    platform_fs_reload_containers();
+
+    uint8_t *out = NULL; size_t n = 0;
+    CHECK(platform_file_read("VERBS.BIN", &out, &n) == 0 &&
+          n == sizeof es && memcmp(out, es, sizeof es) == 0,
+          "carga del pack S");
+    free(out);
+    out = NULL; n = 0;
+    CHECK(platform_file_read("VERBC.BIN", &out, &n) == 0 &&
+          n == sizeof ca && memcmp(out, ca, sizeof ca) == 0,
+          "carga del pack C");
+    free(out);
+
+    platform_input_set_auto(0);
+    platform_set_idle(inject_idle);
+    g_inject = "s";
+    CHECK(kult_boot_language(g_img) == 'S', "la tecla 's' elige el pack S instalado");
+    g_inject = "c";
+    CHECK(kult_boot_language(g_img) == 'C', "la tecla 'c' elige el pack C instalado");
+    platform_set_idle(NULL);
+
+    remove(lang);
+    platform_fs_reload_containers();
+    platform_set_idle(inject_idle);
+    g_inject = "s";
+    CHECK(kult_boot_language(g_img) == 'E',
+          "sin pack S instalado se cae a E");
+    platform_set_idle(NULL);
+    platform_input_set_auto(1);
+}
+
+/* El pack real versionado (assets/language.data) debe incluir DRAP y los dos
+ * idiomas completos. Condicional: se omite si no está en el árbol de trabajo. */
+static void test_language_assets(void) {
+    static const char *const paths[] = {
+        "assets/language.data", "../assets/language.data"
+    };
+    const char *path = NULL;
+    for (size_t i = 0; i < sizeof paths / sizeof paths[0] && !path; i++) {
+        FILE *f = fopen(paths[i], "rb");
+        if (f) { fclose(f); path = paths[i]; }
+    }
+    if (!path) {
+        fprintf(stderr, "nota: sin assets/language.data; se omite el pack real\n");
+        return;
+    }
+    kult_container c;
+    CHECK(kult_container_load(path, KULT_CONTAINER_LANG, &c) == 0,
+          "assets/language.data debe ser un contenedor LANG");
+    if (!c.data) return;
+
+    static const char *const req[] = {
+        "DRAP.PI1", "CARACS.BIN",
+        "VERBS.BIN", "VERBC.BIN", "MOTSS.BIN", "MOTSC.BIN",
+        "DESCS.BIN", "DESCC.BIN", "DIALS.BIN", "DIALC.BIN"
+    };
+    for (size_t i = 0; i < sizeof req / sizeof req[0]; i++) {
+        uint32_t sz = 0;
+        CHECK(kult_container_get(&c, req[i], &sz) != NULL && sz > 0,
+              "el pack real debe incluir un fichero no vacio");
+    }
+    static const char *const pairs[][2] = {
+        {"VERBS.BIN", "VERBC.BIN"}, {"MOTSS.BIN", "MOTSC.BIN"},
+        {"DESCS.BIN", "DESCC.BIN"}, {"DIALS.BIN", "DIALC.BIN"}
+    };
+    for (size_t i = 0; i < sizeof pairs / sizeof pairs[0]; i++) {
+        uint32_t se = 0, sc = 0;
+        const uint8_t *pe = kult_container_get(&c, pairs[i][0], &se);
+        const uint8_t *pc = kult_container_get(&c, pairs[i][1], &sc);
+        CHECK(pe && pc && !(se == sc && memcmp(pe, pc, se) == 0),
+              "los packs S y C no deben ser identicos");
+    }
+    kult_container_free(&c);
 }
 
 /* Log de diagnóstico: siempre en <base>/kult.log. */
@@ -511,13 +972,6 @@ static void test_prg_loader(void) {
 
 /* --- T-020: menú de idioma fiel (_start, boot/language.c) --- */
 
-/* Inyecta una cadena de teclas la primera vez que lo llama Cnecin bloqueante. */
-static const char *g_inject;
-static void inject_idle(uint8_t *img) {
-    (void)img;
-    if (g_inject) { platform_key_push_str(g_inject); g_inject = NULL; }
-}
-
 static void test_boot_language(void) {
     /* Modo auto (headless): las teclas pendientes se drenan y gana la auto-tecla
      * ('E' por KULT_KEY). */
@@ -766,6 +1220,13 @@ int main(void) {
 
     test_fs();
     test_containers();
+    test_diskimage_stx();
+    test_diskimage_fat12();
+    test_ingest_validate();
+    test_ingest_pipeline();
+    test_container_atomic();
+    test_language_packs();
+    test_language_assets();
     test_log();
     test_present_hook();
     test_cpu_delay();
@@ -789,8 +1250,9 @@ int main(void) {
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
-    printf("RESULTADO: OK (fs/containers, log, present por VBL, cpu_delay, cpu_cycles, disk_delay, "
-           "video, entrada/botones (clic mantenido), Crawio, replay, reloj, tick VBL, "
-           "loader PRG, idioma, musica PSG, Timer A, RMS)\n");
+    printf("RESULTADO: OK (fs/containers, ingesta STX/FAT12 y validacion PRG, "
+           "contenedor atomico, packs S/C, log, present por VBL, cpu_delay, cpu_cycles, "
+           "disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
+           "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }
