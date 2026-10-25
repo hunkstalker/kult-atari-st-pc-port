@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102–T-135 cerradas (2026-10-25). El port arranca
+**Estado:** release 1.0.0 publicada (2026-10-25). T-022, T-092, T-096, T-101 y T-102–T-135 cerradas. El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -17,22 +17,20 @@ volumen y silencio. El OSD caduca por tiempo real. La migración de
 al ejecutable. El español usa ERBE + correcciones; el catalán parte de la
 revisión T-093 y tiene la migración diferencial T-118 y el cierre terminológico
 ERBE de T-119/T-120 (`CALZE`→`GOT`, `NETWERK`/`REZZO`→`XARXA TUNER`;
-se conservan `DAGA`, `FESOL` y `COMERCIANT`) y T-121–T-123 traducen el diálogo deformado a una clave fonética catalana. T-094 está cerrada y la release 1.0.0 está preparada y etiquetada localmente
-como `v1.0.0`. El CI de release ya está en el commit y genera ZIP Windows,
-TGZ Linux y AppImage; falta el force-push de `main` y del tag, y la primera
-ejecución. El entorno no tiene credenciales. La
-copia local de revisión `docs/REVISION_CATALAN.xlsx` queda ignorada y no se
-publica en el repositorio.
+se conservan `DAGA`, `FESOL` y `COMERCIANT`) y T-121–T-123 traducen el diálogo deformado a una clave fonética catalana. T-094 está cerrada. La release 1.0.0 se publicó
+el 2026-10-25 como `v1.0.0` (commit `8eb079a`) con ZIP Windows, TGZ Linux y
+AppImage; el CI terminó en `success`. La copia local de revisión
+`docs/REVISION_CATALAN.xlsx` queda ignorada y no se publica en el repositorio.
 
-**Siguiente tarea: T-092 — force-push de `main`/`v1.0.0` y GitHub Release.**
+**Publicación cerrada (T-092/T-096):**
 
-- **Alcance:** publicar el commit de cierre, el tag `v1.0.0` y el ZIP de Windows.
-- **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`.
-- **Bloqueo:** no hay `gh` ni credenciales en el entorno; hay que hacerlo desde una
-  sesión autenticada.
-- **CI:** `.github/workflows/release.yml` ya está incluido en el commit de release;
-  al subir el tag `v1.0.0` se construye el ZIP y se crea la GitHub Release.
+- Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.0.0>
+- CI: [tag `v1.0.0`](https://github.com/hunkstalker/kult-atari-st-pc-port/actions/runs/40237580337)
+  y [main](https://github.com/hunkstalker/kult-atari-st-pc-port/actions/runs/40237575710),
+  ambos en `success`.
+- Hashes y detalle: `notes/0092`.
+
+**Siguiente tarea: A1 — investigación Amiga (`T-A00`/`T-A01`), prerrequisito de N3.**
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -49,28 +47,28 @@ publica en el repositorio.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
-**T-135 — implementado (2026-10-25):**
+**T-135 — cerrada (2026-10-25):**
 
 - TGZ Linux con `kult`, `lib/libSDL3.so.0`, RPATH y datos.
 - AppImage con AppRun, SDL3 y `KULT_BASE_DIR`.
-- `make deps-linux`; pruebas locales sin STX correctas.
-- Detalle: `notes/0091`.
+- `make deps-linux`; pruebas locales sin STX correctas y CI con TGZ/AppImage.
+- Detalle: `notes/0091`, `notes/0092`.
 
-**T-096 — implementado (2026-10-25):**
+**T-096 — cerrada (2026-10-25):**
 
 - `.github/workflows/release.yml`: tests HAL/herramientas; ZIP Windows, TGZ
   Linux, AppImage, checksums y GitHub Release en tags `v*`. Ajuste CI: `PY=python` y pkg-config
   silenciado en `make test-port` (`notes/0090`).
 - La suite diferencial del core queda fuera del CI público porque requiere
   `KULT.PRG`.
-- Primera ejecución pendiente del force-push. Detalle: `notes/0089`.
+- Primera ejecución correcta en `main` y `v1.0.0`. Detalle: `notes/0089`, `notes/0092`.
 
 **T-094 — cerrada (2026-10-25):**
 
 - El usuario valida el ZIP de T-134 y autoriza el cierre.
 - Release 1.0.0 preparada; tag local `v1.0.0`; ZIP de 13 entradas con SHA256
   `5ed0e019…`.
-- La publicación remota queda pendiente de T-092. Detalle: `notes/0088`.
+- Publicación remota completada con T-092. Detalle: `notes/0088`, `notes/0092`.
 
 **T-134 — cerrada (sesión 71, 2026-10-25):**
 
@@ -377,25 +375,27 @@ publica en el repositorio.
 
 **Artefactos actuales:**
 
-- ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`
-  (artefacto de release 1.0.0; tag local `v1.0.0`; publicación remota pendiente de T-092).
+- Release publicada: `kult-1.0.0-win64.zip` (CI)
+  SHA256 `685491849e7e8f8948561236d2f84f2c488bafae183ef34053a809452965b77d`;
+  `kult-1.0.0-linux-x86_64.tar.gz` `a2a78c00…`;
+  `kult-1.0.0-x86_64.AppImage` `9442791c…`. Detalle: `notes/0092`.
+- ZIP local de T-094: `5ed0e019…` (no byte-idéntico al de CI).
 - `assets/language.data` regenerado en T-128 (sin cambios en T-129/T-130): 78.511 B,
   SHA256 `38ff7f705bb51a06abf02b0e9fcd4cc7b8cebf6409933bcc611a12a4ed342f1f`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - `make test`: 519 core + HAL (36 funciones / 261 `CHECK`) + diagnóstico
   off/on + 5 herramientas OK.
-- `make package-win`: Windows de T-132 conservado; T-135 añade Linux y deja el paquete listo para force-push.
+- `make package-win`: Windows de T-132 conservado; Linux T-135 y release 1.0.0 publicados.
 
 **Pendiente, en este orden:**
 
-1. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `v1.0.0` y
-   paquetes Windows/Linux. Requiere credenciales; no están disponibles en este
-   entorno.
-2. **T-096 — CI de GitHub.** Workflow implementado; la primera ejecución se
-   lanza al publicar el tag. El core diferencial necesita `KULT.PRG` y queda
-   local/opcional.
+1. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: censo Amiga↔ST y decomp ASM;
+   prerrequisito duro de N3.
+2. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
+3. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
+4. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+5. **macOS**: no hay tarea abierta; si se decide, planificar como 1.1.0.
 
 **Antes de tocar código:**
 

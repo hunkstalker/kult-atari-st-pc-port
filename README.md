@@ -56,11 +56,78 @@ git subtree pull --prefix=lib/kult-core \
 - Backend **SDL3** (ventana, entrada, audio, GPU) + renderizador planar→RGB.
 
 ## Requisitos
-- **Windows 10 o superior, 64 bits**, para el paquete precompilado. En Linux se
-  compila desde el código fuente.
+- **Windows 10 o superior, 64 bits**, o **Linux x86_64** para los paquetes
+  precompilados. Linux también se puede compilar desde el código fuente.
+  Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.0.0>.
 - Una copia legal del juego con los dos discos en formato `.STX`:
   `Kult.STX` y `Kult (B).STX`. Los nombres no importan; se identifican por
   SHA-256.
+
+## Primera ejecución
+
+El paquete no incluye el juego: necesitas `Kult.STX` y `Kult (B).STX`. En la
+primera ejecución se validan los discos, se genera `data/kult.data` y el juego
+continúa arrancando en esa misma ejecución. **No hace falta ejecutarlo dos
+veces.** En las siguientes ejecuciones, si existe `data/kult.data`, los `.STX`
+ya no son necesarios y puedes borrarlos.
+
+No uses una carpeta de solo lectura (`Program Files`, `/opt`): el juego escribe
+`data/`, `saves/`, `kult.ini` y `kult.log` junto al ejecutable o al AppImage.
+
+### Windows ZIP
+
+1. Descomprime `kult-1.0.0-win64.zip` en una carpeta escribible.
+2. Copia `Kult.STX` y `Kult (B).STX` junto a `kult.exe` o dentro de `data/`.
+3. Ejecuta `kult.exe` con doble clic.
+4. La primera ejecución crea `data/` y `saves/`, ingiere los discos y genera
+   `data/kult.data`; al terminar, el juego arranca.
+5. Para volver a jugar, ejecuta de nuevo `kult.exe`. Si mueves el juego, mueve
+   también `data/` y `saves/`.
+
+### Linux TGZ
+
+1. Descomprime `kult-1.0.0-linux-x86_64.tar.gz` en una carpeta escribible.
+2. Copia los `.STX` junto a `kult` o dentro de `data/`.
+3. Ejecuta el juego:
+
+   ```sh
+   ./kult
+   ```
+
+   Si falta el permiso de ejecución: `chmod +x kult`.
+
+4. La primera ejecución ingiere los discos, genera `data/kult.data` y arranca
+   el juego en el mismo proceso.
+5. Para volver a jugar, ejecuta otra vez `./kult`; si mueves la carpeta, mueve
+   `data/` y `saves/` con ella.
+
+### Linux AppImage
+
+1. Copia `kult-1.0.0-x86_64.AppImage` a una carpeta escribible y dale permiso:
+
+   ```sh
+   chmod +x kult-1.0.0-x86_64.AppImage
+   ```
+
+2. Copia los `.STX` junto al AppImage. También puedes ponerlos en `data/` si ya
+   existe esa carpeta.
+3. Ejecuta:
+
+   ```sh
+   ./kult-1.0.0-x86_64.AppImage
+   ```
+
+4. El AppImage es un único archivo: su contenido interno es de solo lectura y se
+   monta temporalmente. Al arrancar, `AppRun` crea `data/` y `saves/` junto al
+   AppImage, copia `language.data` y `LEEME.txt`, ingiere los discos y arranca el
+   juego en esa misma ejecución.
+5. Para volver a jugar, ejecuta el mismo AppImage. Si lo mueves de carpeta,
+   mueve también `data/` y `saves/`.
+6. Si el sistema no tiene FUSE:
+
+   ```sh
+   ./kult-1.0.0-x86_64.AppImage --appimage-extract-and-run
+   ```
 
 ## Controles
 - **Ratón**: izquierdo/teclado = acción; derecho = acción + skip.
@@ -72,15 +139,13 @@ git subtree pull --prefix=lib/kult-core \
 - Lista completa de atajos en `Kult Settings.txt`.
 
 ## Datos y diagnóstico
-- Release **portable**: todo vive junto al `.exe`. `data/` contiene los assets
-  del usuario y `saves/` las escrituras del juego. Las ranuras F5/F6/F7 van a
+- Release **portable**: `data/` contiene los assets del usuario y `saves/` las
+  escrituras del juego. En Windows y Linux TGZ viven junto al ejecutable; en el
+  AppImage, junto al propio AppImage. Las ranuras F5/F6/F7 van a
   `saves/slot-0.save`…`slot-9.save`; `kult.ini` recuerda pantalla, escala,
-  ranura, volumen y silencio. La escala inicial por defecto es Estirar a pantalla.
-  No hay appdata ni rutas de datos alternativas.
-- Copia `Kult.STX` y `Kult (B).STX` en `data/` o junto al `.exe`. En el primer
-  arranque se extraen, se validan por SHA-256 y se genera `data/kult.data`.
-  Después puedes borrar los `.STX`.
-- **`kult.log`** se escribe en la raíz, junto al `.exe`, con timestamp. Los
+  ranura, volumen y silencio. La escala inicial por defecto es Estirar a
+  pantalla. No hay appdata ni rutas de datos alternativas.
+- **`kult.log`** se escribe junto al ejecutable o al AppImage, con timestamp. Los
   errores no abren ventanas; solo si el log no se puede escribir aparece un
   diálogo de emergencia. `kult-headless.exe` es solo una herramienta de
   desarrollo y no forma parte de la release.

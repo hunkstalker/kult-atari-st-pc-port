@@ -49,9 +49,9 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
-**Estado actual: release 1.0.0 validada por el usuario. T-094 cerrada el
-2026-10-25 sobre el ZIP de T-134 (`5ed0e019…`), incluyendo F1/F2, Estirar a
-pantalla, F5/F6/F7, OSD, textos ES/CA con `Ç` y el diálogo deformado.**
+**Estado actual: release 1.0.0 publicada. T-094 cerrada el 2026-10-25 sobre
+el ZIP de T-134 (`5ed0e019…`), incluyendo F1/F2, Estirar a pantalla, F5/F6/F7,
+OSD, textos ES/CA con `Ç` y el diálogo deformado.**
 
 - ✅ Título, menú de idioma y colores.
 - ✅ Partida y controles (izquierdo/teclado = acción; derecho = acción + skip).
@@ -177,8 +177,9 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
 - ✅ Validación final del usuario sobre `build-win/kult-1.0.0-win64.zip`,
   SHA256 `5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`
   (13 entradas), 2026-10-25.
-- Release 1.0.0 preparada y etiquetada localmente como `v1.0.0`; la publicación
-  remota queda pendiente de T-092.
+- Release 1.0.0 publicada como `v1.0.0`; `main`, tag, CI y GitHub Release
+  completados (T-092/T-096). El ZIP de CI no es byte-idéntico al local de T-094;
+  los `.sha256` adjuntos son la referencia. Detalle: `notes/0092`.
    Códigos: `0` ok, `2` PRG/datos ausentes, `3` fallo de arranque, `4` fallo de
    ventana, `5` carpeta del juego no escribible. Sin diálogos normales; solo si
    no se pudo escribir el log aparece uno de emergencia.

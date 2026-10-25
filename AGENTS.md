@@ -21,9 +21,9 @@ y `l_0101a8` reconstruido en `boot/` como ruta latente verificada
 ranuras F5/F6/F7 (`slot-N.save`), el OSD con la fuente original del juego y la
 terminología catalana T-119/T-132 (`GOT`, `XARXA TUNER`, `DAGA`, `FESOL`,
 `COMERCIANT`, `Ç`) y el diálogo deformado en clave fonética catalana; el ZIP
-final está regenerado en T-135 con Linux. La release **1.0.0** está validada (T-094) y etiquetada localmente como
-`v1.0.0`; el CI de release está implementado en `.github/workflows/release.yml`.
-Falta el force-push (T-092); la primera ejecución la lanza el tag y genera ZIP, TGZ y AppImage.
+final está regenerado en T-135 con Linux. La release **1.0.0** está publicada
+como `v1.0.0` (commit `8eb079a`) con ZIP Windows, TGZ Linux y AppImage; el CI de
+`.github/workflows/release.yml` terminó en `success` (T-092/T-096).
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
@@ -31,9 +31,9 @@ separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). T-101
 corrigió «DIE» (objeto) a **DADO**/**DAU** en los packs y dejó regresión de
 textos. T-106 usa la fuente original del juego para el OSD, T-107/T-108 dejan
 las ranuras en `slot-N.save` sin migración y T-109/T-110 añaden Estirar a
-pantalla. T-073 es opcional. Sin bloqueantes de código. Detalle:
-`notes/0053`–`notes/0091`. Ver `notes/0011`–`notes/0014`, `notes/0041`,
-`notes/0042`, `notes/0049`–`notes/0091`.
+pantalla. T-073 es opcional. Sin bloqueantes de código. Siguiente hito: A1 (investigación Amiga). Detalle:
+`notes/0053`–`notes/0092`. Ver `notes/0011`–`notes/0014`, `notes/0041`,
+`notes/0042`, `notes/0049`–`notes/0092`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**

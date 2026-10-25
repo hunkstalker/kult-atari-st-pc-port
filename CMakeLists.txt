@@ -101,7 +101,6 @@ endif()
 # kult-headless sigue siendo un target de desarrollo, pero no se empaqueta.
 install(TARGETS kult-sdl RUNTIME DESTINATION .)
 install(FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME.txt
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/Kult Settings.txt"
   "${CMAKE_CURRENT_SOURCE_DIR}/assets/Kult Settings.png"
   ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE
@@ -110,6 +109,7 @@ install(FILES
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/language.data DESTINATION data)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/LICENSES DESTINATION .)
 if(WIN32)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME.txt DESTINATION .)
   set(KULT_SDL3_DLL
       ${CMAKE_CURRENT_SOURCE_DIR}/third_party/SDL3-3.4.10-win32-x64/SDL3.dll)
   if(EXISTS ${KULT_SDL3_DLL})
@@ -137,7 +137,8 @@ if(UNIX AND NOT APPLE)
   get_filename_component(KULT_SDL3_RUNTIME_REAL "${KULT_SDL3_RUNTIME_LIB}" REALPATH)
   install(FILES "${KULT_SDL3_RUNTIME_REAL}" DESTINATION lib RENAME "libSDL3.so.0")
   set_target_properties(kult-sdl PROPERTIES INSTALL_RPATH "$ORIGIN/lib")
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME_LINUX.txt DESTINATION .)
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/assets/LEEME_LINUX.txt
+          DESTINATION . RENAME LEEME.txt)
 endif()
 
 set(CPACK_PACKAGE_NAME "kult")

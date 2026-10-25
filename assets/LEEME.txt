@@ -1,5 +1,5 @@
 Kult: The Temple of Flying Saucers (Exxos/ERE, 1989)
-Port nativo a PC — release portable
+Port nativo a PC — Windows (release portable)
 ===================================
 
 Este paquete NO incluye ningún fichero del juego: aporta tu copia.
@@ -13,11 +13,12 @@ la carpeta debe ser escribible.
    Los nombres no importan; el contenido se identifica por SHA-256.
 
 2) Ejecuta `kult.exe`.
-   La primera vez extrae los assets y genera `data/kult.data`. Puede tardar
-   unos segundos.
+   La primera vez extrae los assets y genera `data/kult.data`. Al terminar,
+   el juego continúa arrancando en esa misma ejecución: no hace falta
+   ejecutarlo dos veces. Puede tardar unos segundos.
 
 3) Cuando termine la ingesta, puedes borrar los .STX: el juego ya arranca
-   desde `data/kult.data`.
+   desde `data/kult.data` en las siguientes ejecuciones.
 
 4) Al arrancar la pantalla puede verse NEGRA (es fiel al original: PRES se
    muestra antes de fijar la paleta). Haz clic con el botón izquierdo; aparece

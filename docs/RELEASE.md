@@ -4,6 +4,12 @@ Documento de decisión para la release del port. Prevalece sobre las partes de
 `docs/BUILD.md`, `LEEME.txt` o notas antiguas que describan `data/`, appdata,
 `kult-headless.exe` o `DIAGNOSTICO.txt` de forma distinta.
 
+## Estado publicado
+
+La release **1.0.0** está publicada en
+<https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.0.0>
+con ZIP Windows, TGZ Linux y AppImage. Detalle y hashes: `notes/0092`.
+
 ## Objetivo
 
 Release **portable**: todo vive en la carpeta donde el usuario descomprime el
@@ -50,7 +56,6 @@ El TGZ Linux contiene:
 kult
 lib/libSDL3.so.0
 LEEME.txt
-LEEME_LINUX.txt
 Kult Settings.txt
 Kult Settings.png
 LICENSE
@@ -62,7 +67,8 @@ saves/
 
 `kult` lleva RUNPATH `$ORIGIN/lib`; el usuario solo aporta los dos STX. También
 se publica un AppImage: `kult-1.0.0-x86_64.AppImage`. Su `AppRun` usa
-`KULT_BASE_DIR` para crear `data/` y `saves/` junto al AppImage.
+`KULT_BASE_DIR` para crear `data/` y `saves/` junto al AppImage, y copia
+`language.data` y `LEEME.txt` a esa misma carpeta.
 
 Dependencias base: glibc/musl del sistema, X11 o Wayland y audio
 ALSA/Pulse. SDL3 va incluida.

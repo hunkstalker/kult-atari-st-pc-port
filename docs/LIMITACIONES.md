@@ -64,14 +64,14 @@ datos.
   el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
   completados. Windows lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
-  `LEEME.txt`, `Kult Settings.txt` y las licencias. Linux lleva `kult`,
-  `lib/libSDL3.so.0`, `LEEME_LINUX.txt`, datos y ajustes, además de un AppImage.
+  `LEEME.txt` (Windows), `Kult Settings.txt` y las licencias. Linux lleva `kult`,
+  `lib/libSDL3.so.0`, `LEEME.txt` (Linux), datos y ajustes, además de un AppImage.
   **No** llevan headless ni `DIAGNOSTICO.txt`. Windows requiere **Windows 10+**
   (UCRT); Linux requiere X11/Wayland y audio base. Los tests automatizados de ingesta/packs
   (T-095) ya están integrados, T-022 y T-101 están cerradas. La validación
-  visual final (T-094) está cerrada y la release 1.0.0 está etiquetada
-  localmente como `v1.0.0`; falta la publicación remota (T-092). El CI (T-096)
-está implementado y se ejecutará al publicar el tag.
+  visual final (T-094) está cerrada y la release 1.0.0 está publicada como
+  `v1.0.0` con ZIP Windows, TGZ Linux y AppImage; el CI (T-096) terminó en
+  `success`. Detalle: `notes/0092`.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a

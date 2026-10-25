@@ -10,6 +10,7 @@ TOOL=${3:-${APPIMAGETOOL:-"$ROOT/third_party/appimagetool-x86_64.AppImage"}}
 [ -x "$STAGE/kult" ] || { echo "ERROR: falta $STAGE/kult" >&2; exit 2; }
 [ -f "$STAGE/lib/libSDL3.so.0" ] || { echo "ERROR: falta SDL3 en $STAGE/lib" >&2; exit 2; }
 [ -f "$STAGE/data/language.data" ] || { echo "ERROR: falta language.data" >&2; exit 2; }
+[ -f "$STAGE/LEEME.txt" ] || { echo "ERROR: falta LEEME.txt" >&2; exit 2; }
 
 APPDIR=$(mktemp -d "${TMPDIR:-/tmp}/kult-appdir.XXXXXX")
 cleanup() { rm -rf "$APPDIR"; }
@@ -19,7 +20,7 @@ mkdir -p "$APPDIR/usr/bin" "$APPDIR/usr/lib" "$APPDIR/usr/share/kult"
 cp "$STAGE/kult" "$APPDIR/usr/bin/kult"
 cp "$STAGE/lib/libSDL3.so.0" "$APPDIR/usr/lib/libSDL3.so.0"
 cp "$STAGE/data/language.data" "$APPDIR/usr/share/kult/language.data"
-cp "$STAGE/LEEME_LINUX.txt" "$APPDIR/usr/share/kult/LEEME_LINUX.txt"
+cp "$STAGE/LEEME.txt" "$APPDIR/usr/share/kult/LEEME.txt"
 cp "$STAGE/Kult Settings.txt" "$APPDIR/usr/share/kult/Kult Settings.txt"
 cp "$STAGE/Kult Settings.png" "$APPDIR/usr/share/kult/Kult Settings.png"
 cp "$STAGE/Kult Settings.png" "$APPDIR/kult.png"
@@ -38,7 +39,7 @@ else
 fi
 mkdir -p "$BASE/data" "$BASE/saves"
 cp -f "$APPDIR/usr/share/kult/language.data" "$BASE/data/language.data"
-cp -f "$APPDIR/usr/share/kult/LEEME_LINUX.txt" "$BASE/LEEME_LINUX.txt" 2>/dev/null || true
+cp -f "$APPDIR/usr/share/kult/LEEME.txt" "$BASE/LEEME.txt" 2>/dev/null || true
 export KULT_BASE_DIR="$BASE"
 export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 exec "$APPDIR/usr/bin/kult" "$@"

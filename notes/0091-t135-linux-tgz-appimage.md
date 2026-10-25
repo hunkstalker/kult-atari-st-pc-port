@@ -10,7 +10,7 @@ El TGZ incluye:
 - `kult` ejecutable.
 - `lib/libSDL3.so.0` con RUNPATH `$ORIGIN/lib`.
 - `data/language.data`, `data/` y `saves/`.
-- `LEEME.txt`, `LEEME_LINUX.txt`, `Kult Settings.txt` y `.png`.
+- `LEEME.txt`, `Kult Settings.txt` y `.png`.
 - licencias.
 
 El usuario aporta `Kult.STX` y `Kult (B).STX`; el primer arranque genera
@@ -26,12 +26,12 @@ comprobar que falla por datos (código 2), no por SDL3. `ldd` resuelve
 
 - `usr/bin/kult`
 - `usr/lib/libSDL3.so.0`
-- `usr/share/kult/{language.data,LEEME_LINUX.txt,settings,licencias}`
+- `usr/share/kult/{language.data,LEEME.txt,settings,licencias}`
 - `AppRun`, `.desktop` e icono.
 
 `AppRun` usa `KULT_BASE_DIR` para que `data/` y `saves/` queden junto al
 AppImage, no dentro del montaje de solo lectura. También copia
-`language.data` al directorio externo.
+`language.data` y `LEEME.txt` al directorio externo.
 
 Prueba local: AppImage ejecutado sin STX; falla por datos con código 2 y crea
 `data/language.data` y `saves/` junto al AppImage.

@@ -10,7 +10,8 @@ artefactos de release quedan fuera.
 - `CMakeLists.txt`, `Makefile`, `cmake/`, `tools/`, `test/` y `requirements.txt`.
 - `docs/`, `notes/`, `README.md`, `PROYECTO.md`, `TODO.md`, `RETOMAR.md` y `AGENTS.md`.
 - `assets/lang/` y `assets/language.data`.
-- Recursos de release: `assets/LEEME.txt`, `assets/Kult Settings.txt`,
+- Recursos de release: `assets/LEEME.txt` (Windows), `assets/LEEME_LINUX.txt`
+  (Linux; se instala como `LEEME.txt`), `assets/Kult Settings.txt`,
   `assets/Kult Settings.png`, icono y `.rc`.
 - Fuentes de diseño: `assets/design/*.af`.
 - `third_party/README.md`.

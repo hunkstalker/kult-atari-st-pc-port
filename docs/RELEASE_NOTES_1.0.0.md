@@ -44,15 +44,22 @@ La release incluye:
 
 - Windows x64: `kult-1.0.0-win64.zip` (`kult.exe`, `SDL3.dll`, datos y ajustes).
 - Linux x86_64: `kult-1.0.0-linux-x86_64.tar.gz` (`kult`, `lib/libSDL3.so.0`,
-  datos, `LEEME_LINUX.txt` y ajustes).
+  datos, `LEEME.txt` y ajustes).
 - Linux AppImage: `kult-1.0.0-x86_64.AppImage`.
 
-El usuario solo aporta `Kult.STX` y `Kult (B).STX`. El ZIP Windows validado en
-T-094 tiene SHA256
-`5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`;
-la GitHub Release adjunta los `.sha256` generados en CI. Los artefactos de CI
-pueden no ser byte-idénticos por los timestamps del empaquetado.
+El usuario solo aporta `Kult.STX` y `Kult (B).STX`. La release publicada está en
+<https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.0.0>.
+SHA256 de los artefactos de CI:
 
-Las instrucciones de uso están en `LEEME.txt`, `LEEME_LINUX.txt`,
-`Kult Settings.txt` y el `README.md`; la licencia del
+- Windows: `685491849e7e8f8948561236d2f84f2c488bafae183ef34053a809452965b77d`
+- Linux TGZ: `a2a78c00bbb6e9ad96811359553e39c6d85e4016810eace0867d850346aa7c68`
+- AppImage: `9442791ca91fe4f502b7fe6e738a9f57d161dff440ce6d0a9f062ba43ece79d5`
+
+El ZIP Windows validado localmente en T-094 era
+`5ed0e019ee90588b08030e5fce2b5cbfd82b1edce98daf0e079c1fb05a77965a`;
+el ZIP de CI no es byte-idéntico por los timestamps del empaquetado. Los
+`.sha256` adjuntos a la release son la referencia.
+
+Las instrucciones de uso están en `LEEME.txt`, `Kult Settings.txt` y el
+`README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.
