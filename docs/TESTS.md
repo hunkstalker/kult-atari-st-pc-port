@@ -70,10 +70,11 @@ Hecho:
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
 
-Hecho (T-118):
+Hecho (T-118/T-119):
 
-- `test_catalan_differential`: recuentos y 11 entradas catalanas actualizadas en
-  fuente y contenedor.
+- `test_catalan_differential`: recuentos, entradas catalanas actualizadas,
+  términos ERBE (`GOT`, `GANIVET`, `GLOP`, `BEINA`, `CANVIADOR`, `XARXA TUNER`)
+  y ausencia de `CALZE`, `DAGA`, `TRAGO`, `FESOL` y `REZZO` en los cuatro bancos.
 
 Hecho (T-117):
 

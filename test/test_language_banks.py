@@ -98,17 +98,26 @@ def test_erbe_es_import():
 
 def test_catalan_differential():
     expected = {
+        ("VERBC.BIN", 39): "OMPLIR GOT",
         ("VERBC.BIN", 104): "GANIVET",
         ("VERBC.BIN", 117): "HIPERVISIO",
+        ("VERBC.BIN", 155): "DONAR\nLA BEINA PER MENJAR",
         ("MOTSC.BIN", 51): "ASH",
         ("MOTSC.BIN", 92): "DESGUAS",
         ("MOTSC.BIN", 129): "SCI FI",
+        ("DESCC.BIN", 50): "QUEDES ATRAPAT A LA\nTERANYINA!",
         ("DESCC.BIN", 73): "UN CURIOS HOMENET AL REVES.",
         ("DESCC.BIN", 126): "EL CAMINANT\nSALVARA ALGU I INDICARA\nLA SEVA ELECCIO AL REPTIL.",
         ("DESCC.BIN", 261): "MENTRE AVANCES, ACTIVES UN MECANISME HORRIPILANT!\nEL SOSTRE ET CAU A SOBRE!",
+        ("DESCC.BIN", 339): "UN GOT DE METALL.",
+        ("DESCC.BIN", 350): "QUEDA 1 GLOP.",
+        ("DESCC.BIN", 356): "SELECCIONA EL GOT QUE CONTE EL CRANI.",
+        ("DESCC.BIN", 378): "[04][04][04][04][04]UN\nGANIVET [04][04][04][04][04][04][04][04][04][04][04][04]",
+        ("DIALC.BIN", 15): "PORTA'M UN CRANI. DESPRES PODRAS PROVAR AMB EL CANVIADOR. SI EM DONES 5 EN MENYS D'UNA HORA, SERAS UN DIVO!",
         ("DIALC.BIN", 284): "QUE\nS'HI\nPUDREIXI, AQUEST!",
         ("DIALC.BIN", 327): "SERE\nJO QUI ABORTI EL COMPLOT PROTOZORQUISTA!",
-        ("DIALC.BIN", 329): "I EL REZZO VOLIA\nQUE ABANDONESSIS SCI FI ENTRE\nLES GARRES D'AQUESTES CRIATURES!",
+        ("DIALC.BIN", 329): "I LA XARXA TUNER VOLIA\nQUE ABANDONESSIS SCI FI ENTRE\nLES GARRES D'AQUESTES CRIATURES!",
+        ("DIALC.BIN", 332): "GUANYA UN CRANI PER CADA PROVA, RESOLENT ELS MISTERIS. LLIURA ELS 5 CRANIS AL GUARDIA CANVIADOR EN MENYS D'UNA HORA I SERAS UN DIVO!",
     }
     counts = {"VERBC.BIN": 176, "DESCC.BIN": 407, "MOTSC.BIN": 131, "DIALC.BIN": 337}
     for bank, count in counts.items():
@@ -120,6 +129,11 @@ def test_catalan_differential():
         source = next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()
         assert dict(_entries(source))[idx] == text
         assert dict(_entries(_from_container(bank)))[idx] == text
+    for bank in counts:
+        texts = dict(_entries(next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()))
+        for old in ("CALZE", "DAGA", "TRAGO", "FESOL", "TELA", "REZZO"):
+            assert not any(old in text for text in texts.values()), (bank, old)
+    assert "XARXA TUNER" in dict(_entries(next((ROOT / "assets" / "lang").rglob("DESCC.BIN")).read_bytes()))[404]
 
 
 def test_desc_126_passerby():

@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102–T-118 cerradas (2026-10-25). El port arranca
+**Estado:** T-022, T-101, T-102–T-119 cerradas (2026-10-25). El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -14,19 +14,21 @@ defecto, con **F1** ventana/fullscreen, **F2** ciclo
 **fuente original del juego**. `kult.ini` guarda pantalla, escala, ranura,
 volumen y silencio. El OSD caduca por tiempo real. La migración de
 `partida-N.bin` se retiró en T-108. El paquete incluye `Kult Settings.png` junto
-al ejecutable. El español usa ERBE + correcciones y el catalán se ha migrado de
-forma diferencial (93 entradas actualizadas). Queda **T-094** sobre el ZIP final.
+al ejecutable. El español usa ERBE + correcciones; el catalán parte de la
+revisión T-093 y tiene la migración diferencial T-118 y el cierre terminológico
+ERBE de T-119 (`CALZE`→`GOT`, `NETWERK`/`REZZO`→`XARXA TUNER`). Queda **T-094**
+sobre el ZIP final.
 La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 único fichero no versionado aparte de la documentación es el backup local
 `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación del ZIP de T-118.**
+**Siguiente tarea: T-094 — validación del ZIP de T-119.**
 
 - **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo arranque en Estirar
   a pantalla, persistencia en `kult.ini`, F1/F2, ratón, F5/F6/F7, volumen,
-  `Kult Settings.png`, textos ES/CA (ERBE y catalán diferencial) y OSD.
+  `Kult Settings.png`, textos ES/CA (ERBE y catalán con terminología T-119) y OSD.
 - **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`.
+  `3d8cf7d6d0320479f7fe4812f0eaaa4165ff4f612e5b0b1cfae27ef28a322ac1`.
 - **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -44,6 +46,16 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
+**T-119 — cerrada (sesión 71, 2026-10-25):**
+
+- Cierre terminológico catalán alineado con ERBE: `CALZE`/`CUBILETE`→`GOT`,
+  `DAGA`→`GANIVET`, `TRAGO`→`GLOP`, `FESOL`→`BEINA`, `FRASCO`→`FLASQUET`,
+  `COMERCIANT`→`CANVIADOR` y `NETWERK`/`REZZO`→`XARXA TUNER`.
+- Se mantienen las líneas alienígenas en inglés de `DIALC` 184/238/239.
+- `language.data` 77.896 B, `0d9582d9…`; ZIP
+  `3d8cf7d6d0320479f7fe4812f0eaaa4165ff4f612e5b0b1cfae27ef28a322ac1`; 12
+  entradas. Detalle: `notes/0072`.
+
 **T-118 — cerrada (sesión 71, 2026-10-25):**
 
 - Migración diferencial del catalán: 1.051 entradas comparadas, **93
@@ -52,7 +64,7 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 - Se mantienen las correcciones T-093, nombres propios y `SCI FI`.
 - `language.data` 77.887 B, `ebdf22b6…`; ZIP
   `3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`; 5
-  herramientas. Detalle: `notes/0071`.
+  herramientas. Detalle: `notes/0071`; terminología revisada en T-119.
 
 **T-117 — cerrada (sesión 71, 2026-10-25):**
 
@@ -214,24 +226,24 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`
-  (T-118; pendiente de T-094, no es aún el artefacto de release).
-- `assets/language.data` regenerado en T-116: 77.717 B,
-  SHA256 `6d20cd132d58001a78d5c66901594cd78cd783ce338c13daba7baab02f05d72f`.
+  SHA256 `3d8cf7d6d0320479f7fe4812f0eaaa4165ff4f612e5b0b1cfae27ef28a322ac1`
+  (T-119; pendiente de T-094, no es aún el artefacto de release).
+- `assets/language.data` regenerado en T-119: 77.896 B,
+  SHA256 `0d9582d961f23bc0214b605387404f03348d3abcf2bfb9a43273f3d7be9a0ad9`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 519 core + HAL (36 funciones / 255 `CHECK`) + diagnóstico
   off/on + 5 herramientas OK.
-- `make package-win`: OK después de T-118 (12 entradas).
+- `make package-win`: OK después de T-119 (12 entradas).
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP de T-118.
-3. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
+   `docs/VERIFICACION.md` sobre el ZIP de T-119.
+2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
-4. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
+3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
    assets; el core diferencial necesita `KULT.PRG` y queda local/opcional.
 
 **Antes de tocar código:**

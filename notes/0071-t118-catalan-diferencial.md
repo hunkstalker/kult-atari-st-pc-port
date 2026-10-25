@@ -30,7 +30,8 @@ la ortografía ASCII sin tildes ni `Ç`.
 - `DESC 261`: actualizado al mecanismo mortal del techo de ERBE.
 - `DIAL 284`: `AQUEST DEFORME HA DE MORIR` → `QUE S'HI PUDREIXI, AQUEST`.
 - `DIAL 327`: actualizado al complot protozorquista de ERBE.
-- `DIAL 329`: conserva `SCI FI` y sigue el texto ERBE del Rezzo.
+- `DIAL 329`: conserva `SCI FI` y sigue el texto ERBE del Rezzo; T-119
+  sustituye `Rezzo` por `XARXA TUNER`.
 
 ## Formato
 

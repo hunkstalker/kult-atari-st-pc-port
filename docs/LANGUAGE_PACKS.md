@@ -29,7 +29,8 @@ aviso y usa `E`.
 | `DIALC.BIN` | catalán: diálogos |
 
 La release incluye el pack español (ERBE + correcciones) y el pack catalán
-revisado y migrado de forma diferencial. Ambos se cargan desde `language.data`.
+revisado, migrado de forma diferencial y con la terminología ERBE unificada en
+T-119. Ambos se cargan desde `language.data`.
 La selección y la carga de `S`/`C` están cubiertas por
 `platform/test/test_platform.c` (T-095, `notes/0049`).
 
@@ -50,9 +51,20 @@ caracteres existentes:
 La ortografía está revisada dentro de esas limitaciones y el pack está validado
 por el usuario. T-101 corrigió `VERB 116` («DIE», el objeto) a **DADO**/**DAU**;
 los usos verbales de «die» en `DIAL` se mantienen como «morir». El español usa
-ERBE + correcciones (T-117); el catalán se ha migrado de forma diferencial
-(T-118), conservando la revisión catalana donde el sentido no cambia.
-`DESC 126` sigue la base ERBE.
+ERBE + correcciones (T-117); el catalán conserva la revisión T-093, la migración
+diferencial T-118 y el cierre terminológico T-119:
+
+- `CALZE`/`CUBILETE` → `GOT` (`OMPLIR GOT`);
+- `DAGA` → `GANIVET`;
+- `TRAGO`/`TRAGOS` → `GLOP`/`GLOPS`;
+- `FESOL` → `BEINA`;
+- `TELA` (araña) → `TERANYINA`;
+- `FRASCO` → `FLASQUET`;
+- `COMERCIANT` → `CANVIADOR` (`GUARDIA CANVIADOR`);
+- `NETWERK`/`REZZO` real → `XARXA TUNER` (ERBE: `RED TUNER`).
+
+Las líneas alienígenas en inglés de `DIALC` 184, 238 y 239 conservan `NETWERK`
+como parte del alienígena deliberado. `DESC 126` sigue la base ERBE.
 T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
 `Ç`, hace falta una fuente catalana con esos glifos.
 
