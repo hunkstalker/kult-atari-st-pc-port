@@ -7,7 +7,7 @@
 | Tests diferenciales del core | `lib/kult-core/test/` | 519 funciones en 44 `test_*.py` | canónicos del core |
 | Tests de herramientas del port | `test/` | 5 funciones en 2 ficheros | ringreport y packs de idioma |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
-| Tests funcionales HAL | `platform/test/test_platform.c` | 36 funciones / 255 `CHECK` | backend PC, contenedores, ingesta, packs, config, display/OSD, ranuras, audio y Estirar a pantalla |
+| Tests funcionales HAL | `platform/test/test_platform.c` | 36 funciones / 256 `CHECK` | backend PC, contenedores, ingesta, packs, config, display/OSD, ranuras, audio y Estirar a pantalla |
 | Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
 | Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 519 | legibilidad y sincronización |
 
@@ -70,14 +70,15 @@ Hecho:
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
 
-Hecho (T-118/T-119/T-120/T-121/T-122/T-123/T-124/T-125/T-126):
+Hecho (T-118/T-119/T-120/T-121/T-122/T-123/T-124/T-125/T-126/T-127):
 
 - `test_catalan_differential`: recuentos, entradas catalanas actualizadas,
   términos ERBE (`GOT`, `GLOP`, `XARXA TUNER`), preferencias `DAGA`, `FESOL`
   y `COMERCIANT`, y ausencia de `CALZE`, `TRAGO`, `BEINA`, `CANVIADOR`, `TELA`
   y `REZZO` en los cuatro bancos. T-121–T-125 añaden todo el diálogo deformado en clave fonética catalana y
-  `DESCC 45` con `ELS CINC CRANIS`; quedan solo sonidos/nombres/control. T-126 añade la regresión de los diez verbos
-  corregidos y la ausencia de `LLENCAR`/`LLANCAR` sueltos.
+  `DESCC 45` con `ELS CINC CRANIS`; quedan solo sonidos/nombres/control. T-126 añade la regresión de los diez verbos corregidos y la ausencia de
+  `LLENCAR`/`LLANCAR` sueltos. T-127 comprueba `CARACC.BIN`, el glifo `Ç` y las
+  palabras con `[0b]`.
 
 Hecho (T-117):
 

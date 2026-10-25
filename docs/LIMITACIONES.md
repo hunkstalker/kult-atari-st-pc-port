@@ -19,7 +19,7 @@ datos.
 - **`os_super` es un no-op** (en PC no hay modo supervisor).
 - **Menú de idioma fiel** (ADR 0004): se mantiene el del original (clic de título
   y teclas D/E/F/S/C), no un menú nativo. S y C vienen en `language.data`.
-- **Catalán**: pack validado por el usuario; sin tildes/Ç por límites de la fuente.
+- **Catalán**: pack validado por el usuario; incluye `Ç` desde T-127. Siguen sin tildes ni diéresis por límites de la fuente.
 - **T-097 validado**: cajas de objetos catalanas correctas.
 - **T-098 validado**: La Horca en español ya no se congela.
 - **Cambio de disco omitido.** El original pide "INSERT DISK 2" (`0x918e`) antes

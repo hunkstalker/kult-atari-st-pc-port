@@ -580,7 +580,7 @@ static void test_language_assets(void) {
     if (!c.data) return;
 
     static const char *const req[] = {
-        "DRAP.PI1", "CARACS.BIN",
+        "DRAP.PI1", "CARACS.BIN", "CARACC.BIN",
         "VERBS.BIN", "VERBC.BIN", "MOTSS.BIN", "MOTSC.BIN",
         "DESCS.BIN", "DESCC.BIN", "DIALS.BIN", "DIALC.BIN"
     };

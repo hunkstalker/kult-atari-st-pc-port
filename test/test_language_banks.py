@@ -105,19 +105,31 @@ def test_catalan_differential():
         ("VERBC.BIN", 52): "ENCAIXAR LA MA",
         ("VERBC.BIN", 60): "ESTIRAR",
         ("VERBC.BIN", 71): "OFERIR",
-        ("VERBC.BIN", 81): "LLANCAR SOBRE",
+        ("VERBC.BIN", 81): "LLAN[0b]AR SOBRE",
         ("VERBC.BIN", 83): "DONAR",
         ("VERBC.BIN", 104): "DAGA",
         ("VERBC.BIN", 117): "HIPERVISIO",
         ("VERBC.BIN", 115): "FESOL",
-        ("VERBC.BIN", 145): "LLANCAR LLIGANYA",
+        ("VERBC.BIN", 145): "LLAN[0b]AR LLIGANYA",
         ("VERBC.BIN", 164): "TIRAR",
         ("VERBC.BIN", 155): "DONAR\nEL FESOL PER MENJAR",
         ("MOTSC.BIN", 51): "ASH",
+        ("MOTSC.BIN", 24): "NAIXEMENT D'UNA\nRA[0b]A DIVINA",
+        ("MOTSC.BIN", 77): "CAL[0b] VIVA",
         ("MOTSC.BIN", 124): "COMERCIANT",
         ("MOTSC.BIN", 92): "DESGUAS",
         ("MOTSC.BIN", 129): "SCI FI",
+        ("DESCC.BIN", 0): "LES COSES HAN\nANAT\nMASSA LLUNY! UN ZAPSTIK CAU AMB FOR[0b]A...",
+        ("DESCC.BIN", 18): "ET LLEN[0b]A A TERRA.",
         ("DESCC.BIN", 45): "UN ASPIRANT COM TU, AMB PRESSA PER ACONSEGUIR ELS CINC CRANIS!",
+        ("DESCC.BIN", 129): "ELS ALTRES PROTOZORQ LLAN[0b]EN UN ATAC MASSIU!",
+        ("DESCC.BIN", 156): "UNA ABRA[0b]ADA SALVATGE. LES SEVES UNGLES AFILADES T'OBREN L'ESQUENA. EL VERI ES RAPID...",
+        ("DESCC.BIN", 173): "... LLEN[0b]AT AMB VIOLENCIA A TERRA!",
+        ("DESCC.BIN", 175): "NI LA DAGA NI LA FOR[0b]A BASTEN PER DEIXAR-TE PASSAR.",
+        ("DESCC.BIN", 213): "ELS GALLS DINDI SEMBLEN MALEVOLS... COMEN[0b]EN A ACOSTAR-SE AMENASSADORS...",
+        ("DESCC.BIN", 227): "ELS ALTRES VAN A ABALAN[0b]AR-SE SOBRE TU...!",
+        ("DESCC.BIN", 368): "QRIICH CAU A TERRA I COMEN[0b]A A CRIDAR.",
+        ("DESCC.BIN", 404): "AMPLIFICADOR HITACHI-GAUSS, CONEGUT COM A GAUSS O FET. EL TEU ENLLA[0b] TELEPATIC AMB LA XARXA TUNER",
         ("DESCC.BIN", 50): "QUEDES ATRAPAT A LA\nTERANYINA!",
         ("DESCC.BIN", 73): "UN CURIOS HOMENET AL REVES.",
         ("DESCC.BIN", 126): "EL CAMINANT\nSALVARA ALGU I INDICARA\nLA SEVA ELECCIO AL REPTIL.",
@@ -127,6 +139,11 @@ def test_catalan_differential():
         ("DESCC.BIN", 356): "SELECCIONA EL GOT QUE CONTE EL CRANI.",
         ("DESCC.BIN", 378): "[04][04][04][04][04]UNA\nDAGA [04][04][04][04][04][04][04][04][04][04][04][04]",
         ("DIALC.BIN", 15): "PORTA'M UN CRANI. DESPRES PODRAS PROVAR AMB EL COMERCIANT. SI EM DONES 5 EN MENYS D'UNA HORA, SERAS UN DIVO!",
+        ("DIALC.BIN", 23): "AVANCA, AMIC, ES LA TEVA UNICA ESPERAN[0b]A!",
+        ("DIALC.BIN", 70): "CREU-ME, AMIC, LA TEVA UNICA ESPERAN[0b]A ARA...",
+        ("DIALC.BIN", 227): "EL COS PROTOZORQ ES MASSA DEBIL PER A MI. LA RA[0b]A ZORQ S'EXTINGEIX. NECESSITO UNA NOVA RA[0b]A ESCLAVA.",
+        ("DIALC.BIN", 282): "OH DEILOS, CONCEDEIX-ME FOR[0b]A!",
+        ("DIALC.BIN", 288): "239, 240. O 250? OH, SHLUKS, COMEN[0b]O DE NOU. 1... 2...",
         ("DIALC.BIN", 143): "TU NER? SAI FAI...\nDES BRAN XAT.",
         ("DIALC.BIN", 147): "TU NER? SAI FAI...\nREKUPE RAT. IN GUT\nESTAT.",
         ("DIALC.BIN", 155): "TU NER? SAI FAI...\nLOKA LITZAT.\nAI TA UN IN SERT.",
@@ -173,8 +190,13 @@ def test_catalan_differential():
     assert "LLENCAR" not in verbs.values()
     assert "LLANCAR" not in verbs.values()
     assert verbs[60] == "ESTIRAR"
-    assert verbs[81] == "LLANCAR SOBRE"
+    assert verbs[81] == "LLAN[0b]AR SOBRE"
     assert verbs[164] == "TIRAR"
+    cedilla = ROOT / "assets" / "lang" / "ca" / "CARACC.BIN"
+    assert cedilla.exists()
+    assert cedilla.read_bytes()[0x0b * 6:0x0b * 6 + 6] == bytes((0x1c, 0x10, 0x10, 0x10, 0x1c, 0x04))
+    assert _from_container("CARACC.BIN")
+    assert any("[0b]" in text for text in dict(_entries(_from_container("DESCC.BIN"))).values())
     coded = {8, 10, 11, 31, 36, 37, 40, 41, 42, 43, 46, 48, 74, 75, 77, 80, 81,
              100, 101, 102, 105, 119, 121, 122, 123, 124, 129, 177, 180, 184,
              188, 210, 215, 219, 220, 235, 236, 237, 238, 239, 242, 243, 244,

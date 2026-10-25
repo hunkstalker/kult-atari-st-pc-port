@@ -1,6 +1,7 @@
 # 0079 — T-126: erratas de verbos catalanes
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-127 añade la `Ç`. Siguiente: T-094
+sobre el ZIP final.
 
 ## LLENCAR / LLANCAR
 

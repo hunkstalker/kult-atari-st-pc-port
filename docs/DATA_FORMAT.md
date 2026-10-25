@@ -90,9 +90,9 @@ python3 tools/build_language_data.py
 ```
 
 Contiene `DRAP.PI1`, el pack español (`VERBS`, `DESCS`, `MOTSS`, `DIALS`,
-`CARACS`) y el pack catalán (`VERBC`, `DESCC`, `MOTSC`, `DIALC`). El catalán es
-inicial, sin tildes ni `Ç` por límites de la fuente, pendiente de revisión
-lingüística.
+`CARACS`) y el pack catalán (`VERBC`, `DESCC`, `MOTSC`, `DIALC`, `CARACC`). El
+catalán conserva `Ç` en el código `0x0b`; siguen pendientes las tildes y
+diéresis por límites de la fuente.
 
 ## Ingesta `kult.data`
 

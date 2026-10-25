@@ -27,10 +27,11 @@ aviso y usa `E`.
 | `DESCC.BIN` | catalán: descripciones |
 | `MOTSC.BIN` | catalán: nombres |
 | `DIALC.BIN` | catalán: diálogos |
+| `CARACC.BIN` | fuente catalana: glifo `Ç` |
 
 La release incluye el pack español (ERBE + correcciones) y el pack catalán
 revisado, migrado de forma diferencial y con la terminología ERBE unificada en
-T-119/T-126. Ambos se cargan desde `language.data`.
+T-119/T-127. Ambos se cargan desde `language.data`.
 La selección y la carga de `S`/`C` están cubiertas por
 `platform/test/test_platform.c` (T-095, `notes/0049`).
 
@@ -39,11 +40,12 @@ La selección y la carga de `S`/`C` están cubiertas por
 Se revisaron las 1.051 entradas catalanas y se corrigieron 404. El detalle está en
 `notes/0043-revision-catalan.md`.
 
-La fuente original es de 4×6 y solo tiene mayúsculas. El pack catalán se pliega a
-caracteres existentes:
+La fuente original es de 4×6 y solo tiene mayúsculas. Desde T-127 el catalán
+incluye `Ç` en el código `0x0b` mediante `CARACC.BIN`; se mantiene el resto del
+plegado:
 
 - sin tildes ni diéresis;
-- `Ç` → `C`;
+- `Ç` se conserva con el glifo propio;
 - `·` → `.`;
 - `L·L` se conserva como `L.L`;
 - `NY` para el sonido de `Ñ`, si apareciera.
@@ -66,10 +68,10 @@ Por preferencia del usuario se conservan **`DAGA`**, **`FESOL`** y
 personaje de `STA KLAROS TA VIEN` (`DIALC` 143, 147, 155, 156, 157, 162, 164,
 165 y 166) en clave fonética catalana: `LASIT UAC IOESDES EMBOLUPA AM NORMA LYTAT`,
 `DES BRAN XAT`, `AI TA UN KIT TANT`, `DES BRAN XEU LOS`, etc. T-125 revisa todo el diálogo en clave (75 entradas) y deja solo sonidos,
-nombres, interjecciones y control sin traducir. `DESC 126` sigue la base ERBE. T-126 corrige el anillo de acciones (`ESTIRAR`,
-`LLANÇAR SOBRE`, `TIRAR`, etc.).
-T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
-`Ç`, hace falta una fuente catalana con esos glifos.
+nombres, interjecciones y control sin traducir. `DESC 126` sigue la base ERBE.
+T-126 corrige el anillo de acciones (`ESTIRAR`, `LLANÇAR SOBRE`, `TIRAR`, etc.).
+T-127 añade la `Ç` catalana en la fuente; quedan pendientes las tildes y
+diéresis, que necesitan más glifos.
 
 ## Generación
 
@@ -78,7 +80,7 @@ Fuentes:
 ```text
 assets/lang/DRAP.PI1
 assets/lang/es/{VERBS,DESCS,MOTSS,DIALS,CARACS}.BIN
-assets/lang/ca/{VERBC,DESCC,MOTSC,DIALC}.BIN
+assets/lang/ca/{VERBC,DESCC,MOTSC,DIALC,CARACC}.BIN
 ```
 
 Contenedor:
@@ -102,8 +104,8 @@ python3 tools/make_language.py --code S \
 
 - `CMake` instala `assets/language.data` en `data/language.data`.
 - El loader usa `language.data` **antes** que `kult.data`.
-- La fuente `CARACS.BIN` se aplica al elegir `S`.
-- El catalán no necesita `CARACC.BIN` porque el texto se ha plegado a ASCII.
+- La fuente `CARACS.BIN` se aplica al elegir `S` y `CARACC.BIN` al elegir `C`.
+- El código `0x0b` es `Ñ` en español y `Ç` en catalán.
 - `saves/` sigue separado; `language.data` es de solo lectura.
 
 ## Verificación

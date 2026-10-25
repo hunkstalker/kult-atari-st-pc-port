@@ -12,7 +12,8 @@ No incluye el juego original: el usuario aporta su propia copia legal.
 - **Español y catalán** integrados en `data/language.data`, además de D/E/F.
   El español parte de la traducción ERBE con correcciones; el catalán conserva
   su revisión, la migración diferencial, la terminología ERBE (`GOT`,
-  `XARXA TUNER`, etc.) y la traducción del diálogo deformado.
+  `XARXA TUNER`, etc.), la traducción del diálogo deformado y la `Ç` con glifo
+  propio.
 - **Selector de idioma** con el `DRAP.PI1` de cinco banderas.
 - **Ingesta inicial desde `.STX`**: detección de los discos A y B por SHA-256,
   extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de
@@ -42,7 +43,7 @@ ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`,
 `saves/`.
 
 SHA256 del ZIP:
-`466ae50bf68256a538f2392b7d4858bd6939426e1b0ef3ebb0d97ce43d5260a2`
+`1c1e8f6f80668e4b9dca2ddd3c78ba805d82005f13ed663e3e5e9d395fcbaf15`
 
 Las instrucciones de uso están en `LEEME.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.
