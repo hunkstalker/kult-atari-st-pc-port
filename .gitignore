@@ -9,10 +9,14 @@ out/
 *.dll
 
 # Dependencias descargadas (SDL3 MinGW; ver docs/BUILD.md)
-third_party/
+third_party/*
+!third_party/README.md
 
 # Capturas/notas temporales del usuario
 temp/
+
+# Revisión lingüística local; no se publica
+docs/REVISION_CATALAN.xlsx
 
 # Entorno / herramientas de test
 .venv

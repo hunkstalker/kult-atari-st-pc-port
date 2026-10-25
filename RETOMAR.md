@@ -19,9 +19,9 @@ revisión T-093 y tiene la migración diferencial T-118 y el cierre terminológi
 ERBE de T-119/T-120 (`CALZE`→`GOT`, `NETWERK`/`REZZO`→`XARXA TUNER`;
 se conservan `DAGA`, `FESOL` y `COMERCIANT`) y T-121–T-123 traducen el diálogo deformado a una clave fonética catalana. Queda **T-094**
 sobre el ZIP final.
-La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
-único fichero no versionado aparte de la documentación es el backup local
-`docs/REVISION_CATALAN.original.xlsx`.
+La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). La
+copia local de revisión `docs/REVISION_CATALAN.xlsx` queda ignorada y no se
+publica en el repositorio.
 
 **Siguiente tarea: T-094 — validación del ZIP de T-132.**
 
@@ -461,7 +461,7 @@ No hay fixes de texto pendientes. Si aparece una regresión visual, usar
   Total: 404 correcciones. `language.data` 77.742 B, SHA256 `855df7c6…`; ZIP
   1.0.0 SHA256 `a11a6948…`. `make test` y `make package-win` OK. Pendientes de
   revisar: T-097 (texto descuadrado al recibir objetos) y T-098 (bloqueo en “La
-  Horca”). El Excel queda en `docs/REVISION_CATALAN.xlsx`.
+  Horca”). La copia local del Excel queda ignorada en `docs/REVISION_CATALAN.xlsx`.
 - **Sesión 57 — revisión completa del catalán (2026-10-24)**: revisadas las
   1.051 entradas de `VERBC`, `MOTSC`, `DESCC` y `DIALC`; 404 correcciones de
   gramática, vocabulario y nombres propios. `language.data` queda en 77.742 B,
