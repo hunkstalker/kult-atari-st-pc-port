@@ -169,6 +169,11 @@ int kult_boot(uint8_t *img, uint32_t max_frames) {
      * usuario acaba de elegir idioma y no queremos una pausa de ~20 s. El timing
      * se reactiva tras ECHE, antes de entrar al juego; la estrella/salas sí
      * conservan su espera. */
+    /* El banco MOTS de español/catalán puede superar los 1.078 B del hueco
+     * original (0x41b76-0x41fac) y PUZZL lo pisaría. Se carga en la zona libre
+     * 0x89000-0x90000 y se redirigen la tabla y la referencia de código. */
+    wr32(img + 0x1a3de, 0x89000);   /* puntero MOTS en la tabla A */
+    wr32(img + 0x10a46, 0x89000);   /* inmediato de la rutina de overlay A */
     (void)load_resource_list_a(img);
     BOOT_TRACE("lista_a");
 
