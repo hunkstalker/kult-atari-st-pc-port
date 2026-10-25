@@ -22,8 +22,8 @@ pendiente de ejecutar en GitHub.
   diálogo de error para Finder.
 - `app/main.c`: reintenta la ingesta tras seleccionar los STX; mensajes
   adaptados a macOS.
-- `CMakeLists.txt`: `Kult.app`, `Info.plist` (`com.kultport.kult`), icono
-  `.icns`, SDL3 en `Contents/Frameworks`, RPATH y recursos de la app.
+- `CMakeLists.txt`: `Kult.app`, `Info.plist`, icono `.icns`, SDL3 en
+  `Contents/Frameworks`, RPATH y recursos de la app.
 - `cmake/macos/Info.plist.in`, `assets/kult.icns`, `assets/LEEME_MAC.txt`.
 - `tools/fetch_sdl3_macos.sh`: SDL3 universal desde fuente.
 - `tools/build_macos.sh`: ZIP + DMG, firma ad-hoc o Developer ID opcional,

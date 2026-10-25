@@ -76,7 +76,7 @@ rm -rf "$HOME/Library/Application Support/Kult"
 ```
 
 Opcionalmente, si existe, borra también
-`~/Library/Saved Application State/com.kultport.kult.savedState`. No hay
+`~/Library/Saved Application State/com.hunkstalker.kult.savedState`. No hay
 instalador, servicios ni archivos de la app en `/Library`; el DMG se puede
 expulsar sin afectar a la instalación.
 

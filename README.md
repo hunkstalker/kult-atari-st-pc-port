@@ -159,7 +159,7 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
    Opcionalmente, si existe:
 
    ```sh
-   rm -rf "$HOME/Library/Saved Application State/com.kultport.kult.savedState"
+   rm -rf "$HOME/Library/Saved Application State/com.hunkstalker.kult.savedState"
    ```
 
 ## Controles
