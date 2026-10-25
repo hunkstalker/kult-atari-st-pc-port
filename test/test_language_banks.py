@@ -96,6 +96,32 @@ def test_erbe_es_import():
         assert not any("SHEIFED" in t or "SAI FAI" in t for t in entries.values())
 
 
+def test_catalan_differential():
+    expected = {
+        ("VERBC.BIN", 104): "GANIVET",
+        ("VERBC.BIN", 117): "HIPERVISIO",
+        ("MOTSC.BIN", 51): "ASH",
+        ("MOTSC.BIN", 92): "DESGUAS",
+        ("MOTSC.BIN", 129): "SCI FI",
+        ("DESCC.BIN", 73): "UN CURIOS HOMENET AL REVES.",
+        ("DESCC.BIN", 126): "EL CAMINANT\nSALVARA ALGU I INDICARA\nLA SEVA ELECCIO AL REPTIL.",
+        ("DESCC.BIN", 261): "MENTRE AVANCES, ACTIVES UN MECANISME HORRIPILANT!\nEL SOSTRE ET CAU A SOBRE!",
+        ("DIALC.BIN", 284): "QUE\nS'HI\nPUDREIXI, AQUEST!",
+        ("DIALC.BIN", 327): "SERE\nJO QUI ABORTI EL COMPLOT PROTOZORQUISTA!",
+        ("DIALC.BIN", 329): "I EL REZZO VOLIA\nQUE ABANDONESSIS SCI FI ENTRE\nLES GARRES D'AQUESTES CRIATURES!",
+    }
+    counts = {"VERBC.BIN": 176, "DESCC.BIN": 407, "MOTSC.BIN": 131, "DIALC.BIN": 337}
+    for bank, count in counts.items():
+        source = next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()
+        entries = dict(_entries(source))
+        assert len(entries) == count
+        assert dict(_entries(_from_container(bank))) == entries
+    for (bank, idx), text in expected.items():
+        source = next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()
+        assert dict(_entries(source))[idx] == text
+        assert dict(_entries(_from_container(bank)))[idx] == text
+
+
 def test_desc_126_passerby():
     expected = {
         "DESCS.BIN": "EL CAMINANTE\nSALVARA A ALGUIEN E INDICARA\nSU ELECCION AL REPTIL.",

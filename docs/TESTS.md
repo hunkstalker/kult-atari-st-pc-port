@@ -5,7 +5,7 @@
 | conjunto | ubicación | cantidad | uso |
 |---|---|---:|---|
 | Tests diferenciales del core | `lib/kult-core/test/` | 519 funciones en 44 `test_*.py` | canónicos del core |
-| Tests de herramientas del port | `test/` | 4 funciones en 2 ficheros | ringreport y packs de idioma |
+| Tests de herramientas del port | `test/` | 5 funciones en 2 ficheros | ringreport y packs de idioma |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
 | Tests funcionales HAL | `platform/test/test_platform.c` | 36 funciones / 255 `CHECK` | backend PC, contenedores, ingesta, packs, config, display/OSD, ranuras, audio y Estirar a pantalla |
 | Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
@@ -69,6 +69,11 @@ Hecho:
 - Eliminada la copia duplicada de los tests del core en `test/`.
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
+
+Hecho (T-118):
+
+- `test_catalan_differential`: recuentos y 11 entradas catalanas actualizadas en
+  fuente y contenedor.
 
 Hecho (T-117):
 

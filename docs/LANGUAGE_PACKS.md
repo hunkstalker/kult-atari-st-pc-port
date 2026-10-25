@@ -29,9 +29,9 @@ aviso y usa `E`.
 | `DIALC.BIN` | catalán: diálogos |
 
 La release incluye el pack español (ERBE + correcciones) y el pack catalán
-revisado. Ambos se cargan desde `language.data`. La selección y la carga de
-`S`/`C` están cubiertas por `platform/test/test_platform.c` (T-095,
-`notes/0049`).
+revisado y migrado de forma diferencial. Ambos se cargan desde `language.data`.
+La selección y la carga de `S`/`C` están cubiertas por
+`platform/test/test_platform.c` (T-095, `notes/0049`).
 
 ## Revisión y limitación de la fuente
 
@@ -50,8 +50,9 @@ caracteres existentes:
 La ortografía está revisada dentro de esas limitaciones y el pack está validado
 por el usuario. T-101 corrigió `VERB 116` («DIE», el objeto) a **DADO**/**DAU**;
 los usos verbales de «die» en `DIAL` se mantienen como «morir». El español usa
-ERBE + correcciones (T-117); el catalán se está migrando de forma diferencial en
-T-118. `DESC 126` sigue la base ERBE.
+ERBE + correcciones (T-117); el catalán se ha migrado de forma diferencial
+(T-118), conservando la revisión catalana donde el sentido no cambia.
+`DESC 126` sigue la base ERBE.
 T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
 `Ç`, hace falta una fuente catalana con esos glifos.
 

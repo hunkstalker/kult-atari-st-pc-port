@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente tras T-118 |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-118) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -38,7 +38,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-115 | DESC 126: “caminante salva a algunos…” en ES/CA | ✅ cerrada (2026-10-25; `notes/0068`; sustituida por T-116) |
 | T-116 | DESC 126 con base ERBE en ES y catalán derivado | ✅ parcial (solo DESC 126); sustituida por T-117 |
 | T-117 | Español completo desde ERBE + correcciones | ✅ cerrada (2026-10-25; `notes/0070`) |
-| T-118 | Catalán diferencial desde ERBE + correcciones | 🚧 siguiente |
+| T-118 | Catalán diferencial desde ERBE + correcciones | ✅ cerrada (2026-10-25; `notes/0071`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -123,7 +123,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP final de T-118 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-118 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -147,7 +147,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-115 | **DESC 126** | ✅ **sesión 71**: primera corrección ES/CA; sustituida por T-116. ZIP `1384cec5…`. Detalle: **`notes/0068`** |
 | T-116 | **DESC 126 con base ERBE** | ✅ **parcial**: solo se cambió DESC 126; el alcance completo se hizo en T-117/T-118. ZIP `e0e2993b…`. Detalle: **`notes/0069`** |
 | T-117 | **Español completo desde ERBE** | ✅ **sesión 71**: bancos ES desde ERBE + `make_es_fixed`, con `SAI FAI`→`SCI FI`, DADO y centinela DESC 406; `language.data` 77.881 B; regresión `test_erbe_es_import`. Detalle: **`notes/0070`** |
-| T-118 | **Catalán diferencial desde ERBE** | 🚧 **siguiente**: conservar catalán donde el sentido no cambie y revisar las entradas afectadas. |
+| T-118 | **Catalán diferencial desde ERBE** | ✅ **sesión 71**: 1.051 entradas comparadas; 93 actualizadas (9/34/24/26), resto conservado por equivalencia semántica; T-093 mantenido. ZIP `3592ff91…`; 5 herramientas. Detalle: **`notes/0071`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

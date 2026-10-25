@@ -10,6 +10,8 @@ No incluye el juego original: el usuario aporta su propia copia legal.
 
 - **Port nativo** para Windows y Linux, sin emulador en tiempo de ejecución.
 - **Español y catalán** integrados en `data/language.data`, además de D/E/F.
+  El español parte de la traducción ERBE con correcciones; el catalán se ha
+  migrado de forma diferencial conservando su revisión.
 - **Selector de idioma** con el `DRAP.PI1` de cinco banderas.
 - **Ingesta inicial desde `.STX`**: detección de los discos A y B por SHA-256,
   extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de
@@ -39,7 +41,7 @@ ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`,
 `saves/`.
 
 SHA256 del ZIP:
-`e0e2993b3975505990708139a0c0d0a8cbfffc6c15fa80c721726820c79c2427`
+`3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`
 
 Las instrucciones de uso están en `LEEME.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.

@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102–T-117 cerradas (2026-10-25). El port arranca
+**Estado:** T-022, T-101, T-102–T-118 cerradas (2026-10-25). El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -14,19 +14,20 @@ defecto, con **F1** ventana/fullscreen, **F2** ciclo
 **fuente original del juego**. `kult.ini` guarda pantalla, escala, ranura,
 volumen y silencio. El OSD caduca por tiempo real. La migración de
 `partida-N.bin` se retiró en T-108. El paquete incluye `Kult Settings.png` junto
-al ejecutable. El español ya usa ERBE + correcciones; queda **T-118**
-(migración diferencial del catalán) y después **T-094**. La release 1.0.0 sigue
-sin push ni tag y **se publicará al final** (T-092). El único fichero no
-versionado aparte de la documentación es el backup local
+al ejecutable. El español usa ERBE + correcciones y el catalán se ha migrado de
+forma diferencial (93 entradas actualizadas). Queda **T-094** sobre el ZIP final.
+La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
+único fichero no versionado aparte de la documentación es el backup local
 `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-118 — catalán diferencial desde ERBE.**
+**Siguiente tarea: T-094 — validación del ZIP de T-118.**
 
-- **Alcance:** conservar el catalán validado donde el sentido no cambie; revisar
-  y retraducir solo las entradas afectadas por el nuevo español ERBE; mantener
-  las correcciones T-093 y los términos propios.
-- **Después:** regenerar `language.data`, empaquetar y **T-094** sobre el ZIP
-  final. Después T-092 (publicar) y T-096 (CI).
+- **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo arranque en Estirar
+  a pantalla, persistencia en `kult.ini`, F1/F2, ratón, F5/F6/F7, volumen,
+  `Kult Settings.png`, textos ES/CA (ERBE y catalán diferencial) y OSD.
+- **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
+  `3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`.
+- **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -42,6 +43,16 @@ versionado aparte de la documentación es el backup local
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-118 — cerrada (sesión 71, 2026-10-25):**
+
+- Migración diferencial del catalán: 1.051 entradas comparadas, **93
+  actualizadas** (9 verbos, 34 nombres, 24 descripciones, 26 diálogos); el resto
+  se conserva por equivalencia semántica.
+- Se mantienen las correcciones T-093, nombres propios y `SCI FI`.
+- `language.data` 77.887 B, `ebdf22b6…`; ZIP
+  `3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`; 5
+  herramientas. Detalle: `notes/0071`.
 
 **T-117 — cerrada (sesión 71, 2026-10-25):**
 
@@ -202,23 +213,21 @@ versionado aparte de la documentación es el backup local
 
 **Artefactos actuales:**
 
-- Último ZIP empaquetado: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `e0e2993b3975505990708139a0c0d0a8cbfffc6c15fa80c721726820c79c2427`
-  (T-116; **obsoleto** tras T-117/T-118).
+- ZIP actual: `build-win/kult-1.0.0-win64.zip`
+  SHA256 `3592ff9196a0c98460487b4612831203d9cb3f521548f03995120c71dd9644de`
+  (T-118; pendiente de T-094, no es aún el artefacto de release).
 - `assets/language.data` regenerado en T-116: 77.717 B,
   SHA256 `6d20cd132d58001a78d5c66901594cd78cd783ce338c13daba7baab02f05d72f`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 519 core + HAL (36 funciones / 255 `CHECK`) + diagnóstico
-  off/on + 4 herramientas OK.
-- `make package-win`: pendiente de T-118.
+  off/on + 5 herramientas OK.
+- `make package-win`: OK después de T-118 (12 entradas).
 
 **Pendiente, en este orden:**
 
-1. **T-118 — catalán diferencial.** Revisar las entradas afectadas por ERBE y
-   regenerar `language.data`.
-2. **T-094 — validación visual final.** Ejecutar la checklist
+1. **T-094 — validación visual final.** Ejecutar la checklist
    `docs/VERIFICACION.md` sobre el ZIP de T-118.
 3. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
