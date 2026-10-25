@@ -208,12 +208,14 @@ static void cpu_charge_us(uint64_t us) {
     g_cpu_busy = 1;
     for (;;) {
         uint64_t now = now_ns();
-        if (now >= end) break;
         uint64_t next_vbl = g_rt_base_ns + (uint64_t)(g_rt_count + 1) * VBL_NS;
-        if (now >= next_vbl) {                   /* VBL vencido: corre el tick */
+        /* Entrega primero los VBLs cuyo instante ya pasó, aunque el reloj haya
+         * rebasado `end` por la granularidad de nanosleep. */
+        if (next_vbl <= end && now >= next_vbl) {
             platform_tick(g_kult_img);
             continue;
         }
+        if (now >= end) break;
         uint64_t wake = next_vbl < end ? next_vbl : end;
         sleep_ns(wake - now);
     }
@@ -234,12 +236,12 @@ void platform_disk_delay(uint32_t bytes) {
     g_cpu_busy = 1;
     for (;;) {
         uint64_t now = now_ns();
-        if (now >= end) break;
         uint64_t next_vbl = g_rt_base_ns + (uint64_t)(g_rt_count + 1) * VBL_NS;
-        if (now >= next_vbl) {                   /* VBL vencido: tick + present */
+        if (next_vbl <= end && now >= next_vbl) {
             platform_tick(g_kult_img);
             continue;
         }
+        if (now >= end) break;
         uint64_t wake = next_vbl < end ? next_vbl : end;
         sleep_ns(wake - now);
     }
