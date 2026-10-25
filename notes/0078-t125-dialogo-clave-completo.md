@@ -1,6 +1,7 @@
 # 0078 — T-125: revisión completa del diálogo en clave
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-126 corrige los verbos catalanes.
+Siguiente: T-094 sobre el ZIP final.
 
 ## Alcance
 

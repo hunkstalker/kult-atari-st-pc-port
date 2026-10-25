@@ -16,7 +16,7 @@ C corra en Windows/Linux.
 > ERBE (`GOT`, `XARXA TUNER`, etc.), con `DAGA`, `FESOL` y `COMERCIANT` conservados y el diálogo deformado
 > traducido en clave fonética catalana; las incidencias de texto de objetos y de La
 > Horca están corregidas. Los tests de ingesta y packs están integrados en
-> `make test`. T-022, T-101 y T-102–T-125 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
+> `make test`. T-022, T-101 y T-102–T-126 están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
 > visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.

@@ -70,13 +70,14 @@ Hecho:
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
 
-Hecho (T-118/T-119/T-120/T-121/T-122/T-123/T-124/T-125):
+Hecho (T-118/T-119/T-120/T-121/T-122/T-123/T-124/T-125/T-126):
 
 - `test_catalan_differential`: recuentos, entradas catalanas actualizadas,
   términos ERBE (`GOT`, `GLOP`, `XARXA TUNER`), preferencias `DAGA`, `FESOL`
   y `COMERCIANT`, y ausencia de `CALZE`, `TRAGO`, `BEINA`, `CANVIADOR`, `TELA`
   y `REZZO` en los cuatro bancos. T-121–T-125 añaden todo el diálogo deformado en clave fonética catalana y
-  `DESCC 45` con `ELS CINC CRANIS`; quedan solo sonidos/nombres/control.
+  `DESCC 45` con `ELS CINC CRANIS`; quedan solo sonidos/nombres/control. T-126 añade la regresión de los diez verbos
+  corregidos y la ausencia de `LLENCAR`/`LLANCAR` sueltos.
 
 Hecho (T-117):
 

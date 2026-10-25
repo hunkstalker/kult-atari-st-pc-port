@@ -98,10 +98,20 @@ def test_erbe_es_import():
 
 def test_catalan_differential():
     expected = {
+        ("VERBC.BIN", 1): "PERTINENCES",
+        ("VERBC.BIN", 13): "DESPLACAR",
+        ("VERBC.BIN", 17): "MOURE",
         ("VERBC.BIN", 39): "OMPLIR GOT",
+        ("VERBC.BIN", 52): "ENCAIXAR LA MA",
+        ("VERBC.BIN", 60): "ESTIRAR",
+        ("VERBC.BIN", 71): "OFERIR",
+        ("VERBC.BIN", 81): "LLANCAR SOBRE",
+        ("VERBC.BIN", 83): "DONAR",
         ("VERBC.BIN", 104): "DAGA",
         ("VERBC.BIN", 117): "HIPERVISIO",
         ("VERBC.BIN", 115): "FESOL",
+        ("VERBC.BIN", 145): "LLANCAR LLIGANYA",
+        ("VERBC.BIN", 164): "TIRAR",
         ("VERBC.BIN", 155): "DONAR\nEL FESOL PER MENJAR",
         ("MOTSC.BIN", 51): "ASH",
         ("MOTSC.BIN", 124): "COMERCIANT",
@@ -159,6 +169,12 @@ def test_catalan_differential():
         for old in ("CALZE", "TRAGO", "BEINA", "CANVIADOR", "TELA", "REZZO"):
             assert not any(old in text for text in texts.values()), (bank, old)
     assert "XARXA TUNER" in dict(_entries(next((ROOT / "assets" / "lang").rglob("DESCC.BIN")).read_bytes()))[404]
+    verbs = dict(_entries(next((ROOT / "assets" / "lang").rglob("VERBC.BIN")).read_bytes()))
+    assert "LLENCAR" not in verbs.values()
+    assert "LLANCAR" not in verbs.values()
+    assert verbs[60] == "ESTIRAR"
+    assert verbs[81] == "LLANCAR SOBRE"
+    assert verbs[164] == "TIRAR"
     coded = {8, 10, 11, 31, 36, 37, 40, 41, 42, 43, 46, 48, 74, 75, 77, 80, 81,
              100, 101, 102, 105, 119, 121, 122, 123, 124, 129, 177, 180, 184,
              188, 210, 215, 219, 220, 235, 236, 237, 238, 239, 242, 243, 244,

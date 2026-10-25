@@ -109,3 +109,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0076-t123-clave-fonetica-catalana.md`](../notes/0076-t123-clave-fonetica-catalana.md)
 - [`notes/0077-t124-ajuste-162.md`](../notes/0077-t124-ajuste-162.md)
 - [`notes/0078-t125-dialogo-clave-completo.md`](../notes/0078-t125-dialogo-clave-completo.md)
+- [`notes/0079-t126-erratas-verbos-catalan.md`](../notes/0079-t126-erratas-verbos-catalan.md)

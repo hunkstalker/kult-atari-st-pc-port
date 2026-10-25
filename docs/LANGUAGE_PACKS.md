@@ -30,7 +30,7 @@ aviso y usa `E`.
 
 La release incluye el pack español (ERBE + correcciones) y el pack catalán
 revisado, migrado de forma diferencial y con la terminología ERBE unificada en
-T-119/T-125. Ambos se cargan desde `language.data`.
+T-119/T-126. Ambos se cargan desde `language.data`.
 La selección y la carga de `S`/`C` están cubiertas por
 `platform/test/test_platform.c` (T-095, `notes/0049`).
 
@@ -66,7 +66,8 @@ Por preferencia del usuario se conservan **`DAGA`**, **`FESOL`** y
 personaje de `STA KLAROS TA VIEN` (`DIALC` 143, 147, 155, 156, 157, 162, 164,
 165 y 166) en clave fonética catalana: `LASIT UAC IOESDES EMBOLUPA AM NORMA LYTAT`,
 `DES BRAN XAT`, `AI TA UN KIT TANT`, `DES BRAN XEU LOS`, etc. T-125 revisa todo el diálogo en clave (75 entradas) y deja solo sonidos,
-nombres, interjecciones y control sin traducir. `DESC 126` sigue la base ERBE.
+nombres, interjecciones y control sin traducir. `DESC 126` sigue la base ERBE. T-126 corrige el anillo de acciones (`ESTIRAR`,
+`LLANÇAR SOBRE`, `TIRAR`, etc.).
 T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
 `Ç`, hace falta una fuente catalana con esos glifos.
 
