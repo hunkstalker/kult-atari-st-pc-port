@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-121) |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-122) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -41,7 +41,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-118 | Catalán diferencial desde ERBE + correcciones | ✅ cerrada (2026-10-25; `notes/0071`; terminología en T-119/T-120) |
 | T-119 | Terminología catalana alineada con ERBE (`CALZE`→`GOT`, `XARXA TUNER`) | ✅ cerrada (2026-10-25; `notes/0072`; preferencias en T-120) |
 | T-120 | Preferencias catalanas: mantener `DAGA`, `FESOL` y `COMERCIANT` | ✅ cerrada (2026-10-25; `notes/0073`) |
-| T-121 | Traducir el diálogo deformado del personaje de `STA KLAROS TA VIEN` | ✅ cerrada (2026-10-25; `notes/0074`) |
+| T-121 | Traducir el diálogo deformado del personaje de `STA KLAROS TA VIEN` | ✅ cerrada (2026-10-25; `notes/0074`; clave en T-122) |
+| T-122 | Reescribir el diálogo deformado con clave catalana (`STA KLAR, STA BE`) | ✅ cerrada (2026-10-25; `notes/0075`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -126,7 +127,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-121 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-122 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -154,6 +155,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-119 | **Terminología catalana alineada con ERBE** | ✅ **sesión 71**: `CALZE`→`GOT`, `TRAGO`→`GLOP`, `TELA`→`TERANYINA`, `FRASCO`→`FLASQUET` y `NETWERK`/`REZZO`→`XARXA TUNER`; alienígena 184/238/239 intacto. `language.data` 77.896 B, `0d9582d9…`; ZIP `3d8cf7d6…`; 5 herramientas. Detalle: **`notes/0072`** |
 | T-120 | **Preferencias catalanas del usuario** | ✅ **sesión 71**: se conservan `DAGA`, `FESOL` y `COMERCIANT` (revertidos `GANIVET`, `BEINA` y `CANVIADOR`). `language.data` 77.903 B, `a3e606b5…`; ZIP `de37885a…`; 5 herramientas. Detalle: **`notes/0073`** |
 | T-121 | **Diálogo deformado traducido** | ✅ **sesión 71**: `DIALC` 143/147/155/156/157/162/164/165/166 pasan de inglés fonético a catalán; `DESCC 45` usa `ELS CINC CRANIS`. `language.data` 77.887 B, `3c554a1d…`; ZIP `79450f59…`; 5 herramientas. Detalle: **`notes/0074`** |
+| T-122 | **Diálogo deformado en clave catalana** | ✅ **sesión 71**: se rehacen las nueve líneas con la deformación deliberada (`STA KLAR, STA BE`, `TU NER?`, `DESAKTIVAT`, `SITUASIO KONFUSA`). `language.data` 77.880 B, `cd4c9a04…`; ZIP `a6a982ee…`; 5 herramientas. Detalle: **`notes/0075`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

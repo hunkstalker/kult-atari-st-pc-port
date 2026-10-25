@@ -42,7 +42,7 @@ ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`,
 `saves/`.
 
 SHA256 del ZIP:
-`79450f59b2c2bfc6b477403c89380709bebbd1f20481a6170ede39d2521849f3`
+`a6a982ee7eb735ebefe7e4126b443ab6a2e4d5a3effa1e984adc38132a594d24`
 
 Las instrucciones de uso están en `LEEME.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.

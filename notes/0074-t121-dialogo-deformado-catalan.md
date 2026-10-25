@@ -1,6 +1,7 @@
 # 0074 — T-121: diálogo deformado traducido al catalán
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-122 rehace estas líneas en clave
+catalana. Siguiente: T-094 sobre el ZIP final.
 
 ## Localización
 
