@@ -50,7 +50,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-112
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-113
 (2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save` y el OSD
 con la fuente del juego.**
 
@@ -126,12 +126,14 @@ están validados.
 
 ### Windows (paquete de release)
 El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
-`make package-win`). **No lleva assets.** Para validar:
+`make package-win`). **No lleva assets del juego**; sí incluye
+`Kult Settings.png` junto al ejecutable. Para validar:
 
 1. Descomprimir el ZIP en una carpeta escribible (no Program Files).
 2. Copiar `Kult.STX` y `Kult (B).STX` en `data/` o junto a `kult.exe`.
    El primer arranque genera `data/kult.data`; después se pueden borrar los STX.
-3. Doble clic en `kult.exe` (no abre consola; el icono es la K de Kult).
+3. Comprobar que `Kult Settings.png` está junto a `kult.exe`; después, doble clic
+   en `kult.exe` (no abre consola; el icono es la K de Kult).
 4. Repetir los puntos 3–6 de arriba: **primera pantalla = título visible** (no
    negro; espera **tecla o clic**) → pantalla de idioma D/E/F/S/C, juego con
    **colores correctos**, guardado ✅, morir → reiniciar ✅, **audio ✅**

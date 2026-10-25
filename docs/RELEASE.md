@@ -26,6 +26,7 @@ borrarse después de una ingesta correcta.
 ├── kult.exe
 ├── SDL3.dll
 ├── LEEME.txt
+├── Kult Settings.png
 ├── LICENSE
 ├── THIRD_PARTY_NOTICES.md
 ├── LICENSES/
@@ -129,12 +130,15 @@ La release contiene:
 kult.exe
 SDL3.dll
 LEEME.txt
+Kult Settings.png
 LICENSE
 THIRD_PARTY_NOTICES.md
 LICENSES/
 data/language.data
 saves/ (vacía)
 ```
+
+`Kult Settings.png` es una imagen de referencia del port, no un asset del juego.
 
 No contiene:
 

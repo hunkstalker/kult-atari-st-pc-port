@@ -96,3 +96,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0063-t110-estirar-pantalla.md`](../notes/0063-t110-estirar-pantalla.md)
 - [`notes/0064-t111-osd-tiempo-real.md`](../notes/0064-t111-osd-tiempo-real.md)
 - [`notes/0065-t112-volumen.md`](../notes/0065-t112-volumen.md)
+- [`notes/0066-t113-kult-settings-png.md`](../notes/0066-t113-kult-settings-png.md)

@@ -39,6 +39,7 @@ Carpetas
 - `saves/`  escrituras del juego (CLEAR.BIN, SCENA.BIN...) y las ranuras
             `slot-0.save`…`slot-9.save`.
 - `kult.ini` recuerda la ranura de guardado activa.
+- `Kult Settings.png` imagen de referencia incluida con el port.
 - `kult.log` se crea junto a kult.exe con timestamp y errores.
 
 Si algo falla, revisa `kult.log`. No hay appdata ni rutas alternativas.
