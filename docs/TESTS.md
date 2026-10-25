@@ -7,7 +7,7 @@
 | Tests diferenciales del core | `lib/kult-core/test/` | 519 funciones en 44 `test_*.py` | canónicos del core |
 | Tests de herramientas del port | `test/` | 2 funciones en 2 ficheros | ringreport y packs de idioma |
 | Tests del kit | `lib/kult-core/tools/recreate_kit/test/` | 339 funciones en 42 ficheros | validación del kit, no de `make test` |
-| Tests funcionales HAL | `platform/test/test_platform.c` | 34 funciones / 218 `CHECK` | backend PC, contenedores, ingesta, packs, display/OSD y ranuras |
+| Tests funcionales HAL | `platform/test/test_platform.c` | 34 funciones / 227 `CHECK` | backend PC, contenedores, ingesta, packs, display/OSD, ranuras y Rellenar |
 | Humo de diagnóstico | `platform/test/test_diag.c` | 2 procesos (`off`/`on`) | logs desactivados/activados y F12 |
 | Tests de convenciones/mapa/visibilidad | dentro del core | incluidos en los 519 | legibilidad y sincronización |
 
@@ -72,7 +72,7 @@ Hecho:
 
 Hecho (T-102–T-104):
 
-- `test_display_viewport`: escala Auto/×1–×6, viewport centrado y ciclos de F2.
+- `test_display_viewport`: escala Auto/×1–×6, viewport centrado, Rellenar, mapeo de ratón y ciclos de F2.
 - `test_osd`: texto y caducidad de los avisos.
 - `test_osd_font`: glifos 4×6 de `A_FONT_DATA`, fondo, mapeo de caracteres y
   ausencia de fuente.

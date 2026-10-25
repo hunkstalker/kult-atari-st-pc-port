@@ -9,7 +9,8 @@ monitor y mantiene el juego a 320×200 con escalado entero y nearest-neighbour.
 
 - **F1**: alterna fullscreen ↔ ventana. Al volver a ventana se usa la última
   escala fija (×3 por defecto) y se centra.
-- **F2**: cicla **Auto → ×1 → ×2 → ×3 → ×4 → ×5 → ×6 → Auto**.
+- **F2**: cicla **Auto → ×1 → ×2 → ×3 → ×4 → ×5 → ×6 → Rellenar → Auto**.
+  Rellenar se añadió en T-109 y estira a toda la salida.
   - En ventana, una escala fija redimensiona la ventana; Auto mantiene el
     tamaño actual y ajusta el viewport.
   - En fullscreen, la escala fija deja bandas negras centradas; Auto usa el

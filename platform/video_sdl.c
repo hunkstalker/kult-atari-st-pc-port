@@ -28,7 +28,7 @@ static uint8_t       g_rgba[FB_W * FB_H * 4];
 static int g_scale_mode = PLATFORM_SCALE_AUTO;
 static int g_fullscreen = 1;
 static int g_last_window_scale = 3;
-static platform_viewport g_vp = { 0, 0, FB_W, FB_H, 1 };
+static platform_viewport g_vp = { 0, 0, FB_W, FB_H, 1, 0 };
 
 static void update_viewport(void) {
     int ow = 0, oh = 0;
@@ -97,9 +97,10 @@ static void toggle_fullscreen(void) {
 
 static void cycle_scale(void) {
     g_scale_mode = platform_display_next(g_scale_mode);
-    if (g_scale_mode != PLATFORM_SCALE_AUTO)
+    if (g_scale_mode >= PLATFORM_SCALE_MIN &&
+        g_scale_mode <= PLATFORM_SCALE_MAX)
         g_last_window_scale = g_scale_mode;
-    if (g_fullscreen)
+    if (g_fullscreen || g_scale_mode == PLATFORM_SCALE_FILL)
         update_viewport();
     else
         apply_window_scale();
@@ -107,32 +108,32 @@ static void cycle_scale(void) {
     char msg[32];
     if (g_scale_mode == PLATFORM_SCALE_AUTO)
         snprintf(msg, sizeof msg, "ESCALA AUTO");
+    else if (g_scale_mode == PLATFORM_SCALE_FILL)
+        snprintf(msg, sizeof msg, "ESCALA RELLENAR");
     else
         snprintf(msg, sizeof msg, "ESCALA x%d", g_vp.scale);
     platform_osd_show(msg);
-    platform_log("F2: modo=%d efectiva=x%d", g_scale_mode, g_vp.scale);
+    platform_log("F2: modo=%d efectiva=%s", g_scale_mode,
+                 g_vp.fill ? "rellenar" : "entera");
 }
 
 static void mouse_to_game(float wx, float wy, int *x, int *y) {
     float rx = 0, ry = 0;
-    int gx = 160, gy = 100;
-    if (g_ren && SDL_RenderCoordinatesFromWindow(g_ren, wx, wy, &rx, &ry)) {
-        gx = (int)((rx - (float)g_vp.x) / (float)g_vp.scale);
-        gy = (int)((ry - (float)g_vp.y) / (float)g_vp.scale);
+    if (g_ren && SDL_RenderCoordinatesFromWindow(g_ren, wx, wy, &rx, &ry))
+        platform_display_point(&g_vp, rx, ry, x, y);
+    else {
+        *x = 160;
+        *y = 100;
     }
-    if (gx < 0) gx = 0;
-    if (gx > FB_W - 1) gx = FB_W - 1;
-    if (gy < 0) gy = 0;
-    if (gy > FB_H - 1) gy = FB_H - 1;
-    *x = gx;
-    *y = gy;
 }
 
 int platform_sdl_open(const char *title, int scale_mode, int fullscreen) {
-    if (scale_mode < PLATFORM_SCALE_AUTO || scale_mode > PLATFORM_SCALE_MAX)
+    if (scale_mode < PLATFORM_SCALE_AUTO ||
+        (scale_mode > PLATFORM_SCALE_MAX && scale_mode != PLATFORM_SCALE_FILL))
         scale_mode = PLATFORM_SCALE_AUTO;
     g_scale_mode = scale_mode;
-    g_last_window_scale = scale_mode ? scale_mode : 3;
+    g_last_window_scale = (scale_mode >= PLATFORM_SCALE_MIN &&
+                           scale_mode <= PLATFORM_SCALE_MAX) ? scale_mode : 3;
     g_fullscreen = fullscreen ? 1 : 0;
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {

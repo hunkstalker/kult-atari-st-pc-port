@@ -17,7 +17,8 @@ No incluye el juego original: el usuario aporta su propia copia legal.
 - **Release portable**: `data/`, `saves/` y `kult.log` junto al ejecutable, sin
   appdata ni rutas alternativas.
 - **Pantalla y atajos**: arranque en fullscreen sin bordes a resolución nativa;
-  **F1** alterna ventana/fullscreen, **F2** escala Auto/×1–×6.
+  **F1** alterna ventana/fullscreen, **F2** escala Auto/×1–×6 o **Rellenar**
+  (estirar a toda la salida).
 - **Ranuras de guardado**: **F5** cicla 0–9, **F6** guarda y **F7** carga
   savestates completos en `saves/slot-N.save`; la ranura activa se recuerda en
   `kult.ini`. Los avisos usan la fuente original del juego.
@@ -34,7 +35,7 @@ ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`, `LICENSE`,
 avisos de terceros, `data/language.data` y `saves/`.
 
 SHA256 del ZIP:
-`862b20b257b7f79d28c72cfa71ac1822aa92e56d937e59260e19bee43d9ececd`
+`9a62f3d4f7b988163343e4265462bdf9a29844c3381b76709ec5da69b4849bca`
 
 Las instrucciones de uso están en `LEEME.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.
