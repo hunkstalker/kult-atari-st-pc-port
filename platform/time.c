@@ -111,6 +111,7 @@ int platform_time_realtime(void) { return g_rt; }
 uint64_t platform_now_ns(void) { return now_ns(); }
 
 uint32_t platform_frame_count(void) { return g_frames; }
+int platform_in_loop(void) { return g_in_loop; }
 
 void platform_tick(uint8_t *img) {
     if (g_tick)

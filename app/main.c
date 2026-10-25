@@ -106,8 +106,8 @@ static void fps_note(void) {
 /* Hook del bucle: ya no presenta (lo hace `tick_cb` en cada VBL, también para
  * las animaciones que corren dentro de un comando). Solo bombea y cuenta FPS. */
 static void present_cb(uint8_t *img) {
-    (void)img;
     if (!platform_sdl_pump()) { kult_request_stop(); return; }
+    platform_slots_apply(img);
     fps_note();
 }
 /* Bombeo durante una espera bloqueante (Cnecin en menús/prompts): presenta y, si

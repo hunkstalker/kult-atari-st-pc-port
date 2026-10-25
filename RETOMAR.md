@@ -6,22 +6,21 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102 y T-103 cerradas (2026-10-25). El port arranca
-en **fullscreen sin bordes a resolución nativa**, con **F1** ventana/fullscreen,
-**F2** escala Auto/1x–6x y savestates completos en `saves/partida-0.bin`…
-`partida-9.bin` con la ranura activa en `kult.ini`. Ahora falta cablear los
-atajos F5/F6/F7 (T-104), la documentación/ZIP (T-105) y la **T-094** (validación
-visual final). La release 1.0.0 sigue sin push ni tag y **se publicará al final**
-(T-092). El único fichero no versionado aparte de la documentación es el backup
-local `docs/REVISION_CATALAN.original.xlsx`.
+**Estado:** T-022, T-101, T-102, T-103 y T-104 cerradas (2026-10-25). El port
+arranca en **fullscreen sin bordes a resolución nativa**, con **F1**
+ventana/fullscreen, **F2** escala Auto/1x–6x y **F5/F6/F7** para ranuras de
+savestate en `saves/partida-0.bin`…`partida-9.bin` (ranura activa en
+`kult.ini`). Queda T-105 (documentación, ZIP y hashes) y después **T-094**
+(validación visual final). La release 1.0.0 sigue sin push ni tag y **se
+publicará al final** (T-092). El único fichero no versionado aparte de la
+documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-104 — atajos F5/F6/F7.**
+**Siguiente tarea: T-105 — documentación de release y ZIP.**
 
-- **Alcance:** F5 cicla 0–9, F6 guarda y F7 carga en el tope del bucle; OSD y
-  errores; solo durante la partida.
-- **Después:** T-105 (documentación/ZIP) y **T-094** (validación visual final
-  sobre el ZIP nuevo).
-- **Publicación:** T-092 y T-096 al final.
+- **Alcance:** LEEME/README/notas/verificación, contadores de tests, `make
+  package-win`, SHA256 nuevo y estado de T-094.
+- **Después:** **T-094** (validación visual final sobre el ZIP nuevo), T-092
+  (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -37,6 +36,14 @@ local `docs/REVISION_CATALAN.original.xlsx`.
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-104 — cerrada (sesión 71, 2026-10-25):**
+
+- F5 cicla 0–9; F6 guarda y F7 carga en el tope del bucle. Fuera de partida
+  avisan `SOLO EN PARTIDA`.
+- Guardado con `cursor_restore`; carga con `sound_stop`, restauración de
+  imagen/paleta/base visible y `cursor_draw`.
+- Tests de solicitud dentro/fuera del bucle y avisos OSD. Detalle: `notes/0057`.
 
 **T-103 — cerrada (sesión 71, 2026-10-25):**
 

@@ -136,6 +136,12 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    **colores correctos**, guardado ✅, morir → reiniciar ✅, **audio ✅**
    (incluidas puertas).
    **Controles**:
+   **F1** alterna pantalla completa/ventana y **F2** cicla la escala
+   (Auto, ×1–×6); comprobar que el ratón sigue apuntando bien y que el OSD se
+   ve discreto.
+   **F5** cicla ranuras 0–9, **F6** guarda y **F7** carga; probar una ranura
+   vacía/corrupta (error visible), reiniciar y comprobar que se recuerda la
+   ranura. El savestate no rebobina la música.
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
    **derecho** = acción + skip (puertas y A/B/C). **Clic mantenido ✅ (T-084)**:
    una pulsación mantenida = **un** clic; el anillo de acciones se abre una vez y

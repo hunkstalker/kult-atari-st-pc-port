@@ -12,6 +12,7 @@
 
 #include "platform.h"
 #include "osd.h"
+#include "kult_api.h"
 
 #define SLOT_MAGIC "KSLOTP01"
 #define SLOT_VERSION 1u
@@ -19,6 +20,8 @@
 #define SLOT_ROW_SIZE (SLOT_HDR_SIZE + PLATFORM_IMAGE_SIZE)
 
 static int g_slot;
+static int g_pending_save;
+static int g_pending_load;
 
 static void slot_path(int slot, char *out, size_t out_size) {
     snprintf(out, out_size, "%s/partida-%d.bin", platform_saves_dir(), slot);
@@ -136,6 +139,53 @@ void platform_slots_select_next(void) {
     snprintf(msg, sizeof msg, "RANURA %d", g_slot);
     platform_osd_show(msg);
     platform_log("slot activo: %d", g_slot);
+}
+
+void platform_slots_request_save(void) {
+    if (!platform_in_loop()) {
+        platform_osd_show("SOLO EN PARTIDA");
+        return;
+    }
+    g_pending_save = 1;
+    g_pending_load = 0;
+}
+
+void platform_slots_request_load(void) {
+    if (!platform_in_loop()) {
+        platform_osd_show("SOLO EN PARTIDA");
+        return;
+    }
+    g_pending_load = 1;
+    g_pending_save = 0;
+}
+
+void platform_slots_apply(uint8_t *img) {
+    int do_load = g_pending_load;
+    int do_save = g_pending_save;
+    g_pending_load = 0;
+    g_pending_save = 0;
+    if (!img || (!do_load && !do_save))
+        return;
+
+    char msg[32];
+    if (do_load) {
+        sound_stop(img);
+        if (platform_slots_load(img, g_slot) == 0) {
+            cursor_draw(img);
+            snprintf(msg, sizeof msg, "PARTIDA %d CARGADA", g_slot);
+        } else {
+            snprintf(msg, sizeof msg, "ERROR AL CARGAR");
+        }
+        platform_osd_show(msg);
+        return;
+    }
+
+    cursor_restore(img);
+    if (platform_slots_save(img, g_slot) == 0)
+        snprintf(msg, sizeof msg, "PARTIDA %d GUARDADA", g_slot);
+    else
+        snprintf(msg, sizeof msg, "ERROR AL GUARDAR");
+    platform_osd_show(msg);
 }
 
 int platform_slots_save(const uint8_t *img, int slot) {

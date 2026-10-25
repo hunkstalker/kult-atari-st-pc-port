@@ -28,6 +28,10 @@ la carpeta debe ser escribible.
 5) Controles: F1 alterna pantalla completa/ventana, F2 cambia la escala
    (Auto, x1..x6) y ESC cierra la ventana.
 
+6) Guardado rápido: F5 cambia de ranura (0-9), F6 guarda y F7 carga. Las
+   partidas van a `saves/partida-N.bin`; la ranura activa se recuerda en
+   `kult.ini`. Solo se guarda/carga durante la partida.
+
 Carpetas
 --------
 - `data/`   entrada de los STX + `kult.data` generado + `language.data`.

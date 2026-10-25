@@ -17,7 +17,9 @@
   fullscreen sin bordes a la resolución nativa** (`KULT_WINDOW=0` fuerza
   headless; `KULT_FULLSCREEN=0` arranca en ventana). `KULT_SCALE=0`/ausente =
   Auto; `1..6` = multiplicador fijo. **F1** alterna fullscreen/ventana; **F2**
-  cicla Auto/×1–×6; ESC sale. Entrada real y ritmo 50 Hz por defecto
+  cicla Auto/×1–×6; **F5** cicla ranuras 0–9; **F6** guarda y **F7** carga
+  (`saves/partida-N.bin`, ranura en `kult.ini`); ESC sale. Entrada real y ritmo
+  50 Hz por defecto
   (`KULT_AUTOINPUT=1` y `KULT_REALTIME=0` los desactivan, p. ej. sin display).
   `KULT_AUDIO=0` apaga el sonido. Sin display: `SDL_VIDEODRIVER=dummy`
   (y `SDL_AUDIODRIVER=dummy`).

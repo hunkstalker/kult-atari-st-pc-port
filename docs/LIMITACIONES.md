@@ -78,6 +78,10 @@ datos.
   binario propio documentado). Ver `notes/0011`.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
   Fwrite); **validado por el usuario**.
+- **Ranuras F5/F6/F7 (T-104)**: savestates del port (1 MiB + paleta + base
+  visible) en `saves/partida-0.bin`…`partida-9.bin`. Solo se guarda/carga
+  durante la partida. **No** incluyen el estado del MFP/PSG: la música no
+  rebobina al punto guardado.
 - **Final del juego (T-089)**: intencionadamente **no vuelve al título**. El
   original entra en el bucle infinito de `attract` (`0x18c80`) y se queda en la
   animación de estrellas; el port ya lo reproduce. Para salir hay que cerrar la

@@ -38,6 +38,11 @@ void wait_frame(uint8_t *img);
  * (arrastrarían el resto del core). Se sustituyen por stubs para el enlazado. */
 void sound_isr_fwd(uint8_t *img)  { (void)img; }
 void sound_isr_back(uint8_t *img) { (void)img; }
+/* Stubs de las rutinas de cursor/sonido que usa platform_slots_apply (el test
+ * del savestate no enlaza el core completo). */
+void cursor_draw(uint8_t *img)    { (void)img; }
+void cursor_restore(uint8_t *img) { (void)img; }
+void sound_stop(uint8_t *img)     { (void)img; }
 
 #define IMG_SIZE 0x100000u
 #define DIR      "/tmp/kult_hal_test"
@@ -626,11 +631,13 @@ static void present_counter(uint8_t *img) { (void)img; g_present_n++; }
 static void test_present_hook(void) {
     platform_set_present(present_counter);
     platform_set_loop(0);
+    CHECK(!platform_in_loop(), "platform_in_loop debe ser 0 en el arranque");
     g_present_n = 0;
     platform_tick(g_img);
     CHECK(g_present_n == 1, "en arranque se presenta en cada tick");
 
     platform_set_loop(1);
+    CHECK(platform_in_loop(), "platform_in_loop debe ser 1 dentro del bucle");
     g_present_n = 0;
     platform_tick(g_img);
     CHECK(g_present_n == 1, "en el bucle también se presenta en cada VBL");
@@ -770,6 +777,38 @@ static void test_slots(void) {
     CHECK(platform_slots_save(a, -1) != 0, "slot negativo invalido");
     CHECK(platform_slots_load(a, 10) != 0, "slot fuera de rango invalido");
 
+    const char *path3 = DIR "/saves/partida-3.bin";
+    wr32(a + A_CURSOR_SAVE_DEST, 0x50000);
+    wr32(a + A_SCREEN_PTR_A, 0x80000);
+    wr32(a + A_SCREEN_PTR_B, 0x90000);
+    wr32(a + A_CURSOR_SPRITE_PTR, 0x50000);
+    wr16(a + A_CURSOR_X, 100);
+    wr16(a + A_CURSOR_Y, 100);
+    platform_set_loop(0);
+    remove(path3);
+    platform_slots_request_save();
+    platform_slots_apply(a);
+    CHECK(fopen(path3, "rb") == NULL,
+          "F6 fuera del bucle no debe guardar");
+    CHECK(strcmp(platform_osd_text(), "SOLO EN PARTIDA") == 0,
+          "F6 fuera del bucle debe avisar");
+
+    platform_set_loop(1);
+    platform_slots_request_save();
+    platform_slots_apply(a);
+    CHECK(fopen(path3, "rb") != NULL, "F6 en el bucle debe guardar");
+    CHECK(strstr(platform_osd_text(), "GUARDADA") != NULL,
+          "el aviso de guardado debe ser visible");
+
+    a[0] = 0xa5;
+    platform_slots_request_load();
+    platform_slots_apply(a);
+    CHECK(a[0] == 11, "F7 debe restaurar la imagen guardada");
+    CHECK(strstr(platform_osd_text(), "CARGADA") != NULL,
+          "el aviso de carga debe ser visible");
+    platform_set_loop(0);
+
+    remove(path3);
     remove(path4);
     remove(bad);
     remove(DIR "/kult.ini");

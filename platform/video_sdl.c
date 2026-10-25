@@ -288,6 +288,8 @@ int platform_sdl_pump(void) {
         } else if (e.type == SDL_EVENT_KEY_DOWN) {
             int special = e.key.key == SDLK_ESCAPE ||
                           e.key.key == SDLK_F1 || e.key.key == SDLK_F2 ||
+                          e.key.key == SDLK_F5 || e.key.key == SDLK_F6 ||
+                          e.key.key == SDLK_F7 ||
                           e.key.key == SDLK_F11 || e.key.key == SDLK_F12;
             if (e.key.repeat && special)
                 continue;
@@ -297,6 +299,12 @@ int platform_sdl_pump(void) {
                 toggle_fullscreen();
             } else if (e.key.key == SDLK_F2) {
                 cycle_scale();
+            } else if (e.key.key == SDLK_F5) {
+                platform_slots_select_next();
+            } else if (e.key.key == SDLK_F6) {
+                platform_slots_request_save();
+            } else if (e.key.key == SDLK_F7) {
+                platform_slots_request_load();
             } else if (e.key.key == SDLK_F12) {
                 /* Marca manual para T-073c (no va al juego). */
                 platform_marks_event("f12", 0, 0);

@@ -69,6 +69,7 @@ void platform_replay_shutdown(void);
 
 /* Reloj: número de frames (VBL) entregados desde el arranque. */
 uint32_t platform_frame_count(void);
+int platform_in_loop(void);
 
 /* Reloj monótono en ns (para diagnósticos, p. ej. FPS del bucle). */
 uint64_t platform_now_ns(void);
@@ -160,6 +161,9 @@ int  platform_slots_current(void);
 void platform_slots_select_next(void);
 int  platform_slots_save(const uint8_t *img, int slot);
 int  platform_slots_load(uint8_t *img, int slot);
+void platform_slots_request_save(void);
+void platform_slots_request_load(void);
+void platform_slots_apply(uint8_t *img);
 
 /* Ventana SDL3 (sólo se enlaza en el build `make port-sdl`, -DHAVE_SDL3).
  * `scale_mode`: 0 = Auto, 1..6 = multiplicador entero. `fullscreen` activa el
