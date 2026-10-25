@@ -11,8 +11,8 @@ C corra en Windows/Linux.
 > la ingesta de los discos originales, el selector de idioma, los packs español y
 > catalán, guardado/carga y audio. La release 1.0.0 está preparada como ZIP
 > portable de Windows; los textos catalanes están validados. Las incidencias de
-> texto de objetos y de La Horca están corregidas y pendientes de validación
-> visual. Después quedan los tests automatizados, la publicación y el CI. El seguimiento técnico del desarrollo está en
+> texto de objetos y de La Horca están corregidas y validadas. Después quedan la
+> validación visual final, los tests automatizados, la publicación y el CI. El seguimiento técnico del desarrollo está en
 > **`PROYECTO.md`**, **`TODO.md`** y **`RETOMAR.md`**.
 
 ## Core importado

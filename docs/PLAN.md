@@ -83,7 +83,7 @@ para que el usuario valide.
 **Aceptación:** doble clic + copia del usuario → funciona.
 **Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. La
 release 1.0.0 está preparada y el catalán está validado; T-097/T-098 están
-corregidos y pendientes de validación visual. Después: validación visual, tests
+corregidos y validados por el usuario. Después: validación visual final, tests
 automatizados y publicación. El CI va después de publicar.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,

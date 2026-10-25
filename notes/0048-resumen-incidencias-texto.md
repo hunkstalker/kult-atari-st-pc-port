@@ -78,5 +78,5 @@ Commit de instrumentación: `506da67`.
 - `make package-win` correcto.
 - `language.data`: `cc8981ae…`
 - ZIP: `0fe3118a…`
-- Pendiente: validación visual de T-097/T-098 por el usuario, T-094, T-095 y
-  publicación.
+- **Validado por el usuario (2026-10-25):** T-097 (cajas de objeto catalanas) y
+  T-098 (La Horca en español). Pendientes: T-094, T-095 y publicación.

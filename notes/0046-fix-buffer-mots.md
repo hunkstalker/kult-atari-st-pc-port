@@ -24,6 +24,7 @@ Así no se toca ningún texto y el banco conserva todo su contenido.
 
 ## Verificación
 
+- **Validado por el usuario (2026-10-25):** La Horca en español ya no se congela.
 - `make test`: 518 core + HAL + 1 port OK.
 - `make package-win` correcto.
 - `language.data`: `1728b48c…`

@@ -20,6 +20,7 @@ códigos `[04]` y el texto catalán.
 
 ## Verificación
 
+- **Validado por el usuario (2026-10-25):** los espacios extra desaparecieron y las cajas de objeto catalanas quedan correctas.
 - `make test`: 518 core + HAL + 1 port OK.
 - `make package-win` correcto.
 - `language.data`: `1728b48c…`

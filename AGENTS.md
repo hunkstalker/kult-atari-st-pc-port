@@ -16,8 +16,8 @@ incluye ingesta de los discos originales, selector de idioma, packs español y
 catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
 La release **1.0.0** está preparada y el catalán está validado por el usuario.
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
-corregidas y pendientes de validación visual. Después: validación visual final,
-tests automatizados y publicación; CI al final. `0x106f2` sigue abierto y T-073 es opcional. Sin bloqueantes de
+corregidas y **validadas por el usuario (2026-10-25)**. Después: validación
+visual final, tests automatizados y publicación; CI al final. `0x106f2` sigue abierto y T-073 es opcional. Sin bloqueantes de
 código. Ver `notes/0011`–`notes/0014`, `notes/0041` y
 `notes/0042`.
 

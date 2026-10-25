@@ -9,6 +9,12 @@ Tareas: `TODO.md`.
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 64 — validación de T-097/T-098 (2026-10-25)**: el usuario confirma
+  que los espacios extra de las cajas de objetos catalanas desaparecieron y que
+  La Horca en español ya no se congela. Ambas incidencias quedan cerradas.
+  Siguiente: T-094 (validación visual final), T-095 (tests automatizados),
+  T-092 (publicación) y T-096 (CI). Detalle: `notes/0045`, `notes/0046` y
+  `notes/0048`.
 - **Sesión 63 — commits de incidencias y evidencias (2026-10-25)**: commits
   `506da67` (diagnóstico), `73876c7` (buffer MOTS) y `c3a18e5` (cajas de objeto +
   textos 240/241). Evidencias guardadas en

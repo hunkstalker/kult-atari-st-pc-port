@@ -270,10 +270,9 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** validar visualmente las correcciones T-097 (cajas de objeto) y
-  T-098 (La Horca), cerrar la validación visual (T-094), añadir tests
-  automatizados de ingesta/packs (T-095) y después publicar la release **1.0.0**
-  (T-092); el CI (T-096) va después de publicar. Después
+- **Siguiente:** cerrar la validación visual (T-094), añadir tests automatizados
+  de ingesta/packs (T-095) y después publicar la release **1.0.0** (T-092); el CI
+  (T-096) va después de publicar. T-097/T-098 ya están validados por el usuario. Después
   **A1** → **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,
