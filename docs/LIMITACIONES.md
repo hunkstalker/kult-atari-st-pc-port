@@ -78,7 +78,7 @@ datos.
   binario propio documentado). Ver `notes/0011`.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
   Fwrite); **validado por el usuario**.
-- **F2 Rellenar (T-109)**: llena la ventana/pantalla estirando 320×200. No
+- **F2 Estirar a pantalla (T-109/T-110)**: llena la ventana/pantalla estirando 320×200. No
   conserva la proporción 8:5 ni la escala entera: en 16:9 el pixel art se ve
   deformado y con píxeles no cuadrados. Auto/×1–×6 mantienen proporción.
 - **Ranuras F5/F6/F7 (T-104)**: savestates del port (1 MiB + paleta + base

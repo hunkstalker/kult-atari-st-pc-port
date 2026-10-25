@@ -26,7 +26,7 @@ la carpeta debe ser escribible.
    El port usa los dos discos juntos y no pide cambiar de disco.
 
 5) Controles: F1 alterna pantalla completa/ventana, F2 cambia la escala
-   (Auto, x1..x6, Rellenar) y ESC cierra la ventana.
+   (Estirar a pantalla, x1..x6, Auto) y ESC cierra la ventana.
 
 6) Guardado rápido: F5 cambia de ranura (0-9), F6 guarda y F7 carga. Las
    partidas van a `saves/slot-N.save`; la ranura activa se recuerda en

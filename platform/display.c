@@ -55,11 +55,11 @@ void platform_display_viewport(int mode, int out_w, int out_h,
 int platform_display_next(int mode) {
     mode = normaliza_modo(mode);
     if (mode == PLATFORM_SCALE_AUTO)
-        return PLATFORM_SCALE_MIN;
-    if (mode == PLATFORM_SCALE_FILL)
-        return PLATFORM_SCALE_AUTO;
-    if (mode >= PLATFORM_SCALE_MAX)
         return PLATFORM_SCALE_FILL;
+    if (mode == PLATFORM_SCALE_FILL)
+        return PLATFORM_SCALE_MIN;
+    if (mode >= PLATFORM_SCALE_MAX)
+        return PLATFORM_SCALE_AUTO;
     return mode + 1;
 }
 

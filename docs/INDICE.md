@@ -93,3 +93,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0060-t107-slot-save.md`](../notes/0060-t107-slot-save.md)
 - [`notes/0061-t108-sin-migracion.md`](../notes/0061-t108-sin-migracion.md)
 - [`notes/0062-t109-rellenar.md`](../notes/0062-t109-rellenar.md)
+- [`notes/0063-t110-estirar-pantalla.md`](../notes/0063-t110-estirar-pantalla.md)

@@ -50,8 +50,8 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-109
-(2026-10-25), incluyendo F1/F2 (con Rellenar), F5/F6/F7, `slot-N.save` y el OSD
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-110
+(2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save` y el OSD
 con la fuente del juego.**
 
 - ✅ Título, menú de idioma y colores.
@@ -138,8 +138,8 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    (incluidas puertas).
    **Controles**:
    **F1** alterna pantalla completa/ventana y **F2** cicla la escala
-   (Auto, ×1–×6, Rellenar); comprobar que el ratón sigue apuntando bien, que
-   Rellenar llena la salida y que el OSD se ve discreto.
+   (Estirar a pantalla, ×1–×6, Auto); comprobar que el ratón sigue apuntando bien, que
+   Estirar a pantalla llena la salida y que el OSD se ve discreto.
    **F5** cicla ranuras 0–9, **F6** guarda y **F7** carga; probar una ranura
    vacía/corrupta (error visible), reiniciar y comprobar que se recuerda la
    ranura. El aviso debe verse con la **fuente 4×6 del juego**, no con una

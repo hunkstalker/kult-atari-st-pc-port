@@ -109,12 +109,12 @@ static void cycle_scale(void) {
     if (g_scale_mode == PLATFORM_SCALE_AUTO)
         snprintf(msg, sizeof msg, "ESCALA AUTO");
     else if (g_scale_mode == PLATFORM_SCALE_FILL)
-        snprintf(msg, sizeof msg, "ESCALA RELLENAR");
+        snprintf(msg, sizeof msg, "ESTIRAR A PANTALLA");
     else
         snprintf(msg, sizeof msg, "ESCALA x%d", g_vp.scale);
     platform_osd_show(msg);
     platform_log("F2: modo=%d efectiva=%s", g_scale_mode,
-                 g_vp.fill ? "rellenar" : "entera");
+                 g_vp.fill ? "estirar" : "entera");
 }
 
 static void mouse_to_game(float wx, float wy, int *x, int *y) {

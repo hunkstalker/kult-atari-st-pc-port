@@ -674,20 +674,21 @@ static void test_display_viewport(void) {
     CHECK(platform_display_scale(2, 1920, 1080) == 2,
           "una escala fija que cabe se respeta");
 
-    CHECK(platform_display_next(PLATFORM_SCALE_AUTO) == 1,
-          "F2: Auto -> x1");
+    CHECK(platform_display_next(PLATFORM_SCALE_AUTO) == PLATFORM_SCALE_FILL,
+          "F2: Auto -> Estirar a pantalla");
+    CHECK(platform_display_next(PLATFORM_SCALE_FILL) == 1,
+          "F2: Estirar a pantalla -> x1");
     CHECK(platform_display_next(3) == 4, "F2: x3 -> x4");
-    CHECK(platform_display_next(PLATFORM_SCALE_MAX) == PLATFORM_SCALE_FILL,
-          "F2: x6 -> Rellenar");
-    CHECK(platform_display_next(PLATFORM_SCALE_FILL) == PLATFORM_SCALE_AUTO,
-          "F2: Rellenar -> Auto");
-    CHECK(platform_display_next(99) == 1, "un modo invalido se normaliza a Auto");
+    CHECK(platform_display_next(PLATFORM_SCALE_MAX) == PLATFORM_SCALE_AUTO,
+          "F2: x6 -> Auto");
+    CHECK(platform_display_next(99) == PLATFORM_SCALE_FILL,
+          "un modo invalido se normaliza a Auto -> Estirar");
 
     CHECK(platform_display_scale(PLATFORM_SCALE_FILL, 1920, 1080) == 0,
-          "Rellenar no usa escala entera");
+          "Estirar no usa escala entera");
     platform_display_viewport(PLATFORM_SCALE_FILL, 1920, 1080, &vp);
     CHECK(vp.fill && vp.x == 0 && vp.y == 0 && vp.w == 1920 && vp.h == 1080,
-          "el viewport Rellenar ocupa toda la salida");
+          "el viewport Estirar ocupa toda la salida");
 
     int px = -1, py = -1;
     platform_display_viewport(PLATFORM_SCALE_AUTO, 1920, 1080, &vp);
@@ -700,11 +701,11 @@ static void test_display_viewport(void) {
 
     platform_display_viewport(PLATFORM_SCALE_FILL, 1920, 1080, &vp);
     platform_display_point(&vp, 960, 540, &px, &py);
-    CHECK(px == 160 && py == 100, "raton Rellenar centrado");
+    CHECK(px == 160 && py == 100, "raton Estirar centrado");
     platform_display_point(&vp, 0, 0, &px, &py);
-    CHECK(px == 0 && py == 0, "raton Rellenar en esquina superior");
+    CHECK(px == 0 && py == 0, "raton Estirar en esquina superior");
     platform_display_point(&vp, 1919, 1079, &px, &py);
-    CHECK(px == 319 && py == 199, "raton Rellenar en esquina inferior");
+    CHECK(px == 319 && py == 199, "raton Estirar en esquina inferior");
 }
 
 static void test_osd(void) {

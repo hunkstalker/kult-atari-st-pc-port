@@ -1,6 +1,8 @@
 # 0062 — T-109: F2 Rellenar (estirado a toda la salida)
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP nuevo.
+Fecha: 2026-10-25. Estado: **cerrada**. T-110 fijó el orden final
+`Estirar a pantalla → ×1..×6 → Auto` y la etiqueta `ESTIRAR A PANTALLA`.
+Siguiente: T-094 sobre el ZIP nuevo.
 
 ## Comportamiento
 
