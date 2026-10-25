@@ -1,6 +1,7 @@
 # 0073 — T-120: preferencias de términos catalanes
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-121 traduce después el diálogo
+deformado. Siguiente: T-094 sobre el ZIP final.
 
 ## Decisión del usuario
 

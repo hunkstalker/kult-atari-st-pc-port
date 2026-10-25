@@ -104,3 +104,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0071-t118-catalan-diferencial.md`](../notes/0071-t118-catalan-diferencial.md)
 - [`notes/0072-t119-terminologia-catalana-erbe.md`](../notes/0072-t119-terminologia-catalana-erbe.md)
 - [`notes/0073-t120-preferencias-catalan.md`](../notes/0073-t120-preferencias-catalan.md)
+- [`notes/0074-t121-dialogo-deformado-catalan.md`](../notes/0074-t121-dialogo-deformado-catalan.md)

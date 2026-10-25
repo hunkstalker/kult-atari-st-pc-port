@@ -17,7 +17,8 @@ Traducciones aplicadas:
 - catalán 240: `HORROR! ET MANO MORIR!`
 
 El resto de coincidencias con el inglés son nombres propios, códigos de control,
-interjecciones o diálogo alienígena deliberado.
+interjecciones o diálogo alienígena deliberado. T-121 tradujo después el bloque
+deformado del personaje de `STA KLAROS TA VIEN` (`notes/0074`).
 
 ## Verificación
 

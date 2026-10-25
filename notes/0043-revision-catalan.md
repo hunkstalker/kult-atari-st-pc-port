@@ -32,7 +32,8 @@ Criterios aplicados:
 - las seis dudas de “LA TRAMPILLA” se resuelven como `PORTELLA` (son trap-door);
 - revisión de las frases de las primeras pantallas y de los textos de objetos,
   combate, final y diálogos;
-- los diálogos deliberadamente deformados se mantienen en su forma original.
+- los diálogos deliberadamente deformados se mantienen en su forma original;
+  T-121 tradujo el bloque del personaje de `STA KLAROS TA VIEN` (`notes/0074`).
 
 ## Formato
 

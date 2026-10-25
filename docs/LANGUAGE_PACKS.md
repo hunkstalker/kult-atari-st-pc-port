@@ -30,7 +30,7 @@ aviso y usa `E`.
 
 La release incluye el pack español (ERBE + correcciones) y el pack catalán
 revisado, migrado de forma diferencial y con la terminología ERBE unificada en
-T-119/T-120. Ambos se cargan desde `language.data`.
+T-119/T-121. Ambos se cargan desde `language.data`.
 La selección y la carga de `S`/`C` están cubiertas por
 `platform/test/test_platform.c` (T-095, `notes/0049`).
 
@@ -52,7 +52,8 @@ La ortografía está revisada dentro de esas limitaciones y el pack está valida
 por el usuario. T-101 corrigió `VERB 116` («DIE», el objeto) a **DADO**/**DAU**;
 los usos verbales de «die» en `DIAL` se mantienen como «morir». El español usa
 ERBE + correcciones (T-117); el catalán conserva la revisión T-093, la migración
-diferencial T-118 y el cierre terminológico T-119/T-120:
+diferencial T-118, el cierre terminológico T-119/T-120 y la traducción del
+diálogo deformado T-121:
 
 - `CALZE`/`CUBILETE` → `GOT` (`OMPLIR GOT`);
 - `TRAGO`/`TRAGOS` → `GLOP`/`GLOPS`;
@@ -61,9 +62,10 @@ diferencial T-118 y el cierre terminológico T-119/T-120:
 - `NETWERK`/`REZZO` real → `XARXA TUNER` (ERBE: `RED TUNER`).
 
 Por preferencia del usuario se conservan **`DAGA`**, **`FESOL`** y
-**`COMERCIANT`** (T-120). Las líneas alienígenas en inglés de `DIALC` 184, 238 y
-239 conservan `NETWERK` como parte del alienígena deliberado. `DESC 126` sigue
-la base ERBE.
+**`COMERCIANT`** (T-120). T-121 traduce al catalán las líneas deformadas del
+personaje de `STA KLAROS TA VIEN` (`DIALC` 143, 147, 155, 156, 157, 162, 164,
+165 y 166). Las líneas alienígenas de `DIALC` 184, 238 y 239 conservan
+`NETWERK` como parte del alienígena deliberado. `DESC 126` sigue la base ERBE.
 T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
 `Ç`, hace falta una fuente catalana con esos glifos.
 
