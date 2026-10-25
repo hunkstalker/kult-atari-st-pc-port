@@ -12,8 +12,8 @@ este repo es la versión en C, fiel en **comportamiento** y verificada con el
 **diferencial** contra el oráculo (Musashi).
 
 - `src/`: **33 módulos**, ~12.620 líneas.
-- Nombres: **423 funciones** + **221 globales** en `symbols/names.txt` (registro único).
-- Pruebas: **518** diferenciales en verde, **0 warnings**.
+- Nombres: **424 funciones** + **221 globales** en `symbols/names.txt` (registro único).
+- Pruebas: **519** diferenciales en verde, **0 warnings**.
 - Legibilidad: **0** identificadores de registro/decompilador en código.
 - API pública del core + visibilidad on-target cerradas.
 

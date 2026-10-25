@@ -13,6 +13,7 @@ LOAD_RESOURCE = 0x1076a
 LOAD_LIST = 0x106f8
 FUN_106E2 = 0x106e2
 FUN_106EA = 0x106ea
+FUN_106F2 = 0x106f2
 NAME = 0x30000
 TABLE = 0x31000
 BUF = 0x20000
@@ -26,6 +27,8 @@ harness._lib.load_resource_list_a.argtypes = [_u8p]
 harness._lib.load_resource_list_a.restype = ctypes.c_int32
 harness._lib.load_resource_list_b.argtypes = [_u8p]
 harness._lib.load_resource_list_b.restype = ctypes.c_int32
+harness._lib.load_resource_list_c.argtypes = [_u8p]
+harness._lib.load_resource_list_c.restype = ctypes.c_int32
 
 
 def _pokes(fname, data, length=None):
@@ -129,6 +132,11 @@ def test_fun_106e2():
 def test_fun_106ea():
     """FUN_000106ea seeds A5 = 0x1a3e4 and falls into load_resource_list."""
     _run_list_wrapper(FUN_106EA, harness._lib.load_resource_list_b, 0x1a3e4)
+
+
+def test_fun_106f2():
+    """FUN_000106f2 seeds A5 = 0x1a2c8 and falls into load_resource_list (list C)."""
+    _run_list_wrapper(FUN_106F2, harness._lib.load_resource_list_c, 0x1a2c8)
 
 
 # Wrappers GEMDOS sueltos (0x107b6..0x10828).

@@ -47,9 +47,9 @@ docs/                 PROYECTOS, ESTADO, PLAN, REVISION, LEGIBILIDAD,
 
 **Completado**: la reimplementación cubre **todo el juego**.
 
-- `src/`: **33 módulos** (~12.620 líneas de C), **423 funciones** identificadas
+- `src/`: **33 módulos** (~12.620 líneas de C), **424 funciones** identificadas
   (0 placeholders) y **221 globales** con nombre.
-- `test/`: **518 pruebas diferenciales** verdes contra el oráculo (Musashi),
+- `test/`: **519 pruebas diferenciales** verdes contra el oráculo (Musashi),
   **0 warnings** de compilación.
 - Convenciones, registro único de nombres (`names.txt`), generación de
   `addrs.h`/`docs/mapa/`, API/visibilidad on-target y **legibilidad** (0

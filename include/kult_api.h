@@ -39,6 +39,7 @@ KULT_API void load_fond(uint8_t *img);
 KULT_API void load_named_screen(uint8_t *img);
 KULT_API int32_t load_resource_list_a(uint8_t *img);
 KULT_API int32_t load_resource_list_b(uint8_t *img);
+KULT_API int32_t load_resource_list_c(uint8_t *img);
 KULT_API int32_t load_scena(uint8_t *img);
 KULT_API void music_stop(uint8_t *img, uint32_t d2);
 KULT_API void music_tick(uint8_t *img, uint32_t a3, uint32_t a6, uint32_t d7);

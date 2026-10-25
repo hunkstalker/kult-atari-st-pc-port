@@ -79,6 +79,11 @@ int32_t load_resource_list_b(uint8_t *img) {
     return load_resource_list(img, 0x1a3e4);
 }
 
+/* 0x106f2 — A5=0x1a2c8 -> load_resource_list (lista C). */
+int32_t load_resource_list_c(uint8_t *img) {
+    return load_resource_list(img, 0x1a2c8);
+}
+
 void run_command_keep_sp(uint8_t *, uint32_t);
 
 /* FUN_00010682 @ 0x10682: si $1a57c != 0xff y el digito (d0 + '0') cambia, lo guarda
