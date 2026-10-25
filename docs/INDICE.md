@@ -106,3 +106,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0073-t120-preferencias-catalan.md`](../notes/0073-t120-preferencias-catalan.md)
 - [`notes/0074-t121-dialogo-deformado-catalan.md`](../notes/0074-t121-dialogo-deformado-catalan.md)
 - [`notes/0075-t122-dialogo-deformado-catalan-clave.md`](../notes/0075-t122-dialogo-deformado-catalan-clave.md)
+- [`notes/0076-t123-clave-fonetica-catalana.md`](../notes/0076-t123-clave-fonetica-catalana.md)

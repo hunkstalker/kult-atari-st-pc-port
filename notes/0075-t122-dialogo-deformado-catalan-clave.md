@@ -1,6 +1,7 @@
 # 0075 — T-122: diálogo deformado en clave catalana
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-123 fija la clave fonética final.
+Siguiente: T-094 sobre el ZIP final.
 
 ## Referencias en otros idiomas
 
