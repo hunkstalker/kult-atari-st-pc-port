@@ -14,8 +14,9 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
 | T-094 | Validación visual final de la release Windows | ⬜ pendiente |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ⬜ pendiente |
-| T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ⬜ pendiente |
-| T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ⬜ pendiente |
+| T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ corregido (`notes/0045`), pendiente validación |
+| T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ corregido (`notes/0046`), pendiente validación |
+| T-099 | Pasada de textos ingleses sin traducir | ✅ 240/241 corregidos (`notes/0047`) |
 | T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y ZIP | ⬜ pendiente tras T-094/T-095 |
 | T-096 | CI en GitHub: core + HAL + paquete sin assets | ⬜ pendiente tras publicar |
 
@@ -92,7 +93,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 
 ## M7 — Empaquetado/release
 > Build, paquete portable, ingesta, idiomas y licencias completados. La release
-> 1.0.0 está preparada. Orden de cierre: **incidencias T-097/T-098 →
+> 1.0.0 está preparada. Orden de cierre: **validación de T-097/T-098 →
 > validación visual → tests automatizados → publicar → CI**. El catalán ya está
 > validado por el usuario (`notes/0043`).
 | id | tarea | estado |
@@ -104,8 +105,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
 | T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos y menús | ⬜ pendiente |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ⬜ pendiente |
-| T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ⬜ pendiente |
-| T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ⬜ pendiente |
+| T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ corregido (`notes/0045`), pendiente validación |
+| T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ corregido (`notes/0046`), pendiente validación |
 | T-092 | **Publicación 1.0.0**: push de `main`, tag, GitHub Release y ZIP Windows | ⬜ pendiente tras T-094/T-095 |
 | T-096 | **CI en GitHub**: core + HAL + paquete sin assets | ⬜ pendiente tras publicar |
 
@@ -141,6 +142,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-D00 | Índice y ADRs (`docs/INDICE.md`, `docs/adr/`) | ✅ |
 | T-D01 | Mantener `RETOMAR.md` y este `TODO.md` al cerrar cada sesión | 🚧 |
 | T-D02 | Licencia raíz, avisos de terceros y textos públicos de release | ✅ `notes/0042` |
+| T-099 | Pasada de textos ingleses sin traducir; 240/241 corregidos | ✅ `notes/0047` |
 
 ## M5 — Filtros CRT (nota: extra opcional, no prioritario)
 > **Nota.** Fuera del camino crítico y **al final** (independiente de A). Es una

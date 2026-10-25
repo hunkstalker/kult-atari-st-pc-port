@@ -73,3 +73,8 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0041-t090-solar-eyes-palette-cycle.md`](../notes/0041-t090-solar-eyes-palette-cycle.md)
 - [`notes/0042-release-licencias-y-textos.md`](../notes/0042-release-licencias-y-textos.md)
 - [`notes/0043-revision-catalan.md`](../notes/0043-revision-catalan.md)
+- [`notes/0044-diagnostico-f12.md`](../notes/0044-diagnostico-f12.md)
+- [`notes/0045-fix-cajas-objetos-catalan.md`](../notes/0045-fix-cajas-objetos-catalan.md)
+- [`notes/0046-fix-buffer-mots.md`](../notes/0046-fix-buffer-mots.md)
+- [`notes/0047-pasada-textos-ingles.md`](../notes/0047-pasada-textos-ingles.md)
+- [`notes/0048-resumen-incidencias-texto.md`](../notes/0048-resumen-incidencias-texto.md)

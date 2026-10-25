@@ -9,6 +9,32 @@ Tareas: `TODO.md`.
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 63 — commits de incidencias y evidencias (2026-10-25)**: commits
+  `506da67` (diagnóstico), `73876c7` (buffer MOTS) y `c3a18e5` (cajas de objeto +
+  textos 240/241). Evidencias guardadas en
+  `build-win/trazas-lang-20261025-es/` y `-ca/`. ZIP final `0fe3118a…`.
+  Pendiente validación visual T-097/T-098. Resumen detallado: `notes/0048`.
+- **Sesión 62 — textos ingleses sin traducir (2026-10-25)**: traducidas las dos
+  únicas frases planas que quedaban en inglés (`DIAL` 240/241 en español;
+  240 también en catalán). El resto son nombres, códigos o alienígena
+  deliberado. `language.data` `cc8981ae…`; ZIP `0fe3118a…`. Detalle:
+  `notes/0047`.
+- **Sesión 61 — fix buffer MOTS y cajas catalanas (2026-10-25)**: el overlay A
+  (`MOTS`) se carga ahora en `0x89000` para no solaparse con `PUZZL`; esto
+  elimina el bloqueo de La Horca en español sin cambiar textos. También
+  restaurados los espacios/saltos antes de `[04]` en `DESC` 374–378. ZIP
+  `10c17549…`; pendiente validación de usuario. Detalle: `notes/0045` y
+  `notes/0046`.
+- **Sesión 60 — cajas de objetos en catalán (2026-10-25)**: restaurados los
+  espacios/saltos de línea antes de los códigos `[04]` en `DESC` 374–378. Esto
+  corrige el descuadre de las cajas de objeto en catalán. `language.data`
+  `1728b48c…`; ZIP `f81c6cbe…`. Pendiente T-098 (solo español). Detalle:
+  `notes/0045`.
+- **Sesión 59 — diagnóstico F12/texto (2026-10-25)**: añadido registro `T` de
+  líneas de texto, instantánea `X` y volcado automático cada 150 VBL con
+  `KULT_AUTOLOG=1`. `build-win/kult-diagnostico.bat` activa `KULT_MARKS` y el
+  volcado. ZIP de diagnóstico: `05f1019a…`. Sirve para T-097/T-098. Detalle:
+  `notes/0044`.
 - **Sesión 58 — catalán validado (2026-10-25)**: el usuario valida el idioma
   catalán. Aplicadas sus correcciones del Excel: 79 cambios en `Todas`, 2 en
   `Correcciones` y las 6 dudas de “LA TRAMPILLA” resueltas como `PORTELLA`.
