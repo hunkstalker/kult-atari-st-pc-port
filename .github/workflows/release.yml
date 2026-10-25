@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  KULT_VERSION: "1.1.0"
+
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
@@ -53,9 +56,9 @@ jobs:
       - name: Preparar artefactos
         run: |
           mkdir -p dist
-          cp build-win/kult-1.0.0-win64.zip dist/
-          sha256sum dist/kult-1.0.0-win64.zip > dist/kult-1.0.0-win64.zip.sha256
-          cat dist/kult-1.0.0-win64.zip.sha256
+          cp build-win/kult-${KULT_VERSION}-win64.zip dist/
+          sha256sum dist/kult-${KULT_VERSION}-win64.zip > dist/kult-${KULT_VERSION}-win64.zip.sha256
+          cat dist/kult-${KULT_VERSION}-win64.zip.sha256
       - name: Subir artefacto
         uses: actions/upload-artifact@v4
         with:
@@ -71,7 +74,11 @@ jobs:
       - name: Instalar dependencias
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends             build-essential cmake ninja-build pkg-config             libasound2-dev libpulse-dev libx11-dev libxext-dev             libxrandr-dev libxi-dev libxcursor-dev libxfixes-dev             libudev-dev libdbus-1-dev             wget unzip file
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build pkg-config \
+            libasound2-dev libpulse-dev libx11-dev libxext-dev \
+            libxrandr-dev libxi-dev libxcursor-dev libxfixes-dev \
+            libudev-dev libdbus-1-dev wget unzip file
       - name: Cache de SDL3 Linux y appimagetool
         uses: actions/cache@v4
         with:
@@ -83,18 +90,20 @@ jobs:
         run: make deps-linux
       - name: Configurar y compilar
         run: |
-          cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release             -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-linux"             -DKULT_SDL3_LIB="$PWD/third_party/sdl3-linux/lib/libSDL3.so.0"
+          cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-linux" \
+            -DKULT_SDL3_LIB="$PWD/third_party/sdl3-linux/lib/libSDL3.so.0"
           cmake --build build-linux -j
       - name: Empaquetar TGZ y AppImage
         run: |
           mkdir -p dist
           (cd build-linux && cpack -G TGZ)
-          cp build-linux/kult-1.0.0-linux-x86_64.tar.gz dist/
-          rm -rf dist/linux-stage
-          cmake --install build-linux --prefix dist/linux-stage
-          tools/build_appimage.sh dist/linux-stage dist/kult-1.0.0-x86_64.AppImage
-          sha256sum dist/kult-1.0.0-linux-x86_64.tar.gz > dist/kult-1.0.0-linux-x86_64.tar.gz.sha256
-          sha256sum dist/kult-1.0.0-x86_64.AppImage > dist/kult-1.0.0-x86_64.AppImage.sha256
+          cp build-linux/kult-${KULT_VERSION}-linux-x86_64.tar.gz dist/
+          rm -rf build/linux-stage
+          cmake --install build-linux --prefix build/linux-stage
+          tools/build_appimage.sh build/linux-stage dist/kult-${KULT_VERSION}-x86_64.AppImage
+          sha256sum dist/kult-${KULT_VERSION}-linux-x86_64.tar.gz > dist/kult-${KULT_VERSION}-linux-x86_64.tar.gz.sha256
+          sha256sum dist/kult-${KULT_VERSION}-x86_64.AppImage > dist/kult-${KULT_VERSION}-x86_64.AppImage.sha256
           cat dist/*.sha256
       - name: Subir artefacto
         uses: actions/upload-artifact@v4
@@ -103,9 +112,53 @@ jobs:
           path: dist/
           if-no-files-found: error
 
+
+  macos:
+    name: macOS Universal 2 (Intel + Apple Silicon)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Instalar dependencias Python
+        run: python -m pip install -r requirements.txt
+      - name: Cache de SDL3 macOS universal
+        uses: actions/cache@v4
+        with:
+          path: third_party/sdl3-macos
+          key: sdl3-macos-3.4.10-${{ hashFiles('tools/fetch_sdl3_macos.sh') }}
+      - name: Obtener SDL3 macOS universal
+        run: make deps-macos
+      - name: Tests HAL y herramientas
+        run: |
+          make test-port CC=clang
+          make test-tools PY=python
+      - name: Configurar, compilar y empaquetar
+        env:
+          MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+        run: |
+          cmake -S . -B build-macos -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+            -DCMAKE_PREFIX_PATH="$PWD/third_party/sdl3-macos" \
+            -DKULT_SDL3_LIB="$PWD/third_party/sdl3-macos/lib/libSDL3.0.dylib"
+          cmake --build build-macos -j
+          rm -rf build/macos-stage
+          cmake --install build-macos --prefix build/macos-stage
+          KULT_VERSION="$KULT_VERSION" tools/build_macos.sh build/macos-stage dist
+          cat dist/*.sha256
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: kult-macos-universal
+          path: dist/
+          if-no-files-found: error
+
   release:
     name: GitHub Release
-    needs: [test, windows, linux]
+    needs: [test, windows, linux, macos]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -120,19 +173,27 @@ jobs:
         with:
           name: kult-linux-x64
           path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: kult-macos-universal
+          path: dist
       - name: Publicar release
         uses: softprops/action-gh-release@v2
         with:
           name: Kult PC ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          body_path: docs/RELEASE_NOTES_1.0.0.md
+          body_path: docs/RELEASE_NOTES_1.1.0.md
           files: |
-            dist/kult-1.0.0-win64.zip
-            dist/kult-1.0.0-win64.zip.sha256
-            dist/kult-1.0.0-linux-x86_64.tar.gz
-            dist/kult-1.0.0-linux-x86_64.tar.gz.sha256
-            dist/kult-1.0.0-x86_64.AppImage
-            dist/kult-1.0.0-x86_64.AppImage.sha256
+            dist/kult-1.1.0-win64.zip
+            dist/kult-1.1.0-win64.zip.sha256
+            dist/kult-1.1.0-linux-x86_64.tar.gz
+            dist/kult-1.1.0-linux-x86_64.tar.gz.sha256
+            dist/kult-1.1.0-x86_64.AppImage
+            dist/kult-1.1.0-x86_64.AppImage.sha256
+            dist/kult-1.1.0-macos-universal.zip
+            dist/kult-1.1.0-macos-universal.zip.sha256
+            dist/kult-1.1.0-macos-universal.dmg
+            dist/kult-1.1.0-macos-universal.dmg.sha256
           fail_on_unmatched_files: true
           draft: false
           prerelease: false
