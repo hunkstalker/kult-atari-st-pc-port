@@ -1392,6 +1392,60 @@ static void test_audio_rms(void) {
           "sin tono ni ruido el RMS debe caer (queda el transitorio del filtro)");
 }
 
+static void test_audio_volume(void) {
+    platform_audio_init();
+    CHECK(platform_audio_volume() == 100, "el volumen inicial es 100");
+    CHECK(!platform_audio_muted(), "el audio no empieza silenciado");
+
+    platform_audio_volume_step(-10);
+    CHECK(platform_audio_volume() == 90, "F9 baja 10");
+    platform_audio_volume_step(10);
+    CHECK(platform_audio_volume() == 100, "F11 sube 10");
+    platform_audio_volume_step(10);
+    CHECK(platform_audio_volume() == 100, "el volumen no pasa de 100");
+    for (int i = 0; i < 12; i++)
+        platform_audio_volume_step(-10);
+    CHECK(platform_audio_volume() == 0, "el volumen no baja de 0");
+
+    platform_audio_init();
+    platform_audio_set_volume(80);
+    platform_audio_toggle_mute();
+    CHECK(platform_audio_muted() && platform_audio_volume() == 0,
+          "F10 silencia y deja volumen 0");
+    platform_audio_toggle_mute();
+    CHECK(!platform_audio_muted() && platform_audio_volume() == 80,
+          "F10 restaura el volumen anterior");
+    platform_audio_toggle_mute();
+    platform_audio_volume_step(-10);
+    CHECK(!platform_audio_muted() && platform_audio_volume() == 70,
+          "subir/bajar volumen desde mute desilencia");
+
+    platform_audio_init();
+    psg_reset(NULL, 0);
+    psg_seed_reg(0, 0x80);
+    psg_seed_reg(8, 0x0f);
+    psg_seed_reg(7, 0x3e);
+    platform_audio_rms_reset();
+    platform_audio_advance(psg_regs(), 100000, 100);
+    uint32_t full = platform_audio_rms();
+    CHECK(full > 100, "el tono de referencia tiene energia");
+
+    platform_audio_init();
+    platform_audio_set_volume(50);
+    platform_audio_rms_reset();
+    platform_audio_advance(psg_regs(), 100000, 100);
+    uint32_t half = platform_audio_rms();
+    CHECK(half > 0 && half < full * 4 / 5 && half > full / 5,
+          "el volumen maestro escala la senal");
+
+    platform_audio_init();
+    platform_audio_set_volume(0);
+    platform_audio_rms_reset();
+    platform_audio_advance(psg_regs(), 100000, 100);
+    CHECK(platform_audio_rms() == 0, "volumen 0 deja la senal a cero");
+    platform_audio_init();
+}
+
 /* Integración real (si el PRG del oráculo está disponible): `init_hardware` arma
  * el Timer A con el vector $134 = 0x3a872 y el bombeo de espera (menús/prompts)
  * hace sonar la música de intro. Sin la imagen del juego, se omite. */
@@ -1507,6 +1561,7 @@ int main(void) {
     test_mfp_timer_a();
     test_audio_pump();
     test_audio_rms();
+    test_audio_volume();
     test_integration_music();
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }

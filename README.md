@@ -14,7 +14,7 @@ C corra en Windows/Linux.
 > ranuras de savestate (`saves/slot-N.save`), con avisos OSD en la **fuente original del
 > juego**. Los textos catalanes están validados y las
 > incidencias de texto de objetos y de La Horca están corregidas. Los tests de
-> ingesta y packs están integrados en `make test`. T-022, T-101 y T-102–T-111
+> ingesta y packs están integrados en `make test`. T-022, T-101 y T-102–T-112
 > están cerradas; la release 1.0.0 no se publica hasta cerrar la validación
 > visual final sobre el ZIP regenerado. Después vienen la publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
@@ -68,6 +68,7 @@ git subtree pull --prefix=lib/kult-core \
 - **F1**: pantalla completa/ventana.
 - **F2**: escala **Estirar a pantalla**, ×1–×6 o Auto; Estirar llena toda la salida.
 - **F5**: cambia de ranura 0–9; **F6**: guarda; **F7**: carga.
+- **F9/F11**: bajan/suben el volumen 10%; **F10**: silencia/restaura.
 - **ESC**: cierra la ventana.
 
 ## Datos y diagnóstico

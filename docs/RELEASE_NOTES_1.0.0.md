@@ -22,6 +22,8 @@ No incluye el juego original: el usuario aporta su propia copia legal.
 - **Ranuras de guardado**: **F5** cicla 0–9, **F6** guarda y **F7** carga
   savestates completos en `saves/slot-N.save`; la ranura activa se recuerda en
   `kult.ini`. Los avisos usan la fuente original del juego.
+- **Volumen**: **F9/F11** bajan/suben el volumen 10% y **F10** silencia/restaura,
+  con OSD del estado (`VOLUMEN N` / `SILENCIO`).
 - Errores solo en `kult.log`; diálogo de emergencia únicamente si el log no se
   puede escribir.
 - Guardado y carga, audio, entrada, combate, final del juego y bucle de
@@ -35,7 +37,7 @@ ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`, `LICENSE`,
 avisos de terceros, `data/language.data` y `saves/`.
 
 SHA256 del ZIP:
-`528de4eff78ecd7851a90a8d454db95310ed5274f7220d3e55290db82e19c33a`
+`d4c125eea9ba6bdcc355f08bf379daf18503e3b12d833acaec67ac087aea2caa`
 
 Las instrucciones de uso están en `LEEME.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.

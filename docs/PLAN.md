@@ -83,7 +83,7 @@ para que el usuario valide.
 **Aceptación:** doble clic + copia del usuario → funciona.
 **Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. El
 catalán está validado y T-097/T-098 están corregidos y validados por el usuario.
-T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-111
+T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-112
 (fullscreen/F1/F2, ranuras `slot-N.save` y OSD original) están cerradas. Antes de publicar queda
 la validación visual final sobre el ZIP de T-105 (T-094). Después: publicación
 (T-092) y CI (T-096).

@@ -117,6 +117,15 @@ static void cycle_scale(void) {
                  g_vp.fill ? "estirar" : "entera");
 }
 
+static void show_audio_osd(void) {
+    char msg[32];
+    if (platform_audio_muted())
+        snprintf(msg, sizeof msg, "SILENCIO");
+    else
+        snprintf(msg, sizeof msg, "VOLUMEN %d", platform_audio_volume());
+    platform_osd_show(msg);
+}
+
 static void mouse_to_game(float wx, float wy, int *x, int *y) {
     float rx = 0, ry = 0;
     if (g_ren && SDL_RenderCoordinatesFromWindow(g_ren, wx, wy, &rx, &ry))
@@ -265,8 +274,9 @@ int platform_sdl_pump(void) {
             int special = e.key.key == SDLK_ESCAPE ||
                           e.key.key == SDLK_F1 || e.key.key == SDLK_F2 ||
                           e.key.key == SDLK_F5 || e.key.key == SDLK_F6 ||
-                          e.key.key == SDLK_F7 ||
-                          e.key.key == SDLK_F11 || e.key.key == SDLK_F12;
+                          e.key.key == SDLK_F7 || e.key.key == SDLK_F9 ||
+                          e.key.key == SDLK_F10 || e.key.key == SDLK_F11 ||
+                          e.key.key == SDLK_F12;
             if (e.key.repeat && special)
                 continue;
             if (e.key.key == SDLK_ESCAPE) {
@@ -281,13 +291,19 @@ int platform_sdl_pump(void) {
                 platform_slots_request_save();
             } else if (e.key.key == SDLK_F7) {
                 platform_slots_request_load();
+            } else if (e.key.key == SDLK_F9) {
+                platform_audio_volume_step(-10);
+                show_audio_osd();
+            } else if (e.key.key == SDLK_F10) {
+                platform_audio_toggle_mute();
+                show_audio_osd();
+            } else if (e.key.key == SDLK_F11) {
+                platform_audio_volume_step(10);
+                show_audio_osd();
             } else if (e.key.key == SDLK_F12) {
                 /* Marca manual para T-073c (no va al juego). */
                 platform_marks_event("f12", 0, 0);
                 platform_log("F12: inicio de animacion");
-            } else if (e.key.key == SDLK_F11) {
-                platform_marks_event("f11", 0, 0);
-                platform_log("F11: fin de animacion");
             } else {
                 platform_key_push((uint32_t)e.key.key & 0xff);
             }

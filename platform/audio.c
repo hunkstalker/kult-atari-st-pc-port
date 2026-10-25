@@ -44,6 +44,9 @@ static int      g_out_rate = OUT_RATE;
 static double   g_frac;
 static int      g_gain = 100;           /* ganancia (%) del bloque en curso */
 static int      g_music_gain = 25;      /* ganancia (%) del reproductor 0x3a872 */
+static int      g_volume = 100;         /* volumen maestro 0..100 */
+static int      g_volume_saved = 100;   /* volumen antes de silenciar */
+static int      g_muted;
 
 /* Estado del generador. */
 static uint32_t g_tone_acc[3], g_tone_bit[3];
@@ -113,6 +116,40 @@ int platform_audio_enabled(void) { return g_enabled; }
 
 void platform_audio_set_enabled(int on) { g_enabled = on ? 1 : 0; }
 
+int platform_audio_volume(void) { return g_volume; }
+int platform_audio_muted(void) { return g_muted; }
+
+void platform_audio_set_volume(int percent) {
+    if (percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
+    g_volume = percent;
+    g_volume_saved = percent;
+    g_muted = 0;
+}
+
+void platform_audio_volume_step(int delta) {
+    if (g_muted) {
+        g_volume = g_volume_saved;
+        g_muted = 0;
+    }
+    int v = g_volume + delta;
+    if (v < 0) v = 0;
+    if (v > 100) v = 100;
+    g_volume = v;
+    g_volume_saved = v;
+}
+
+void platform_audio_toggle_mute(void) {
+    if (g_muted) {
+        g_volume = g_volume_saved;
+        g_muted = 0;
+    } else {
+        g_volume_saved = g_volume;
+        g_volume = 0;
+        g_muted = 1;
+    }
+}
+
 void platform_audio_init(void) {
     const char *e = getenv("KULT_AUDIO");
     g_enabled = !(e && e[0] == '0');
@@ -124,6 +161,9 @@ void platform_audio_init(void) {
     }
 
     g_out_rate = OUT_RATE;
+    g_volume = 100;
+    g_volume_saved = 100;
+    g_muted = 0;
     g_frac = 0.0;
     g_head = g_tail = 0;
     memset(g_tone_acc, 0, sizeof g_tone_acc);
@@ -225,6 +265,7 @@ static int16_t ym_sample(const uint8_t *psg) {
     }
 
     int32_t s = sum * 42 * g_gain / 100;
+    s = s * g_volume / 100;
     /* Filtro de continua: centra el PCM unipolar por niveles de volumen. */
     int32_t y = s - g_hp_x + (int32_t)(g_hp_y * 0.995f);
     g_hp_x = s;

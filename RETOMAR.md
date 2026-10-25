@@ -6,25 +6,24 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102, T-103, T-104, T-105, T-106, T-107, T-108,
-T-109, T-110 y T-111 cerradas (2026-10-25). El port arranca en **fullscreen sin
-bordes a resolución nativa**, con **F1** ventana/fullscreen, **F2** ciclo
-`Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
-`saves/slot-0.save`…`slot-9.save` (ranura activa en `kult.ini`) y OSD con la
-**fuente original del juego**. El OSD caduca por tiempo real, incluso si el
-juego está bloqueado. La migración de `partida-N.bin` se retiró en T-108. El ZIP
-está regenerado; queda **T-094** (validación visual/funcional final). La release
-1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El único
-fichero no versionado aparte de la documentación es el backup local
-`docs/REVISION_CATALAN.original.xlsx`.
+**Estado:** T-022, T-101 y T-102–T-112 cerradas (2026-10-25). El port arranca
+en **fullscreen sin bordes a resolución nativa**, con **F1** ventana/fullscreen,
+**F2** ciclo `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de
+savestate en `saves/slot-0.save`…`slot-9.save` (ranura activa en `kult.ini`),
+**F9/F10/F11** para volumen y OSD con la **fuente original del juego**. El OSD
+caduca por tiempo real y el volumen arranca al 100% en cada sesión. La migración
+de `partida-N.bin` se retiró en T-108. El ZIP está regenerado; queda **T-094**
+(validación visual/funcional final). La release 1.0.0 sigue sin push ni tag y
+**se publicará al final** (T-092). El único fichero no versionado aparte de la
+documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación del ZIP de T-111.**
+**Siguiente tarea: T-094 — validación del ZIP de T-112.**
 
 - **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo F1/F2
-  (Estirar a pantalla), ratón en ventana/fullscreen, F5/F6/F7, ranura recordada,
-  errores y OSD con la fuente del juego.
+  (Estirar a pantalla), ratón en ventana/fullscreen, F5/F6/F7, volumen
+  F9/F10/F11, ranura recordada, errores y OSD con la fuente del juego.
 - **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `528de4eff78ecd7851a90a8d454db95310ed5274f7220d3e55290db82e19c33a`.
+  `d4c125eea9ba6bdcc355f08bf379daf18503e3b12d833acaec67ac087aea2caa`.
 - **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -41,6 +40,14 @@ fichero no versionado aparte de la documentación es el backup local
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-112 — cerrada (sesión 71, 2026-10-25):**
+
+- F9/F11 bajan/suben el volumen maestro 10%; F10 silencia/restaura.
+- OSD `VOLUMEN N`/`SILENCIO`; F11 deja la marca de animación y F12 sigue como
+  diagnóstico.
+- ZIP `d4c125eea9ba6bdcc355f08bf379daf18503e3b12d833acaec67ac087aea2caa`;
+  `make test` 519 core + 35 funciones / 240 `CHECK`. Detalle: `notes/0065`.
 
 **T-111 — cerrada (sesión 71, 2026-10-25):**
 
@@ -151,22 +158,22 @@ fichero no versionado aparte de la documentación es el backup local
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `528de4eff78ecd7851a90a8d454db95310ed5274f7220d3e55290db82e19c33a`
-  (regenerado en T-111 con OSD por tiempo real; pendiente de la validación
-  T-094, no es aún el artefacto de release).
+  SHA256 `d4c125eea9ba6bdcc355f08bf379daf18503e3b12d833acaec67ac087aea2caa`
+  (regenerado en T-112 con volumen; pendiente de la validación T-094, no es aún
+  el artefacto de release).
 - `assets/language.data` SHA256
   `e69cae5a6ac0832415f9a4e4086609fb89b6577bcb6fced6cb998c82e608629b`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
-- `make test`: 519 core + HAL (34 funciones / 228 `CHECK`) + diagnóstico
+- `make test`: 519 core + HAL (35 funciones / 240 `CHECK`) + diagnóstico
   off/on + 2 herramientas OK.
-- `make package-win`: OK después de T-111.
+- `make package-win`: OK después de T-112.
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP de T-111.
+   `docs/VERIFICACION.md` sobre el ZIP de T-112.
 2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
 3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin

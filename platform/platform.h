@@ -179,6 +179,11 @@ void platform_sdl_close(void);
  * La salida a dispositivo SDL es opcional (sólo build port-sdl). */
 int  platform_audio_enabled(void);
 void platform_audio_set_enabled(int on);
+int  platform_audio_volume(void);          /* 0..100 */
+int  platform_audio_muted(void);
+void platform_audio_set_volume(int percent);
+void platform_audio_volume_step(int delta);
+void platform_audio_toggle_mute(void);
 
 /* Drena el anillo de muestras mono S16 (lo usa el callback de SDL y las pruebas). */
 int  platform_audio_pull(int16_t *out, int maxframes);

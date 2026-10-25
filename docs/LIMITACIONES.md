@@ -78,6 +78,8 @@ datos.
   binario propio documentado). Ver `notes/0011`.
 - **Guardado/partida completa**: los servicios de fichero son reales (Fcreate/
   Fwrite); **validado por el usuario**.
+- **Volumen (T-112)**: F9/F11 bajan/suben el volumen maestro 10% y F10
+  silencia/restaura. No se persiste entre sesiones; arranca al 100%.
 - **F2 Estirar a pantalla (T-109/T-110)**: llena la ventana/pantalla estirando 320×200. No
   conserva la proporción 8:5 ni la escala entera: en 16:9 el pixel art se ve
   deformado y con píxeles no cuadrados. Auto/×1–×6 mantienen proporción.
