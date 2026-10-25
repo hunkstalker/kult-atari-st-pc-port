@@ -120,6 +120,16 @@ void platform_tick(uint8_t *img) {
     g_frames++;
 
 #ifndef KULT_NO_CPUWORK
+    {   /* Volcado periodico del anillo: permite recuperar el estado si el juego
+         * se queda bloqueado y no puede procesar F12. Solo con KULT_AUTOLOG. */
+        static int autolog = -1;
+        if (autolog < 0) {
+            const char *e = getenv("KULT_AUTOLOG");
+            autolog = (e && *e) ? 1 : 0;
+        }
+        if (autolog && (g_frames % 150u) == 0)
+            platform_marks_event("auto", 0, 0);
+    }
     {   /* Diagnostico: simular F12 en un VBL (pruebas del buffer de marcas). */
         static long at = -2;
         static int done;

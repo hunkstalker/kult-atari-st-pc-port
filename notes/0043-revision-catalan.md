@@ -67,6 +67,12 @@ validación visual final con la fuente del juego.
 - ZIP: `build-win/kult-1.0.0-win64.zip`,
   SHA256 `a11a6948b0a3a6658c89719469f56d47df3be761b4ba0928888639ca25c137bc`.
 
+## Diagnóstico para las incidencias
+
+Con `KULT_MARKS` + `KULT_AUTOLOG=1` se registran las líneas de texto y los
+últimos ~3 s de funciones; F12 añade una instantánea `X` de la última línea
+dibujada. Sirve para T-097 y T-098.
+
 ## Validación
 
 El usuario da por validado el idioma catalán el **2026-10-25**. Las dos

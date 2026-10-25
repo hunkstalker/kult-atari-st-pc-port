@@ -26,6 +26,7 @@
 #include "machine.h"
 #include "addrs.h"
 #include "kult_internal.h"
+#include "kult_port.h"
 
 uint32_t screen_address(uint8_t *, uint32_t, uint32_t, uint32_t *);
 void mask_restore_rows(uint8_t *, uint32_t, uint32_t, uint32_t, uint32_t);
@@ -149,6 +150,8 @@ void print_spaces(uint8_t *, uint32_t);
 
 /* 0x10b24 — mide la línea, ajusta el ancho y la imprime rellenando. */
 uint32_t print_line(uint8_t *img, uint32_t str) {
+    kult_text_ev("line", img, str, be32(img + A_CUR_STR_END),
+                 be16(img + A_TEXT_BOX_W), be16(img + A_TEXT_INDEX));
     uint32_t nwords, width;
     measure_words(img, str, &nwords, &width);
     width = (width + 2) & 0xffff;
@@ -268,7 +271,9 @@ void overlay_a_draw(uint8_t *img, uint32_t script) {
     wr16(img + A_CURSOR_TEXT_X, be16(img + A_OVERLAY_X));
     wr16(img + A_CURSOR_TEXT_Y, be16(img + A_OVERLAY_Y));
     wr32(img + A_COLOR_TABLE, 0x1d3c2);
-    uint32_t str = text_index_arg(img, 0x41b76, img[A_TEXT_SEL_A], &script);
+    uint32_t str = text_index_arg(img, kult_overlay_a_bank(), img[A_TEXT_SEL_A], &script);
+    kult_text_ev("ovl_a", img, str, be32(img + A_CUR_STR_END),
+                 be16(img + A_TEXT_BOX_W), be16(img + A_TEXT_INDEX));
     print_line_center(img, str);
 }
 
@@ -280,6 +285,8 @@ void overlay_b_draw(uint8_t *img, uint32_t script) {
     wr16(img + A_CURSOR_TEXT_Y, 0xc1);
     wr32(img + A_COLOR_TABLE, 0x1d3c2);
     uint32_t str = text_index_arg(img, 0x41586, img[A_TEXT_SEL_B], &script);
+    kult_text_ev("ovl_b", img, str, be32(img + A_CUR_STR_END),
+                 be16(img + A_TEXT_BOX_W), be16(img + A_TEXT_INDEX));
     print_line_center(img, str);
 }
 

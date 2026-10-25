@@ -13,3 +13,7 @@ void platform_init(void) {
     platform_time_init();
     platform_audio_init();
 }
+
+/* Banco A (MOTS) del port: zona libre entre ECHE y las pantallas.
+ * Evita que un banco de idioma >1.078 B se solape con PUZZL en 0x41fac. */
+uint32_t platform_overlay_a_bank(void) { return 0x41b76u; }

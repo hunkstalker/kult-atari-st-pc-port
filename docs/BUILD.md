@@ -126,6 +126,11 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
   `kult-marcas.bat` lo activa.
   Los logs van en **append** con separador `# RUN`; F12 también deja
   `F12: marca manual` en `kult.log`.
+- **Texto y F12**: con `KULT_MARKS` activo se registran líneas
+  `T <vbl> <tag> idx=.. w=.. str=.. end=.. cx=.. cy=.. raw=..` al dibujar
+  líneas de texto. F12 deja una línea `X` con la última línea de texto (índice,
+  ancho, posición y bytes). Con `KULT_AUTOLOG=1` se vuelca el anillo cada 150
+  VBL, de modo que un bloqueo sin F12 deja los últimos ~3 s en el log.
 - **Traza del anillo (`R`)**: con `KULT_RINGLOG=<ruta>` (solo líneas `R`) o
   `KULT_MARKS` activo, cada anillo de acciones escribe en vivo (no depende de
   F12) líneas

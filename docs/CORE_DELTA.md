@@ -20,6 +20,7 @@ Estos ficheros del core llevan cambios propios del port:
 - `lib/kult-core/src/input.c`
 - `lib/kult-core/src/loop.c`
 - `lib/kult-core/src/mode.c`
+- `lib/kult-core/src/text.c`
 - `lib/kult-core/src/video.c`
 - `lib/kult-core/include/kult_port.h`
 

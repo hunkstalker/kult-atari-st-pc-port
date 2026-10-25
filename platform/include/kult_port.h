@@ -60,6 +60,16 @@ static inline void kult_diag_rnd(const char *tag, uint8_t *img,
 /* Traza de entrada: clics crudos de SDL y clics procesados por wait_frame. */
 void platform_diag_input(const char *tag, uint8_t *img,
                          uint32_t x, uint32_t y, uint32_t buttons);
+void platform_text_ev(const char *tag, uint8_t *img, uint32_t str,
+                      uint32_t end, uint32_t width, uint32_t index);
+static inline void kult_text_ev(const char *tag, uint8_t *img, uint32_t str,
+                                uint32_t end, uint32_t width, uint32_t index) {
+    platform_text_ev(tag, img, str, end, width, index);
+}
+
+uint32_t platform_overlay_a_bank(void);
+static inline uint32_t kult_overlay_a_bank(void) { return platform_overlay_a_bank(); }
+
 #ifdef KULT_NO_CPUWORK
 static inline void kult_diag_input(const char *tag, uint8_t *img,
                                    uint32_t x, uint32_t y, uint32_t buttons) {

@@ -67,6 +67,14 @@ __attribute__((no_instrument_function)) static void build(void);    /* ventana d
 static struct { uint32_t addr, vbl; } g_ring[MARK_RING];
 static uint32_t g_ring_pos, g_ring_count;
 
+/* Ultima linea de texto dibujada: se incluye en el volcado F12/auto. */
+static struct {
+    uint32_t vbl, str, end, width, index;
+    char tag[16];
+    uint8_t raw[80];
+    uint32_t raw_len;
+} g_last_text;
+
 static int marks_recording(void) {
     static int on = -1;
     if (on < 0) { const char *e = getenv("KULT_MARKS"); on = (e && *e) ? 1 : 0; }
@@ -380,6 +388,37 @@ static FILE *ring_file(void) {
     return g_ring_file ? g_ring_file : marks_file();
 }
 
+__attribute__((no_instrument_function))
+void platform_text_ev(const char *tag, uint8_t *img, uint32_t str,
+                      uint32_t end, uint32_t width, uint32_t index) {
+    FILE *mf = ring_file();
+    if (!mf || !img) return;
+    uint32_t vbl = platform_frame_count();
+    g_last_text.vbl = vbl;
+    g_last_text.str = str;
+    g_last_text.end = end;
+    g_last_text.width = width;
+    g_last_text.index = index;
+    snprintf(g_last_text.tag, sizeof g_last_text.tag, "%s", tag ? tag : "?");
+    g_last_text.raw_len = 0;
+    if (str < 0x100000u && end <= 0x100000u && end > str) {
+        uint32_t n = end - str;
+        if (n > sizeof g_last_text.raw) n = sizeof g_last_text.raw;
+        memcpy(g_last_text.raw, img + str, n);
+        g_last_text.raw_len = n;
+    }
+    fprintf(mf, "T %u %s idx=%04x w=%u str=%05x end=%05x cx=%04x cy=%04x "
+                "raw=",
+            vbl, tag ? tag : "?", (unsigned)index, (unsigned)width,
+            (unsigned)str, (unsigned)end,
+            (unsigned)be16(img + A_CURSOR_TEXT_X),
+            (unsigned)be16(img + A_CURSOR_TEXT_Y));
+    for (uint32_t i = 0; i < g_last_text.raw_len; i++)
+        fprintf(mf, "%02x", g_last_text.raw[i]);
+    fputc('\n', mf);
+    fflush(mf);
+}
+
 /* Traza del anillo de acciones. Escribe si KULT_RINGLOG o KULT_MARKS están activos. */
 __attribute__((no_instrument_function))
 void platform_diag_ev(const char *tag, uint8_t *img,
@@ -558,7 +597,8 @@ void platform_marks_event(const char *tag, int a, int b) {
     uint32_t vbl = platform_frame_count();
     /* Volcar los ~150 VBLs anteriores del buffer (3 s) ANTES de la marca:
      * asi F12 puede pulsarse despues de una animacion corta. */
-    if (tag && strcmp(tag, "f12") == 0 && g_ring_count) {
+    if (tag && (strcmp(tag, "f12") == 0 || strcmp(tag, "auto") == 0) &&
+        g_ring_count) {
         uint32_t cutoff = (vbl > 150u) ? vbl - 150u : 0u;
         uint32_t start = (g_ring_count == MARK_RING) ? g_ring_pos : 0u;
         for (uint32_t i = 0; i < g_ring_count; i++) {
@@ -566,6 +606,16 @@ void platform_marks_event(const char *tag, int a, int b) {
             if (g_ring[k].vbl >= cutoff)
                 fprintf(mf, "F %x %u\n", g_ring[k].addr, g_ring[k].vbl);
         }
+    }
+    if (tag && (strcmp(tag, "f12") == 0 || strcmp(tag, "auto") == 0) &&
+        g_last_text.raw_len) {
+        fprintf(mf, "X %s %u idx=%04x w=%u str=%05x end=%05x raw=",
+                g_last_text.tag, g_last_text.vbl, (unsigned)g_last_text.index,
+                (unsigned)g_last_text.width, (unsigned)g_last_text.str,
+                (unsigned)g_last_text.end);
+        for (uint32_t i = 0; i < g_last_text.raw_len; i++)
+            fprintf(mf, "%02x", g_last_text.raw[i]);
+        fputc('\n', mf);
     }
     fprintf(mf, "M %s %u %d %d\n", tag ? tag : "?", vbl, a, b);
     fflush(mf);
