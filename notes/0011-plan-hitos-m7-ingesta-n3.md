@@ -113,6 +113,8 @@ blobs originales); el motor es **nuestro** y lee **assets nativos**.
   puntero hacia `l_0101a8`; el único vector cercano es `$502 = l_01019a`. Por
   tanto **parece inobservable**, pero **se deja abierto**: puede necesitarse más
   adelante. Si se retoma, portar `0x106f2` (lista C + `crt0` + lista A) en `boot/`.
+  **Retomado en la sesión 68 (2026-10-25): plan completo en
+  `notes/0052-plan-t022.md`.**
 - **No confundir** con el **reinicio tras morir**, que es `0x1842c`
   (`prepare_room`) → `0x1682a` (`reset_clear`). El estado está en el core
   (`src/loop.c`, `src/fileio.c`), pero el `bra 0x10158` final se emula en

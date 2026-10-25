@@ -81,10 +81,10 @@ para que el usuario valide.
 **icono** (`assets/`); ZIP Windows + TGZ Linux; **ingesta** (`kult.data`) y
 **overlays de idioma** (`language.data`).
 **Aceptación:** doble clic + copia del usuario → funciona.
-**Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. La
-release 1.0.0 está preparada y el catalán está validado; T-097/T-098 están
-corregidos y validados por el usuario. Después: validación visual final, tests
-automatizados y publicación. El CI va después de publicar.
+**Nota:** build, paquete portable, ingesta, idiomas y licencias están hechos. El
+catalán está validado y T-097/T-098 están corregidos y validados por el usuario.
+Antes de publicar quedan T-022 (`0x106f2`), regenerar el ZIP y la validación
+visual final (T-094). Después: publicación (T-092) y CI (T-096).
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
 `saves/`, `LEEME.txt` y licencias; sin headless ni `DIAGNOSTICO.txt`), ingesta

@@ -76,7 +76,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | `_start` (0x10000) | arranque + **menú de idioma** (único nombre sin C) |
 | `0x160c2` | tick de VBL: contador `A_DAT_1ACD4` + trabajo por frame |
 | `0x135ba` | XBIOS `Setscreen(-1,-1,0)` → `os_setscreen` no-op (✅) |
-| `0x106f2` | reinicio suave `l_0101a8` (**abierto**; parece inobservable). **No** es el reinicio tras morir (ese es `0x1842c`→`reset_clear`; su `bra 0x10158` se emula en `boot/`, ver T-076) |
+| `0x106f2` | reinicio suave `l_0101a8` (**siguiente, T-022**; plan `notes/0052`). **No** es el reinicio tras morir (ese es `0x1842c`→`reset_clear`; su `bra 0x10158` se emula en `boot/`, ver T-076) |
 | `0x19316` | comprobación FDC → **se omite** en PC |
 
 ### 5.3 Se implementa (capa de PC)
@@ -91,11 +91,11 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 |---|---|---|
 | **M0** | repo y documentación; importar el core en `lib/kult-core/` | ✅ hecho |
 | **M1** | HAL mínima **headless** + driver (sin ventana) | ✅ hecho |
-| **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` **abierto**) + tick `0x160c2` |
+| **M2** | portar `_start` y `0x160c2` | ✅ `_start` **fiel** (menú validado en T-020; `0x106f2` **planificado en T-022**) + tick `0x160c2` |
 | **M3** | render SDL3 + entrada real (primera ventana jugable) | ✅ ventana + entrada real + ritmo 50 Hz |
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
-| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). Release 1.0.0 preparada; publicación pendiente (T-092) |
+| **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). Release 1.0.0 pendiente de T-022, ZIP nuevo y T-094; publicación después (T-092) |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -105,10 +105,11 @@ Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 
 > **Orden acordado:** `arreglos (portabilidad Windows + docs) → M7 build → T-061
 > (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta + idiomas) ✅ →
-> publicación de la release 1.0.0 → A1 → N3 → A2 → M5`.
+> T-022 (`0x106f2` + `l_0101a8`) → validación final (T-094) → publicación de la
+> release 1.0.0 (T-092) → CI (T-096) → A1 → N3 → A2 → M5.
 > **M5** es un extra de presentación independiente (no se junta con A). **A1** es
 > **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
-> **T-022/`0x106f2`** se deja **abierto** (posible futuro). Detalle: `notes/0011`.
+> **T-022/`0x106f2`** se retoma en la **sesión 68**; plan: `notes/0052`. Detalle: `notes/0011`.
 
 ## 7. Decisiones cerradas
 Recogidas como ADR en `docs/adr/`:
@@ -143,13 +144,13 @@ Recogidas como ADR en `docs/adr/`:
   timing ciclo-exacto. **T-089 ✅** (final del juego: `attract`, validado en
   Windows). **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance).
   T-073 queda como **feature opcional** de calibración fina no bloqueante.
-  `0x106f2` (reinicio suave) queda **abierto/pendiente**. Ingesta `.STX` /
-  `kult.data` (T-072): ✅ implementada.
+  `0x106f2` (reinicio suave) queda **siguiente (T-022)**; plan `notes/0052`.
+  Ingesta `.STX` / `kult.data` (T-072): ✅ implementada.
 - **Plan fijado (sesión 11, sin código)**: orden `arreglos (portabilidad Windows +
   docs) → M7 build → T-061 validación ✅ → T-072/M7-c (empaquetado + ingesta +
-  idiomas) ✅ → publicación 1.0.0 → A1 (investigación Amiga, prerrequisito duro
-  de N3) → N3 (motor nativo + assets nativos, ADR + rama) → A2 (Amiga) → M5
-  (opcional)`. Detalle: **`notes/0011`**.
+  idiomas) ✅ → T-022 → T-094 → publicación 1.0.0 → A1 (investigación Amiga,
+  prerrequisito duro de N3) → N3 (motor nativo + assets nativos, ADR + rama) →
+  A2 (Amiga) → M5 (opcional)`. Detalle: **`notes/0011`**.
 - **M7 build hecho (sesión 12, T-070)**: portabilidad Windows (`platform/time.c`
   reloj/espera, `platform/fs.c` `;` + `data/` junto al exe, `KULT_PRG` del dir de
   datos), **CMake** nativo (`kult`, `kult-sdl`) y **cross MinGW**
@@ -270,9 +271,12 @@ Recogidas como ADR en `docs/adr/`:
   `make test` 511, `test-port`, nativo/win/ZIP OK. Exe `c7b8dac1…`, ZIP
   `787bd41d…`. **Validado visualmente por el usuario** (el glitch del punto 4
   desaparece). No hay un punto 3 independiente: 4905 era el mismo reveal H-el1.
-- **Siguiente:** cerrar la validación visual (T-094) y después publicar la
-  release **1.0.0** (T-092); el CI (T-096) va después de publicar. T-095 (tests
-  de ingesta/packs) y T-097/T-098 ya están cerrados. Después
+- **Siguiente:** **T-022** (completar `0x106f2` en el repo C y portar
+  `l_0101a8` como ruta latente, sin flujo artificial; plan en
+  `notes/0052-plan-t022.md`). Después, regenerar el ZIP, cerrar la validación
+  visual (T-094) y publicar la release **1.0.0** (T-092); el CI (T-096) va
+  después de publicar. T-095 (tests de ingesta/packs) y T-097/T-098 ya están
+  cerrados. Después
   **A1** → **N3** → **A2** → **M5**. **T-061 ✅ cerrada y validada en Windows
   (2026-10-23)**: checklist completo (título/idioma/colores, partida/controles,
   retrato C, sangre/espacio, estrella, cursor, glitch del reveal,

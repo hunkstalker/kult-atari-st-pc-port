@@ -14,14 +14,16 @@ llama a **19 servicios**; el port implementa esos servicios para PC (SDL3). Ver
 El port es jugable de principio a fin en Windows y Linux. **M0–M7 funcionalmente cerradas**:
 incluye ingesta de los discos originales, selector de idioma, packs español y
 catalán, guardado/carga, audio, final del juego, paquete portable y licencias.
-La release **1.0.0** está preparada y el catalán está validado por el usuario.
+El catalán está validado por el usuario. La release **1.0.0** queda pendiente de
+T-022, de regenerar el ZIP y de la validación visual final.
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
 separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). Después:
-validación visual final y publicación; CI al final. `0x106f2` sigue abierto y
-T-073 es opcional. Sin bloqueantes de código. Ver `notes/0011`–`notes/0014`,
-`notes/0041`, `notes/0042`, `notes/0049` y `notes/0050`.
+**T-022** (completar `0x106f2` y portar `l_0101a8` como ruta latente), validación
+visual final y publicación; CI al final. T-073 es opcional. Sin bloqueantes de
+código. Plan T-022: `notes/0052-plan-t022.md`. Ver `notes/0011`–`notes/0014`,
+`notes/0041`, `notes/0042`, `notes/0049`–`notes/0052`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**

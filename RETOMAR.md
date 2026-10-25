@@ -6,9 +6,26 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-100 cerrada y verificada; documentación y artefactos actualizados.
-Release 1.0.0 preparada, sin push ni tag. El único fichero no versionado es el
-backup local `docs/REVISION_CATALAN.original.xlsx`.
+**Estado:** T-100 cerrada y verificada; el usuario validó funcionalmente los
+últimos cambios. La siguiente tarea de código es **T-022**, que se hará antes de
+T-094. La release 1.0.0 sigue sin push ni tag y **se publicará al final**, después
+de T-022 y de la validación visual final. El único fichero no versionado aparte
+de la documentación pendiente es el backup local
+`docs/REVISION_CATALAN.original.xlsx`.
+
+**Siguiente tarea: T-022 — completar `0x106f2` y el reinicio suave `l_0101a8`.**
+
+- **Objetivo principal:** dejar `kult-atari-st-c` 1:1 con el original. Falta
+  `f_0106f2` (`0x106f2`), que carga la lista C (`0x1a2c8`).
+- **En el port:** reconstruir `l_0101a8` como **ruta latente verificada**, sin
+  añadir menús, botones ni eventos artificiales. Solo se podrá forzar con el
+  diagnóstico `KULT_SOFT_RESTART_AT`.
+- **Orden:** repo C → subtree pull → `boot/` del port → tests/smoke → ZIP nuevo →
+  T-094 → T-092. Publicar 1.0.0 es lo último.
+- **Plan completo, hallazgos y trampas:** `notes/0052-plan-t022.md`.
+- **Estado del repo C:** `/app/kult-atari-st-c`, rama `main`, limpio en `beebb52`.
+- **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
+  `0x10158`), ya resuelto (`notes/0022`).
 
 **Ya cerrado y validado:**
 
@@ -19,39 +36,54 @@ backup local `docs/REVISION_CATALAN.original.xlsx`.
 - T-095: tests automatizados de ingesta (STX/Pasti/FAT12), validación de
   `KULT.PRG`, `kult.data` atómico y packs `S`/`C`; integrados en `make test`.
 - T-100: diagnósticos separados en `platform/diag.c`, buffer F12 perezoso,
-  `make test-diag` y guía `docs/DIAGNOSTICO.md`.
+  `make test-diag` y guía `docs/DIAGNOSTICO.md`. Validación funcional del
+  usuario sobre los últimos cambios (2026-10-25); **no sustituye a T-094**.
 
 **Artefactos actuales:**
 
-- ZIP: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `b959d76ad0aa2a1a4175a00ac2a0705efa567c13d3abe63c7ab7509ba334bec3`
-  (regenerado tras T-100; candidato para T-094/T-092).
+- ZIP actual: `build-win/kult-1.0.0-win64.zip`
+  SHA256 `013ff06c39a187fc114418e3d24cceb874ecd9da9df5cc3b1d40291d798f41b3`
+  (artefacto de trabajo; T-022 lo invalidará y habrá que regenerarlo. El hash
+  cambia al empaquetar y no está validado como release: T-094 sigue pendiente).
 - `assets/language.data` SHA256
   `cc8981aee93cfed520250caf9e338d5f1480504617c02af6a3e312e0f6682e13`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 518 core + HAL (30 funciones / 163 `CHECK`) + diagnóstico
-  off/on + 1 port OK.
-- `make package-win`: OK.
+  off/on + 1 port OK (línea base antes de T-022).
+- `make package-win`: OK antes de T-022.
 
 **Pendiente, en este orden:**
 
-1. **T-094 — validación visual final de la release Windows.** Arrancar desde el
-   ZIP en carpeta limpia, con los STX, y revisar: DRAP, menú D/E/F/S/C, título,
-   textos español/catalán, fuentes, cajas de objeto, La Horca, guardado/carga,
-   audio y menús. Es la última pasada visual global, no una revisión de
-   traducción.
-2. **T-092 — publicación 1.0.0.** Push de `main`, tag/Release `1.0.0` y adjuntar
-   el ZIP Windows con las notas de release. `origin` ya está configurado.
-3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
+1. **T-022 — `0x106f2` y `l_0101a8`.** Empezar por el repo C:
+   `load_resource_list_c`, API, mapa y prueba diferencial; después importar al
+   port y reconstruir `l_0101a8` en `boot/`. Plan: `notes/0052-plan-t022.md`.
+2. **Regenerar el ZIP y ejecutar T-094.** La validación visual final debe hacerse
+   sobre el paquete generado **después** de T-022.
+3. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
+   Es el último paso de la release.
+4. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
    assets; el core diferencial necesita `KULT.PRG` y queda local/opcional.
+
+**Antes de tocar código:**
+
+- Hay cambios documentales sin commit: `RETOMAR.md`, `TODO.md`,
+  `docs/INDICE.md`, `notes/0051-validacion-cambios-t100.md` y
+  `notes/0052-plan-t022.md`. Commitearlos primero para no mezclar documentación
+  con T-022.
+- Revisar `git status` en `/app/kult-atari-st-c` y en
+  `/app/kult-atari-st-pc-port`.
+- Tomar la línea base con `make test`.
 
 **Comandos de arranque:**
 
 ```sh
+cd /app/kult-atari-st-pc-port
 make test
-make package-win
+
+cd /app/kult-atari-st-c
+make test
 ```
 
 No hay fixes de texto pendientes. Si aparece una regresión visual, usar
@@ -62,6 +94,17 @@ No hay fixes de texto pendientes. Si aparece una regresión visual, usar
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 68 — plan T-022 (2026-10-25)**: sin cambios de código. Se acuerda
+  completar `0x106f2` en el repo C (objetivo 1:1) y reconstruir `l_0101a8` como
+  ruta latente verificada, sin flujos artificiales. T-022 pasa delante de T-094;
+  la publicación 1.0.0 queda al final. Plan completo: `notes/0052-plan-t022.md`.
+  Próxima sesión: Fase 0 (commit de documentación pendiente) y Fase 1 en
+  `kult-atari-st-c`.
+- **Sesión 67 — validación funcional de los últimos cambios (2026-10-25)**: el
+  usuario confirma que T-095/T-100 siguen funcionando bien. No es la validación
+  visual final de la release; **T-094 sigue pendiente**. En ese momento el
+  siguiente paso era T-094; la sesión 68 acordó hacer T-022 antes. Detalle:
+  `notes/0051`.
 - **Sesión 66 — diagnósticos separados (T-100) (2026-10-25)**: toda la salida
   opcional de logs sale de `platform/cpuwork.c` a `platform/diag.{c,h}`; el
   timing y los hooks de HAL quedan en `cpuwork.c`. El buffer F12 de 2 MiB se
