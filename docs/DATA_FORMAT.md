@@ -38,8 +38,17 @@ offset  tamaño  contenido
 64      1 MiB   imagen completa del motor
 ```
 
-`kult.ini` (junto al ejecutable) guarda `save_slot = 0..9`. La carga valida
-magia, versión, ranura y tamaño antes de modificar la partida.
+`kult.ini` (junto al ejecutable) guarda los ajustes de las teclas F:
+
+```ini
+save_slot = 0..9
+scale = 0..7        # 0 Auto, 1..6 escala fija, 7 Estirar a pantalla (def.)
+fullscreen = 0|1
+volume = 0..100
+muted = 0|1
+```
+
+La carga valida magia, versión, ranura y tamaño antes de modificar la partida.
 
 ## Contenedor `KULTDTA1`
 

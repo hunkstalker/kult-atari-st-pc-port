@@ -120,7 +120,7 @@ Sin fallback a appdata, `/tmp` ni directorios alternativos. `KULT_DATA_DIR` y
 `CLEAR.BIN`, `SCENA.BIN` y cualquier estado modificable van a `saves/`, nunca al
 contenedor ni a `data/`. Las ranuras F5/F6/F7 se guardan como
 `saves/slot-0.save`…`slot-9.save`; `kult.ini`, junto al ejecutable, recuerda
-la ranura activa.
+la pantalla, escala, ranura, volumen y silencio.
 
 ## Empaquetado
 

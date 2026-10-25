@@ -4,7 +4,6 @@
  * visible. No incluye el estado del MFP/PSG: al cargar se restaura el estado
  * lógico/visual y el juego decide cuándo vuelve a sonar la música.
  */
-#include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,10 +24,6 @@ static int g_pending_load;
 
 static void slot_path(int slot, char *out, size_t out_size) {
     snprintf(out, out_size, "%s/slot-%d.save", platform_saves_dir(), slot);
-}
-
-static void ini_path(char *out, size_t out_size) {
-    snprintf(out, out_size, "%s/kult.ini", platform_storage_path());
 }
 
 static void put_be16(uint8_t *p, uint16_t v) {
@@ -58,73 +53,10 @@ static int normaliza_slot(int slot) {
     return slot;
 }
 
-static int ini_leer_slot(void) {
-    char path[1300], line[256];
-    ini_path(path, sizeof path);
-    FILE *f = fopen(path, "r");
-    if (!f)
-        return 0;
-    int slot = 0;
-    while (fgets(line, sizeof line, f)) {
-        char *p = line;
-        while (isspace((unsigned char)*p)) p++;
-        if (strncmp(p, "save_slot", 9) == 0) {
-            char *eq = strchr(p, '=');
-            if (eq) {
-                int v = atoi(eq + 1);
-                slot = normaliza_slot(v);
-                if (slot < 0) slot = 0;
-            }
-        }
-    }
-    fclose(f);
-    return slot;
-}
-
-static int ini_guardar_slot(int slot) {
-    char path[1300], tmp[1310], line[256];
-    ini_path(path, sizeof path);
-    snprintf(tmp, sizeof tmp, "%s.tmp", path);
-    FILE *in = fopen(path, "r");
-    FILE *out = fopen(tmp, "w");
-    if (!out) {
-        platform_log("slot: no se pudo escribir %s", tmp);
-        if (in) fclose(in);
-        return -1;
-    }
-    int written = 0;
-    if (in) {
-        while (fgets(line, sizeof line, in)) {
-            char *p = line;
-            while (isspace((unsigned char)*p)) p++;
-            if (strncmp(p, "save_slot", 9) == 0) {
-                if (!written) {
-                    fprintf(out, "save_slot = %d\n", slot);
-                    written = 1;
-                }
-            } else {
-                fputs(line, out);
-            }
-        }
-        fclose(in);
-    }
-    if (!written)
-        fprintf(out, "save_slot = %d\n", slot);
-    if (fclose(out) != 0) {
-        remove(tmp);
-        return -1;
-    }
-    remove(path);
-    if (rename(tmp, path) != 0) {
-        remove(tmp);
-        platform_log("slot: no se pudo reemplazar %s", path);
-        return -1;
-    }
-    return 0;
-}
-
 void platform_slots_init(void) {
-    g_slot = ini_leer_slot();
+    g_slot = platform_config_get_int("save_slot", 0);
+    if (normaliza_slot(g_slot) < 0)
+        g_slot = 0;
     platform_log("slot activo: %d", g_slot);
 }
 
@@ -134,7 +66,7 @@ int platform_slots_current(void) {
 
 void platform_slots_select_next(void) {
     g_slot = (g_slot + 1) % PLATFORM_SLOT_COUNT;
-    (void)ini_guardar_slot(g_slot);
+    platform_config_set_int("save_slot", g_slot);
     char msg[32];
     snprintf(msg, sizeof msg, "RANURA %d", g_slot);
     platform_osd_show(msg);

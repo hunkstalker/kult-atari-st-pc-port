@@ -71,6 +71,10 @@ void platform_replay_shutdown(void);
 uint32_t platform_frame_count(void);
 int platform_in_loop(void);
 
+/* kult.ini junto al ejecutable: ajustes persistentes de las teclas F. */
+int  platform_config_get_int(const char *key, int def);
+void platform_config_set_int(const char *key, int value);
+
 /* Reloj monótono en ns (para diagnósticos, p. ej. FPS del bucle). */
 uint64_t platform_now_ns(void);
 
@@ -181,6 +185,7 @@ int  platform_audio_enabled(void);
 void platform_audio_set_enabled(int on);
 int  platform_audio_volume(void);          /* 0..100 */
 int  platform_audio_muted(void);
+int  platform_audio_volume_saved(void);
 void platform_audio_set_volume(int percent);
 void platform_audio_volume_step(int delta);
 void platform_audio_toggle_mute(void);

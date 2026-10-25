@@ -76,6 +76,7 @@ static void toggle_fullscreen(void) {
         if (SDL_SetWindowFullscreen(g_win, false)) {
             g_fullscreen = 0;
             apply_window_scale();
+            platform_config_set_int("fullscreen", 0);
             platform_osd_show("VENTANA");
             platform_log("F1: ventana");
         } else {
@@ -86,6 +87,7 @@ static void toggle_fullscreen(void) {
         if (SDL_SetWindowFullscreen(g_win, true)) {
             g_fullscreen = 1;
             update_viewport();
+            platform_config_set_int("fullscreen", 1);
             platform_osd_show("PANTALLA COMPLETA");
             platform_log("F1: pantalla completa");
         } else {
@@ -105,6 +107,8 @@ static void cycle_scale(void) {
     else
         apply_window_scale();
 
+    platform_config_set_int("scale", g_scale_mode);
+
     char msg[32];
     if (g_scale_mode == PLATFORM_SCALE_AUTO)
         snprintf(msg, sizeof msg, "ESCALA AUTO");
@@ -118,6 +122,8 @@ static void cycle_scale(void) {
 }
 
 static void show_audio_osd(void) {
+    platform_config_set_int("volume", platform_audio_volume_saved());
+    platform_config_set_int("muted", platform_audio_muted());
     char msg[32];
     if (platform_audio_muted())
         snprintf(msg, sizeof msg, "SILENCIO");

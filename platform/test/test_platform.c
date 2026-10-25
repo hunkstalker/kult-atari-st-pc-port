@@ -774,6 +774,50 @@ static void test_osd_font(void) {
     free(img);
 }
 
+static void test_config(void) {
+    const char *path = DIR "/kult.ini";
+    remove(path);
+    CHECK(platform_config_get_int("missing", 42) == 42,
+          "config: una clave ausente devuelve el defecto");
+    CHECK(platform_config_get_int("scale", PLATFORM_SCALE_FILL) == PLATFORM_SCALE_FILL,
+          "config: Estirar es el modo de escala por defecto");
+
+    platform_config_set_int("save_slot", 7);
+    platform_config_set_int("scale", PLATFORM_SCALE_MAX);
+    platform_config_set_int("volume", 80);
+    platform_config_set_int("fullscreen", 0);
+    CHECK(platform_config_get_int("save_slot", 0) == 7, "config: save_slot");
+    CHECK(platform_config_get_int("scale", 0) == PLATFORM_SCALE_MAX, "config: scale");
+    CHECK(platform_config_get_int("volume", 100) == 80, "config: volume");
+    CHECK(platform_config_get_int("fullscreen", 1) == 0, "config: fullscreen");
+
+    platform_config_set_int("save_slot", 2);
+    CHECK(platform_config_get_int("save_slot", 0) == 2,
+          "config: reemplaza la clave existente");
+    platform_config_set_int("otra", 5);
+    CHECK(platform_config_get_int("otra", 0) == 5,
+          "config: conserva claves desconocidas");
+    CHECK(platform_config_get_int("volume", 0) == 80,
+          "config: no pisa otras claves al guardar");
+
+    FILE *f = fopen(path, "rb");
+    CHECK(f != NULL, "config: kult.ini debe existir");
+    if (f) {
+        char txt[512] = {0};
+        fread(txt, 1, sizeof txt - 1, f);
+        fclose(f);
+        CHECK(strstr(txt, "save_slot = 2") != NULL,
+              "config: kult.ini contiene save_slot");
+        CHECK(strstr(txt, "scale = 6") != NULL,
+              "config: kult.ini contiene scale");
+        CHECK(strstr(txt, "volume = 80") != NULL,
+              "config: kult.ini contiene volume");
+        CHECK(strstr(txt, "fullscreen = 0") != NULL,
+              "config: kult.ini contiene fullscreen");
+    }
+    remove(path);
+}
+
 static void test_slots(void) {
     const int slot = 4;
     const char *path4 = DIR "/saves/slot-4.save";
@@ -1412,6 +1456,8 @@ static void test_audio_volume(void) {
     platform_audio_toggle_mute();
     CHECK(platform_audio_muted() && platform_audio_volume() == 0,
           "F10 silencia y deja volumen 0");
+    CHECK(platform_audio_volume_saved() == 80,
+          "el volumen guardado se conserva al silenciar");
     platform_audio_toggle_mute();
     CHECK(!platform_audio_muted() && platform_audio_volume() == 80,
           "F10 restaura el volumen anterior");
@@ -1542,6 +1588,7 @@ int main(void) {
     test_display_viewport();
     test_osd();
     test_osd_font();
+    test_config();
     test_slots();
     test_cpu_delay();
     test_cpu_charge_cycles();
@@ -1566,7 +1613,7 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs/containers, ingesta STX/FAT12 y validacion PRG, "
-           "contenedor atomico, packs S/C, log, present por VBL, display/OSD (fuente del juego), ranuras, "
+           "contenedor atomico, packs S/C, config, log, present por VBL, display/OSD (fuente del juego), ranuras, "
            "cpu_delay, cpu_cycles, disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
            "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;

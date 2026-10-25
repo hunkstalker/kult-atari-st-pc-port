@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-113) |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-114) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -34,6 +34,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-111 | OSD: caducidad por tiempo real (no por VBL) | ✅ cerrada (2026-10-25; `notes/0064`) |
 | T-112 | Volumen F9/F10/F11 con OSD del estado | ✅ cerrada (2026-10-25; `notes/0065`) |
 | T-113 | Incluir `Kult Settings.png` junto al `.exe` en release/CI | ✅ cerrada (2026-10-25; `notes/0066`) |
+| T-114 | Arranque en Estirar y configuración F en `kult.ini` | ✅ cerrada (2026-10-25; `notes/0067`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -118,7 +119,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP regenerado en T-113 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP regenerado en T-114 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -137,7 +138,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-110 | **F2: Estirar a pantalla → ×1..×6 → Auto** | ✅ **sesión 71**: nuevo orden del ciclo, OSD literal `ESTIRAR A PANTALLA`, log `estirar`; pruebas de ciclo actualizadas. ZIP `1cfd3a55…` (sustituido por T-111); `make test` 519 core + 34 funciones / 227 `CHECK`. Detalle: **`notes/0063`** |
 | T-111 | **OSD por tiempo real** | ✅ **sesión 71**: TTL con `platform_now_ns()` (2,5 s); `platform_osd_show_ms()`; caduca aunque el juego esté bloqueado en `Cnecin`; nueva prueba sin VBL. ZIP `528de4ef…` (sustituido por T-112); `make test` 519 core + 34 funciones / 228 `CHECK`. Detalle: **`notes/0064`** |
 | T-112 | **Volumen F9/F10/F11** | ✅ **sesión 71**: volumen maestro ±10%, mute/restauración y OSD `VOLUMEN N`/`SILENCIO`; F11 deja de ser marca de animación. ZIP `d4c125ee…` (sustituido por T-113); `make test` 519 core + 35 funciones / 240 `CHECK`. Detalle: **`notes/0065`** |
-| T-113 | **`Kult Settings.png` en la release** | ✅ **sesión 71**: imagen versionada e instalada junto a `kult.exe`; paquete de 12 entradas; verificado con `unzip -l`. ZIP `16c004ba…`. Detalle: **`notes/0066`** |
+| T-113 | **`Kult Settings.png` en la release** | ✅ **sesión 71**: imagen versionada e instalada junto a `kult.exe`; paquete de 12 entradas; verificado con `unzip -l`. ZIP `16c004ba…` (sustituido por T-114). Detalle: **`notes/0066`** |
+| T-114 | **Arranque en Estirar + config F persistente** | ✅ **sesión 71**: `scale` por defecto 7 (Estirar); `kult.ini` guarda escala, fullscreen, volumen, mute y ranura; `platform/config.c` centraliza el parser. ZIP `07b91456…`; `make test` 519 core + 36 funciones / 255 `CHECK`. Detalle: **`notes/0067`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

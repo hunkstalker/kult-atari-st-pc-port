@@ -118,6 +118,7 @@ void platform_audio_set_enabled(int on) { g_enabled = on ? 1 : 0; }
 
 int platform_audio_volume(void) { return g_volume; }
 int platform_audio_muted(void) { return g_muted; }
+int platform_audio_volume_saved(void) { return g_volume_saved; }
 
 void platform_audio_set_volume(int percent) {
     if (percent < 0) percent = 0;

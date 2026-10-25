@@ -27,7 +27,8 @@ la carpeta debe ser escribible.
 
 5) Controles: F1 alterna pantalla completa/ventana, F2 cambia la escala
    (Estirar a pantalla, x1..x6, Auto), F9 baja volumen, F10 silencia/restaura,
-   F11 sube volumen y ESC cierra la ventana.
+   F11 sube volumen y ESC cierra la ventana. Al arrancar se usa Estirar a
+   pantalla salvo que kult.ini indique otra escala.
 
 6) Guardado rápido: F5 cambia de ranura (0-9), F6 guarda y F7 carga. Las
    partidas van a `saves/slot-N.save`; la ranura activa se recuerda en
@@ -38,7 +39,7 @@ Carpetas
 - `data/`   entrada de los STX + `kult.data` generado + `language.data`.
 - `saves/`  escrituras del juego (CLEAR.BIN, SCENA.BIN...) y las ranuras
             `slot-0.save`…`slot-9.save`.
-- `kult.ini` recuerda la ranura de guardado activa.
+- `kult.ini` recuerda pantalla, escala, ranura de guardado, volumen y silencio.
 - `Kult Settings.png` imagen de referencia incluida con el port.
 - `kult.log` se crea junto a kult.exe con timestamp y errores.
 

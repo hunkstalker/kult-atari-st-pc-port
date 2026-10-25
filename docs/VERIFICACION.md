@@ -50,7 +50,7 @@ ventana/audio, SDL3 con display y tarjeta de sonido. Ver `docs/LIMITACIONES.md`.
 **Leyenda:** ✅ validado; ⬜ pendiente.
 
 **Estado actual (candidato 1.0.0; T-061 ✅ cerrada y validada en Windows,
-2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-113
+2026-10-23). T-094 no está cerrada: repetir esta checklist sobre el ZIP de T-114
 (2026-10-25), incluyendo F1/F2 (con Estirar a pantalla), F5/F6/F7, `slot-N.save` y el OSD
 con la fuente del juego.**
 
@@ -140,14 +140,17 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    (incluidas puertas).
    **Controles**:
    **F1** alterna pantalla completa/ventana y **F2** cicla la escala
-   (Estirar a pantalla, ×1–×6, Auto); comprobar que el ratón sigue apuntando bien, que
-   Estirar a pantalla llena la salida y que el OSD se ve discreto.
+   (Estirar a pantalla, ×1–×6, Auto); comprobar que el ratón sigue apuntando bien,
+   que Estirar a pantalla llena la salida y que el OSD se ve discreto. Al
+   arrancar debe usarse Estirar a pantalla si `kult.ini` no indica otra escala.
    **F5** cicla ranuras 0–9, **F6** guarda y **F7** carga; probar una ranura
    vacía/corrupta (error visible), reiniciar y comprobar que se recuerda la
    ranura. El aviso debe verse con la **fuente 4×6 del juego**, no con una
    fuente externa. El savestate no rebobina la música.
    **F9/F11** bajan/suben el volumen 10% y **F10** silencia/restaura; el OSD
-   debe mostrar `VOLUMEN N` o `SILENCIO` y el audio debe responder.
+   debe mostrar `VOLUMEN N` o `SILENCIO` y el audio debe responder. Cambiar
+   escala, pantalla, volumen o silencio y reiniciar: deben conservarse en
+   `kult.ini`.
    **izquierdo / teclado** = acción normal, **sin** skip y con animación visible;
    **derecho** = acción + skip (puertas y A/B/C). **Clic mantenido ✅ (T-084)**:
    una pulsación mantenida = **un** clic; el anillo de acciones se abre una vez y

@@ -13,6 +13,9 @@
  *   KULT_KEYS      teclas inyectadas        (def. auto 'E')
  *   KULT_WINDOW    ventana SDL              (build SDL: 1 por defecto; 0 =
  *                                           headless; build sin SDL: se ignora)
+ *   KULT_SCALE     fuerza el modo de escala (0 Auto .. 7 Estirar; si no,
+ *                                           kult.ini o Estirar por defecto)
+ *   KULT_FULLSCREEN fuerza ventana/fullscreen (si no, kult.ini o fullscreen)
  *   KULT_REPLAY_REC  graba las respuestas de entrada en un replay binario
  *   KULT_REPLAY_PLAY reproduce un replay e ignora la entrada real de SDL
  *
@@ -24,6 +27,7 @@
 #include <stdint.h>
 
 #include "platform.h"
+#include "display.h"
 #include "boot.h"
 
 #ifdef HAVE_SDL3
@@ -34,13 +38,6 @@
 
 #ifndef KULT_VERSION
 #define KULT_VERSION "dev"
-#endif
-
-#ifdef HAVE_SDL3
-static const char *env_or(const char *name, const char *def) {
-    const char *v = getenv(name);
-    return (v && *v) ? v : def;
-}
 #endif
 
 /* Ficheros que el juego necesita en el directorio de datos (los de disk_a +
@@ -163,6 +160,9 @@ int main(int argc, char **argv) {
 
     platform_set_image(img);
     platform_init();
+    platform_audio_set_volume(platform_config_get_int("volume", 100));
+    if (platform_config_get_int("muted", 0))
+        platform_audio_toggle_mute();
     if (!platform_storage_ready()) {
         platform_fatal(
             "No se puede escribir en la carpeta del juego:\n%s\n\n"
@@ -212,14 +212,29 @@ int main(int argc, char **argv) {
 
 #ifdef HAVE_SDL3
     if (window) {
-        int scale = (int)strtoul(env_or("KULT_SCALE", "0"), NULL, 0);
+        int scale = platform_config_get_int("scale", PLATFORM_SCALE_FILL);
+        const char *senv = getenv("KULT_SCALE");
+        if (senv && *senv)
+            scale = (int)strtoul(senv, NULL, 0);
+        if (scale < PLATFORM_SCALE_AUTO ||
+            (scale > PLATFORM_SCALE_MAX && scale != PLATFORM_SCALE_FILL))
+            scale = PLATFORM_SCALE_FILL;
+
+        int fullscreen = platform_config_get_int("fullscreen", 1);
         const char *fenv = getenv("KULT_FULLSCREEN");
-        int fullscreen = fenv ? (fenv[0] != '0') : 1;
+        if (fenv)
+            fullscreen = fenv[0] != '0';
+        else
+            fullscreen = fullscreen != 0;
+
         if (platform_sdl_open("Kult: The Temple of Flying Saucers", scale,
                               fullscreen) == 0) {
             g_sdl = 1;
+            const char *scale_name = scale == PLATFORM_SCALE_AUTO ? "auto" :
+                                     scale == PLATFORM_SCALE_FILL ? "estirar" :
+                                     "fija";
             platform_log("ventana SDL: abierta (fullscreen=%d, escala=%s)",
-                         fullscreen, scale ? "fija" : "auto");
+                         fullscreen, scale_name);
             kult_set_frame_cb(present_cb);
             platform_set_idle(idle_cb);
             platform_set_present(tick_cb);   /* presenta/bombea en el arranque */
