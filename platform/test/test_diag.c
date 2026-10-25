@@ -86,6 +86,7 @@ static void test_off(void) {
     unsetenv("KULT_RINGLOG");
     unsetenv("KULT_RANDLOG");
     unsetenv("KULT_INPUTLOG");
+    CHECK(!platform_marks_active(), "sin KULT_MARKS el diagnostico esta inactivo");
     call_all_without_logs();
     CHECK(!file_exists(DIR "/marks.log"), "sin KULT_MARKS no se crea el log");
     CHECK(!file_exists(DIR "/ring.log"), "sin KULT_RINGLOG no se crea el log");
@@ -98,6 +99,7 @@ static void test_on(void) {
     setenv("KULT_RINGLOG", DIR "/ring.log", 1);
     setenv("KULT_RANDLOG", DIR "/rand.log", 1);
     setenv("KULT_INPUTLOG", DIR "/input.log", 1);
+    CHECK(platform_marks_active(), "con KULT_MARKS el diagnostico esta activo");
 
     memcpy(g_img + 0x21000, "TEST", 4);
     g_img[A_SKIP_TRANSITION] = 0xff;

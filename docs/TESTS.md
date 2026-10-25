@@ -51,7 +51,7 @@ diferencial, las convenciones y las garantías del port. No deben borrarse para
 - **Repositorio**: los tests se conservan; son la fuente de verdad.
 - **Artefactos binarios** (ZIP Windows / TGZ Linux): no incluyen tests. El
   `install()` de CMake solo copia el ejecutable, SDL3, `data/language.data`,
-  licencias, `Kult Settings.png`, `TECLAS_FN.txt` y las carpetas `data/`/`saves/`.
+  licencias, `Kult Settings.png`, `Instrucciones - Atajos de teclado.txt` y las carpetas `data/`/`saves/`.
   Verificado con el ZIP 1.0.0: 13 entradas, ninguna de test.
 - **Archivos fuente de GitHub**: los ZIP/TAR de código que genera GitHub
   incluyen todo el repositorio, tests incluidos. Es lo esperado en una fuente.
@@ -78,7 +78,9 @@ Hecho (T-118/T-119/T-120/T-121/T-122/T-123/T-124/T-125/T-126/T-127/T-128):
   y `REZZO` en los cuatro bancos. T-121–T-125 añaden todo el diálogo deformado en clave fonética catalana y
   `DESCC 45` con `ELS CINC CRANIS`; quedan solo sonidos/nombres/control. T-126 añade la regresión de los diez verbos corregidos y la ausencia de
   `LLENCAR`/`LLANCAR` sueltos. T-127 comprueba `CARACC.BIN`, el glifo `Ç` y las
-  palabras con `[0b]`. T-128 cubre `BARRIGA`, `ATRAVIESES`, `NAVE` y `ATREUS`. T-129 cubre F5 en dos pasos. T-130 añade `TECLAS_FN.txt` al paquete.
+  palabras con `[0b]`. T-128 cubre `BARRIGA`, `ATRAVIESES`, `NAVE` y `ATREUS`. T-129 cubre F5 en dos pasos. T-130 añade la hoja de teclas al paquete; T-131 la renombra a
+  `Instrucciones - Atajos de teclado.txt`, quita teclas inútiles y deja F12 solo
+  con `KULT_MARKS`.
 
 Hecho (T-117):
 

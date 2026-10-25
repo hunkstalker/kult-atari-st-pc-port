@@ -307,9 +307,11 @@ int platform_sdl_pump(void) {
                 platform_audio_volume_step(10);
                 show_audio_osd();
             } else if (e.key.key == SDLK_F12) {
-                /* Marca manual para T-073c (no va al juego). */
-                platform_marks_event("f12", 0, 0);
-                platform_log("F12: inicio de animacion");
+                /* Marca manual solo con diagnostico activo; en release no hace nada. */
+                if (platform_marks_active()) {
+                    platform_marks_event("f12", 0, 0);
+                    platform_log("F12: inicio de animacion");
+                }
             } else {
                 platform_key_push((uint32_t)e.key.key & 0xff);
             }

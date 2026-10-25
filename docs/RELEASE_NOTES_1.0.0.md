@@ -39,11 +39,11 @@ No incluye el juego original: el usuario aporta su propia copia legal.
 ## Paquete
 
 ZIP portable de Windows x64 con `kult.exe`, `SDL3.dll`, `LEEME.txt`,
-`TECLAS_FN.txt`, `Kult Settings.png`, `LICENSE`, avisos de terceros,
+`Instrucciones - Atajos de teclado.txt`, `Kult Settings.png`, `LICENSE`, avisos de terceros,
 `data/language.data` y `saves/`.
 
 SHA256 del ZIP:
-`2316f64a81192a83184c571560188010710a4aa0509153763e68afb495b6bf5a`
+`d45392a3eeffcb69ddf3a9d1b273e4ada1ded925c9359946e8686d9e66651ae4`
 
-Las instrucciones de uso están en `LEEME.txt`, `TECLAS_FN.txt` y el `README.md`; la licencia del
+Las instrucciones de uso están en `LEEME.txt`, `Instrucciones - Atajos de teclado.txt` y el `README.md`; la licencia del
 port está en `LICENSE` y las licencias de terceros en `THIRD_PARTY_NOTICES.md`.

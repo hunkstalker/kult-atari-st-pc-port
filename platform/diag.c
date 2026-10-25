@@ -56,6 +56,10 @@ static int marks_recording(void) {
     return on;
 }
 
+int platform_marks_active(void) {
+    return marks_recording();
+}
+
 /* Ultima linea de texto dibujada: se incluye en el volcado F12/auto. */
 static struct {
     uint32_t vbl, str, end, width, index;

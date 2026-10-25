@@ -115,6 +115,7 @@ void platform_cpuwork_reset_stack(void);
 
 /* Marca manual en el log de KULT_MARKS (p. ej. F12 en el momento exacto). */
 void platform_marks_event(const char *tag, int a, int b);
+int  platform_marks_active(void);
 
 /* Linea de diagnostico libre en el log de KULT_MARKS (traza de despacho). */
 void platform_marks_line(const char *fmt, ...);

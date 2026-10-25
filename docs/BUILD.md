@@ -80,7 +80,7 @@ Envoltorios equivalentes: `make cmake-native` y `make package-native`.
    ```sh
    (cd build-win && cpack -G ZIP)      # -> kult-1.0.0-win64.zip
    ```
-   Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt` + `TECLAS_FN.txt` + `Kult Settings.png`.
+   Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt` + `Instrucciones - Atajos de teclado.txt` + `Kult Settings.png`.
    **Sin assets, sin headless y sin DIAGNOSTICO.txt.** Requiere Windows 10+
    (UCRT: `api-ms-win-crt-*`).
 
@@ -135,11 +135,11 @@ Arquitectura, variables y pruebas: [`DIAGNOSTICO.md`](DIAGNOSTICO.md).
   `M f12 <vbl>` al pulsar **F12**: vuelca los ~3 s anteriores (buffer circular)
   y sigue trazando todo el core instrumentado (~1,5 s, una vez por función/VBL).
   `kult-marcas.bat` lo activa.
-  Los logs van en **append** con separador `# RUN`; F12 también deja
-  `F12: marca manual` en `kult.log`.
+  Los logs van en **append** con separador `# RUN`; F12 (solo con
+  `KULT_MARKS` activo) también deja `F12: marca manual` en `kult.log`.
 - **Texto y F12**: con `KULT_MARKS` activo se registran líneas
   `T <vbl> <tag> idx=.. w=.. str=.. end=.. cx=.. cy=.. raw=..` al dibujar
-  líneas de texto. F12 deja una línea `X` con la última línea de texto (índice,
+  líneas de texto. F12 (con `KULT_MARKS`) deja una línea `X` con la última línea de texto (índice,
   ancho, posición y bytes). Con `KULT_AUTOLOG=1` se vuelca el anillo cada 150
   VBL, de modo que un bloqueo sin F12 deja los últimos ~3 s en el log.
 - **Traza del anillo (`R`)**: con `KULT_RINGLOG=<ruta>` (solo líneas `R`) o

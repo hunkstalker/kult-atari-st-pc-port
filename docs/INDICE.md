@@ -114,3 +114,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0081-t128-correcciones-textos.md`](../notes/0081-t128-correcciones-textos.md)
 - [`notes/0082-t129-f5-dos-pasos.md`](../notes/0082-t129-f5-dos-pasos.md)
 - [`notes/0083-t130-teclas-fn-release.md`](../notes/0083-t130-teclas-fn-release.md)
+- [`notes/0084-t131-instrucciones-atajos.md`](../notes/0084-t131-instrucciones-atajos.md)

@@ -1,6 +1,7 @@
 # 0083 — T-130: TECLAS_FN.txt en la release
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. T-131 lo renombra a
+`Instrucciones - Atajos de teclado.txt`. Siguiente: T-094 sobre el ZIP final.
 
 ## Cambio
 

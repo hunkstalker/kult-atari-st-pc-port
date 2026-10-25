@@ -45,8 +45,10 @@ Los ~50 puntos de instrumentación del core son el delta documentado en
 | `KULT_FPSLOG=1` | FPS del bucle cada ~3 s en `kult.log` |
 
 F12 vuelca los ~150 VBL anteriores, la última línea de texto (`X`) y abre una
-ventana de ~75 VBL de traza de funciones. El historial circular (2 MiB) se
-reserva **solo al activar `KULT_MARKS`**; no ocupa BSS en una ejecución normal.
+ventana de ~75 VBL de traza de funciones. **Solo actúa si `KULT_MARKS` está
+activo**; en una ejecución normal no escribe en `kult.log` ni genera traza. El
+historial circular (2 MiB) se reserva **solo al activar `KULT_MARKS`**; no ocupa
+BSS en una ejecución normal.
 
 Ejemplo Windows:
 
