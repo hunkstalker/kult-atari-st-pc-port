@@ -126,6 +126,19 @@ def test_catalan_differential():
         ("DIALC.BIN", 164): "AKETS SON KLASI FIKATS\nDEFEK TUOSOS.\nDES BRAN XEU LOS ARA.",
         ("DIALC.BIN", 165): "NO MES SA MOR\nUNA BE GADA.",
         ("DIALC.BIN", 166): "LA SITU ACIO\nIN KLE RA.",
+        ("DIALC.BIN", 8): "LA SANG\nRA JARA!",
+        ("DIALC.BIN", 11): "JO SOK EL MASTEL\nDELS ESKORPIONS.\nKIN FAM KIN TINK!",
+        ("DIALC.BIN", 42): "RAY VUN EN KONTAKTE\nAMB DOS NOUS!",
+        ("DIALC.BIN", 80): "KE! UN TU NER\nLLARDOS!",
+        ("DIALC.BIN", 100): "KREK K ESTAS EN\nUN EMBOLIK, RAY VUN.",
+        ("DIALC.BIN", 180): "TU NER RAY VEN\nSOTA KONTR ATAK...",
+        ("DIALC.BIN", 184): "LA XARXA TU NER\nDONA GRA SIES PER\nLOKA LITSAR LOS, RAY VEN.",
+        ("DIALC.BIN", 235): "EL KRICH ES UN\nPARA SIT. NE SESSI TA...",
+        ("DIALC.BIN", 238): "LA XARXA TU NER\nA DE MANAR,\nNO EL KRICH.",
+        ("DIALC.BIN", 242): "LA SITU ASIO\nEBOLU SIONA NORMAL MEN.",
+        ("DIALC.BIN", 294): "OLA LAVEN.\nHEH HEH. JO TAMBE!",
+        ("DIALC.BIN", 309): "TU NER RAY VUN\nEN POSI SIO\nFABO RABLE.",
+        ("DIALC.BIN", 311): "SITU ASIO KRITI KA\nPER AL TU NER\nRAY VUN.",
         ("DIALC.BIN", 284): "QUE\nS'HI\nPUDREIXI, AQUEST!",
         ("DIALC.BIN", 327): "SERE\nJO QUI ABORTI EL COMPLOT PROTOZORQUISTA!",
         ("DIALC.BIN", 329): "I LA XARXA TUNER VOLIA\nQUE ABANDONESSIS SCI FI ENTRE\nLES GARRES D'AQUESTES CRIATURES!",
@@ -146,6 +159,19 @@ def test_catalan_differential():
         for old in ("CALZE", "TRAGO", "BEINA", "CANVIADOR", "TELA", "REZZO"):
             assert not any(old in text for text in texts.values()), (bank, old)
     assert "XARXA TUNER" in dict(_entries(next((ROOT / "assets" / "lang").rglob("DESCC.BIN")).read_bytes()))[404]
+    coded = {8, 10, 11, 31, 36, 37, 40, 41, 42, 43, 46, 48, 74, 75, 77, 80, 81,
+             100, 101, 102, 105, 119, 121, 122, 123, 124, 129, 177, 180, 184,
+             188, 210, 215, 219, 220, 235, 236, 237, 238, 239, 242, 243, 244,
+             245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257,
+             258, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271,
+             272, 273, 294, 309, 310, 311}
+    dials = dict(_entries(next((ROOT / "assets" / "lang").rglob("DIALC.BIN")).read_bytes()))
+    for idx in coded:
+        assert not any(word in dials[idx] for word in (
+            "SIT YOU", "NETWERK", "KONDISH", "DEEAKTIV", "MISHUN", "WODDA",
+            "IFYOO", "DOOAZ", "STAKE", "POACH", "KREECH", "YOR ORDERZ",
+            "TOO NER", "TOON"
+        )), (idx, dials[idx])
 
 
 def test_desc_126_passerby():

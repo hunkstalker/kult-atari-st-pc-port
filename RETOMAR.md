@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022, T-101, T-102–T-124 cerradas (2026-10-25). El port arranca
+**Estado:** T-022, T-101, T-102–T-125 cerradas (2026-10-25). El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -23,13 +23,13 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 único fichero no versionado aparte de la documentación es el backup local
 `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación del ZIP de T-124.**
+**Siguiente tarea: T-094 — validación del ZIP de T-125.**
 
 - **Alcance:** checklist `docs/VERIFICACION.md`, incluyendo arranque en Estirar
   a pantalla, persistencia en `kult.ini`, F1/F2, ratón, F5/F6/F7, volumen,
-  `Kult Settings.png`, textos ES/CA (ERBE y catalán con terminología T-119/T-124) y OSD.
+  `Kult Settings.png`, textos ES/CA (ERBE y catalán con terminología T-119/T-125) y OSD.
 - **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `237d8274e4d85888437ca8b39d4c6c461467f5a353ac2757635b46eec7fea7a5`.
+  `295465c6884421d39c49945bbbb82a120e3a8de03fa1e219ff0ceb92852c3608`.
 - **Después:** T-092 (publicar) y T-096 (CI).
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
@@ -47,12 +47,20 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
+**T-125 — cerrada (sesión 71, 2026-10-25):**
+
+- Revisión completa de `DIALC`: 75 entradas en clave fonética catalana usando
+  EN/FR/DE; se conservan solo sonidos, nombres, interjecciones y control.
+- `language.data` 77.904 B, `2e83f042…`; ZIP
+  `295465c6884421d39c49945bbbb82a120e3a8de03fa1e219ff0ceb92852c3608`; 12
+  entradas. Detalle: `notes/0078`.
+
 **T-124 — cerrada (sesión 71, 2026-10-25):**
 
 - Ajuste de `DIALC 162` a `LASIT UAC IOESDES / EMBOLUPA AM NORMA LYTAT`.
 - `language.data` 77.905 B, `4a2cae27…`; ZIP
   `237d8274e4d85888437ca8b39d4c6c461467f5a353ac2757635b46eec7fea7a5`; 12
-  entradas. Detalle: `notes/0077`.
+  entradas. T-125 completa el resto del diálogo en clave. Detalle: `notes/0077`.
 
 **T-123 — cerrada (sesión 71, 2026-10-25):**
 
@@ -272,21 +280,21 @@ La release 1.0.0 sigue sin push ni tag y **se publicará al final** (T-092). El
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `237d8274e4d85888437ca8b39d4c6c461467f5a353ac2757635b46eec7fea7a5`
-  (T-124; pendiente de T-094, no es aún el artefacto de release).
-- `assets/language.data` regenerado en T-124: 77.905 B,
-  SHA256 `4a2cae27671aae250f238e053696fb1f09b2f0d2228eac438bfbef645a3d8f44`.
+  SHA256 `295465c6884421d39c49945bbbb82a120e3a8de03fa1e219ff0ceb92852c3608`
+  (T-125; pendiente de T-094, no es aún el artefacto de release).
+- `assets/language.data` regenerado en T-125: 77.904 B,
+  SHA256 `2e83f042e5e1aeb1c38f3ad205c287d2e3a164f8437686e59b0466f7b07f1ee8`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
 - `make test`: 519 core + HAL (36 funciones / 255 `CHECK`) + diagnóstico
   off/on + 5 herramientas OK.
-- `make package-win`: OK después de T-124 (12 entradas).
+- `make package-win`: OK después de T-125 (12 entradas).
 
 **Pendiente, en este orden:**
 
 1. **T-094 — validación visual final.** Ejecutar la checklist
-   `docs/VERIFICACION.md` sobre el ZIP de T-124.
+   `docs/VERIFICACION.md` sobre el ZIP de T-125.
 2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
 3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin

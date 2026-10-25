@@ -13,7 +13,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-073 | Calibración opcional de CPU/ritmo/fidelidad del port | 🧩 feature opcional (no bloqueante) |
 | T-090 | SOLAR EYES: flash PSI acelerado (`palette_cycle`) | ✅ cerrado |
 | T-093 | Revisión lingüística del catalán | ✅ validada por el usuario (2026-10-25) |
-| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-124) |
+| T-094 | Validación visual final de la release Windows | ⬜ pendiente (ZIP de T-125) |
 | T-095 | Tests automatizados de ingesta `.STX` y packs `S`/`C` | ✅ cerrada (2026-10-25) |
 | T-097 | Texto descuadrado al recibir un objeto (p. ej. “una mosca de pedra”) | ✅ validado por el usuario (2026-10-25) |
 | T-098 | Bloqueo en la prueba “La Horca” usando `kult.data`/`language.data` | ✅ validado por el usuario (2026-10-25) |
@@ -45,6 +45,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-122 | Reescribir el diálogo deformado con clave catalana (`STA KLAR, STA BE`) | ✅ cerrada (2026-10-25; `notes/0075`; clave final en T-123) |
 | T-123 | Clave fonética catalana creativa (`LASIT UAC IOESDES…`) | ✅ cerrada (2026-10-25; `notes/0076`; ajuste en T-124) |
 | T-124 | Ajuste de `DIALC 162` (`EMBOLUPA AM NORMA LYTAT`) | ✅ cerrada (2026-10-25; `notes/0077`) |
+| T-125 | Revisión completa de todo el diálogo en clave fonética | ✅ cerrada (2026-10-25; `notes/0078`) |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -129,7 +130,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-072 | **Ingesta + `kult.data`**: detección de `.STX` por SHA-256, extracción Pasti/FAT12, validación de `KULT.PRG` y generación atómica de `data/kult.data` | ✅ implementada |
 | T-091 | **`language.data`**: DRAP + packs de idioma; español y catalán revisados incluidos | ✅ |
 | T-093 | **Revisión lingüística del catalán**: textos, nombres propios y estilo | ✅ **validada por el usuario (2026-10-25)** |
-| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-124 |
+| T-094 | **Validación visual final** de la release Windows: DRAP, fuentes, textos, menús y atajos F1/F2/F5/F6/F7 | ⬜ pendiente sobre el ZIP de T-125 |
 | T-095 | **Tests automatizados de ingesta y packs**: fixtures sintéticos de `.STX`/`kult.data` y cobertura de `S`/`C` | ✅ **sesión 65**: `platform/diskimage.{h,c}` (STX Pasti + FAT12) y 7 pruebas nuevas en `platform/test/test_platform.c` (30 funciones/163 `CHECK`): STX sin/comprimir, FAT12, validación de `KULT.PRG`, pipeline condicional con los STX reales, contenedor atómico, selección/lectura de `S`/`C` y `assets/language.data`. `make test` 518 core + HAL + 1 port OK. Detalle: **`notes/0049`** |
 | T-097 | **Texto descuadrado al recibir objetos**: revisar espacios/códigos en la frase de entrega | ✅ **validado por el usuario (2026-10-25)** |
 | T-098 | **Bloqueo en “La Horca”**: reproducir con `kult.data` + `language.data` y localizar la causa | ✅ **validado por el usuario (2026-10-25)** |
@@ -160,6 +161,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-122 | **Diálogo deformado en clave catalana** | ✅ **sesión 71**: se rehacen las nueve líneas con la deformación deliberada (`STA KLAR, STA BE`, `TU NER?`, `DESAKTIVAT`, `SITUASIO KONFUSA`). `language.data` 77.880 B, `cd4c9a04…`; ZIP `a6a982ee…`; 5 herramientas. Detalle: **`notes/0075`** |
 | T-123 | **Clave fonética catalana creativa** | ✅ **sesión 71**: cortes y cambios fonéticos (`LASIT UAC IOESDES EBOLUPA AM NORMA YTAT`, `DES BRAN XAT`, `AI TA UN KIT TANT`, `DES BRAN XEU LOS`). `language.data` 77.903 B, `923dba18…`; ZIP `229db647…`; 5 herramientas. Detalle: **`notes/0076`** |
 | T-124 | **Ajuste de `DIALC 162`** | ✅ **sesión 71**: `EMBOLUPA AM NORMA LYTAT`. `language.data` 77.905 B, `4a2cae27…`; ZIP `237d8274…`; 5 herramientas. Detalle: **`notes/0077`** |
+| T-125 | **Diálogo en clave completo** | ✅ **sesión 71**: 75 entradas pasan a clave fonética catalana usando EN/FR/DE; solo quedan sonidos, nombres y control. `language.data` 77.904 B, `2e83f042…`; ZIP `295465c6…`; 5 herramientas. Detalle: **`notes/0078`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

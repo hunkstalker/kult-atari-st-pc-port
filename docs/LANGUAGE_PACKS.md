@@ -30,7 +30,7 @@ aviso y usa `E`.
 
 La release incluye el pack español (ERBE + correcciones) y el pack catalán
 revisado, migrado de forma diferencial y con la terminología ERBE unificada en
-T-119/T-124. Ambos se cargan desde `language.data`.
+T-119/T-125. Ambos se cargan desde `language.data`.
 La selección y la carga de `S`/`C` están cubiertas por
 `platform/test/test_platform.c` (T-095, `notes/0049`).
 
@@ -53,7 +53,7 @@ por el usuario. T-101 corrigió `VERB 116` («DIE», el objeto) a **DADO**/**DAU
 los usos verbales de «die» en `DIAL` se mantienen como «morir». El español usa
 ERBE + correcciones (T-117); el catalán conserva la revisión T-093, la migración
 diferencial T-118, el cierre terminológico T-119/T-120 y la traducción del
-diálogo deformado T-121/T-123:
+diálogo deformado T-121/T-125:
 
 - `CALZE`/`CUBILETE` → `GOT` (`OMPLIR GOT`);
 - `TRAGO`/`TRAGOS` → `GLOP`/`GLOPS`;
@@ -65,8 +65,8 @@ Por preferencia del usuario se conservan **`DAGA`**, **`FESOL`** y
 **`COMERCIANT`** (T-120). T-121 traduce al catalán las líneas deformadas del
 personaje de `STA KLAROS TA VIEN` (`DIALC` 143, 147, 155, 156, 157, 162, 164,
 165 y 166) en clave fonética catalana: `LASIT UAC IOESDES EMBOLUPA AM NORMA LYTAT`,
-`DES BRAN XAT`, `AI TA UN KIT TANT`, `DES BRAN XEU LOS`, etc. Las líneas alienígenas de `DIALC` 184, 238 y 239 conservan
-`NETWERK` como parte del alienígena deliberado. `DESC 126` sigue la base ERBE.
+`DES BRAN XAT`, `AI TA UN KIT TANT`, `DES BRAN XEU LOS`, etc. T-125 revisa todo el diálogo en clave (75 entradas) y deja solo sonidos,
+nombres, interjecciones y control sin traducir. `DESC 126` sigue la base ERBE.
 T-097/T-098 quedaron cerradas; si se quiere ortografía completa con tildes y
 `Ç`, hace falta una fuente catalana con esos glifos.
 
