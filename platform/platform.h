@@ -148,8 +148,10 @@ void platform_fb_to_rgba(uint8_t *dst);
 /* Cuenta de píxeles no-negro del framebuffer visible (para comprobaciones). */
 uint32_t platform_fb_nonzero(void);
 
-/* Ventana SDL3 (sólo se enlaza en el build `make port-sdl`, -DHAVE_SDL3). */
-int  platform_sdl_open(const char *title, int scale);
+/* Ventana SDL3 (sólo se enlaza en el build `make port-sdl`, -DHAVE_SDL3).
+ * `scale_mode`: 0 = Auto, 1..6 = multiplicador entero. `fullscreen` activa el
+ * fullscreen sin bordes a la resolución nativa del monitor. */
+int  platform_sdl_open(const char *title, int scale_mode, int fullscreen);
 void platform_sdl_present(uint8_t *img);
 int  platform_sdl_pump(void);      /* 1 = seguir, 0 = cerrar */
 int  platform_sdl_should_quit(void);

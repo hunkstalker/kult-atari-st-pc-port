@@ -6,23 +6,22 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-022 y T-101 cerradas (2026-10-25). `0x106f2` (lista C) está en el
-core con prueba diferencial (519 verdes) y `l_0101a8` reconstruido en `boot/`
-como ruta latente verificada. T-101 corrigió «DIE» (objeto) a **DADO**/**DAU**
-en los packs ES/CA y regeneró `language.data` y el ZIP. La siguiente tarea es
-**T-094** (validación visual final). La release 1.0.0 sigue sin push ni tag y
+**Estado:** T-022, T-101 y T-102 cerradas (2026-10-25). El port arranca en
+**fullscreen sin bordes a resolución nativa**, con **F1** ventana/fullscreen y
+**F2** escala Auto/1x–6x. T-101 corrigió «DIE» (objeto) a **DADO**/**DAU** en
+los packs ES/CA y regeneró `language.data` y el ZIP. Ahora se implementan los
+slots (T-103), los atajos F5/F6/F7 (T-104) y la documentación/ZIP (T-105) antes
+de **T-094** (validación visual final). La release 1.0.0 sigue sin push ni tag y
 **se publicará al final** (T-092). El único fichero no versionado aparte de la
 documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-094 — validación visual final del ZIP de T-101.**
+**Siguiente tarea: T-103 — savestate completo por ranura.**
 
-- **Alcance:** DRAP, fuentes, textos y menús en Windows; checklist
-  `docs/VERIFICACION.md`.
-- **No sustituye** la validación funcional de T-095/T-100; se hace sobre el
-  paquete nuevo, no sobre el anterior.
-- **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
-  `aba7eca812cdd49c334c46658d3a52d645fb9395a9ea5f59f0d65936b0b1643c`.
-- **Después:** T-092 (publicar 1.0.0) y T-096 (CI).
+- **Alcance:** formato `KSLOTP01`, `saves/partida-0.bin`…`partida-9.bin`,
+  paleta/base visible, `kult.ini` con la ranura activa y avisos OSD.
+- **Después:** T-104 (F5/F6/F7), T-105 (documentación/ZIP) y **T-094**
+  (validación visual final sobre el ZIP nuevo).
+- **Publicación:** T-092 y T-096 al final.
 
 **T-022 — cerrada (sesión 69, 2026-10-25):**
 
@@ -38,6 +37,15 @@ documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
   `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
+
+**T-102 — cerrada (sesión 71, 2026-10-25):**
+
+- Arranque fullscreen sin bordes a resolución nativa; F1 alterna ventana y F2
+  cicla Auto/1x–6x. Viewport entero propio y ratón corregido por viewport.
+- `KULT_SCALE` pasa a modo inicial (0/Auto, 1..6 fijo); `KULT_FULLSCREEN=0`
+  arranca en ventana para desarrollo.
+- Tests de `platform/display.c` y OSD en `test-port`; build SDL OK. Detalle:
+  `notes/0055`.
 
 **T-101 — cerrada (sesión 70, 2026-10-25):**
 

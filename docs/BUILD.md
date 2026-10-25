@@ -13,8 +13,11 @@
   oráculo).
 - **Ventana + audio SDL3 (M3/M4)**: `make port-sdl` → `build/kult-sdl`
   (`platform/video_sdl.c` y `platform/audio_sdl.c`, `-DHAVE_SDL3`). Requiere
-  `sdl3`/`sdl3-dev` (pkg-config `sdl3`). **La ventana se abre por defecto**
-  (`KULT_WINDOW=0` fuerza headless); `KULT_SCALE=3`; ESC sale. Entrada real y ritmo 50 Hz por defecto
+  `sdl3`/`sdl3-dev` (pkg-config `sdl3`). **La ventana se abre por defecto en
+  fullscreen sin bordes a la resolución nativa** (`KULT_WINDOW=0` fuerza
+  headless; `KULT_FULLSCREEN=0` arranca en ventana). `KULT_SCALE=0`/ausente =
+  Auto; `1..6` = multiplicador fijo. **F1** alterna fullscreen/ventana; **F2**
+  cicla Auto/×1–×6; ESC sale. Entrada real y ritmo 50 Hz por defecto
   (`KULT_AUTOINPUT=1` y `KULT_REALTIME=0` los desactivan, p. ej. sin display).
   `KULT_AUDIO=0` apaga el sonido. Sin display: `SDL_VIDEODRIVER=dummy`
   (y `SDL_AUDIODRIVER=dummy`).

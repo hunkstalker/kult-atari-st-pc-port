@@ -22,6 +22,10 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-096 | CI en GitHub: HAL + paquete sin assets (core diferencial aparte) | ⬜ pendiente tras publicar |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
+| T-102 | Arranque fullscreen nativo, F1 fullscreen/ventana y F2 escala entera | ✅ cerrada (2026-10-25; `notes/0055`) |
+| T-103 | Savestate completo por ranura (0-9) y persistencia de la ranura activa | 🚧 siguiente |
+| T-104 | Atajos F5/F6/F7 integrados en el bucle | ⬜ pendiente |
+| T-105 | Documentación de release, ZIP y hashes tras los atajos | ⬜ pendiente |
 
 ## M0 — Repositorio y base
 | id | tarea | estado |
@@ -114,6 +118,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-096 | **CI en GitHub**: `test-port` + build/paquete sin assets. El core diferencial requiere `work/disk_a/KULT.PRG` (no versionado): queda como ejecución local o con un fixture privado, no como gate del CI público. | ⬜ pendiente tras publicar |
 | T-100 | **Diagnósticos separados del timing y guía de uso** | ✅ **sesión 66**: `platform/diag.{c,h}` con todos los logs opcionales; `cpuwork.c` solo timing/hooks; buffer F12 de 2 MiB ahora perezoso (BSS 2.225.448 → 128.328 B en `build/kult`). Nuevo `make test-diag` (off/on) integrado en `test-port`. Guía `docs/DIAGNOSTICO.md`. Validación funcional del usuario (2026-10-25), sin cerrar T-094. Detalle: **`notes/0050`**, **`notes/0051`** |
 | T-101 | **«DIE» (objeto) mal traducido como MORIR**: el verbo 116 es el sustantivo «dado», no «morir» | ✅ **sesión 70**: `VERB 116` corregido a **DADO** (bytes oficiales Erbe `e4 24 2f`) y a **DAU** en catalán (`e4 35`); `language.data` regenerado (77.747 B, `e69cae5a…`). Nueva regresión `test/test_language_banks.py` (BIN + contenedor); `make test` 519 core + HAL + diagnóstico + 2 herramientas; ZIP `aba7eca8…`. Los «die» verbales de `DIAL` no se tocan. Detalle: **`notes/0054`** |
+| T-102 | **Arranque fullscreen nativo + F1/F2**: fullscreen sin bordes a resolución nativa, F1 alterna ventana/fullscreen y F2 cicla Auto/1x–6x con viewport entero propio | ✅ **sesión 71**: `platform/display.c` (escala/viewport puro), `platform/osd.c` (aviso breve), `platform/video_sdl.c` sin presentación lógica y con ratón corregido por viewport, `app/main.c` con `KULT_SCALE=0` Auto y `KULT_FULLSCREEN=0`; tests de display/OSD en `test-port`; `make port`/`port-sdl` OK. Detalle: **`notes/0055`** |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

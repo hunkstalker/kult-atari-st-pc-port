@@ -212,10 +212,14 @@ int main(int argc, char **argv) {
 
 #ifdef HAVE_SDL3
     if (window) {
-        int scale = (int)strtoul(env_or("KULT_SCALE", "3"), NULL, 0);
-        if (platform_sdl_open("Kult: The Temple of Flying Saucers", scale) == 0) {
+        int scale = (int)strtoul(env_or("KULT_SCALE", "0"), NULL, 0);
+        const char *fenv = getenv("KULT_FULLSCREEN");
+        int fullscreen = fenv ? (fenv[0] != '0') : 1;
+        if (platform_sdl_open("Kult: The Temple of Flying Saucers", scale,
+                              fullscreen) == 0) {
             g_sdl = 1;
-            platform_log("ventana SDL: abierta (%dx%d)", 320 * scale, 200 * scale);
+            platform_log("ventana SDL: abierta (fullscreen=%d, escala=%s)",
+                         fullscreen, scale ? "fija" : "auto");
             kult_set_frame_cb(present_cb);
             platform_set_idle(idle_cb);
             platform_set_present(tick_cb);   /* presenta/bombea en el arranque */

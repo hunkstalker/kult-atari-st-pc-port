@@ -25,7 +25,8 @@ la carpeta debe ser escribible.
    También S (español) y C (catalán), incluidos en `data/language.data`.
    El port usa los dos discos juntos y no pide cambiar de disco.
 
-5) ESC cierra la ventana.
+5) Controles: F1 alterna pantalla completa/ventana, F2 cambia la escala
+   (Auto, x1..x6) y ESC cierra la ventana.
 
 Carpetas
 --------

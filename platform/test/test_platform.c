@@ -25,6 +25,8 @@
 #include "container.h"
 #include "diskimage.h"
 #include "sha256.h"
+#include "display.h"
+#include "osd.h"
 
 /* Stub del core para poder probar el tick de VBL aislado (boot/vbl.c). */
 uint32_t pal_next_byte(uint8_t *img) { (void)img; return 0; }
@@ -637,6 +639,57 @@ static void test_present_hook(void) {
     platform_set_present(NULL);
 }
 
+/* T-102: viewport entero Auto/1x..6x y OSD breve. */
+static void test_display_viewport(void) {
+    platform_viewport vp;
+
+    CHECK(platform_display_scale(PLATFORM_SCALE_AUTO, 1920, 1080) == 5,
+          "Auto en 1080p debe elegir x5");
+    platform_display_viewport(PLATFORM_SCALE_AUTO, 1920, 1080, &vp);
+    CHECK(vp.x == 160 && vp.y == 40 && vp.w == 1600 && vp.h == 1000 &&
+          vp.scale == 5, "viewport Auto centrado en 1080p");
+
+    CHECK(platform_display_scale(PLATFORM_SCALE_AUTO, 1280, 800) == 4,
+          "Auto en 1280x800 debe encajar exacto a x4");
+    platform_display_viewport(PLATFORM_SCALE_AUTO, 1280, 800, &vp);
+    CHECK(vp.x == 0 && vp.y == 0 && vp.w == 1280 && vp.h == 800,
+          "viewport Auto exacto sin bandas");
+
+    CHECK(platform_display_scale(PLATFORM_SCALE_AUTO, 640, 400) == 2,
+          "Auto en 640x400 debe elegir x2");
+    CHECK(platform_display_scale(PLATFORM_SCALE_AUTO, 100, 100) == 1,
+          "una salida menor que 320x200 no baja de x1");
+    CHECK(platform_display_scale(PLATFORM_SCALE_AUTO, 1366, 768) == 3,
+          "1366x768 solo admite x3 (x4 no cabe de alto)");
+
+    CHECK(platform_display_scale(6, 1920, 1080) == 5,
+          "una escala fija mayor que la salida se recorta al mayor entero");
+    CHECK(platform_display_scale(2, 1920, 1080) == 2,
+          "una escala fija que cabe se respeta");
+
+    CHECK(platform_display_next(PLATFORM_SCALE_AUTO) == 1,
+          "F2: Auto -> x1");
+    CHECK(platform_display_next(3) == 4, "F2: x3 -> x4");
+    CHECK(platform_display_next(PLATFORM_SCALE_MAX) == PLATFORM_SCALE_AUTO,
+          "F2: x6 -> Auto");
+    CHECK(platform_display_next(99) == 1, "un modo invalido se normaliza a Auto");
+}
+
+static void test_osd(void) {
+    platform_osd_clear();
+    CHECK(!platform_osd_active(), "OSD vacio no debe estar activo");
+
+    platform_osd_show_frames("RANURA 3", 1000);
+    CHECK(platform_osd_active(), "OSD con margen debe estar activo");
+    CHECK(strcmp(platform_osd_text(), "RANURA 3") == 0,
+          "OSD debe conservar el texto");
+
+    platform_osd_show_frames("X", 0);
+    CHECK(!platform_osd_active(), "OSD con 0 frames debe caducar");
+    platform_osd_clear();
+    CHECK(!platform_osd_active(), "clear debe apagar el OSD");
+}
+
 /* Retardo de CPU (cpu_delay de los bucles dbf): no-op sin tiempo real; con
  * tiempo real duerme el equivalente (~10 ciclos/unidad a 8 MHz) y cede VBLs. */
 static void test_cpu_delay(void) {
@@ -1229,6 +1282,8 @@ int main(void) {
     test_language_assets();
     test_log();
     test_present_hook();
+    test_display_viewport();
+    test_osd();
     test_cpu_delay();
     test_cpu_charge_cycles();
     test_disk_delay();
@@ -1251,8 +1306,8 @@ int main(void) {
 
     if (g_fail) { fprintf(stderr, "RESULTADO: FALLO\n"); return 1; }
     printf("RESULTADO: OK (fs/containers, ingesta STX/FAT12 y validacion PRG, "
-           "contenedor atomico, packs S/C, log, present por VBL, cpu_delay, cpu_cycles, "
-           "disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
+           "contenedor atomico, packs S/C, log, present por VBL, display/OSD, cpu_delay, "
+           "cpu_cycles, disk_delay, video, entrada/botones (clic mantenido), Crawio, replay, reloj, "
            "tick VBL, loader PRG, idioma, musica PSG, Timer A, RMS)\n");
     return 0;
 }
