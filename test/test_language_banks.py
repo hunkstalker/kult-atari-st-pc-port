@@ -74,8 +74,8 @@ def test_verbo_die_es_el_objeto_dado_no_morir():
 
 def test_desc_126_passerby():
     expected = {
-        "DESCS.BIN": "EL CAMINANTE SALVA A ALGUNOS E INDICA SU ELECCION AL REPTIL.",
-        "DESCC.BIN": "EL CAMINANT SALVA ALGUNS I INDICA LA SEVA ELECCIO AL REPTIL.",
+        "DESCS.BIN": "EL CAMINANTE\nSALVARA A ALGUIEN E INDICARA\nSU ELECCION AL REPTIL.",
+        "DESCC.BIN": "EL CAMINANT\nSALVARA ALGU I INDICARA\nLA SEVA ELECCIO AL REPTIL.",
     }
     for bank, text in expected.items():
         source = next((ROOT / "assets" / "lang").rglob(bank)).read_bytes()

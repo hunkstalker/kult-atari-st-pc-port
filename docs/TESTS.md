@@ -70,7 +70,7 @@ Hecho:
 - `test/` reducido a `test_ringreport.py` + README.
 - `make test` compone core + HAL + herramientas sin duplicar suites.
 
-Hecho (T-115):
+Hecho (T-115/T-116):
 
 - Regresión `test_desc_126_passerby` en `test/test_language_banks.py` para la
   descripción 126 en ES/CA (BIN y `language.data`).

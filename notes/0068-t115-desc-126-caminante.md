@@ -1,6 +1,7 @@
 # 0068 — T-115: DESC 126 más fiel al inglés
 
-Fecha: 2026-10-25. Estado: **cerrada**. Siguiente: T-094 sobre el ZIP final.
+Fecha: 2026-10-25. Estado: **cerrada**. Sustituida por T-116 (base ERBE).
+Siguiente: T-094 sobre el ZIP final.
 
 ## Texto
 
