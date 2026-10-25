@@ -6,29 +6,41 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** T-100 cerrada y verificada; el usuario validó funcionalmente los
-últimos cambios. La siguiente tarea de código es **T-022**, que se hará antes de
-T-094. La release 1.0.0 sigue sin push ni tag y **se publicará al final**, después
-de T-022 y de la validación visual final. El único fichero no versionado aparte
-de la documentación pendiente es el backup local
-`docs/REVISION_CATALAN.original.xlsx`.
+**Estado:** T-022 cerrada (2026-10-25). `0x106f2` (lista C) está en el core
+con prueba diferencial (519 verdes) y `l_0101a8` reconstruido en `boot/` como
+ruta latente verificada. El ZIP se ha regenerado. La siguiente tarea es
+**T-094** (validación visual final). La release 1.0.0 sigue sin push ni tag y
+**se publicará al final** (T-092). El único fichero no versionado aparte de la
+documentación es el backup local `docs/REVISION_CATALAN.original.xlsx`.
 
-**Siguiente tarea: T-022 — completar `0x106f2` y el reinicio suave `l_0101a8`.**
+**Siguiente tarea: T-094 — validación visual final del ZIP de T-022.**
 
-- **Objetivo principal:** dejar `kult-atari-st-c` 1:1 con el original. Falta
-  `f_0106f2` (`0x106f2`), que carga la lista C (`0x1a2c8`).
-- **En el port:** reconstruir `l_0101a8` como **ruta latente verificada**, sin
-  añadir menús, botones ni eventos artificiales. Solo se podrá forzar con el
-  diagnóstico `KULT_SOFT_RESTART_AT`.
-- **Orden:** repo C → subtree pull → `boot/` del port → tests/smoke → ZIP nuevo →
-  T-094 → T-092. Publicar 1.0.0 es lo último.
-- **Plan completo, hallazgos y trampas:** `notes/0052-plan-t022.md`.
-- **Estado del repo C:** `/app/kult-atari-st-c`, rama `main`, limpio en `beebb52`.
+- **Alcance:** DRAP, fuentes, textos y menús en Windows; checklist
+  `docs/VERIFICACION.md`.
+- **No sustituye** la validación funcional de T-095/T-100; se hace sobre el
+  paquete nuevo, no sobre el anterior.
+- **ZIP:** `build-win/kult-1.0.0-win64.zip`, SHA256
+  `ca6eec877d8ef8e75c6c9918c1d08fdffb0dc5a084b920a8a30a9fe58bfa252b` (fijado en esta sesión).
+- **Después:** T-092 (publicar 1.0.0) y T-096 (CI).
+
+**T-022 — cerrada (sesión 69, 2026-10-25):**
+
+- **Repo C:** commit `94c0be1`; `load_resource_list_c` (lista C `0x1a2c8`) con
+  API, mapa, símbolo y prueba diferencial. `make test` 519, `make regscan`
+  `ids_reg=0`, `make core`/`make mapa` OK.
+- **Port:** core importado (`fbeaff3`); `boot_load_0100ec` factorizado y
+  `boot_l0101a8` añadido como ruta latente. Diagnóstico:
+  `KULT_SOFT_RESTART_AT=<vbl>`; sin menús, botones ni eventos artificiales.
+- **Verificación:** `make test` (519 core + HAL + diagnóstico + 1 port),
+  arranque normal y smoke con `KULT_SOFT_RESTART_AT=200` sin crash; secuencia
+  lista C (no disponible → se continúa) → `crt0` → lista A → FOND/B/ECHE →
+  `0x10158` → `game_loop`.
 - **No confundir** con el reinicio tras morir (`0x1842c` → `reset_clear` →
   `0x10158`), ya resuelto (`notes/0022`).
 
 **Ya cerrado y validado:**
 
+- T-022: `0x106f2`/`l_0101a8` portados y verificados (2026-10-25).
 - Catalán validado por el usuario (2026-10-25).
 - T-097: cajas de los textos de objeto catalanas, validadas.
 - T-098: bloqueo de La Horca en español, validado.
@@ -42,38 +54,30 @@ de la documentación pendiente es el backup local
 **Artefactos actuales:**
 
 - ZIP actual: `build-win/kult-1.0.0-win64.zip`
-  SHA256 `013ff06c39a187fc114418e3d24cceb874ecd9da9df5cc3b1d40291d798f41b3`
-  (artefacto de trabajo; T-022 lo invalidará y habrá que regenerarlo. El hash
-  cambia al empaquetar y no está validado como release: T-094 sigue pendiente).
+  SHA256 `ca6eec877d8ef8e75c6c9918c1d08fdffb0dc5a084b920a8a30a9fe58bfa252b` (regenerado después de T-022; pendiente de la
+  validación visual T-094, no es aún el artefacto de release).
 - `assets/language.data` SHA256
   `cc8981aee93cfed520250caf9e338d5f1480504617c02af6a3e312e0f6682e13`.
 - Evidencias de idioma: `build-win/trazas-lang-20261025-es/` y
   `build-win/trazas-lang-20261025-ca/`.
 - Diagnóstico: `build-win/kult-diagnostico.bat` (F12 + volcado automático).
-- `make test`: 518 core + HAL (30 funciones / 163 `CHECK`) + diagnóstico
-  off/on + 1 port OK (línea base antes de T-022).
-- `make package-win`: OK antes de T-022.
+- `make test`: 519 core + HAL (30 funciones / 163 `CHECK`) + diagnóstico
+  off/on + 1 port OK.
+- `make package-win`: OK después de T-022.
 
 **Pendiente, en este orden:**
 
-1. **T-022 — `0x106f2` y `l_0101a8`.** Empezar por el repo C:
-   `load_resource_list_c`, API, mapa y prueba diferencial; después importar al
-   port y reconstruir `l_0101a8` en `boot/`. Plan: `notes/0052-plan-t022.md`.
-2. **Regenerar el ZIP y ejecutar T-094.** La validación visual final debe hacerse
-   sobre el paquete generado **después** de T-022.
-3. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
+1. **T-094 — validación visual final.** Ejecutar la checklist
+   `docs/VERIFICACION.md` sobre el ZIP regenerado en T-022.
+2. **T-092 — publicar 1.0.0.** Push de `main`, tag/Release `1.0.0` y ZIP Windows.
    Es el último paso de la release.
-4. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
+3. **T-096 — CI de GitHub.** Workflow para HAL (`test-port`) + empaquetado sin
    assets; el core diferencial necesita `KULT.PRG` y queda local/opcional.
 
 **Antes de tocar código:**
 
-- Hay cambios documentales sin commit: `RETOMAR.md`, `TODO.md`,
-  `docs/INDICE.md`, `notes/0051-validacion-cambios-t100.md` y
-  `notes/0052-plan-t022.md`. Commitearlos primero para no mezclar documentación
-  con T-022.
 - Revisar `git status` en `/app/kult-atari-st-c` y en
-  `/app/kult-atari-st-pc-port`.
+  `/app/kult-atari-st-pc-port`; ambos deben quedar limpios al cerrar.
 - Tomar la línea base con `make test`.
 
 **Comandos de arranque:**
@@ -94,6 +98,13 @@ No hay fixes de texto pendientes. Si aparece una regresión visual, usar
 > última sesión. Las rutas `build-win/kult-0.1.0-win64/...` que aparecen en
 > notas antiguas ya no existen: ese árbol se limpió. Las evidencias nuevas, si
 > se conservan, van directamente bajo `build-win/`.
+- **Sesión 69 — T-022 cerrada (2026-10-25)**: repo C `94c0be1`
+  (`load_resource_list_c`, lista C; 519 diferenciales verdes, `ids_reg=0`).
+  Core importado en el port (`fbeaff3`) y `boot_load_0100ec`/`boot_l0101a8` en
+  `boot/`; `KULT_SOFT_RESTART_AT` es el único disparador (ruta latente, sin
+  flujos artificiales). Smokes de arranque normal y reinicio suave OK; ZIP
+  regenerado (`ca6eec87…`). Siguiente: **T-094** sobre ese ZIP. Detalle:
+  `notes/0053-t022-reinicio-suave.md`.
 - **Sesión 68 — plan T-022 (2026-10-25)**: sin cambios de código. Se acuerda
   completar `0x106f2` en el repo C (objetivo 1:1) y reconstruir `l_0101a8` como
   ruta latente verificada, sin flujos artificiales. T-022 pasa delante de T-094;

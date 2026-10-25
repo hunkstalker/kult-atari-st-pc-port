@@ -83,3 +83,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0050-diagnostico-separado.md`](../notes/0050-diagnostico-separado.md)
 - [`notes/0051-validacion-cambios-t100.md`](../notes/0051-validacion-cambios-t100.md)
 - [`notes/0052-plan-t022.md`](../notes/0052-plan-t022.md)
+- [`notes/0053-t022-reinicio-suave.md`](../notes/0053-t022-reinicio-suave.md)

@@ -4,7 +4,8 @@ El core C vive en `lib/kult-core/`, importado del repositorio
 [kult-atari-st-c](https://github.com/hunkstalker/kult-atari-st-c) mediante
 `git subtree`.
 
-- Importación inicial: commit `beebb52` del repo C (subtree con `--squash`).
+- Última importación: commit `94c0be1` del repo C (T-022; `load_resource_list_c`).
+- Importación inicial: commit `beebb52` (subtree con `--squash`).
 - El build del port usa `lib/kult-core/src` y `lib/kult-core/include`.
 - Las herramientas y tests del core viven también en el subtree.
 - No se compilan `lib/kult-core/docs`, `test` ni `tools` salvo que se invoquen

@@ -41,6 +41,7 @@ Los ~50 puntos de instrumentación del core son el delta documentado en
 | `KULT_INPUTLOG=<ruta>` | eventos `I` de entrada |
 | `KULT_AUTOLOG=1` | volcado del historial cada 150 VBL |
 | `KULT_F12_AT=<vbl>` | simula F12 en un VBL concreto |
+| `KULT_SOFT_RESTART_AT=<vbl>` | fuerza `l_0101a8` (lista C → `crt0` → lista A → `0x100ec`) y vuelve a `0x10158` |
 | `KULT_FPSLOG=1` | FPS del bucle cada ~3 s en `kult.log` |
 
 F12 vuelca los ~150 VBL anteriores, la última línea de texto (`X`) y abre una

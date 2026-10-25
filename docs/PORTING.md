@@ -29,7 +29,7 @@ backend de PC es todo el porte. El core **no se toca**.
 | `_start` (0x10000) | arranque + **menú de idioma** D/E/F | único nombre sin definición C |
 | `0x160c2` | tick de VBL: `addq.b #1,A_DAT_1ACD4` + trabajo por frame | sin él las esperas cuelgan |
 | `0x135ba` | line-A + XBIOS (Setpalette/paleta) | pequeña |
-| `0x106f2` | reinicio | camino de reinicio |
+| `0x106f2` | `load_resource_list_c` (lista C) + reinicio `l_0101a8` | portado; ruta latente (`KULT_SOFT_RESTART_AT`) |
 | `0x19316` | comprobación **FDC** | **se omite** en PC |
 
 ## Vídeo / render

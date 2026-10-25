@@ -51,19 +51,21 @@ datos.
 ## Pendientes / futuros
 - **M5 — filtros CRT** (`SDL_GPU` + shaders): **extra opcional, no prioritario**,
   al final (ver `notes/0009`). Sin filtros hoy (`SDL_Renderer` + escalado entero).
-- **Reinicio `0x106f2` (`l_0101a8`)**: **siguiente (T-022)**; plan en
-  `notes/0052-plan-t022.md`. Es un "reinicio suave" de `_start`; el análisis
-  estático lo ve **inobservable** (solo aparece como constante base de
-  relocalización, sin llamante), pero se porta por completitud (`notes/0010`,
-  `notes/0011`, `notes/0052`). **No confundir** con
-  el reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba
-  en el C nativo ya se emula en `boot/` (`notes/0022`).
+- **Reinicio `0x106f2` (`l_0101a8`)**: ✅ **portado como ruta latente (T-022)**;
+  detalle en `notes/0053-t022-reinicio-suave.md`. Es un "reinicio suave" de
+  `_start`; el análisis estático lo ve **inobservable** (solo aparece como
+  constante base de relocalización, sin llamante), así que **no se usa en el
+  flujo normal**. Solo se puede forzar con el diagnóstico
+  `KULT_SOFT_RESTART_AT=<vbl>`, que recarga lista C → `crt0` → lista A →
+  FOND/lista B/ECHE antes de volver a `0x10158`. **No confundir** con el
+  reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba en
+  el C nativo ya se emula en `boot/` (`notes/0022`).
 - **M7 — release 1.0.0**: build, paquete, ingesta, idiomas y licencias
   completados. El paquete lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
   `LEEME.txt` y las licencias; **no** lleva headless ni `DIAGNOSTICO.txt`.
   Requiere **Windows 10+** (UCRT). Los tests automatizados de ingesta/packs
-  (T-095) ya están integrados. Pendientes: **T-022**, regenerar el ZIP,
-  validación visual final y publicación; el CI va al final.
+  (T-095) ya están integrados y T-022 está cerrada. Pendientes: validación
+  visual final sobre el ZIP regenerado y publicación; el CI va al final.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **Windows: sin consola.** `kult.exe` es subsistema GUI. Los errores van a

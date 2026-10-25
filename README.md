@@ -11,9 +11,10 @@ C corra en Windows/Linux.
 > la ingesta de los discos originales, el selector de idioma, los packs español y
 > catalán, guardado/carga y audio. Los textos catalanes están validados y las
 > incidencias de texto de objetos y de La Horca están corregidas. Los tests de
-> ingesta y packs están integrados en `make test`. La release 1.0.0 no se publica
-> hasta completar T-022 (`0x106f2`), regenerar el ZIP y cerrar la validación
-> visual final; después vienen la publicación y el CI.
+> ingesta y packs están integrados en `make test`. T-022 (`0x106f2` y el
+> reinicio suave `l_0101a8`) está cerrada; la release 1.0.0 no se publica hasta
+> cerrar la validación visual final sobre el ZIP regenerado. Después vienen la
+> publicación y el CI.
 > El seguimiento técnico del desarrollo está en **`PROYECTO.md`**, **`TODO.md`** y
 > **`RETOMAR.md`**.
 
