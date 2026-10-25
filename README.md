@@ -147,6 +147,20 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
    se procesan y el juego arranca en esa misma ejecución.
 4. Los datos y partidas quedan en `~/Library/Application Support/Kult/`. Las
    siguientes ejecuciones usan `data/kult.data` y no piden los STX.
+5. **Desinstalar la app:** ciérrala y arrastra `Kult.app` a la Papelera. Los
+   datos, ajustes y partidas de Application Support se conservan.
+6. **Eliminación completa:** si quieres borrar también los datos y las partidas,
+   haz antes copia de `saves/` y ejecuta:
+
+   ```sh
+   rm -rf "$HOME/Library/Application Support/Kult"
+   ```
+
+   Opcionalmente, si existe:
+
+   ```sh
+   rm -rf "$HOME/Library/Saved Application State/com.hunkstalker.kult.savedState"
+   ```
 
 ## Controles
 - **Ratón**: izquierdo/teclado = acción; derecho = acción + skip.

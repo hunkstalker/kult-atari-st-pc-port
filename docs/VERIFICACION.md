@@ -199,6 +199,10 @@ La release macOS es Universal 2 y no está notarizada. Probar en un Mac Intel
 5. Probar título, audio, fullscreen, F1/F2/F5/F6/F7, volumen y salir.
 6. Comprobar que la build es Universal 2 con `lipo -archs`; Apple Silicon queda
    pendiente de prueba visual manual si no hay equipo.
+7. Eliminar `Kult.app` y comprobar que los datos y partidas siguen en
+   `~/Library/Application Support/Kult/`.
+8. Borrar Application Support y comprobar que una instalación nueva arranca
+   limpia y vuelve a pedir los STX.
 
 ## Regla
 Toda corrección o feature nueva deja su prueba. Si algo es inobservable, se

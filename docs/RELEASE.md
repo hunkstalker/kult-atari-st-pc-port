@@ -110,6 +110,20 @@ la app muestra un diálogo para seleccionar los dos discos y los copia a
 `~/Library/Application Support/Kult/data/`. Los datos, partidas, `kult.ini` y
 `kult.log` viven en esa carpeta.
 
+### Desinstalación
+
+- **Solo la app**: cerrar `Kult.app` y arrastrarla a la Papelera. No hay
+  instalador, LaunchAgents ni archivos en `/Library`; Application Support se
+  conserva.
+- **Eliminación completa**: borrar también
+  `~/Library/Application Support/Kult/`, que contiene `data/`, `saves/`,
+  `kult.ini` y `kult.log`. Hacer copia de `saves/` antes si se quieren conservar
+  las partidas.
+- El estado opcional de ventanas de macOS puede quedar en
+  `~/Library/Saved Application State/com.hunkstalker.kult.savedState`; se puede
+  borrar si existe.
+- El DMG es de solo lectura: expulsarlo no elimina la app instalada.
+
 ## Arranque
 
 1. Crear/verificar `data/` y `saves/` en la base de datos (carpeta del

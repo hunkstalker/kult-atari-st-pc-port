@@ -44,6 +44,28 @@ Controles
 - ESC: cierra.
 - Lista completa en `Kult Settings.txt`.
 
+Desinstalación
+--------------
+La app no tiene instalador ni deja servicios, LaunchAgents ni archivos en
+`/Library`.
+
+1) Para quitar solo la aplicación: cierra `Kult.app` y arrástrala a la
+   Papelera. Los datos, ajustes y partidas se conservan en Application Support.
+
+2) Para una eliminación completa, haz copia de `saves/` si quieres conservar
+   las partidas y borra la carpeta de datos:
+
+       rm -rf "$HOME/Library/Application Support/Kult"
+
+   Opcionalmente, si existe:
+
+       rm -rf "$HOME/Library/Saved Application State/com.hunkstalker.kult.savedState"
+
+   Esto elimina `data/`, `saves/`, `kult.ini` y `kult.log`.
+
+El DMG es de solo lectura: expúlsalo cuando termines; no afecta a la app
+instalada.
+
 Notas
 -----
 - Es una release Universal 2 (`arm64` + `x86_64`) firmada en modo ad-hoc, no

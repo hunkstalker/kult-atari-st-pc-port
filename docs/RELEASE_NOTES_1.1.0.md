@@ -1,4 +1,4 @@
-# Kult: The Temple of Flying Saucers — Port 1.1.0
+# Kult: The Temple of Flying Saucers — Port a PC 1.1.0
 
 Segunda release pública del port nativo de **Kult: The Temple of Flying
 Saucers** (Exxos/ERE, 1989): **Windows, Linux y macOS**, con español y catalán.
@@ -62,6 +62,23 @@ una revisión posterior.
 - **macOS**: abre `Kult.app`; si faltan los discos, selecciónalos en el diálogo.
   Si existe `~/Library/Application Support/Kult/data/kult.data`, las siguientes
   ejecuciones no piden los STX.
+
+## Desinstalación en macOS
+
+Para quitar solo la aplicación, ciérrala y arrastra `Kult.app` a la Papelera.
+Los datos y partidas se conservan en Application Support.
+
+Para una eliminación completa, haz copia de `saves/` si quieres conservar las
+partidas y borra:
+
+```sh
+rm -rf "$HOME/Library/Application Support/Kult"
+```
+
+Opcionalmente, si existe, borra también
+`~/Library/Saved Application State/com.hunkstalker.kult.savedState`. No hay
+instalador, servicios ni archivos de la app en `/Library`; el DMG se puede
+expulsar sin afectar a la instalación.
 
 Los checksums SHA-256 de los artefactos se adjuntan a la GitHub Release.
 Los artefactos de CI no son necesariamente byte-idénticos a builds locales por

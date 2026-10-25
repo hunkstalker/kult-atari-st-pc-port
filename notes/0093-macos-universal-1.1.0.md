@@ -30,6 +30,9 @@ pendiente de ejecutar en GitHub.
   checksums y notarización opcional si hay secretos.
 - `Makefile`: `deps-macos`, `cmake-macos`, `package-macos`.
 - CI: job `macos-15` Universal 2 y artefacto; la release incluye ZIP/DMG.
+- Desinstalación documentada en README, `LEEME_MAC.txt`, RELEASE y notas:
+  quitar solo `Kult.app` conserva datos; borrar Application Support elimina
+  datos y partidas.
 
 ## Pendiente
 
