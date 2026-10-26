@@ -43,9 +43,14 @@ Fecha: 2026-10-26. Estado: **implementado en rama; pendiente QA visual**.
   el código intenta hasta ~120 Hz. En un monitor de 60 Hz el máximo útil es 60;
   en 120/144 Hz puede subir hasta el límite del código.
 
+## QA
+
+- **Windows (2026-10-26)**: validado por el usuario; el cursor se comporta
+  correctamente y sin duplicados.
+
 ## Pendiente antes de mezclar
 
-- QA visual en Linux/Windows/macOS: cursor suave, sin duplicados ni rastros.
+- QA visual en Linux/macOS; Windows ya está validado.
 - Capturas reales con cursor y savestate con cursor visible tras cargar.
 - Medir carga de CPU/GPU con el pump a ~120 Hz.
 - Revisar interacción con OSD, F1/F2, fullscreen y escalado Estirar.

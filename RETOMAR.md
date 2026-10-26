@@ -410,10 +410,10 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 
 1. **T-136 — macOS Universal 2**: validación visual del DMG en Mac Intel.
 2. **T-137 — release 1.1.0**: tag, GitHub Release y checksums.
-3. **T-138 — cursor a refresco nativo (B)**: overlay y presentación oportunista;
-   decidido en `notes/0094`.
+3. **T-138 — cursor a refresco nativo (B)**: validado en Windows (2026-10-26);
+   pendiente QA Linux/macOS y merge tras 1.1.0. Detalle: `notes/0095`.
 4. **T-139 — separar render y simulación en hilos**: solo si T-138 no basta;
-   mayor riesgo y QA.
+   con el cursor ya validado en Windows, no parece necesario.
 5. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
 6. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
 7. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
