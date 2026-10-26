@@ -21,8 +21,10 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y paquetes Windows/Linux | ✅ publicada (2026-10-25; CI OK; `notes/0092`) |
 | T-135 | Paquetes Linux TGZ + AppImage | ✅ cerrada; CI generó TGZ/AppImage (`notes/0091`, `notes/0092`) |
 | T-096 | CI en GitHub: HAL + paquetes Windows/Linux | ✅ cerrada; primera ejecución OK (`notes/0092`) |
-| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 implementado; CI/QA pendientes (`notes/0093`) |
+| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 CI verde; pendiente validación DMG en Mac Intel (`notes/0093`) |
 | T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de tag y GitHub Release |
+| T-138 | Cursor a refresco nativo (overlay B) | ⬜ después de 1.1.0; rama `feature/cursor-refresh` (`notes/0094`) |
+| T-139 | Separar render y simulación en hilos | ⬜ solo si T-138 no basta; después de la validación |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
 | T-102 | Arranque fullscreen nativo, F1 fullscreen/ventana y F2 escala entera | ✅ cerrada (2026-10-25; `notes/0055`) |
@@ -188,8 +190,14 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M8 — macOS y release 1.1.0
 | id | tarea | estado |
 |---|---|---|
-| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP/DMG y CI | 🚧 **implementación local**; falta ejecutar CI macOS, artifact y QA Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
-| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP/DMG, checksums y notas | ⬜ pendiente de tag/publicación |
+| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP/DMG y CI | 🚧 **CI verde (run 12)**; artifact `kult-macos-universal` generado; pendiente QA visual Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
+| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP/DMG, checksums y notas | ⬜ pendiente de validación DMG y tag/publicación |
+
+## M9 — Cursor a refresco nativo (después de 1.1.0)
+| id | tarea | estado |
+|---|---|---|
+| T-138 | **Cursor B**: overlay pixel-exacto del cursor, presentación oportunista a más Hz, capturas con cursor, savestate con estado y sin píxeles horneados | ⬜ después de 1.1.0; decisiones en **`notes/0094`** |
+| T-139 | **Separar render y simulación en hilos** | ⬜ solo si T-138 no da fluidez suficiente; mayor riesgo y QA; después de la validación |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

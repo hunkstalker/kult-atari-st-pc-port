@@ -33,8 +33,9 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 **Siguiente tarea: T-136 — macOS Universal 2 y release 1.1.0.**
 
 - Implementación local: `notes/0093`.
-- Pendiente: ejecutar CI macOS, probar el artifact en un Mac Intel y publicar
-  `v1.1.0` (T-137). Apple Silicon queda validado solo por CI.
+- CI macOS en verde (run 12); artifact `kult-macos-universal` generado.
+- Pendiente: probar el DMG en un Mac Intel y publicar `v1.1.0` (T-137).
+  Apple Silicon queda validado solo por CI.
 - macOS va firmado en modo ad-hoc y no notarizado; Gatekeeper se documenta en
   `LEEME_MAC.txt`.
 
@@ -76,7 +77,8 @@ AppImage; el CI terminó en `success`. La copia local de revisión
   arranque y errores visibles desde Finder.
 - `make deps-macos`, `make cmake-macos`, `make package-macos`; ZIP/DMG con firma
   ad-hoc y sin notarizar.
-- CI `macos-15` añadido; falta ejecutarlo y probar el artifact en Mac Intel.
+- CI `macos-15` ejecutado en verde (run 12); artifact `kult-macos-universal`
+  generado; falta la prueba visual en Mac Intel.
 - Detalle: `notes/0093`.
 
 **T-094 — cerrada (2026-10-25):**
@@ -406,12 +408,16 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 
 **Pendiente, en este orden:**
 
-1. **T-136 — macOS Universal 2**: CI macOS, artifact y QA visual en Mac Intel.
-2. **T-137 — release 1.1.0**: Windows/Linux/macOS, checksums y GitHub Release.
-3. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
-4. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
-5. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
-6. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+1. **T-136 — macOS Universal 2**: validación visual del DMG en Mac Intel.
+2. **T-137 — release 1.1.0**: tag, GitHub Release y checksums.
+3. **T-138 — cursor a refresco nativo (B)**: overlay y presentación oportunista;
+   decidido en `notes/0094`.
+4. **T-139 — separar render y simulación en hilos**: solo si T-138 no basta;
+   mayor riesgo y QA.
+5. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
+6. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
+7. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
+8. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
 
 **Antes de tocar código:**
 

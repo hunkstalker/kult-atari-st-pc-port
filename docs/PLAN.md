@@ -105,6 +105,17 @@ CI macOS; `LEEME.txt` por plataforma.
 verificado por arquitectura/CI, y GitHub Release 1.1.0 con checksums.
 **Nota:** no se notariza; Gatekeeper se documenta. Detalle: `notes/0093`.
 
+## M9 — Cursor a refresco nativo (después de 1.1.0)
+**Objetivo:** mover el cursor a la frecuencia del monitor sin cambiar la
+simulación del juego a 50 Hz.
+**Contenido:** overlay pixel-exacto del cursor del juego; presentación
+oportunista durante las esperas de VBL; capturas con cursor; savestate con
+estado del cursor y sin píxeles horneados.
+**Decisión:** activado por defecto, sin variable de usuario. Si la fluidez no
+basta, **T-139** estudia separar render y simulación en hilos; no se hace de
+entrada por el riesgo en macOS/audio/estado.
+**Detalle:** `notes/0094`.
+
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 **Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a
 dos versiones**, sin rehacer nada luego.

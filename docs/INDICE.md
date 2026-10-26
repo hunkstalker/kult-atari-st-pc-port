@@ -125,3 +125,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0091-t135-linux-tgz-appimage.md`](../notes/0091-t135-linux-tgz-appimage.md)
 - [`notes/0092-publicacion-1.0.0.md`](../notes/0092-publicacion-1.0.0.md)
 - [`notes/0093-macos-universal-1.1.0.md`](../notes/0093-macos-universal-1.1.0.md)
+- [`notes/0094-cursor-refresh-plan.md`](../notes/0094-cursor-refresh-plan.md)

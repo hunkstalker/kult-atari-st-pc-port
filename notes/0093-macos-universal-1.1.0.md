@@ -1,7 +1,7 @@
 # 0093 — macOS Universal 2 y release 1.1.0
 
-Fecha: 2026-10-25. Estado: **implementación en curso**; build/CI de macOS
-pendiente de ejecutar en GitHub.
+Fecha: 2026-10-25. Estado: **CI verde (run 12)**; artifact generado; pendiente
+validación visual del DMG en Mac Intel.
 
 ## Decisión
 
@@ -34,11 +34,17 @@ pendiente de ejecutar en GitHub.
   quitar solo `Kult.app` conserva datos; borrar Application Support elimina
   datos y partidas.
 
+## Estado CI
+
+- Run 12 (`ffcbebe`) en verde: tests, Windows, Linux y macOS Universal 2.
+- Artifact `kult-macos-universal` generado (ZIP/DMG + checksums).
+- El job `release` queda omitido porque no hay tag.
+
 ## Pendiente
 
-- Ejecutar CI macOS y descargar el artifact.
 - Prueba visual en Mac Intel: arranque, selector STX, audio, fullscreen,
   F1/F2/F5–F7, guardado y Gatekeeper.
 - Smoke test de Apple Silicon en CI; no hay QA visual de Apple Silicon.
+- Tras la validación, tag `v1.1.0` y release.
 - Si aparece un problema de `-finstrument-functions` en Apple Clang, ajustar
   solo el build macOS y documentar el impacto en timing.
