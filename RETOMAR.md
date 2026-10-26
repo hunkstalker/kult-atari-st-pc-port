@@ -412,12 +412,13 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 2. **T-137 — release 1.1.0**: tag, GitHub Release y checksums.
 3. **T-138 — cursor a refresco nativo (B)**: validado en Windows (2026-10-26);
    pendiente QA Linux/macOS y merge tras 1.1.0. Detalle: `notes/0095`.
-4. **T-139 — separar render y simulación en hilos**: solo si T-138 no basta;
-   con el cursor ya validado en Windows, no parece necesario.
-5. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
-6. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
-7. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
-8. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+4. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
+5. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
+6. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
+7. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+
+**T-139 descartada:** separar render y simulación en hilos no es necesario con
+T-138; se reevaluará solo si aparece stutter.
 
 **Antes de tocar código:**
 

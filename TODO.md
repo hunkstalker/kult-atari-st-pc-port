@@ -24,7 +24,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 CI verde; pendiente validación DMG en Mac Intel (`notes/0093`) |
 | T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de tag y GitHub Release |
 | T-138 | Cursor a refresco nativo (overlay B) | ✅ validado en Windows (2026-10-26); pendiente Linux/macOS. Rama `feature/cursor-refresh` (`notes/0095`) |
-| T-139 | Separar render y simulación en hilos | ⬜ solo si T-138 no basta; después de la validación |
+| T-139 | Separar render y simulación en hilos | ✅ descartada (2026-10-26): T-138 validado en Windows; reevaluar solo si aparece stutter |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
 | T-102 | Arranque fullscreen nativo, F1 fullscreen/ventana y F2 escala entera | ✅ cerrada (2026-10-25; `notes/0055`) |
@@ -197,7 +197,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | id | tarea | estado |
 |---|---|---|
 | T-138 | **Cursor B**: overlay pixel-exacto del cursor, presentación oportunista a más Hz, capturas con cursor, savestate con estado y sin píxeles horneados | ✅ **validado en Windows (2026-10-26)**; tests locales y builds OK; pendiente QA visual Linux/macOS. Detalle: **`notes/0095`** |
-| T-139 | **Separar render y simulación en hilos** | ⬜ solo si T-138 no da fluidez suficiente; mayor riesgo y QA; después de la validación |
+| T-139 | **Separar render y simulación en hilos** | ✅ **descartada (2026-10-26)**: con T-138 validado en Windows no hace falta; reevaluar solo si aparece stutter |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

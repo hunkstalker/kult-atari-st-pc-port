@@ -16,10 +16,10 @@ Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
 - La presentación a más Hz es **oportunista** mientras el hilo del juego espera
   un VBL. En tramos CPU-bound el cursor puede bajar a 50 Hz o menos; no se
   rompe la lógica.
-- **T-139** (separar render y simulación en hilos) queda al final, solo si T-138
-  no da fluidez suficiente. No se implementa de entrada: SDL/window en macOS,
-  audio, input y el estado del core no son thread-safe sin un diseño y QA
-  específicos.
+- **T-139** (separar render y simulación en hilos) queda **descartada**: T-138
+  se validó en Windows y no se necesita. Solo se reevaluaría si apareciera
+  stutter; SDL/window en macOS, audio, input y el estado del core no son
+  thread-safe sin un diseño y QA específicos.
 
 ## Arquitectura prevista
 
