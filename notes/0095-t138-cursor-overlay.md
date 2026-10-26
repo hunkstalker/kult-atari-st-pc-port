@@ -1,6 +1,7 @@
-# 0095 — T-138: cursor como overlay (rama `feature/cursor-refresh`)
+# 0095 — T-138: cursor como overlay (merged a main)
 
-Fecha: 2026-10-26. Estado: **implementado en rama; pendiente QA visual**.
+Fecha: 2026-10-26. Estado: **implementado, merged y validado en
+Windows/Linux/macOS; release 1.2.0 publicada (tag `v1.2.0`)**.
 
 ## Alcance
 
@@ -47,16 +48,16 @@ Fecha: 2026-10-26. Estado: **implementado en rama; pendiente QA visual**.
 
 - **Windows (2026-10-26)**: validado por el usuario; el cursor se comporta
   correctamente y sin duplicados.
+- **Linux/macOS (2026-10-26)**: validado por el usuario; cursor correcto, sin
+  duplicados.
 
-## Pendiente antes de mezclar
+## Seguimiento opcional (post-1.2.0)
 
-- QA visual en Linux/macOS; Windows ya está validado.
-- Capturas reales con cursor y savestate con cursor visible tras cargar.
 - Medir carga de CPU/GPU con el pump a ~120 Hz.
 - Revisar interacción con OSD, F1/F2, fullscreen y escalado Estirar.
 - Decidir si el OSD debe quedar por encima o por debajo del cursor.
-- No mezclar en `main` ni en `v1.1.0`; T-138 es posterior.
 
 ## Rama
 
-`feature/cursor-refresh`, basada en `eee8744`.
+`feature/cursor-refresh`, basada en `eee8744`; actualizada con main (`d54dc28`)
+y mezclada en main (`dbca6d3`).

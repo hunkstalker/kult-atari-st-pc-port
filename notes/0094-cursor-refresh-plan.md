@@ -1,6 +1,7 @@
 # 0094 — Plan T-138: cursor a refresco nativo (opción B)
 
-Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
+Fecha: 2026-10-25. Estado: **implementado, merged y validado en
+Windows/Linux/macOS**; T-139 descartada; release 1.2.0 publicada (tag `v1.2.0`).
 
 ## Decisiones
 
@@ -17,7 +18,7 @@ Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
   un VBL. En tramos CPU-bound el cursor puede bajar a 50 Hz o menos; no se
   rompe la lógica.
 - **T-139** (separar render y simulación en hilos) queda **descartada**: T-138
-  se validó en Windows y no se necesita. Solo se reevaluaría si apareciera
+  se validó en Windows/Linux/macOS y no se necesita. Solo se reevaluaría si apareciera
   stutter; SDL/window en macOS, audio, input y el estado del core no son
   thread-safe sin un diseño y QA específicos.
 
@@ -47,9 +48,6 @@ Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
 
 ## Rama
 
-```text
-git switch -c feature/cursor-refresh
-```
-
-Base: `ffcbebe` (commit probado en CI para 1.1.0). No se toca `main` ni el tag
-`v1.1.0` hasta publicar la release.
+Feature `feature/cursor-refresh`, creada desde `eee8744` y actualizada con main
+(`d54dc28`); mezclada en main (`dbca6d3`). T-138 validado en Windows/Linux/macOS;
+publicado en la release 1.2.0 (tag `v1.2.0`).

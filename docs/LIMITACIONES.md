@@ -1,6 +1,6 @@
-# LIMITACIONES — release 1.1.0
+# LIMITACIONES — release 1.2.0
 
-Lista de limitaciones conocidas del port para la release **1.1.0**. La
+Lista de limitaciones conocidas del port para la release **1.2.0**. La
 validación final de juego, textos y audio la hace el usuario con su copia de
 datos.
 
@@ -62,17 +62,18 @@ datos.
   FOND/lista B/ECHE antes de volver a `0x10158`. **No confundir** con el
   reinicio tras morir (`0x1842c`→`reset_clear`): el `bra 0x10158` que faltaba en
   el C nativo ya se emula en `boot/` (`notes/0022`).
-- **M7 — release 1.1.0**: build, paquete, ingesta, idiomas y licencias
-  completados. Windows lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
-  `LEEME.txt`, ajustes y licencias. Linux lleva `kult`, `lib/libSDL3.so.0`,
-  `LEEME.txt`, datos y ajustes, además de un AppImage. macOS lleva `Kult.app`
-  Universal 2, `LEEME.txt`, ajustes y licencias, dentro de un DMG que se
-  distribuye en un ZIP. **No** llevan
-  headless ni `DIAGNOSTICO.txt`. Windows requiere **Windows 10+** (UCRT);
-  Linux requiere X11/Wayland y audio base; macOS requiere **11+** (Intel o
-  Apple Silicon). Los tests automatizados de ingesta/packs (T-095) ya están
-  integrados, T-022 y T-101 están cerradas. La release 1.0.0 está publicada
-  (detalle: `notes/0092`); la 1.1.0 añade macOS y está en preparación.
+- **M7 — build base + release 1.2.0**: build, paquete, ingesta, idiomas y
+  licencias completados. Windows lleva `kult.exe`, `SDL3.dll`, `data/`,
+  `saves/`, `LEEME.txt`, ajustes y licencias. Linux lleva `kult`,
+  `lib/libSDL3.so.0`, `LEEME.txt`, datos y ajustes, además de un AppImage.
+  macOS lleva `Kult.app` Universal 2, `LEEME.txt`, ajustes y licencias, dentro
+  de un DMG que se distribuye en un ZIP. **No** llevan headless ni
+  `DIAGNOSTICO.txt`. Windows requiere **Windows 10+** (UCRT); Linux requiere
+  X11/Wayland y audio base; macOS requiere **11+** (Intel o Apple Silicon). Los
+  tests automatizados de ingesta/packs (T-095) ya están integrados, T-022 y
+  T-101 están cerradas. La release 1.0.0 está publicada (detalle:
+  `notes/0092`); la 1.1.0 añade macOS y está publicada; la 1.2.0 añade el
+  cursor y está publicada.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **macOS sin notarizar**: `Kult.app` se firma en modo ad-hoc, no con Developer

@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** releases 1.0.0 (2026-10-25) y 1.1.0 (2026-10-26) publicadas; 1.1.0 con macOS Universal 2 (T-136) y CI OK. T-022, T-092, T-096, T-101, T-137 y T-102–T-135 cerradas. El port arranca
+**Estado:** releases 1.0.0 (2026-10-25), 1.1.0 y 1.2.0 (2026-10-26) publicadas; T-138 (cursor) merged y validado en Windows/Linux/macOS. T-022, T-092, T-096, T-101, T-137, T-140 y T-102–T-135 cerradas. El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -30,11 +30,35 @@ AppImage; el CI terminó en `success`. La copia local de revisión
   ambos en `success`.
 - Hashes y detalle: `notes/0092`.
 
+**Publicación 1.1.0 (T-137):**
+
+- Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.1.0>
+- CI: [tag `v1.1.0`](https://github.com/hunkstalker/kult-atari-st-pc-port/actions/runs/40312705273)
+  en `success`.
+- macOS: ZIP con el DMG dentro + `.zip.sha256`; sin DMG suelto. Detalle:
+  `notes/0093`.
+
+**T-138 validado y release 1.2.0 (2026-10-26):**
+
+- `feature/cursor-refresh` actualizada con main (`d54dc28`) y mezclada en main
+  (`dbca6d3`); T-138 ya está en main, fuera de 1.1.0.
+- Versión 1.2.0 en Makefile, CMake, `build_macos.sh` y workflow; notas públicas
+  en `docs/RELEASE_NOTES_1.2.0.md`.
+- T-138 validado en Windows/Linux/macOS (2026-10-26); release 1.2.0 publicada
+  con el tag `v1.2.0`. Detalle: `notes/0096`.
+
+**Publicación 1.2.0 (T-140):**
+
+- Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.2.0>
+- macOS: ZIP con el DMG dentro + `.zip.sha256`; sin DMG suelto.
+
 **Siguiente tarea: T-136 — QA visual del DMG en Mac Intel.**
 
-- Implementación local: `notes/0093`.
+- Implementación local: `notes/0093`, `notes/0095`, `notes/0096`.
 - Release 1.1.0 publicada (2026-10-26; tag `v1.1.0`, CI OK) con ZIP de macOS
   (contiene el DMG) + `.zip.sha256`; sin DMG suelto.
+- T-138 (cursor) está merged y validado en Windows/Linux/macOS; publicado en la
+  release **1.2.0** (tag `v1.2.0`).
 - Pendiente: validar el DMG en un Mac Intel. Apple Silicon queda validado solo
   por CI.
 - macOS va firmado en modo ad-hoc y no notarizado; Gatekeeper se documenta en
@@ -411,12 +435,10 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 
 1. **T-136 — macOS Universal 2**: validación visual del DMG en Mac Intel
    (release 1.1.0 ya publicada).
-2. **T-138 — cursor a refresco nativo (B)**: validado en Windows (2026-10-26);
-   pendiente QA Linux/macOS y merge a main. Detalle: `notes/0095`.
-3. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
-4. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
-5. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
-6. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+2. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
+3. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
+4. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
+5. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
 
 **T-139 descartada:** separar render y simulación en hilos no es necesario con
 T-138; se reevaluará solo si aparece stutter.

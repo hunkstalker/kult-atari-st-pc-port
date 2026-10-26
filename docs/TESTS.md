@@ -53,7 +53,7 @@ diferencial, las convenciones y las garantías del port. No deben borrarse para
   `install()` de CMake copia el ejecutable, SDL3, `data/language.data`,
   licencias, `Kult Settings.png`, `Kult Settings.txt`, `LEEME.txt` (Windows en
   el ZIP, Linux en el TGZ) y las carpetas `data/`/`saves/`. El ZIP Windows
-  1.1.0 tiene 13 entradas; Linux añade TGZ/AppImage y macOS añade un ZIP que
+  1.2.0 tiene 13 entradas; Linux añade TGZ/AppImage y macOS añade un ZIP que
   contiene el DMG con `Kult.app`.
 - **macOS**: `make test-port CC=clang` y `make test-tools PY=python` en CI.
 - **T-138**: `build/test_cursor_overlay` comprueba composición del cursor a la misma y nueva posición, y oculto; se ejecuta dentro de `make test-port`.

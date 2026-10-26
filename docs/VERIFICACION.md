@@ -185,12 +185,12 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    no se pudo escribir el log aparece uno de emergencia.
 6. Requisito: **Windows 10 o superior** (UCRT).
 
-### Checklist macOS 1.1.0
+### Checklist macOS 1.2.0
 
 La release macOS es Universal 2 y no está notarizada. Probar en un Mac Intel
 (manual) y comprobar que el CI verifica `arm64`:
 
-1. Descargar `kult-1.1.0-macos-universal.zip`, verificar su `.zip.sha256`,
+1. Descargar `kult-1.2.0-macos-universal.zip`, verificar su `.zip.sha256`,
    descomprimirlo y montar el `.dmg`; comprobar que el ZIP contiene solo el DMG,
    que `file`/`lipo` son correctos en CI y que el bundle abre con clic derecho >
    Abrir.
@@ -198,7 +198,9 @@ La release macOS es Universal 2 y no está notarizada. Probar en un Mac Intel
    `~/Library/Application Support/Kult/data/`, y continuar al juego.
 3. Repetir sin STX: debe usar `data/kult.data` y no pedir discos.
 4. Comprobar `data/`, `saves/`, `kult.ini` y `kult.log` en Application Support.
-5. Probar título, audio, fullscreen, F1/F2/F5/F6/F7, volumen y salir.
+5. Probar título, audio, fullscreen, F1/F2/F5/F6/F7, volumen y salir. Comprobar
+   también el cursor a refresco nativo, sin duplicados, en capturas y tras cargar
+   un savestate.
 6. Comprobar que la build es Universal 2 con `lipo -archs`; Apple Silicon queda
    pendiente de prueba visual manual si no hay equipo.
 7. Eliminar `Kult.app` y comprobar que los datos y partidas siguen en

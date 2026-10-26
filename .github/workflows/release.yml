@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  KULT_VERSION: "1.1.0"
+  KULT_VERSION: "1.2.0"
 
 concurrency:
   group: release-${{ github.ref }}
@@ -35,13 +35,23 @@ jobs:
 
   windows:
     name: Paquete Windows x64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Preparar cache de apt
+        run: mkdir -p "$RUNNER_TEMP/apt-archives"
+      - name: Cache de paquetes apt
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/apt-archives
+          key: apt-jammy-mingw-v1
+          restore-keys: apt-jammy-mingw-
       - name: Instalar toolchain
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          ARCHIVES="$RUNNER_TEMP/apt-archives"
+          sudo timeout 180 apt-get -o Dir::Cache::archives="$ARCHIVES/" -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Acquire::Retries=3 update
+          sudo timeout 600 apt-get -o Dir::Cache::archives="$ARCHIVES/" -o APT::Keep-Downloaded-Packages=true -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Acquire::Retries=3 install -y --no-install-recommends \
             build-essential cmake zip unzip wget \
             gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
       - name: Cache de SDL3
@@ -182,16 +192,16 @@ jobs:
         with:
           name: Kult PC ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
-          body_path: docs/RELEASE_NOTES_1.1.0.md
+          body_path: docs/RELEASE_NOTES_1.2.0.md
           files: |
-            dist/kult-1.1.0-win64.zip
-            dist/kult-1.1.0-win64.zip.sha256
-            dist/kult-1.1.0-linux-x86_64.tar.gz
-            dist/kult-1.1.0-linux-x86_64.tar.gz.sha256
-            dist/kult-1.1.0-x86_64.AppImage
-            dist/kult-1.1.0-x86_64.AppImage.sha256
-            dist/kult-1.1.0-macos-universal.zip
-            dist/kult-1.1.0-macos-universal.zip.sha256
+            dist/kult-1.2.0-win64.zip
+            dist/kult-1.2.0-win64.zip.sha256
+            dist/kult-1.2.0-linux-x86_64.tar.gz
+            dist/kult-1.2.0-linux-x86_64.tar.gz.sha256
+            dist/kult-1.2.0-x86_64.AppImage
+            dist/kult-1.2.0-x86_64.AppImage.sha256
+            dist/kult-1.2.0-macos-universal.zip
+            dist/kult-1.2.0-macos-universal.zip.sha256
           fail_on_unmatched_files: true
           draft: false
           prerelease: false

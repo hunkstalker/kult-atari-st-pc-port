@@ -87,7 +87,8 @@ T-022 (`0x106f2` + `l_0101a8`), T-101 («DIE» → DADO/DAU) y T-102–T-135
 (fullscreen/F1/F2, ranuras `slot-N.save`, OSD original y terminología catalana)
 están cerradas. T-094 (validación del ZIP Windows), T-092 (publicación 1.0.0) y
 T-096 (CI) están cerradas; la GitHub Release 1.0.0 incluye ZIP Windows, TGZ
-Linux y AppImage. Siguiente hito: **M8 — macOS Universal 2 y release 1.1.0**.
+Linux y AppImage. Siguiente hito: **M8 (macOS, ya publicado en 1.1.0) → M9
+(cursor) → M10 (release 1.2.0)**.
 **Estado:** **build hecho** (T-070: CMake nativo/cross MinGW + SDL3 3.4.10 +
 icono + `kult.log`), **paquete portable** (`kult.exe`, `SDL3.dll`, `data/`,
 `saves/`, `LEEME.txt` y licencias; sin headless ni `DIAGNOSTICO.txt`), ingesta
@@ -113,9 +114,18 @@ simulación del juego a 50 Hz.
 oportunista durante las esperas de VBL; capturas con cursor; savestate con
 estado del cursor y sin píxeles horneados.
 **Decisión:** activado por defecto, sin variable de usuario. **T-139** (separar
-render y simulación en hilos) queda descartada tras validar T-138 en Windows; se
-reevaluará solo si aparece stutter.
-**Detalle:** `notes/0094`.
+render y simulación en hilos) queda descartada tras validar T-138 en
+Windows/Linux/macOS; se reevaluará solo si aparece stutter.
+**Estado:** T-138 merged y validado en Windows/Linux/macOS (2026-10-26);
+publicado en la release 1.2.0.
+**Detalle:** `notes/0094`, `notes/0095`.
+
+## M10 — Release 1.2.0 (publicada)
+**Objetivo:** publicar el cursor a refresco nativo en una release estable.
+**Contenido:** paquetes Windows/Linux, ZIP de macOS con el DMG y `.zip.sha256`,
+notas públicas `docs/RELEASE_NOTES_1.2.0.md`.
+**Estado:** ✅ publicada (2026-10-26; tag `v1.2.0`); sin DMG suelto en macOS.
+**Detalle:** `notes/0096`.
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 **Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a

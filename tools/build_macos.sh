@@ -1,13 +1,13 @@
 #!/bin/sh
 # Empaqueta Kult.app, firma ad-hoc (o Developer ID), crea el DMG y un ZIP
 # que contiene solo el DMG.
-# Uso: KULT_VERSION=1.1.0 tools/build_macos.sh <stage-dir> <out-dir>
+# Uso: KULT_VERSION=1.2.0 tools/build_macos.sh <stage-dir> <out-dir>
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 STAGE=${1:?falta stage-dir}
 OUTDIR=${2:?falta out-dir}
-VERSION=${KULT_VERSION:-1.1.0}
+VERSION=${KULT_VERSION:-1.2.0}
 APP="$STAGE/Kult.app"
 EXE="$APP/Contents/MacOS/Kult"
 LEEME="$STAGE/LEEME.txt"
