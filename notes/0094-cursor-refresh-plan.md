@@ -30,7 +30,8 @@ Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
   conserva la API `cursor_draw`/`cursor_restore` y el estado en la imagen.
 - El overlay usa `A_CURSOR_X/Y`, `A_CLIP_X/Y`, `A_CURSOR_SPRITE_PTR` y
   `A_CURSOR_HOTSPOT`, con la paleta actual.
-- Orden de capas: framebuffer → OSD → cursor.
+- Orden de capas: framebuffer → cursor → OSD, como hasta ahora (el OSD sigue
+  siendo la capa superior).
 - No se usa una librería externa: SDL3, ya presente.
 
 ## Fases
