@@ -55,6 +55,8 @@ diferencial, las convenciones y las garantías del port. No deben borrarse para
   el ZIP, Linux en el TGZ) y las carpetas `data/`/`saves/`. El ZIP Windows
   1.1.0 tiene 13 entradas; Linux añade TGZ/AppImage y macOS `Kult.app` + ZIP/DMG.
 - **macOS**: `make test-port CC=clang` y `make test-tools PY=python` en CI.
+- **T-138**: `build/test_cursor_overlay` comprueba composición del cursor a la misma y nueva posición, y oculto; se ejecuta dentro de `make test-port`.
+- **T-138**: `make test-port` comprueba que el pump de presentación se ejecuta durante `cpu_delay`.
   `make test` no se ejecuta (oráculo `.so`/`KULT.PRG` Linux); la app Universal 2
   se comprueba con `lipo`, `otool` y un smoke test sin STX.
 - **Archivos fuente de GitHub**: los ZIP/TAR de código que genera GitHub

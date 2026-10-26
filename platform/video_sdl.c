@@ -24,6 +24,7 @@ static SDL_Window   *g_win;
 static SDL_Renderer *g_ren;
 static SDL_Texture  *g_tex;
 static uint8_t       g_rgba[FB_W * FB_H * 4];
+static uint8_t       g_frame[PLATFORM_IMAGE_SIZE];
 
 static int g_scale_mode = PLATFORM_SCALE_AUTO;
 static int g_fullscreen = 1;
@@ -222,9 +223,10 @@ void platform_sdl_present(uint8_t *img) {
             last = v;
         }
     }
-    platform_fb_to_rgba(g_rgba);
+    platform_cursor_compose(g_frame, img);
+    platform_fb_to_rgba_from(g_frame, g_rgba);
     if (platform_osd_active())
-        platform_osd_draw_rgba(g_rgba, img, platform_osd_text());
+        platform_osd_draw_rgba(g_rgba, g_frame, platform_osd_text());
     SDL_UpdateTexture(g_tex, NULL, g_rgba, FB_W * 4);
     SDL_SetRenderViewport(g_ren, NULL);
     SDL_SetRenderScale(g_ren, 1.0f, 1.0f);

@@ -76,6 +76,7 @@ static int check_game_files(void) {
 
 #ifdef HAVE_SDL3
 static int g_sdl;
+static uint8_t *g_render_img;
 
 /* KULT_FPSLOG=1: FPS del bucle del juego (una iteración = un wait_frame, igual
  * que el contador Ikbdws del arnés Hatari) cada ~3 s. Sirve para comparar la
@@ -121,6 +122,14 @@ static void idle_cb(uint8_t *img) {
 static void tick_cb(uint8_t *img) {
     if (!platform_sdl_pump()) { platform_sdl_close(); exit(0); }
     platform_sdl_present(img);
+}
+
+/* Pump de presentación durante las esperas: no avanza el juego; solo mueve el
+ * cursor y vuelve a presentar la imagen actual a más Hz. */
+static void render_pump_cb(void) {
+    if (!g_render_img) return;
+    if (!platform_sdl_pump()) { kult_request_stop(); return; }
+    platform_sdl_present(g_render_img);
 }
 #endif
 
@@ -241,6 +250,8 @@ int main(int argc, char **argv) {
         if (platform_sdl_open("Kult: The Temple of Flying Saucers", scale,
                               fullscreen) == 0) {
             g_sdl = 1;
+            g_render_img = img;
+            platform_set_render_pump(render_pump_cb);
             const char *scale_name = scale == PLATFORM_SCALE_AUTO ? "auto" :
                                      scale == PLATFORM_SCALE_FILL ? "estirar" :
                                      "fija";
@@ -293,7 +304,12 @@ int main(int argc, char **argv) {
                  platform_fb_nonzero(), rc);
 
 #ifdef HAVE_SDL3
-    if (g_sdl) { platform_audio_sdl_close(); platform_sdl_close(); }
+    if (g_sdl) {
+        platform_set_render_pump(NULL);
+        g_render_img = NULL;
+        platform_audio_sdl_close();
+        platform_sdl_close();
+    }
 #endif
 
     if (dump) {

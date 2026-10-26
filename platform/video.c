@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "os.h"
@@ -60,8 +61,8 @@ void platform_video_restore(uint32_t visible, const uint16_t *palette) {
 }
 
 /* Color (0..15) del píxel (x,y) en el framebuffer planar `base`. */
-static unsigned fb_pixel(uint32_t base, int x, int y) {
-    const uint8_t *row = g_kult_img + base + (uint32_t)y * FB_ROW_BYTES;
+static unsigned fb_pixel_img(const uint8_t *img, uint32_t base, int x, int y) {
+    const uint8_t *row = img + base + (uint32_t)y * FB_ROW_BYTES;
     const uint8_t *grp = row + (x >> 4) * 8;         /* 4 planos x word = 8 B */
     unsigned bit = 15u - (unsigned)(x & 15);
     unsigned c = 0;
@@ -76,13 +77,12 @@ static unsigned chan8(unsigned v3) {               /* 3 bits -> 8 bits */
     return (v3 << 5) | (v3 << 2) | (v3 >> 1);
 }
 
-/* Convierte el framebuffer visible a RGBA8888 (320*200*4 bytes). Lo usa el
- * renderizador SDL (M3); comparte la misma lectura planar y paleta que el PPM. */
-void platform_fb_to_rgba(uint8_t *dst) {
+/* Convierte una imagen planar a RGBA8888 (320*200*4 bytes). */
+void platform_fb_to_rgba_from(const uint8_t *img, uint8_t *dst) {
     uint32_t base = platform_visible_base();
     for (int y = 0; y < FB_H; y++) {
         for (int x = 0; x < FB_W; x++) {
-            uint16_t w = g_palette[fb_pixel(base, x, y) & 15];
+            uint16_t w = g_palette[fb_pixel_img(img, base, x, y) & 15];
             *dst++ = (uint8_t)chan8((w >> 8) & 7);
             *dst++ = (uint8_t)chan8((w >> 4) & 7);
             *dst++ = (uint8_t)chan8(w & 7);
@@ -91,25 +91,32 @@ void platform_fb_to_rgba(uint8_t *dst) {
     }
 }
 
+void platform_fb_to_rgba(uint8_t *dst) {
+    platform_fb_to_rgba_from(g_kult_img, dst);
+}
+
 uint32_t platform_fb_nonzero(void) {
     if (!g_kult_img) return 0;
     uint32_t base = platform_visible_base();
     uint32_t n = 0;
     for (int y = 0; y < FB_H; y++)
         for (int x = 0; x < FB_W; x++)
-            if (fb_pixel(base, x, y) != 0) n++;
+            if (fb_pixel_img(g_kult_img, base, x, y) != 0) n++;
     return n;
 }
 
 int platform_dump_ppm(const char *path) {
     if (!g_kult_img) return -1;
+    uint8_t *frame = malloc(PLATFORM_IMAGE_SIZE);
+    if (!frame) return -1;
+    platform_cursor_compose(frame, g_kult_img);
     FILE *f = fopen(path, "wb");
-    if (!f) return -1;
+    if (!f) { free(frame); return -1; }
     uint32_t base = platform_visible_base();
     fprintf(f, "P6\n%d %d\n255\n", FB_W, FB_H);
     for (int y = 0; y < FB_H; y++) {
         for (int x = 0; x < FB_W; x++) {
-            uint16_t w = g_palette[fb_pixel(base, x, y) & 15];
+            uint16_t w = g_palette[fb_pixel_img(frame, base, x, y) & 15];
             uint8_t rgb[3] = {
                 (uint8_t)chan8((w >> 8) & 7),
                 (uint8_t)chan8((w >> 4) & 7),
@@ -119,14 +126,19 @@ int platform_dump_ppm(const char *path) {
         }
     }
     fclose(f);
+    free(frame);
     return 0;
 }
 
 int platform_dump_planar(const char *path) {
     if (!g_kult_img) return -1;
+    uint8_t *frame = malloc(PLATFORM_IMAGE_SIZE);
+    if (!frame) return -1;
+    platform_cursor_compose(frame, g_kult_img);
     FILE *f = fopen(path, "wb");
-    if (!f) return -1;
-    fwrite(g_kult_img + platform_visible_base(), 1, FB_BYTES, f);
+    if (!f) { free(frame); return -1; }
+    fwrite(frame + platform_visible_base(), 1, FB_BYTES, f);
     fclose(f);
+    free(frame);
     return 0;
 }

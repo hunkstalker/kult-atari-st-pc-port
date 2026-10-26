@@ -50,6 +50,12 @@ endif()
 # El diferencial (make test) no usa este CMake y sigue sin instrumentar.
 set_source_files_properties(${KULT_CORE_SRC}
   PROPERTIES COMPILE_OPTIONS "-finstrument-functions")
+# El cursor software del core se conserva, pero se renombra para que el port
+# pueda envolverlo y componer una copia de presentación/captura.
+set_source_files_properties(
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/kult-core/src/cursor.c
+  PROPERTIES COMPILE_DEFINITIONS
+    "cursor_draw=kult_core_cursor_draw;cursor_restore=kult_core_cursor_restore")
 
 add_library(kultport STATIC ${KULT_CORE_SRC} ${KULT_BOOT_SRC} ${KULT_PLATFORM_SRC})
 # `platform/include` PRIMERO: sombrea os.h/hw.h/psg.h/sched.h del kit.

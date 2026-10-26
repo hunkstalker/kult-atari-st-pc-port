@@ -23,7 +23,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-096 | CI en GitHub: HAL + paquetes Windows/Linux | ✅ cerrada; primera ejecución OK (`notes/0092`) |
 | T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 CI verde; pendiente validación DMG en Mac Intel (`notes/0093`) |
 | T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de tag y GitHub Release |
-| T-138 | Cursor a refresco nativo (overlay B) | ⬜ después de 1.1.0; rama `feature/cursor-refresh` (`notes/0094`) |
+| T-138 | Cursor a refresco nativo (overlay B) | 🚧 implementado en rama `feature/cursor-refresh`; pendiente QA (`notes/0095`) |
 | T-139 | Separar render y simulación en hilos | ⬜ solo si T-138 no basta; después de la validación |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
@@ -196,7 +196,7 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M9 — Cursor a refresco nativo (después de 1.1.0)
 | id | tarea | estado |
 |---|---|---|
-| T-138 | **Cursor B**: overlay pixel-exacto del cursor, presentación oportunista a más Hz, capturas con cursor, savestate con estado y sin píxeles horneados | ⬜ después de 1.1.0; decisiones en **`notes/0094`** |
+| T-138 | **Cursor B**: overlay pixel-exacto del cursor, presentación oportunista a más Hz, capturas con cursor, savestate con estado y sin píxeles horneados | 🚧 **implementado en rama**; tests locales y builds Linux/Windows OK; pendiente QA visual. Detalle: **`notes/0095`** |
 | T-139 | **Separar render y simulación en hilos** | ⬜ solo si T-138 no da fluidez suficiente; mayor riesgo y QA; después de la validación |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)

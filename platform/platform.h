@@ -98,6 +98,8 @@ void platform_set_tick(void (*fn)(uint8_t *img));
  * conserva por compatibilidad, pero ya no desactiva la presentación. */
 void platform_set_present(void (*fn)(uint8_t *img));
 void platform_set_loop(int on);
+/* Pump de presentación de alta frecuencia durante las esperas (SDL). */
+void platform_set_render_pump(void (*fn)(void));
 
 /* Retardo de CPU del original (`dbf` que solo consumen tiempo: motor de
  * elementos, reveal/retrato...). Convierte "unidades" (~ciclos/10) a tiempo con
@@ -160,6 +162,11 @@ const uint16_t *platform_palette(void);
 
 /* Convierte el framebuffer visible (320x200) a RGBA8888 (256000 B). */
 void platform_fb_to_rgba(uint8_t *dst);
+/* Igual, usando una imagen explícita (copia con cursor compuesto). */
+void platform_fb_to_rgba_from(const uint8_t *img, uint8_t *dst);
+/* Copia la imagen y recoloca el cursor en su posición actual. */
+void platform_cursor_compose(uint8_t *dst, const uint8_t *src);
+int  platform_cursor_visible(void);
 
 /* Cuenta de píxeles no-negro del framebuffer visible (para comprobaciones). */
 uint32_t platform_fb_nonzero(void);

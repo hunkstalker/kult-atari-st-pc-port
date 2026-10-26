@@ -42,6 +42,9 @@ void sound_isr_back(uint8_t *img) { (void)img; }
  * del savestate no enlaza el core completo). */
 void cursor_draw(uint8_t *img)    { (void)img; }
 void cursor_restore(uint8_t *img) { (void)img; }
+void platform_cursor_compose(uint8_t *dst, const uint8_t *src) {
+    if (dst && src) memcpy(dst, src, PLATFORM_IMAGE_SIZE);
+}
 void sound_stop(uint8_t *img)     { (void)img; }
 
 #define IMG_SIZE 0x100000u
@@ -963,7 +966,12 @@ static void test_slots(void) {
 
 /* Retardo de CPU (cpu_delay de los bucles dbf): no-op sin tiempo real; con
  * tiempo real duerme el equivalente (~10 ciclos/unidad a 8 MHz) y cede VBLs. */
+static int g_render_calls;
+static void render_counter(void) { g_render_calls++; }
+
 static void test_cpu_delay(void) {
+    platform_set_render_pump(render_counter);
+    g_render_calls = 0;
     platform_set_realtime(0);
     uint32_t f0 = platform_frame_count();
     platform_cpu_delay(40000);
@@ -975,6 +983,8 @@ static void test_cpu_delay(void) {
     platform_cpu_delay(36000);                  /* ~45 ms a 8 MHz */
     CHECK(platform_frame_count() - f0 >= 2,
           "cpu_delay en tiempo real cede >= 2 VBLs en ~45 ms");
+    CHECK(g_render_calls > 0,
+          "el pump de presentación corre durante cpu_delay");
 
     /* Ciclo `dbra d0` con d0=0xffff del retrato/intro (0x16a20), del anillo
      * (0x1566a) y de palette_cycle (0x16310, SOLAR EYES/T-090): 65536
@@ -984,6 +994,7 @@ static void test_cpu_delay(void) {
     CHECK(platform_frame_count() - f0 >= 4,
           "cpu_delay de 0x10000 unidades cede >= 4 VBLs (~82 ms)");
     platform_set_realtime(0);
+    platform_set_render_pump(NULL);
 }
 
 /* Espera de lectura de disquete del ST: no-op sin tiempo real; con tiempo real
