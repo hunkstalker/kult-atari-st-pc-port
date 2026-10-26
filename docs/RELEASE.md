@@ -8,7 +8,8 @@ Documento de decisión para la release del port. Prevalece sobre las partes de
 
 La release **1.0.0** está publicada con ZIP Windows, TGZ Linux y AppImage
 (detalle: `notes/0092`). La **1.1.0** está en preparación y añade macOS
-Universal 2; el ZIP/DMG de macOS se firma en modo ad-hoc y no se notariza.
+Universal 2; el DMG de macOS se firma en modo ad-hoc, no se notariza y se
+distribuye dentro de un ZIP.
 
 ## Objetivo
 
@@ -78,14 +79,14 @@ ALSA/Pulse. SDL3 va incluida.
 ## macOS
 
 La release macOS es Universal 2 (Intel `x86_64` + Apple Silicon `arm64`),
-requiere macOS 11+ y se publica como ZIP y DMG:
+requiere macOS 11+ y se publica como un ZIP que contiene únicamente el DMG:
 
 ```text
 kult-1.1.0-macos-universal.zip
-kult-1.1.0-macos-universal.dmg
+kult-1.1.0-macos-universal.zip.sha256
 ```
 
-Contenido:
+El ZIP contiene solo el DMG; el DMG contiene:
 
 ```text
 Kult.app/
@@ -103,6 +104,9 @@ LICENSE
 THIRD_PARTY_NOTICES.md
 LICENSES/
 ```
+
+El DMG se conserva en el artifact de CI para la QA manual, pero no se publica
+como asset suelto en la release.
 
 `Kult.app` va firmada en modo ad-hoc si no se configura
 `MACOS_SIGN_IDENTITY`; no está notarizada. Si faltan `data/kult.data` y los STX,
@@ -234,13 +238,13 @@ saves/ (vacía)
 - `test`: `make test-port` + `make test-tools`.
 - `windows`: `make deps-win` + `make package-win`, ZIP y `.sha256`.
 - `linux`: `make deps-linux`, CMake, TGZ, AppImage y sus `.sha256`.
-- `macos`: `make deps-macos`, CMake Universal 2, ZIP/DMG, firma ad-hoc y
-  `.sha256`.
-- `release`: en tags `v*`, adjunta ZIP Windows, TGZ/AppImage Linux y ZIP/DMG
-  macOS con sus checksums.
+- `macos`: `make deps-macos`, CMake Universal 2, DMG y ZIP que contiene solo el
+  DMG, firma ad-hoc y `.zip.sha256`. El artifact incluye también el DMG para QA.
+- `release`: en tags `v*`, adjunta ZIP Windows, TGZ/AppImage Linux y el ZIP de
+  macOS (con el DMG) más su `.zip.sha256`. No publica el DMG suelto.
 
 Los artefactos de CI pueden no ser byte-idénticos al ZIP validado localmente;
-cada paquete incluye su `.sha256`.
+cada paquete tiene su `.sha256` como asset separado en la release.
 
 No contiene:
 

@@ -4,8 +4,8 @@ Kult: The Temple of Flying Saucers — macOS
 Requisitos: macOS 11 o superior. Esta build es Universal 2: funciona en Macs
 Intel y Apple Silicon. No incluye el juego: aporta tu copia legal.
 
-1) Descomprime el ZIP o abre el DMG y copia `Kult.app` a una carpeta normal
-   (por ejemplo, Aplicaciones o Escritorio).
+1) Este DMG viene dentro del ZIP de la release. Ábrelo y copia `Kult.app` a
+   una carpeta normal (por ejemplo, Aplicaciones o Escritorio).
 
 2) Primera ejecución: abre `Kult.app`.
    Si macOS avisa de que la aplicación no está verificada, usa clic derecho >

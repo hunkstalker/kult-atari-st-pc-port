@@ -3,9 +3,9 @@
 Segunda release pública del port nativo de **Kult: The Temple of Flying
 Saucers** (Exxos/ERE, 1989): **Windows, Linux y macOS**, con español y catalán.
 
-Fecha: 2026-10-25. Tag: `v1.1.0`.
+Fecha: 2026-10-26. Tag: `v1.1.0`.
 
-El port ejecuta el C verificado del Atari ST sobre un backend SDL3, sin emulador.
+El port ejecuta el C del Atari ST sobre un backend SDL3, sin emulador.
 No incluye el juego original: el usuario aporta su propia copia legal.
 
 ## Destacado
@@ -29,8 +29,9 @@ No incluye el juego original: el usuario aporta su propia copia legal.
   `lib/libSDL3.so.0`, datos, ajustes y `LEEME.txt`).
 - Linux AppImage: `kult-1.1.0-x86_64.AppImage` (un solo archivo; crea `data/` y
   `saves/` junto a él y copia `LEEME.txt`).
-- macOS Universal 2: `kult-1.1.0-macos-universal.zip` y `.dmg`
-  (`Kult.app`, `LEEME.txt`, ajustes y licencias).
+- macOS Universal 2: `kult-1.1.0-macos-universal.zip`, que contiene únicamente
+  `kult-1.1.0-macos-universal.dmg` (con `Kult.app`, `LEEME.txt`, ajustes y
+  licencias); su `.zip.sha256` se adjunta como descarga aparte.
 
 Las instrucciones completas de primera ejecución están en `README.md` y en el
 `LEEME.txt` de cada plataforma. El usuario solo aporta `Kult.STX` y
@@ -46,10 +47,7 @@ seguridad. Para abrirla:
 2. O ir a **Ajustes del Sistema > Privacidad y seguridad** y permitir la app.
 
 No hace falta tener una cuenta Apple Developer para usar esta build. Una
-notarización oficial queda para una release posterior. La build Universal 2 se
-verifica en CI para `arm64` y `x86_64`; la prueba visual manual prevista es en un
-Mac Intel. Si aparece un problema específico de Apple Silicon, se corregirá en
-una revisión posterior.
+notarización oficial queda para una release posterior.
 
 ## Primera ejecución
 
@@ -59,8 +57,10 @@ una revisión posterior.
 - **AppImage**: coloca los `.STX` junto al AppImage y ejecútalo desde una carpeta
   escribible. La primera ejecución crea `data/`, `saves/` y `LEEME.txt` a su
   lado.
-- **macOS**: abre `Kult.app`; si faltan los discos, selecciónalos en el diálogo.
-  Si existe `~/Library/Application Support/Kult/data/kult.data`, las siguientes
+- **macOS**: descomprime `kult-1.1.0-macos-universal.zip`, abre el DMG y
+  arrastra `Kult.app` a Aplicaciones. Al abrir la app, si faltan los discos,
+  selecciónalos en el diálogo. Si existe
+  `~/Library/Application Support/Kult/data/kult.data`, las siguientes
   ejecuciones no piden los STX.
 
 ## Desinstalación en macOS
@@ -80,9 +80,9 @@ Opcionalmente, si existe, borra también
 instalador, servicios ni archivos de la app en `/Library`; el DMG se puede
 expulsar sin afectar a la instalación.
 
-Los checksums SHA-256 de los artefactos se adjuntan a la GitHub Release.
-Los artefactos de CI no son necesariamente byte-idénticos a builds locales por
-los timestamps del empaquetado.
+Los checksums SHA-256 de los paquetes se adjuntan a la GitHub Release como
+descargas aparte. En macOS, el `.zip.sha256` corresponde al ZIP que contiene el
+DMG.
 
 ## Licencias
 

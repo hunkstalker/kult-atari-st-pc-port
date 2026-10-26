@@ -1,5 +1,6 @@
 #!/bin/sh
-# Empaqueta Kult.app, firma ad-hoc (o Developer ID) y crea ZIP + DMG.
+# Empaqueta Kult.app, firma ad-hoc (o Developer ID), crea el DMG y un ZIP
+# que contiene solo el DMG.
 # Uso: KULT_VERSION=1.1.0 tools/build_macos.sh <stage-dir> <out-dir>
 set -eu
 
@@ -24,9 +25,9 @@ need() {
 need lipo
 need otool
 need codesign
-need ditto
 need hdiutil
 need shasum
+need zip
 
 ARCHS=$(lipo -archs "$EXE")
 for arch in arm64 x86_64; do
@@ -73,7 +74,6 @@ mkdir -p "$OUTDIR"
 ZIP="$OUTDIR/kult-$VERSION-macos-universal.zip"
 DMG="$OUTDIR/kult-$VERSION-macos-universal.dmg"
 rm -f "$ZIP" "$DMG"
-ditto -c -k --sequesterRsrc --keepParent "$PKG" "$ZIP"
 hdiutil create -volname "Kult $VERSION" -srcfolder "$PKG" -ov -format UDZO "$DMG"
 
 if [ -n "$SIGN_ID" ]; then
@@ -89,9 +89,10 @@ if [ -n "${APPLE_ID:-}" ] && [ -n "${APPLE_TEAM_ID:-}" ] && [ -n "${APPLE_APP_PA
     xcrun stapler staple "$DMG"
 fi
 
-for f in "$ZIP" "$DMG"; do
-    shasum -a 256 "$f" > "$f.sha256"
-    cat "$f.sha256"
-done
+# El ZIP de release contiene solo el DMG, ya firmado/notarizado.
+# El DMG se conserva en el artifact de CI para la QA manual.
+(cd "$OUTDIR" && zip -q -X -j "$(basename "$ZIP")" "$(basename "$DMG")" && \
+    shasum -a 256 "$(basename "$ZIP")" > "$(basename "$ZIP").sha256")
+cat "$ZIP.sha256"
 echo "OK: $ZIP"
 echo "OK: $DMG"

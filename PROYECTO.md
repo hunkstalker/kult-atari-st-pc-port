@@ -96,7 +96,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M4** | audio (MFP Timer A + PSG + SDL audio) | ✅ hecho (T-040/041/042) |
 | **M6** | pulido y validación | ✅ **cerrada**: T-060 ✅ (menú fiel); **T-061 ✅ validada en Windows (2026-10-23)**; **T-089 ✅** (final en bucle de estrellas); **T-090 ✅** (SOLAR EYES, cerrado; audio gap fuera de alcance). T-073 queda como **feature opcional** de calibración fina |
 | **M7** | build/empaquetado (Windows/Linux) + ingesta + idiomas + licencias | ✅ build (T-070), paquete portable (T-071), ingesta `.STX`/`kult.data` (T-072), `language.data` con español y catalán (T-091), licencias (T-D02). T-022, T-101 y T-102–T-135 cerradas (fullscreen/F1/F2, ranuras F5/F6/F7 en `slot-N.save`, OSD con fuente original, terminología catalana T-119/T-132); release 1.0.0 publicada (T-092; commit `8eb079a`, ZIP/TGZ/AppImage); CI de release ejecutado con éxito (T-096); Linux TGZ + AppImage (T-135) |
-| **M8** | **macOS Universal 2 + release 1.1.0** | 🚧 T-136 con CI verde (run 12) y artifact generado; falta QA del DMG en Mac Intel y T-137 (tag/release). Sin notarizar (ad-hoc) |
+| **M8** | **macOS Universal 2 + release 1.1.0** | 🚧 T-136 con CI verde (run 12) del empaquetado anterior; el nuevo paquete genera DMG + ZIP (solo DMG) + `.zip.sha256` y está pendiente de CI/QA; falta T-137 (tag `v1.1.0`/release con ZIP macOS + `.zip.sha256`). Sin notarizar (ad-hoc) |
 | **M9** | **cursor a refresco nativo + separación render/simulación** | ⬜ T-138 (overlay B) y T-139 (hilos, solo si hace falta) después de 1.1.0; ver `notes/0094` |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |

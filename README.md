@@ -136,9 +136,9 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
 
 ### macOS (Universal 2)
 
-1. Descomprime `kult-1.1.0-macos-universal.zip` o abre
-   `kult-1.1.0-macos-universal.dmg` y copia `Kult.app` a una carpeta normal,
-   por ejemplo `Aplicaciones` o `Escritorio`.
+1. Descarga `kult-1.1.0-macos-universal.zip`, descomprímelo y abre el
+   `kult-1.1.0-macos-universal.dmg` que contiene. Copia `Kult.app` a una carpeta
+   normal, por ejemplo `Aplicaciones` o `Escritorio`.
 2. Arranca `Kult.app` con doble clic. Si macOS avisa de que no está verificada,
    usa clic derecho > **Abrir** o **Ajustes del Sistema > Privacidad y
    seguridad > Abrir igualmente**. La build es ad-hoc, no está notarizada.

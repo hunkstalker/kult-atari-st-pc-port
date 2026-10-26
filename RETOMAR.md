@@ -33,9 +33,11 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 **Siguiente tarea: T-136 — macOS Universal 2 y release 1.1.0.**
 
 - Implementación local: `notes/0093`.
-- CI macOS en verde (run 12); artifact `kult-macos-universal` generado.
-- Pendiente: probar el DMG en un Mac Intel y publicar `v1.1.0` (T-137).
-  Apple Silicon queda validado solo por CI.
+- CI macOS en verde (run 12) con el empaquetado anterior; el nuevo empaquetado
+  genera DMG y ZIP que contiene solo el DMG, más su `.zip.sha256`.
+- Pendiente: verificar el ZIP en CI, probar el DMG en un Mac Intel y publicar
+  `v1.1.0` (T-137). Apple Silicon queda validado solo por CI.
+- La release 1.1.0 publicará el ZIP de macOS y su `.zip.sha256`; sin DMG suelto.
 - macOS va firmado en modo ad-hoc y no notarizado; Gatekeeper se documenta en
   `LEEME_MAC.txt`.
 
@@ -75,10 +77,10 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 - macOS Universal 2: `Kult.app` con SDL3, icono, `Info.plist` y `LEEME.txt`.
 - Datos en `~/Library/Application Support/Kult`; selector de STX en el primer
   arranque y errores visibles desde Finder.
-- `make deps-macos`, `make cmake-macos`, `make package-macos`; ZIP/DMG con firma
-  ad-hoc y sin notarizar.
-- CI `macos-15` ejecutado en verde (run 12); artifact `kult-macos-universal`
-  generado; falta la prueba visual en Mac Intel.
+- `make deps-macos`, `make cmake-macos`, `make package-macos`; DMG y ZIP que
+  contiene solo el DMG, más su `.zip.sha256`, con firma ad-hoc y sin notarizar.
+- CI `macos-15` ejecutado en verde (run 12) con el empaquetado anterior; falta
+  ejecutar CI del nuevo commit y la prueba visual en Mac Intel.
 - Detalle: `notes/0093`.
 
 **T-094 — cerrada (2026-10-25):**
@@ -408,8 +410,10 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 
 **Pendiente, en este orden:**
 
-1. **T-136 — macOS Universal 2**: validación visual del DMG en Mac Intel.
-2. **T-137 — release 1.1.0**: tag, GitHub Release y checksums.
+1. **T-136 — macOS Universal 2**: verificar el ZIP de release en CI y validar
+   visualmente el DMG en Mac Intel.
+2. **T-137 — release 1.1.0**: tag `v1.1.0`, GitHub Release con el ZIP de macOS
+   (contiene el DMG) + `.zip.sha256`, y checksums de Windows/Linux.
 3. **T-138 — cursor a refresco nativo (B)**: overlay y presentación oportunista;
    decidido en `notes/0094`.
 4. **T-139 — separar render y simulación en hilos**: solo si T-138 no basta;

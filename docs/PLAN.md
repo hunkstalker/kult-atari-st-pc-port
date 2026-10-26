@@ -99,10 +99,11 @@ Detalle: `notes/0012`, `notes/0013`.
 **Objetivo:** publicar Windows/Linux/macOS con un único `Kult.app` Universal 2,
 sin cuenta Apple Developer.
 **Contenido:** `Kult.app` + `Info.plist` + `.icns`; SDL3 universal; selector de
-STX; datos en `~/Library/Application Support/Kult`; ZIP/DMG; firma ad-hoc;
-CI macOS; `LEEME.txt` por plataforma.
+STX; datos en `~/Library/Application Support/Kult`; ZIP que contiene el DMG;
+firma ad-hoc; CI macOS; `LEEME.txt` por plataforma.
 **Aceptación:** CI macOS en verde, artifact probado en Mac Intel, Apple Silicon
-verificado por arquitectura/CI, y GitHub Release 1.1.0 con checksums.
+verificado por arquitectura/CI, y GitHub Release 1.1.0 con el ZIP de macOS y sus
+checksums.
 **Nota:** no se notariza; Gatekeeper se documenta. Detalle: `notes/0093`.
 
 ## M9 — Cursor a refresco nativo (después de 1.1.0)

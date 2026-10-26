@@ -25,8 +25,8 @@ final está regenerado en T-135 con Linux. La release **1.0.0** está publicada
 como `v1.0.0` (commit `8eb079a`) con ZIP Windows, TGZ Linux y AppImage; el CI de
 `.github/workflows/release.yml` terminó en `success` (T-092/T-096). La **1.1.0**
 está en preparación con macOS Universal 2 (T-136): `Kult.app` Intel + Apple
-Silicon, selector de STX, Application Support, ZIP/DMG, firma ad-hoc y sin
-notarizar.
+Silicon, selector de STX, Application Support, ZIP que contiene el DMG, firma
+ad-hoc y sin notarizar.
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están

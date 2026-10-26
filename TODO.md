@@ -21,8 +21,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y paquetes Windows/Linux | ✅ publicada (2026-10-25; CI OK; `notes/0092`) |
 | T-135 | Paquetes Linux TGZ + AppImage | ✅ cerrada; CI generó TGZ/AppImage (`notes/0091`, `notes/0092`) |
 | T-096 | CI en GitHub: HAL + paquetes Windows/Linux | ✅ cerrada; primera ejecución OK (`notes/0092`) |
-| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 CI verde; pendiente validación DMG en Mac Intel (`notes/0093`) |
-| T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de tag y GitHub Release |
+| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 CI verde (run 12, empaquetado anterior); nuevo ZIP con DMG pendiente de CI; pendiente validación DMG en Mac Intel (`notes/0093`) |
+| T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de validación DMG y tag `v1.1.0`; release con ZIP macOS + `.zip.sha256` (sin DMG suelto) |
 | T-138 | Cursor a refresco nativo (overlay B) | ⬜ después de 1.1.0; rama `feature/cursor-refresh` (`notes/0094`) |
 | T-139 | Separar render y simulación en hilos | ⬜ solo si T-138 no basta; después de la validación |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
@@ -190,8 +190,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M8 — macOS y release 1.1.0
 | id | tarea | estado |
 |---|---|---|
-| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP/DMG y CI | 🚧 **CI verde (run 12)**; artifact `kult-macos-universal` generado; pendiente QA visual Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
-| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP/DMG, checksums y notas | ⬜ pendiente de validación DMG y tag/publicación |
+| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP con DMG y CI | 🚧 **CI verde (run 12) con el empaquetado anterior**; nuevo empaquetado DMG + ZIP (solo DMG) + `.zip.sha256` pendiente de CI; pendiente QA visual Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
+| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP con DMG, checksums y notas | ⬜ pendiente de validación DMG y tag `v1.1.0`; la release publica el ZIP de macOS + `.zip.sha256` (sin DMG suelto) |
 
 ## M9 — Cursor a refresco nativo (después de 1.1.0)
 | id | tarea | estado |
