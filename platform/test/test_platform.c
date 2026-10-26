@@ -1131,6 +1131,18 @@ static void test_real_input(void) {
           "el ratón real fija el cursor");
     CHECK(g_img[A_IKBD_PACKET] == 1, "el botón izquierdo viaja en el IKBD");
 
+    /* T-138: el overlay usa el ratón nuevo antes de la siguiente entrega IKBD,
+     * pero respeta un cursor recolocado por el juego hasta que el usuario mueva
+     * el ratón. */
+    uint16_t ox, oy;
+    wr16(g_img + A_CURSOR_X, 50);
+    wr16(g_img + A_CURSOR_Y, 60);
+    platform_input_cursor_for_overlay(g_img, &ox, &oy);
+    CHECK(ox == 50 && oy == 60, "overlay respeta el cursor movido por el juego");
+    platform_mouse_set(210, 160, 0);
+    platform_input_cursor_for_overlay(g_img, &ox, &oy);
+    CHECK(ox == 210 && oy == 160, "overlay usa el ratón nuevo antes de IKBD");
+
     platform_key_push('D');
     uint32_t key = 0;
     CHECK(os_cnecin(g_img, &key) == 1 && (key & 0xff) == 'D',

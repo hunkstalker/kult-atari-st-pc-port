@@ -233,6 +233,9 @@ Arquitectura, variables y pruebas: [`DIAGNOSTICO.md`](DIAGNOSTICO.md).
   **`notes/0038-replay-input-t088.md`**. Flujo **validado en Windows**: sirvió
   para reproducir y cerrar el crash de la ficha al atacar a un personaje
   (T-088).
+- **Presentación (T-138)**: `KULT_PRESENT_LOG=1` registra cada segundo la
+  frecuencia real de `SDL_RenderPresent` (`present: N Hz`). Está limitada por
+  VSync y por la frecuencia del monitor.
 - **Medida objetiva**: `KULT_FPSLOG=1` imprime cada ~3 s el **FPS del bucle del
   juego** (una iteración = un `wait_frame`, igual que el contador `Ikbdws` del
   arnés Hatari del predecesor: `tools/hatari_fps/`). Comparar la **misma escena**

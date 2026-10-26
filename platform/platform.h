@@ -68,6 +68,9 @@ void platform_input_apply_skip(uint8_t *img);
 void platform_ikbdws(const uint8_t *buf, uint32_t len);
 void platform_input_set_auto(int on);
 void platform_set_idle(void (*fn)(uint8_t *img));
+/* Posición del cursor para presentación: ratón nuevo o cursor movido por el juego. */
+void platform_input_cursor_for_overlay(const uint8_t *img, uint16_t *x,
+                                       uint16_t *y);
 
 /* Replay de entrada (T-088): graba o reproduce las respuestas que ve el juego
  * en cada sondeo (IKBD/cursor, Crawio y Cnecin). KULT_REPLAY_REC=<ruta> graba;

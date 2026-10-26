@@ -26,6 +26,14 @@ uint32_t screen_address_raw(uint8_t *img, uint32_t x, uint32_t y,
     return be32(img + A_SCREEN_PTR_A) + x + y * 0xa0;
 }
 
+/* En este test no se enlaza input.c: el cursor de la imagen es la referencia. */
+void platform_input_cursor_for_overlay(const uint8_t *img, uint16_t *x,
+                                       uint16_t *y) {
+    if (!img || !x || !y) return;
+    *x = be16(img + A_CURSOR_X);
+    *y = be16(img + A_CURSOR_Y);
+}
+
 static int cmp(const uint8_t *a, const uint8_t *b) {
     for (size_t i = 0; i < PLATFORM_IMAGE_SIZE; i++)
         if (a[i] != b[i]) {

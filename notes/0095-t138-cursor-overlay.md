@@ -26,6 +26,10 @@ Fecha: 2026-10-26. Estado: **implementado en rama; pendiente QA visual**.
   `sleep_with_render()`: durante las esperas de VBL se presenta la misma imagen
   a hasta ~120 Hz para que el cursor responda. La simulación no se acelera.
 - `app/main.c` registra el pump solo con ventana SDL abierta.
+- El overlay usa la posición nueva del ratón aunque el IKBD aún no la haya
+  entregado; si el juego recoloca el cursor (ficha de objeto), respeta esa
+  posición hasta que el usuario mueva el ratón.
+- `KULT_PRESENT_LOG=1` registra la frecuencia real de presentación.
 
 ## Tests
 
@@ -35,6 +39,9 @@ Fecha: 2026-10-26. Estado: **implementado en rama; pendiente QA visual**.
 - `make test-port` verifica que el pump se ejecuta durante `cpu_delay`.
 - CMake Linux y Windows: build OK.
 - pytest: 5 passed.
+- Medición con Xvfb: 60 Hz de presentación (límite VSync del display de prueba);
+  el código intenta hasta ~120 Hz. En un monitor de 60 Hz el máximo útil es 60;
+  en 120/144 Hz puede subir hasta el límite del código.
 
 ## Pendiente antes de mezclar
 

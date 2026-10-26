@@ -209,6 +209,24 @@ int platform_sdl_open(const char *title, int scale_mode, int fullscreen) {
 
 void platform_sdl_present(uint8_t *img) {
     if (!g_tex || !g_ren) return;
+    {
+        static int log_on = -1;
+        static uint64_t last_ns;
+        static unsigned count;
+        uint64_t now = platform_now_ns();
+        if (log_on < 0) {
+            log_on = getenv("KULT_PRESENT_LOG") != NULL;
+            last_ns = now;
+        }
+        if (log_on) {
+            count++;
+            if (now - last_ns >= 1000000000ull) {
+                platform_log("present: %u Hz", count);
+                count = 0;
+                last_ns = now;
+            }
+        }
+    }
     update_viewport();
     /* KULT_VBL_TITLE=1: muestra el VBL actual en la barra de titulo (marcas). */
     {

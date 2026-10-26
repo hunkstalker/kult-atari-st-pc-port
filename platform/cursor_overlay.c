@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "machine.h"
+#include "addrs.h"
 #include "platform.h"
 
 void kult_core_cursor_draw(uint8_t *img);
@@ -34,8 +36,12 @@ void platform_cursor_compose(uint8_t *dst, const uint8_t *src) {
     memcpy(dst, src, PLATFORM_IMAGE_SIZE);
     if (!g_visible) return;
 
-    /* Quita el cursor de la posición anterior y lo pinta en A_CURSOR_X/Y,
-     * que la HAL actualiza con cada evento de ratón. */
+    /* Quita el cursor de la posición anterior y lo pinta en la posición de
+     * presentación: el ratón más reciente o el cursor movido por el juego. */
+    uint16_t x, y;
+    platform_input_cursor_for_overlay(src, &x, &y);
+    wr16(dst + A_CURSOR_X, x);
+    wr16(dst + A_CURSOR_Y, y);
     kult_core_cursor_restore(dst);
     kult_core_cursor_draw(dst);
 }
