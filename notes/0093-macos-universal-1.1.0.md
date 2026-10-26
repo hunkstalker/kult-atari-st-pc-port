@@ -1,8 +1,8 @@
 # 0093 — macOS Universal 2 y release 1.1.0
 
-Fecha: 2026-10-25; actualizado 2026-10-26. Estado: **CI verde (run 12) con el
-empaquetado anterior**; el nuevo empaquetado de release está pendiente de CI y
-de validación visual del DMG en Mac Intel.
+Fecha: 2026-10-25; actualizado 2026-10-26. Estado: **release 1.1.0 publicada**
+(2026-10-26; tag `v1.1.0`, CI OK); pendiente la validación visual del DMG en Mac
+Intel.
 
 ## Decisión
 
@@ -38,20 +38,15 @@ de validación visual del DMG en Mac Intel.
 
 ## Estado CI
 
-- Run 12 (`ffcbebe`) en verde con el empaquetado anterior: tests, Windows,
-  Linux y macOS Universal 2.
-- El nuevo commit genera DMG y ZIP que contiene solo el DMG, más su
-  `.zip.sha256`; pendiente de ejecutar CI sobre ese commit.
-- El artifact `kult-macos-universal` incluirá el DMG para QA y el ZIP de release;
-  la release publicará solo el ZIP y su `.zip.sha256`.
-- El job `release` queda omitido en `main` porque solo corre en tags.
+- Release 1.1.0 publicada (2026-10-26; tag `v1.1.0`, CI OK).
+- El artifact `kult-macos-universal` genera DMG y ZIP que contiene solo el DMG,
+  más su `.zip.sha256`; la release publica el ZIP y su sha, sin DMG suelto.
+- El job `release` corre en tags; en `main` queda omitido.
 
 ## Pendiente
 
 - Prueba visual en Mac Intel: arranque, selector STX, audio, fullscreen,
   F1/F2/F5–F7, guardado y Gatekeeper.
 - Smoke test de Apple Silicon en CI; no hay QA visual de Apple Silicon.
-- Verificar en CI que el ZIP contiene solo el DMG y que el `.zip.sha256` coincide.
-- Tras la validación, tag `v1.1.0` y release.
 - Si aparece un problema de `-finstrument-functions` en Apple Clang, ajustar
   solo el build macOS y documentar el impacto en timing.

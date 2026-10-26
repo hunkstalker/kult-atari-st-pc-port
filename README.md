@@ -10,9 +10,10 @@ No parte de cero: el **C verificado** del Atari ST está importado en
 C corra en Windows, Linux y macOS.
 
 > **Estado:** el port es jugable de principio a fin en Windows y Linux. La
-> versión **1.1.0** añade macOS Universal 2 (Intel + Apple Silicon), firmado en
-> modo ad-hoc y no notarizado; la validación visual manual en Mac Intel está
-> pendiente. Incluye la ingesta de los discos originales, el selector de idioma,
+> versión **1.1.0** está publicada (2026-10-26) y añade macOS Universal 2
+> (Intel + Apple Silicon), firmado en modo ad-hoc y no notarizado; la validación
+> visual manual en Mac Intel está pendiente. Incluye la ingesta de los discos
+> originales, el selector de idioma,
 > los packs español y catalán, guardado/carga y audio, además de **fullscreen
 > nativo**, **F1**
 > ventana/fullscreen, **F2** escala Estirar a pantalla/×1–×6/Auto y **F5/F6/F7** para

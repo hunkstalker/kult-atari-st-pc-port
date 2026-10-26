@@ -16,10 +16,10 @@ Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
 - La presentación a más Hz es **oportunista** mientras el hilo del juego espera
   un VBL. En tramos CPU-bound el cursor puede bajar a 50 Hz o menos; no se
   rompe la lógica.
-- **T-139** (separar render y simulación en hilos) queda al final, solo si T-138
-  no da fluidez suficiente. No se implementa de entrada: SDL/window en macOS,
-  audio, input y el estado del core no son thread-safe sin un diseño y QA
-  específicos.
+- **T-139** (separar render y simulación en hilos) queda **descartada**: T-138
+  se validó en Windows y no se necesita. Solo se reevaluaría si apareciera
+  stutter; SDL/window en macOS, audio, input y el estado del core no son
+  thread-safe sin un diseño y QA específicos.
 
 ## Arquitectura prevista
 
@@ -30,7 +30,8 @@ Fecha: 2026-10-25. Estado: **planificado**, sin implementar.
   conserva la API `cursor_draw`/`cursor_restore` y el estado en la imagen.
 - El overlay usa `A_CURSOR_X/Y`, `A_CLIP_X/Y`, `A_CURSOR_SPRITE_PTR` y
   `A_CURSOR_HOTSPOT`, con la paleta actual.
-- Orden de capas: framebuffer → OSD → cursor.
+- Orden de capas: framebuffer → cursor → OSD, como hasta ahora (el OSD sigue
+  siendo la capa superior).
 - No se usa una librería externa: SDL3, ya presente.
 
 ## Fases

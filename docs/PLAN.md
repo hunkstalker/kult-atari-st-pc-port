@@ -112,9 +112,9 @@ simulación del juego a 50 Hz.
 **Contenido:** overlay pixel-exacto del cursor del juego; presentación
 oportunista durante las esperas de VBL; capturas con cursor; savestate con
 estado del cursor y sin píxeles horneados.
-**Decisión:** activado por defecto, sin variable de usuario. Si la fluidez no
-basta, **T-139** estudia separar render y simulación en hilos; no se hace de
-entrada por el riesgo en macOS/audio/estado.
+**Decisión:** activado por defecto, sin variable de usuario. **T-139** (separar
+render y simulación en hilos) queda descartada tras validar T-138 en Windows; se
+reevaluará solo si aparece stutter.
 **Detalle:** `notes/0094`.
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)

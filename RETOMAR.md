@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** release 1.0.0 publicada (2026-10-25); **v1.1.0 en preparación** con macOS Universal 2 (T-136). T-022, T-092, T-096, T-101 y T-102–T-135 cerradas. El port arranca
+**Estado:** releases 1.0.0 (2026-10-25) y 1.1.0 (2026-10-26) publicadas; 1.1.0 con macOS Universal 2 (T-136) y CI OK. T-022, T-092, T-096, T-101, T-137 y T-102–T-135 cerradas. El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -30,14 +30,13 @@ AppImage; el CI terminó en `success`. La copia local de revisión
   ambos en `success`.
 - Hashes y detalle: `notes/0092`.
 
-**Siguiente tarea: T-136 — macOS Universal 2 y release 1.1.0.**
+**Siguiente tarea: T-136 — QA visual del DMG en Mac Intel.**
 
 - Implementación local: `notes/0093`.
-- CI macOS en verde (run 12) con el empaquetado anterior; el nuevo empaquetado
-  genera DMG y ZIP que contiene solo el DMG, más su `.zip.sha256`.
-- Pendiente: verificar el ZIP en CI, probar el DMG en un Mac Intel y publicar
-  `v1.1.0` (T-137). Apple Silicon queda validado solo por CI.
-- La release 1.1.0 publicará el ZIP de macOS y su `.zip.sha256`; sin DMG suelto.
+- Release 1.1.0 publicada (2026-10-26; tag `v1.1.0`, CI OK) con ZIP de macOS
+  (contiene el DMG) + `.zip.sha256`; sin DMG suelto.
+- Pendiente: validar el DMG en un Mac Intel. Apple Silicon queda validado solo
+  por CI.
 - macOS va firmado en modo ad-hoc y no notarizado; Gatekeeper se documenta en
   `LEEME_MAC.txt`.
 
@@ -410,18 +409,17 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 
 **Pendiente, en este orden:**
 
-1. **T-136 — macOS Universal 2**: verificar el ZIP de release en CI y validar
-   visualmente el DMG en Mac Intel.
-2. **T-137 — release 1.1.0**: tag `v1.1.0`, GitHub Release con el ZIP de macOS
-   (contiene el DMG) + `.zip.sha256`, y checksums de Windows/Linux.
-3. **T-138 — cursor a refresco nativo (B)**: overlay y presentación oportunista;
-   decidido en `notes/0094`.
-4. **T-139 — separar render y simulación en hilos**: solo si T-138 no basta;
-   mayor riesgo y QA.
-5. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
-6. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
-7. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
-8. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+1. **T-136 — macOS Universal 2**: validación visual del DMG en Mac Intel
+   (release 1.1.0 ya publicada).
+2. **T-138 — cursor a refresco nativo (B)**: validado en Windows (2026-10-26);
+   pendiente QA Linux/macOS y merge a main. Detalle: `notes/0095`.
+3. **A1 — investigación Amiga (`T-A00`/`T-A01`)**: prerrequisito duro de N3.
+4. **N3 — motor nativo y assets nativos (`T-N00`–`T-N03`)**.
+5. **A2 — implementación Amiga (`T-A02`/`T-A03`)**.
+6. **M5/T-050 — filtros CRT** y **T-073 — calibración CPU/ritmo**: opcionales.
+
+**T-139 descartada:** separar render y simulación en hilos no es necesario con
+T-138; se reevaluará solo si aparece stutter.
 
 **Antes de tocar código:**
 

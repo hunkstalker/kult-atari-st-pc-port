@@ -38,6 +38,11 @@ static int g_head, g_tail;
 static uint32_t g_auto_key = 'E';
 static uint16_t g_cursor_x = 160;
 static uint16_t g_cursor_y = 100;
+static uint16_t g_delivered_x = 160;
+static uint16_t g_delivered_y = 100;
+static uint16_t g_observed_x = 160;
+static uint16_t g_observed_y = 100;
+static uint8_t  g_game_cursor_override;
 static uint8_t  g_left_down, g_right_down; /* estado físico de los botones */
 static uint8_t  g_action_pending;  /* flanco de bajada aún no entregado */
 static uint8_t  g_skip_pending;    /* bajada del derecho aún no entregada */
@@ -190,6 +195,8 @@ void platform_mouse_set(int x, int y, int buttons) {
     if (x > g_mouse_max_x) x = g_mouse_max_x;
     if (y < 0) y = 0;
     if (y > g_mouse_max_y) y = g_mouse_max_y;
+    if (g_cursor_x != (uint16_t)x || g_cursor_y != (uint16_t)y)
+        g_game_cursor_override = 0;
     g_cursor_x = (uint16_t)x;
     g_cursor_y = (uint16_t)y;
     /* Máscara del puerto: bit0 = izquierdo, bit1 = derecho. Sólo las bajadas
@@ -228,6 +235,31 @@ void platform_mouse_set(int x, int y, int buttons) {
 }
 
 int platform_input_skip_state(void) { return g_right_down; }
+
+/* Posición para el overlay: si el ratón se movió después de la última entrega
+ * IKBD, usa la posición nueva; si no, respeta un cursor movido por el juego
+ * (p. ej. la ficha de un objeto). */
+void platform_input_cursor_for_overlay(const uint8_t *img, uint16_t *x,
+                                       uint16_t *y) {
+    if (!img || !x || !y) return;
+    uint16_t ax = be16(img + A_CURSOR_X);
+    uint16_t ay = be16(img + A_CURSOR_Y);
+    if (ax != g_observed_x || ay != g_observed_y) {
+        g_observed_x = ax;
+        g_observed_y = ay;
+        g_game_cursor_override = 1;   /* el juego recolocó el cursor */
+    }
+    if (g_game_cursor_override) {
+        *x = ax;
+        *y = ay;
+    } else if (g_cursor_x != g_delivered_x || g_cursor_y != g_delivered_y) {
+        *x = g_cursor_x;
+        *y = g_cursor_y;
+    } else {
+        *x = ax;
+        *y = ay;
+    }
+}
 
 /* Emula el comando IKBD que el juego envía en crt0_init:
  *   Ikbdws(0x19, 0x1a459, 4) -> 5 bytes: 09 01 30 00 b8
@@ -386,6 +418,11 @@ void platform_ikbd_deliver(uint8_t *img) {
         img[A_INPUT_BUTTONS] &= (uint8_t)~0x04;
     wr16(img + A_CURSOR_X, g_cursor_x);
     wr16(img + A_CURSOR_Y, g_cursor_y);
+    g_delivered_x = g_cursor_x;
+    g_delivered_y = g_cursor_y;
+    g_observed_x = g_cursor_x;
+    g_observed_y = g_cursor_y;
+    g_game_cursor_override = 0;
     if (b & 1)
         kult_diag_input("ikbd_click", img, g_cursor_x, g_cursor_y, b);
 }

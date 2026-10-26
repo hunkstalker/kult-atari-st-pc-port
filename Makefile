@@ -62,9 +62,10 @@ test: test-core test-port
 #   make port-sdl   -> build/kult-sdl  con ventana SDL3 (-DHAVE_SDL3)
 #   make test-port  -> pruebas de la HAL (sin oráculo)
 #   make test       -> core + HAL + tests propios del port
-PLATFORM_SRC := $(filter-out platform/video_sdl.c platform/audio_sdl.c platform/mac_dialog.c platform/dispatch_trace.c,$(wildcard platform/*.c))
+CURSOR_OVERLAY_SRC := platform/cursor_overlay.c
+PLATFORM_SRC := $(filter-out platform/video_sdl.c platform/audio_sdl.c platform/mac_dialog.c platform/cursor_overlay.c platform/dispatch_trace.c,$(wildcard platform/*.c))
 PORT_CORE_SRC := $(wildcard lib/kult-core/src/*.c)
-PORT_SRC     := $(PORT_CORE_SRC) $(PLATFORM_SRC) $(wildcard boot/*.c) $(wildcard app/*.c)
+PORT_SRC     := $(PORT_CORE_SRC) $(PLATFORM_SRC) $(CURSOR_OVERLAY_SRC) $(wildcard boot/*.c) $(wildcard app/*.c)
 PORT_INC     := -Iplatform -Iplatform/include -Iboot -Ilib/kult-core/include -Iassets -I$(KIT)/include
 PORT_CFLAGS  := -std=c11 -O2 -Wall -Wextra -DKULT_VERSION=\"dev\" $(PORT_INC)
 PORT_HDRS    := $(wildcard platform/include/*.h) $(wildcard platform/*.h) \
@@ -84,6 +85,13 @@ port: $(PORT_BIN)
 $(PORT_OBJDIR)/lib/kult-core/src/%.o: lib/kult-core/src/%.c $(PORT_HDRS)
 	@mkdir -p $(dir $@)
 	$(CC) $(PORT_CFLAGS) -finstrument-functions -c $< -o $@
+# El cursor del core se renombra; platform/cursor_overlay.c envuelve la función
+# original y decide si el cursor se compone en presentación/captura.
+$(PORT_OBJDIR)/lib/kult-core/src/cursor.o: lib/kult-core/src/cursor.c $(PORT_HDRS)
+	@mkdir -p $(dir $@)
+	$(CC) $(PORT_CFLAGS) -finstrument-functions \
+	  -Dcursor_draw=kult_core_cursor_draw \
+	  -Dcursor_restore=kult_core_cursor_restore -c $< -o $@
 $(PORT_OBJDIR)/%.o: %.c $(PORT_HDRS)
 	@mkdir -p $(dir $@)
 	$(CC) $(PORT_CFLAGS) -c $< -o $@
@@ -105,6 +113,11 @@ port-sdl: $(PORT_SDL_BIN)
 $(SDL_OBJDIR)/lib/kult-core/src/%.o: lib/kult-core/src/%.c $(PORT_HDRS)
 	@mkdir -p $(dir $@)
 	$(CC) $(PORT_CFLAGS) -DHAVE_SDL3 $(SDL3_CFLAGS) -finstrument-functions -c $< -o $@
+$(SDL_OBJDIR)/lib/kult-core/src/cursor.o: lib/kult-core/src/cursor.c $(PORT_HDRS)
+	@mkdir -p $(dir $@)
+	$(CC) $(PORT_CFLAGS) -DHAVE_SDL3 $(SDL3_CFLAGS) -finstrument-functions \
+	  -Dcursor_draw=kult_core_cursor_draw \
+	  -Dcursor_restore=kult_core_cursor_restore -c $< -o $@
 $(SDL_OBJDIR)/%.o: %.c $(PORT_HDRS)
 	@mkdir -p $(dir $@)
 	$(CC) $(PORT_CFLAGS) -DHAVE_SDL3 $(SDL3_CFLAGS) -c $< -o $@
@@ -116,13 +129,21 @@ $(PORT_SDL_BIN): $(SDL_CORE_O) $(SDL_OBJS) $(SDL_EXTRA_O)
 # Sin instrumentación ni platform/cpuwork.c (la tabla referencia todo el core).
 PLATFORM_TEST_SRC := $(filter-out platform/cpuwork.c platform/dispatch_trace.c,$(PLATFORM_SRC))
 PLATFORM_TEST := build/test_platform
+CURSOR_TEST   := build/test_cursor_overlay
 .PHONY: test-port
-test-port: $(PLATFORM_TEST) test-diag
+test-port: $(PLATFORM_TEST) $(CURSOR_TEST) test-diag
 	$(PLATFORM_TEST)
+	$(CURSOR_TEST)
 $(PLATFORM_TEST): platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c lib/kult-core/src/music.c lib/kult-core/src/input.c $(PLATFORM_TEST_SRC) \
                   $(wildcard platform/include/*.h) $(wildcard platform/*.h) $(wildcard lib/kult-core/include/*.h)
 	@mkdir -p build
 	$(CC) $(PORT_CFLAGS) -DKULT_NO_CPUWORK platform/test/test_platform.c boot/vbl.c boot/prg.c boot/music_player.c boot/language.c lib/kult-core/src/music.c lib/kult-core/src/input.c $(PLATFORM_TEST_SRC) -o $@
+
+$(CURSOR_TEST): platform/test/test_cursor_overlay.c $(PORT_OBJDIR)/lib/kult-core/src/cursor.o $(PORT_OBJDIR)/platform/cursor_overlay.o \
+                $(wildcard platform/*.h) $(wildcard lib/kult-core/include/*.h)
+	@mkdir -p build
+	$(CC) $(PORT_CFLAGS) platform/test/test_cursor_overlay.c \
+	  $(PORT_OBJDIR)/lib/kult-core/src/cursor.o $(PORT_OBJDIR)/platform/cursor_overlay.o -o $@
 
 # Humo del diagnóstico: dos procesos para probar los logs desactivados/activados.
 PLATFORM_DIAG_TEST := build/test_diag

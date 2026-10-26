@@ -7,7 +7,7 @@ Documento de decisión para la release del port. Prevalece sobre las partes de
 ## Estado
 
 La release **1.0.0** está publicada con ZIP Windows, TGZ Linux y AppImage
-(detalle: `notes/0092`). La **1.1.0** está en preparación y añade macOS
+(detalle: `notes/0092`). La **1.1.0** está publicada (2026-10-26) y añade macOS
 Universal 2; el DMG de macOS se firma en modo ad-hoc, no se notariza y se
 distribuye dentro de un ZIP.
 

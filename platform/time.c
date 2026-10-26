@@ -60,6 +60,8 @@ static uint64_t now_ns(void) {
 #endif
 }
 
+static void (*g_render_pump)(void); /* presentación de alta frecuencia */
+
 /* Duerme al menos `ns` nanosegundos (en Windows, resolución de ms). */
 static void sleep_ns(uint64_t ns) {
 #ifdef _WIN32
@@ -70,6 +72,25 @@ static void sleep_ns(uint64_t ns) {
                            (long)(ns % 1000000000ull) };
     nanosleep(&sl, NULL);
 #endif
+}
+
+/* Duerme hasta `target`, pero da oportunidades al pump de presentación para
+ * refrescar el cursor mientras el juego espera. El juego sigue a 50 Hz. */
+#define RENDER_NS 8333333ull   /* ~120 Hz como máximo */
+static void sleep_with_render(uint64_t target) {
+    if (!g_render_pump) {
+        uint64_t now = now_ns();
+        if (now < target) sleep_ns(target - now);
+        return;
+    }
+    for (;;) {
+        uint64_t now = now_ns();
+        if (now >= target) break;
+        if (g_render_pump) g_render_pump();
+        uint64_t left = target - now;
+        if (left > RENDER_NS) left = RENDER_NS;
+        sleep_ns(left);
+    }
 }
 
 static uint32_t g_frames;
@@ -95,6 +116,7 @@ void platform_time_init(void) {
 
 void platform_set_tick(void (*fn)(uint8_t *img)) { g_tick = fn; }
 void platform_set_present(void (*fn)(uint8_t *img)) { g_present = fn; }
+void platform_set_render_pump(void (*fn)(void)) { g_render_pump = fn; }
 void platform_set_loop(int on) { g_in_loop = on ? 1 : 0; }
 
 void platform_set_realtime(int on) {
@@ -157,7 +179,7 @@ void platform_tick(uint8_t *img) {
         uint64_t target = g_rt_base_ns + (uint64_t)g_rt_count * VBL_NS;
         uint64_t now = now_ns();
         if (target > now) {
-            sleep_ns(target - now);
+            sleep_with_render(target);
         } else if (now - target > 500000000ull) {     /* muy por detrás: resincroniza */
             g_rt_base_ns = now;
             g_rt_count = 0;
@@ -217,7 +239,7 @@ static void cpu_charge_us(uint64_t us) {
         }
         if (now >= end) break;
         uint64_t wake = next_vbl < end ? next_vbl : end;
-        sleep_ns(wake - now);
+        sleep_with_render(wake);
     }
     g_cpu_busy = 0;
 }
@@ -243,7 +265,7 @@ void platform_disk_delay(uint32_t bytes) {
         }
         if (now >= end) break;
         uint64_t wake = next_vbl < end ? next_vbl : end;
-        sleep_ns(wake - now);
+        sleep_with_render(wake);
     }
     g_cpu_busy = 0;
 }

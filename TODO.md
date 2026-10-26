@@ -21,10 +21,10 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-092 | Publicar release 1.0.0: `main`, tag, GitHub Release y paquetes Windows/Linux | ✅ publicada (2026-10-25; CI OK; `notes/0092`) |
 | T-135 | Paquetes Linux TGZ + AppImage | ✅ cerrada; CI generó TGZ/AppImage (`notes/0091`, `notes/0092`) |
 | T-096 | CI en GitHub: HAL + paquetes Windows/Linux | ✅ cerrada; primera ejecución OK (`notes/0092`) |
-| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 CI verde (run 12, empaquetado anterior); nuevo ZIP con DMG pendiente de CI; pendiente validación DMG en Mac Intel (`notes/0093`) |
-| T-137 | Publicar release 1.1.0 con macOS | ⬜ pendiente de validación DMG y tag `v1.1.0`; release con ZIP macOS + `.zip.sha256` (sin DMG suelto) |
-| T-138 | Cursor a refresco nativo (overlay B) | ⬜ después de 1.1.0; rama `feature/cursor-refresh` (`notes/0094`) |
-| T-139 | Separar render y simulación en hilos | ⬜ solo si T-138 no basta; después de la validación |
+| T-136 | macOS Universal 2 (Intel + Apple Silicon) | 🚧 release 1.1.0 publicada; pendiente validación visual del DMG en Mac Intel (`notes/0093`) |
+| T-137 | Publicar release 1.1.0 con macOS | ✅ publicada (2026-10-26; tag `v1.1.0`, CI OK; ZIP macOS con el DMG + `.zip.sha256`, sin DMG suelto) |
+| T-138 | Cursor a refresco nativo (overlay B) | ✅ validado en Windows (2026-10-26); pendiente Linux/macOS y merge. Rama `feature/cursor-refresh` (`notes/0095`) |
+| T-139 | Separar render y simulación en hilos | ✅ descartada (2026-10-26): T-138 validado en Windows; reevaluar solo si aparece stutter |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
 | T-102 | Arranque fullscreen nativo, F1 fullscreen/ventana y F2 escala entera | ✅ cerrada (2026-10-25; `notes/0055`) |
@@ -190,14 +190,14 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 ## M8 — macOS y release 1.1.0
 | id | tarea | estado |
 |---|---|---|
-| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP con DMG y CI | 🚧 **CI verde (run 12) con el empaquetado anterior**; nuevo empaquetado DMG + ZIP (solo DMG) + `.zip.sha256` pendiente de CI; pendiente QA visual Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
-| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP con DMG, checksums y notas | ⬜ pendiente de validación DMG y tag `v1.1.0`; la release publica el ZIP de macOS + `.zip.sha256` (sin DMG suelto) |
+| T-136 | **macOS Universal 2**: `Kult.app` Intel + Apple Silicon, selector STX, Application Support, ZIP con DMG y CI | 🚧 **Release 1.1.0 publicada** (tag `v1.1.0`, CI OK); pendiente QA visual del DMG en Mac Intel. Sin notarizar (ad-hoc). Detalle: **`notes/0093`** |
+| T-137 | **Release 1.1.0**: Windows ZIP, Linux TGZ/AppImage, macOS ZIP con DMG, checksums y notas | ✅ **publicada (2026-10-26)**: tag `v1.1.0`, CI OK; ZIP de macOS (contiene el DMG) + `.zip.sha256`; sin DMG suelto |
 
 ## M9 — Cursor a refresco nativo (después de 1.1.0)
 | id | tarea | estado |
 |---|---|---|
-| T-138 | **Cursor B**: overlay pixel-exacto del cursor, presentación oportunista a más Hz, capturas con cursor, savestate con estado y sin píxeles horneados | ⬜ después de 1.1.0; decisiones en **`notes/0094`** |
-| T-139 | **Separar render y simulación en hilos** | ⬜ solo si T-138 no da fluidez suficiente; mayor riesgo y QA; después de la validación |
+| T-138 | **Cursor B**: overlay pixel-exacto del cursor, presentación oportunista a más Hz, capturas con cursor, savestate con estado y sin píxeles horneados | ✅ **validado en Windows (2026-10-26)**; tests locales y builds OK; pendiente QA visual Linux/macOS. Detalle: **`notes/0095`** |
+| T-139 | **Separar render y simulación en hilos** | ✅ **descartada (2026-10-26)**: con T-138 validado en Windows no hace falta; reevaluar solo si aparece stutter |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para
