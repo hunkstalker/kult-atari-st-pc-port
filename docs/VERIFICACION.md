@@ -190,8 +190,10 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
 La release macOS es Universal 2 y no está notarizada. Probar en un Mac Intel
 (manual) y comprobar que el CI verifica `arm64`:
 
-1. Descargar `kult-1.1.0-macos-universal.zip` o `.dmg`; comprobar `file`/`lipo`
-   en CI y que el bundle abre con clic derecho > Abrir.
+1. Descargar `kult-1.1.0-macos-universal.zip`, verificar su `.zip.sha256`,
+   descomprimirlo y montar el `.dmg`; comprobar que el ZIP contiene solo el DMG,
+   que `file`/`lipo` son correctos en CI y que el bundle abre con clic derecho >
+   Abrir.
 2. Arrancar sin `data/kult.data`: debe pedir los dos `.STX` y copiarlos a
    `~/Library/Application Support/Kult/data/`, y continuar al juego.
 3. Repetir sin STX: debe usar `data/kult.data` y no pedir discos.

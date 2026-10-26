@@ -1,7 +1,8 @@
 # 0093 — macOS Universal 2 y release 1.1.0
 
-Fecha: 2026-10-25. Estado: **CI verde (run 12)**; artifact generado; pendiente
-validación visual del DMG en Mac Intel.
+Fecha: 2026-10-25; actualizado 2026-10-26. Estado: **release 1.1.0 publicada**
+(2026-10-26; tag `v1.1.0`, CI OK); pendiente la validación visual del DMG en Mac
+Intel.
 
 ## Decisión
 
@@ -26,25 +27,26 @@ validación visual del DMG en Mac Intel.
   `Contents/Frameworks`, RPATH y recursos de la app.
 - `cmake/macos/Info.plist.in`, `assets/kult.icns`, `assets/LEEME_MAC.txt`.
 - `tools/fetch_sdl3_macos.sh`: SDL3 universal desde fuente.
-- `tools/build_macos.sh`: ZIP + DMG, firma ad-hoc o Developer ID opcional,
-  checksums y notarización opcional si hay secretos.
+- `tools/build_macos.sh`: DMG y ZIP que contiene solo el DMG; firma ad-hoc o
+  Developer ID opcional, `.zip.sha256` y notarización opcional si hay secretos.
 - `Makefile`: `deps-macos`, `cmake-macos`, `package-macos`.
-- CI: job `macos-15` Universal 2 y artefacto; la release incluye ZIP/DMG.
+- CI: job `macos-15` Universal 2 y artefacto con DMG + ZIP (solo DMG) +
+  `.zip.sha256`; la release publica el ZIP y su sha, sin DMG suelto.
 - Desinstalación documentada en README, `LEEME_MAC.txt`, RELEASE y notas:
   quitar solo `Kult.app` conserva datos; borrar Application Support elimina
   datos y partidas.
 
 ## Estado CI
 
-- Run 12 (`ffcbebe`) en verde: tests, Windows, Linux y macOS Universal 2.
-- Artifact `kult-macos-universal` generado (ZIP/DMG + checksums).
-- El job `release` queda omitido porque no hay tag.
+- Release 1.1.0 publicada (2026-10-26; tag `v1.1.0`, CI OK).
+- El artifact `kult-macos-universal` genera DMG y ZIP que contiene solo el DMG,
+  más su `.zip.sha256`; la release publica el ZIP y su sha, sin DMG suelto.
+- El job `release` corre en tags; en `main` queda omitido.
 
 ## Pendiente
 
 - Prueba visual en Mac Intel: arranque, selector STX, audio, fullscreen,
   F1/F2/F5–F7, guardado y Gatekeeper.
 - Smoke test de Apple Silicon en CI; no hay QA visual de Apple Silicon.
-- Tras la validación, tag `v1.1.0` y release.
 - Si aparece un problema de `-finstrument-functions` en Apple Clang, ajustar
   solo el build macOS y documentar el impacto en timing.

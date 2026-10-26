@@ -192,8 +192,6 @@ jobs:
             dist/kult-1.1.0-x86_64.AppImage.sha256
             dist/kult-1.1.0-macos-universal.zip
             dist/kult-1.1.0-macos-universal.zip.sha256
-            dist/kult-1.1.0-macos-universal.dmg
-            dist/kult-1.1.0-macos-universal.dmg.sha256
           fail_on_unmatched_files: true
           draft: false
           prerelease: false

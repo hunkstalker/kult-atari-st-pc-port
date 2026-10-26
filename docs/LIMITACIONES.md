@@ -66,7 +66,8 @@ datos.
   completados. Windows lleva `kult.exe`, `SDL3.dll`, `data/`, `saves/`,
   `LEEME.txt`, ajustes y licencias. Linux lleva `kult`, `lib/libSDL3.so.0`,
   `LEEME.txt`, datos y ajustes, además de un AppImage. macOS lleva `Kult.app`
-  Universal 2, `LEEME.txt`, ajustes y licencias, en ZIP y DMG. **No** llevan
+  Universal 2, `LEEME.txt`, ajustes y licencias, dentro de un DMG que se
+  distribuye en un ZIP. **No** llevan
   headless ni `DIAGNOSTICO.txt`. Windows requiere **Windows 10+** (UCRT);
   Linux requiere X11/Wayland y audio base; macOS requiere **11+** (Intel o
   Apple Silicon). Los tests automatizados de ingesta/packs (T-095) ya están

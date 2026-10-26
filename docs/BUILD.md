@@ -29,10 +29,10 @@
 - **CMake (M7/T-070)**: build alternativo del ejecutable para **Linux**,
   **Windows** (cross MinGW) y **macOS Universal 2**. Ver abajo; el **Makefile
   se mantiene** para core/diferencial y para `make port`/`port-sdl`/`test-port`.
-- **Empaquetado de release**: ZIP Windows, TGZ Linux/AppImage y ZIP/DMG macOS
-  Universal 2, sin assets (el usuario aporta sus STX). `kult-headless` y
-  `DIAGNOSTICO.txt` no forman parte del paquete. En el primer arranque se
-  ingieren los STX y se genera `data/kult.data`.
+- **Empaquetado de release**: ZIP Windows, TGZ Linux/AppImage y ZIP de macOS
+  que contiene el DMG Universal 2, sin assets (el usuario aporta sus STX).
+  `kult-headless` y `DIAGNOSTICO.txt` no forman parte del paquete. En el primer
+  arranque se ingieren los STX y se genera `data/kult.data`.
 
 ## Objetivo
 - **Core** compilable aparte para las pruebas diferenciales (sin SDL).
@@ -120,8 +120,9 @@ build con SDL3 del sistema.
    cmake --install build-macos --prefix build/macos-stage
    KULT_VERSION=1.1.0 tools/build_macos.sh build/macos-stage dist
    ```
-   Genera `kult-1.1.0-macos-universal.zip` y `.dmg`, firma ad-hoc (o con
-   `MACOS_SIGN_IDENTITY`) y crea los `.sha256`. Si existen `APPLE_ID`,
+   Genera el `.dmg`, el ZIP que contiene solo ese DMG y su `.zip.sha256`;
+   firma ad-hoc (o con `MACOS_SIGN_IDENTITY`). El DMG queda en `dist/` para QA;
+   la release publica el ZIP y su `.zip.sha256`. Si existen `APPLE_ID`,
    `APPLE_TEAM_ID` y `APPLE_APP_PASSWORD`, notariza el DMG; sin esos secretos
    queda una build ad-hoc no notarizada.
 4. Tests: `make test-port CC=clang` y `make test-tools PY=python`. El
