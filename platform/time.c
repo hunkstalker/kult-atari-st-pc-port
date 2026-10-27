@@ -61,6 +61,26 @@ static uint64_t now_ns(void) {
 }
 
 static void (*g_render_pump)(void); /* presentación de alta frecuencia */
+static int g_cpu_busy;              /* evita reentrada tick -> cpu_delay */
+static int g_pump_enabled = 1;
+static uint64_t g_pump_interval_ns = 8333333ull;   /* ~120 Hz */
+static uint64_t g_last_pump_ns;
+
+static void pump_init(void) {
+    const char *e = getenv("KULT_RENDER_PUMP");
+    g_pump_enabled = 1;
+    g_pump_interval_ns = 8333333ull;
+    g_last_pump_ns = 0;
+    if (e && *e) {
+        long hz = strtol(e, NULL, 0);
+        if (hz <= 0) {
+            g_pump_enabled = 0;
+        } else {
+            if (hz > 1000) hz = 1000;
+            g_pump_interval_ns = 1000000000ull / (uint64_t)hz;
+        }
+    }
+}
 
 /* Duerme al menos `ns` nanosegundos (en Windows, resolución de ms). */
 static void sleep_ns(uint64_t ns) {
@@ -75,10 +95,10 @@ static void sleep_ns(uint64_t ns) {
 }
 
 /* Duerme hasta `target`, pero da oportunidades al pump de presentación para
- * refrescar el cursor mientras el juego espera. El juego sigue a 50 Hz. */
-#define RENDER_NS 8333333ull   /* ~120 Hz como máximo */
+ * refrescar el cursor mientras el juego espera. El pump no corre durante
+ * cpu_delay/disk_delay: esos retardos deben conservar su ritmo. */
 static void sleep_with_render(uint64_t target) {
-    if (!g_render_pump) {
+    if (!g_render_pump || !g_pump_enabled || g_cpu_busy) {
         uint64_t now = now_ns();
         if (now < target) sleep_ns(target - now);
         return;
@@ -86,10 +106,16 @@ static void sleep_with_render(uint64_t target) {
     for (;;) {
         uint64_t now = now_ns();
         if (now >= target) break;
-        if (g_render_pump) g_render_pump();
-        uint64_t left = target - now;
-        if (left > RENDER_NS) left = RENDER_NS;
-        sleep_ns(left);
+        if (g_last_pump_ns == 0 ||
+            now - g_last_pump_ns >= g_pump_interval_ns) {
+            g_last_pump_ns = now;
+            g_render_pump();
+            now = now_ns();
+            if (now >= target) break;
+        }
+        uint64_t next = g_last_pump_ns + g_pump_interval_ns;
+        if (next > target) next = target;
+        if (next > now) sleep_ns(next - now);
     }
 }
 
@@ -105,13 +131,13 @@ static uint32_t g_rt_count;
 
 static uint64_t g_cpu_acc_us;    /* acumulador de retardos dbf (< 1 ms) */
 static uint32_t g_cpu_hz;        /* Hz de la CPU efectiva (lazy, KULT_CPU_HZ) */
-static int g_cpu_busy;           /* evita reentrada tick -> cpu_delay */
 static int g_disk_timing = 1;    /* 0 = no modelar esperas de disco (arranque) */
 
 void platform_time_init(void) {
     g_frames = 0; g_tick = 0; g_rt = 0;
     g_present = 0; g_in_loop = 0;
     g_cpu_acc_us = 0; g_cpu_hz = 0; g_cpu_busy = 0; g_disk_timing = 1;
+    pump_init();
 }
 
 void platform_set_tick(void (*fn)(uint8_t *img)) { g_tick = fn; }

@@ -983,8 +983,8 @@ static void test_cpu_delay(void) {
     platform_cpu_delay(36000);                  /* ~45 ms a 8 MHz */
     CHECK(platform_frame_count() - f0 >= 2,
           "cpu_delay en tiempo real cede >= 2 VBLs en ~45 ms");
-    CHECK(g_render_calls > 0,
-          "el pump de presentación corre durante cpu_delay");
+    CHECK(g_render_calls == 0,
+          "cpu_delay no debe llamar al pump de presentación");
 
     /* Ciclo `dbra d0` con d0=0xffff del retrato/intro (0x16a20), del anillo
      * (0x1566a) y de palette_cycle (0x16310, SOLAR EYES/T-090): 65536
@@ -993,6 +993,8 @@ static void test_cpu_delay(void) {
     platform_cpu_delay(0x10000u);
     CHECK(platform_frame_count() - f0 >= 4,
           "cpu_delay de 0x10000 unidades cede >= 4 VBLs (~82 ms)");
+    CHECK(g_render_calls == 0,
+          "cpu_delay largo tampoco debe llamar al pump");
     platform_set_realtime(0);
     platform_set_render_pump(NULL);
 }
@@ -1000,6 +1002,8 @@ static void test_cpu_delay(void) {
 /* Espera de lectura de disquete del ST: no-op sin tiempo real; con tiempo real
  * 800 B a 62,5 us/B = 50 ms -> >= 2 VBLs. */
 static void test_disk_delay(void) {
+    platform_set_render_pump(render_counter);
+    g_render_calls = 0;
     platform_set_realtime(0);
     uint32_t f0 = platform_frame_count();
     platform_disk_delay(800);
@@ -1018,13 +1022,18 @@ static void test_disk_delay(void) {
     platform_disk_delay(800);                   /* ~50 ms */
     CHECK(platform_frame_count() - f0 >= 2,
           "disk_delay en tiempo real cede >= 2 VBLs en ~50 ms");
+    CHECK(g_render_calls == 0,
+          "disk_delay no debe llamar al pump de presentación");
     platform_disk_timing(1);
     platform_set_realtime(0);
+    platform_set_render_pump(NULL);
 }
 
 /* Coste de CPU en ciclos exactos (bucle subq/bne de 0x16dec): mismo contrato
  * que cpu_delay; 737280 ciclos ~92 ms a 8 MHz -> >= 4 VBLs. */
 static void test_cpu_charge_cycles(void) {
+    platform_set_render_pump(render_counter);
+    g_render_calls = 0;
     platform_set_realtime(0);
     uint32_t f0 = platform_frame_count();
     platform_cpu_charge_cycles(737280);
@@ -1036,7 +1045,10 @@ static void test_cpu_charge_cycles(void) {
     platform_cpu_charge_cycles(737280);
     CHECK(platform_frame_count() - f0 >= 4,
           "charge_cycles en tiempo real cede >= 4 VBLs en ~92 ms");
+    CHECK(g_render_calls == 0,
+          "charge_cycles no debe llamar al pump de presentación");
     platform_set_realtime(0);
+    platform_set_render_pump(NULL);
 }
 
 static void test_video(void) {
