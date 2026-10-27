@@ -11,9 +11,10 @@ C corra en Windows, Linux y macOS.
 
 > **Estado:** el port es jugable de principio a fin en Windows y Linux. La
 > versión **1.1.0** está publicada (2026-10-26) con macOS Universal 2 (Intel +
-> Apple Silicon), firmado en modo ad-hoc y no notarizado. La **1.2.0** está
-> publicada (2026-10-26) y añade el cursor a refresco nativo. Incluye la ingesta
-> de los discos originales, el selector de idioma,
+> Apple Silicon), firmado en modo ad-hoc y no notarizado. La **1.2.0** publicó
+> el cursor a refresco nativo; la **1.2.1** (2026-10-26) corrige el ritmo del
+> pixel-reveal y las transiciones de retratos. Incluye la ingesta de los discos
+> originales, el selector de idioma,
 > los packs español y catalán, guardado/carga y audio, además de **fullscreen
 > nativo**, **F1**
 > ventana/fullscreen, **F2** escala Estirar a pantalla/×1–×6/Auto y **F5/F6/F7** para
@@ -82,7 +83,7 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
 
 ### Windows ZIP
 
-1. Descomprime `kult-1.2.0-win64.zip` en una carpeta escribible.
+1. Descomprime `kult-1.2.1-win64.zip` en una carpeta escribible.
 2. Copia `Kult.STX` y `Kult (B).STX` junto a `kult.exe` o dentro de `data/`.
 3. Ejecuta `kult.exe` con doble clic.
 4. La primera ejecución crea `data/` y `saves/`, ingiere los discos y genera
@@ -92,7 +93,7 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
 
 ### Linux TGZ
 
-1. Descomprime `kult-1.2.0-linux-x86_64.tar.gz` en una carpeta escribible.
+1. Descomprime `kult-1.2.1-linux-x86_64.tar.gz` en una carpeta escribible.
 2. Copia los `.STX` junto a `kult` o dentro de `data/`.
 3. Ejecuta el juego:
 
@@ -109,10 +110,10 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
 
 ### Linux AppImage
 
-1. Copia `kult-1.2.0-x86_64.AppImage` a una carpeta escribible y dale permiso:
+1. Copia `kult-1.2.1-x86_64.AppImage` a una carpeta escribible y dale permiso:
 
    ```sh
-   chmod +x kult-1.2.0-x86_64.AppImage
+   chmod +x kult-1.2.1-x86_64.AppImage
    ```
 
 2. Copia los `.STX` junto al AppImage. También puedes ponerlos en `data/` si ya
@@ -120,7 +121,7 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
 3. Ejecuta:
 
    ```sh
-   ./kult-1.2.0-x86_64.AppImage
+   ./kult-1.2.1-x86_64.AppImage
    ```
 
 4. El AppImage es un único archivo: su contenido interno es de solo lectura y se
@@ -132,13 +133,13 @@ ejecutable o al AppImage. En macOS escribe en Application Support.
 6. Si el sistema no tiene FUSE:
 
    ```sh
-   ./kult-1.2.0-x86_64.AppImage --appimage-extract-and-run
+   ./kult-1.2.1-x86_64.AppImage --appimage-extract-and-run
    ```
 
 ### macOS (Universal 2)
 
-1. Descarga `kult-1.2.0-macos-universal.zip`, descomprímelo y abre el
-   `kult-1.2.0-macos-universal.dmg` que contiene. Copia `Kult.app` a una carpeta
+1. Descarga `kult-1.2.1-macos-universal.zip`, descomprímelo y abre el
+   `kult-1.2.1-macos-universal.dmg` que contiene. Copia `Kult.app` a una carpeta
    normal, por ejemplo `Aplicaciones` o `Escritorio`.
 2. Arranca `Kult.app` con doble clic. Si macOS avisa de que no está verificada,
    usa clic derecho > **Abrir** o **Ajustes del Sistema > Privacidad y

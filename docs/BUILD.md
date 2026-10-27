@@ -1,6 +1,6 @@
 # BUILD
 
-## Estado (M0–M7 build + macOS 1.2.0)
+## Estado (M0–M7 build + macOS 1.2.1)
 - **Core + diferencial**: operativo con el **Makefile + kit** heredado de
   `kult-atari-st-c`. `make test` compila `build/libkult.so` (candidato) y
   `lib/kult-core/tools/recreate_kit/oracle/build/liboracle.so` (oráculo) y lanza la suite.
@@ -68,7 +68,7 @@ cmake -S . -B build-linux -DCMAKE_BUILD_TYPE=Release   -DCMAKE_PREFIX_PATH="$PWD
 cmake --build build-linux -j
 (cd build-linux && cpack -G TGZ)
 cmake --install build-linux --prefix build/linux-stage
-tools/build_appimage.sh build/linux-stage dist/kult-1.2.0-x86_64.AppImage
+tools/build_appimage.sh build/linux-stage dist/kult-1.2.1-x86_64.AppImage
 ```
 
 Envoltorios equivalentes: `make cmake-native` y `make package-native` para el
@@ -94,7 +94,7 @@ build con SDL3 del sistema.
    instala `kult.exe`.
 3. Empaquetar (o `make package-win`):
    ```sh
-   (cd build-win && cpack -G ZIP)      # -> kult-1.2.0-win64.zip
+   (cd build-win && cpack -G ZIP)      # -> kult-1.2.1-win64.zip
    ```
    Contenido: `kult.exe` + `SDL3.dll` + `data/` + `saves/` + `LEEME.txt` + `Kult Settings.txt` + `Kult Settings.png`.
    **Sin assets, sin headless y sin DIAGNOSTICO.txt.** Requiere Windows 10+
@@ -118,7 +118,7 @@ build con SDL3 del sistema.
 3. Empaquetar (o `make package-macos`):
    ```sh
    cmake --install build-macos --prefix build/macos-stage
-   KULT_VERSION=1.2.0 tools/build_macos.sh build/macos-stage dist
+   KULT_VERSION=1.2.1 tools/build_macos.sh build/macos-stage dist
    ```
    Genera el `.dmg`, el ZIP que contiene solo ese DMG y su `.zip.sha256`;
    firma ad-hoc (o con `MACOS_SIGN_IDENTITY`). El DMG queda en `dist/` para QA;

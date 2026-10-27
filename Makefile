@@ -165,7 +165,7 @@ BUILD_WIN_DIAG := build-win-diag
 BUILD_MACOS := build-macos
 SDL3_MINGW := $(CURDIR)/third_party/SDL3-3.4.10/x86_64-w64-mingw32
 SDL3_MACOS := $(CURDIR)/third_party/sdl3-macos
-KULT_VERSION ?= 1.2.0
+KULT_VERSION ?= 1.2.1
 
 .PHONY: deps-win
 deps-win:

@@ -17,6 +17,7 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 | [`RELEASE_NOTES_1.0.0.md`](RELEASE_NOTES_1.0.0.md) | notas públicas de la release 1.0.0 |
 | [`RELEASE_NOTES_1.1.0.md`](RELEASE_NOTES_1.1.0.md) | notas públicas de la release 1.1.0 (macOS) |
 | [`RELEASE_NOTES_1.2.0.md`](RELEASE_NOTES_1.2.0.md) | notas públicas de la release 1.2.0 (cursor) |
+| [`RELEASE_NOTES_1.2.1.md`](RELEASE_NOTES_1.2.1.md) | notas públicas de la release 1.2.1 (fix del pump) |
 | [`DATA_FORMAT.md`](DATA_FORMAT.md) | `kult.data`/`language.data` e ingesta STX |
 | [`LANGUAGE_PACKS.md`](LANGUAGE_PACKS.md) | packs español/catalán y limitaciones de fuente |
 | [`TESTS.md`](TESTS.md) | inventario y política de tests |
@@ -129,3 +130,4 @@ Punto de entrada a los documentos de `docs/`. Para el estado y las tareas, ver
 - [`notes/0094-cursor-refresh-plan.md`](../notes/0094-cursor-refresh-plan.md)
 - [`notes/0095-t138-cursor-overlay.md`](../notes/0095-t138-cursor-overlay.md)
 - [`notes/0096-release-1.2.0.md`](../notes/0096-release-1.2.0.md)
+- [`notes/0097-release-1.2.1.md`](../notes/0097-release-1.2.1.md)

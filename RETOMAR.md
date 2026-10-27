@@ -6,7 +6,7 @@ Tareas: `TODO.md`.
 
 ## Punto de retomar (nueva sesión)
 
-**Estado:** releases 1.0.0 (2026-10-25), 1.1.0 y 1.2.0 (2026-10-26) publicadas; T-138 (cursor) merged y validado en Windows/Linux/macOS. T-022, T-092, T-096, T-101, T-137, T-140 y T-102–T-135 cerradas. El port arranca
+**Estado:** releases 1.0.0 (2026-10-25), 1.1.0 y 1.2.0 publicadas; **1.2.1 con QA Windows OK y tag local `v1.2.1`, pendiente push/CI**. T-138 (cursor) merged y validado en Windows/Linux/macOS. T-022, T-092, T-096, T-101, T-137, T-140 y T-102–T-135 cerradas; T-141 pendiente de cierre. El port arranca
 en **fullscreen sin bordes a resolución nativa** y **Estirar a pantalla** por
 defecto, con **F1** ventana/fullscreen, **F2** ciclo
 `Estirar a pantalla → ×1–×6 → Auto`, **F5/F6/F7** para ranuras de savestate en
@@ -52,9 +52,19 @@ AppImage; el CI terminó en `success`. La copia local de revisión
 - Release: <https://github.com/hunkstalker/kult-atari-st-pc-port/releases/tag/v1.2.0>
 - macOS: ZIP con el DMG dentro + `.zip.sha256`; sin DMG suelto.
 
+**Release 1.2.1 (T-141):**
+
+- Commit de código/fix: `9b198ae`; tag local `v1.2.1` sobre el commit de
+  documentación posterior (pendiente de push).
+- Fix: el pump de presentación no corre durante `cpu_delay`/`disk_delay`; el
+  pixel-reveal y los retratos recuperan su ritmo. Cadencia del pump limitada a
+  ~120 Hz; `KULT_RENDER_PUMP=0/60/120`. Detalle: `notes/0097`.
+- QA Windows 165 Hz del ZIP: OK; quedan bugs gráficos conocidos para parches
+  posteriores (T-142). Los paquetes los generará el CI al hacer push del tag.
+
 **Siguiente tarea: T-136 — QA visual del DMG en Mac Intel.**
 
-- Implementación local: `notes/0093`, `notes/0095`, `notes/0096`.
+- Implementación local: `notes/0093`, `notes/0095`, `notes/0096`, `notes/0097`.
 - Release 1.1.0 publicada (2026-10-26; tag `v1.1.0`, CI OK) con ZIP de macOS
   (contiene el DMG) + `.zip.sha256`; sin DMG suelto.
 - T-138 (cursor) está merged y validado en Windows/Linux/macOS; publicado en la

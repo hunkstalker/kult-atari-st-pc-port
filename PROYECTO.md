@@ -99,6 +99,7 @@ Detalle, uso y equivalente PC: **`docs/PORTING.md`**.
 | **M8** | **macOS Universal 2 + release 1.1.0** | 🚧 T-137: release 1.1.0 publicada (tag `v1.1.0`, CI OK) con ZIP de macOS (contiene el DMG) + `.zip.sha256`; T-136 pendiente de QA visual del DMG en Mac Intel. Sin notarizar (ad-hoc) |
 | **M9** | **cursor a refresco nativo** | ✅ T-138 (overlay B) validado en Windows/Linux/macOS y merged a main (2026-10-26). T-139 (hilos) descartada. Ver `notes/0095` |
 | **M10** | **release 1.2.0 con cursor** | ✅ T-140: release 1.2.0 publicada (tag `v1.2.0`) con ZIP de macOS + `.zip.sha256`; sin DMG suelto |
+| **M11** | **release 1.2.1 con fix del pump** | 🚧 T-141: QA Windows OK; tag local `v1.2.1`; reveal/retratos corregidos y cadencia del pump limitada a ~120 Hz; pendiente push/CI |
 | **A1** | **investigación** Amiga (censo + decomp) | ⬜ **prerrequisito duro de N3** |
 | **N3** | **motor nativo + assets nativos** (ADR + rama) | ⬜ hito futuro (tras validación) |
 | **A2** | **implementación** Amiga (sobre el motor de N3) | ⬜ |
@@ -110,7 +111,7 @@ Detalle por fase: **`docs/PLAN.md`**; plan de hitos: **`notes/0011`**.
 > (validación del usuario) ✅ → T-072/M7-c (empaquetado + ingesta + idiomas) ✅ →
 > T-022 (`0x106f2` + `l_0101a8`) ✅ → T-102–T-135 (fullscreen/F1/F2/Estirar a pantalla + ranuras
 > `slot-N.save` + OSD original + terminología catalana T-119/T-132) ✅ → validación final (T-094) → publicación de
-> la release 1.0.0 y CI (T-092/T-096) ✅ → T-136 macOS → T-137 release 1.1.0 → T-138 cursor → release 1.2.0 → A1 → N3 → A2 → M5. T-139 (hilos) descartada.
+> la release 1.0.0 y CI (T-092/T-096) ✅ → T-136 macOS → T-137 release 1.1.0 → T-138 cursor → release 1.2.0 → fix 1.2.1 → A1 → N3 → A2 → M5. T-139 (hilos) descartada.
 > **M5** es un extra de presentación independiente (no se junta con A). **A1** es
 > **prerrequisito duro de N3** (su censo/decomp informa el modelo a dos versiones).
 > **T-022/`0x106f2`** quedó cerrada en la **sesión 69**; detalle: `notes/0053`.

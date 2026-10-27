@@ -26,6 +26,8 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | T-138 | Cursor a refresco nativo (overlay B) | ✅ validado en Windows/Linux/macOS (2026-10-26); merged a main; release 1.2.0 (`notes/0095`) |
 | T-139 | Separar render y simulación en hilos | ✅ descartada (2026-10-26): T-138 validado en Windows/Linux/macOS; reevaluar solo si aparece stutter |
 | T-140 | Publicar release 1.2.0 con cursor | ✅ publicada (2026-10-26; tag `v1.2.0`) |
+| T-141 | Fix del pump y release 1.2.1 | 🚧 QA OK; tag local `v1.2.1`; pendiente push/CI |
+| T-142 | Bugs gráficos posteriores a 1.2.1 | ⬜ pendiente de detalle; no bloquea 1.2.1 |
 | T-100 | Diagnósticos separados del timing y guía de uso | ✅ cerrada (2026-10-25) |
 | T-101 | «DIE» (objeto) traducido como MORIR; corregir a DADO/DAU | ✅ cerrada (2026-10-25; `notes/0054`) |
 | T-102 | Arranque fullscreen nativo, F1 fullscreen/ventana y F2 escala entera | ✅ cerrada (2026-10-25; `notes/0055`) |
@@ -204,6 +206,12 @@ cámbiala aquí y anota el resultado en `RETOMAR.md`. Los ids son estables
 | id | tarea | estado |
 |---|---|---|
 | T-140 | **Release 1.2.0**: cursor + macOS DMG, Windows/Linux, checksums y notas | ✅ **publicada (2026-10-26)**: tag `v1.2.0`; ZIP de macOS (contiene el DMG) + `.zip.sha256`; sin DMG suelto |
+
+## M11 — Release 1.2.1 (tag local, pendiente push/CI)
+| id | tarea | estado |
+|---|---|---|
+| T-141 | **Fix del pump + release 1.2.1**: reveal/retratos, cadencia del pump y `KULT_RENDER_PUMP` | 🚧 **QA Windows OK; tag local `v1.2.1`**: fix y medición validados; pendiente push/CI. Bugs gráficos en T-142 |
+| T-142 | **Bugs gráficos post-1.2.1** | ⬜ Pendiente de detallar por el usuario; se aborda en parches posteriores |
 
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 > Mapa de *lógica compartida vs específica* y diferencias de hardware/assets, para

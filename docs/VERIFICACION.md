@@ -185,12 +185,12 @@ El paquete está en `build-win/kult-1.0.0-win64.zip` (generado con
    no se pudo escribir el log aparece uno de emergencia.
 6. Requisito: **Windows 10 o superior** (UCRT).
 
-### Checklist macOS 1.2.0
+### Checklist macOS 1.2.1
 
 La release macOS es Universal 2 y no está notarizada. Probar en un Mac Intel
 (manual) y comprobar que el CI verifica `arm64`:
 
-1. Descargar `kult-1.2.0-macos-universal.zip`, verificar su `.zip.sha256`,
+1. Descargar `kult-1.2.1-macos-universal.zip`, verificar su `.zip.sha256`,
    descomprimirlo y montar el `.dmg`; comprobar que el ZIP contiene solo el DMG,
    que `file`/`lipo` son correctos en CI y que el bundle abre con clic derecho >
    Abrir.

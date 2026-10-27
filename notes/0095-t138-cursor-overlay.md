@@ -1,7 +1,8 @@
 # 0095 — T-138: cursor como overlay (merged a main)
 
 Fecha: 2026-10-26. Estado: **implementado, merged y validado en
-Windows/Linux/macOS; release 1.2.0 publicada (tag `v1.2.0`)**.
+Windows/Linux/macOS; releases 1.2.0 y 1.2.1 publicadas (tags `v1.2.0` y
+`v1.2.1`)**.
 
 ## Alcance
 
@@ -26,6 +27,9 @@ Windows/Linux/macOS; release 1.2.0 publicada (tag `v1.2.0`)**.
 - `platform/time.c` añade `platform_set_render_pump()` y
   `sleep_with_render()`: durante las esperas de VBL se presenta la misma imagen
   a hasta ~120 Hz para que el cursor responda. La simulación no se acelera.
+- El pump **no** se ejecuta durante `cpu_delay`/`disk_delay`; así el
+  pixel-reveal y los retratos conservan su ritmo. `KULT_RENDER_PUMP=0/60/120`
+  desactiva o ajusta el pump, cuya cadencia se limita a ~120 Hz.
 - `app/main.c` registra el pump solo con ventana SDL abierta.
 - El overlay usa la posición nueva del ratón aunque el IKBD aún no la haya
   entregado; si el juego recoloca el cursor (ficha de objeto), respeta esa
@@ -37,7 +41,8 @@ Windows/Linux/macOS; release 1.2.0 publicada (tag `v1.2.0`)**.
 - `make test-port`: OK.
 - `build/test_cursor_overlay`: comprueba composición a la misma posición, a una
   posición nueva y con el cursor oculto.
-- `make test-port` verifica que el pump se ejecuta durante `cpu_delay`.
+- `make test-port` verifica que `cpu_delay`, `disk_delay` y
+  `charge_cycles` no llaman al pump.
 - CMake Linux y Windows: build OK.
 - pytest: 5 passed.
 - Medición con Xvfb: 60 Hz de presentación (límite VSync del display de prueba);
@@ -51,11 +56,12 @@ Windows/Linux/macOS; release 1.2.0 publicada (tag `v1.2.0`)**.
 - **Linux/macOS (2026-10-26)**: validado por el usuario; cursor correcto, sin
   duplicados.
 
-## Seguimiento opcional (post-1.2.0)
+## Seguimiento opcional (post-1.2.1)
 
 - Medir carga de CPU/GPU con el pump a ~120 Hz.
 - Revisar interacción con OSD, F1/F2, fullscreen y escalado Estirar.
 - Decidir si el OSD debe quedar por encima o por debajo del cursor.
+- Fix 1.2.1: pump fuera de `cpu_delay`/`disk_delay`; detalle en `notes/0097`.
 
 ## Rama
 

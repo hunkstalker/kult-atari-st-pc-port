@@ -1,6 +1,6 @@
-# LIMITACIONES — release 1.2.0
+# LIMITACIONES — release 1.2.1
 
-Lista de limitaciones conocidas del port para la release **1.2.0**. La
+Lista de limitaciones conocidas del port para la release **1.2.1**. La
 validación final de juego, textos y audio la hace el usuario con su copia de
 datos.
 
@@ -73,7 +73,7 @@ datos.
   tests automatizados de ingesta/packs (T-095) ya están integrados, T-022 y
   T-101 están cerradas. La release 1.0.0 está publicada (detalle:
   `notes/0092`); la 1.1.0 añade macOS y está publicada; la 1.2.0 añade el
-  cursor y está publicada.
+  cursor y está publicada; la 1.2.1 corrige el pump y está publicada.
 - **Ingesta implementada (T-072)**: se detectan los dos STX por SHA-256, se
   extraen y se genera `data/kult.data`. Los STX se pueden borrar después.
 - **macOS sin notarizar**: `Kult.app` se firma en modo ad-hoc, no con Developer

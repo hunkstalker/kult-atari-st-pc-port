@@ -10,7 +10,9 @@ La release **1.0.0** está publicada con ZIP Windows, TGZ Linux y AppImage
 (detalle: `notes/0092`). La **1.1.0** está publicada (2026-10-26) y añade macOS
 Universal 2; el DMG de macOS se firma en modo ad-hoc, no se notariza y se
 distribuye dentro de un ZIP. La **1.2.0** está publicada (2026-10-26), añade el
-cursor a refresco nativo (T-138) y se distribuye con el tag `v1.2.0`.
+cursor a refresco nativo (T-138) y se distribuye con el tag `v1.2.0`. La
+**1.2.1** está publicada (2026-10-27), corrige el ritmo del pixel-reveal y las
+transiciones de retratos, y se distribuye con el tag `v1.2.1`.
 
 ## Objetivo
 
@@ -70,7 +72,7 @@ saves/
 ```
 
 `kult` lleva RUNPATH `$ORIGIN/lib`; el usuario solo aporta los dos STX. También
-se publica un AppImage: `kult-1.2.0-x86_64.AppImage`. Su `AppRun` usa
+se publica un AppImage: `kult-1.2.1-x86_64.AppImage`. Su `AppRun` usa
 `KULT_BASE_DIR` para crear `data/` y `saves/` junto al AppImage, y copia
 `language.data` y `LEEME.txt` a esa misma carpeta.
 
@@ -83,8 +85,8 @@ La release macOS es Universal 2 (Intel `x86_64` + Apple Silicon `arm64`),
 requiere macOS 11+ y se publica como un ZIP que contiene únicamente el DMG:
 
 ```text
-kult-1.2.0-macos-universal.zip
-kult-1.2.0-macos-universal.zip.sha256
+kult-1.2.1-macos-universal.zip
+kult-1.2.1-macos-universal.zip.sha256
 ```
 
 El ZIP contiene solo el DMG; el DMG contiene:

@@ -33,13 +33,13 @@ monta temporalmente; los datos del usuario quedan fuera, junto al AppImage.
 
 1) Copia el AppImage a una carpeta escribible y dale permiso:
 
-       chmod +x kult-1.2.0-x86_64.AppImage
+       chmod +x kult-1.2.1-x86_64.AppImage
 
 2) Copia Kult.STX y Kult (B).STX junto al AppImage. También puedes ponerlos en
    `data/` si ya existe esa carpeta.
 3) Ejecuta:
 
-       ./kult-1.2.0-x86_64.AppImage
+       ./kult-1.2.1-x86_64.AppImage
 
 `AppRun` crea `data/` y `saves/` junto al AppImage, copia `language.data` y
 `LEEME.txt`, ingiere los discos y arranca el juego en esa misma ejecución.
@@ -48,7 +48,7 @@ Después puedes borrar los STX. Si mueves el AppImage, mueve también `data/` y
 
 Si el sistema no tiene FUSE:
 
-       ./kult-1.2.0-x86_64.AppImage --appimage-extract-and-run
+       ./kult-1.2.1-x86_64.AppImage --appimage-extract-and-run
 
 Atajos y diagnóstico
 --------------------

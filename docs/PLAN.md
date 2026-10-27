@@ -127,6 +127,14 @@ notas públicas `docs/RELEASE_NOTES_1.2.0.md`.
 **Estado:** ✅ publicada (2026-10-26; tag `v1.2.0`); sin DMG suelto en macOS.
 **Detalle:** `notes/0096`.
 
+## M11 — Release 1.2.1 (fix del pump)
+**Objetivo:** recuperar el ritmo del pixel-reveal y los retratos sin perder el
+cursor a alta frecuencia.
+**Contenido:** pump fuera de `cpu_delay`/`disk_delay`, cadencia del pump a
+~120 Hz y `KULT_RENDER_PUMP=0/60/120`.
+**Estado:** ✅ publicada (2026-10-26; tag `v1.2.1`); sin DMG suelto en macOS.
+**Detalle:** `notes/0097`.
+
 ## A1 — Investigación Amiga (prerrequisito **DURO** de N3)
 **Objetivo:** entender el binario Amiga para **diseñar el modelo de datos de N3 a
 dos versiones**, sin rehacer nada luego.

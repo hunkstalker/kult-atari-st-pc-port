@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 3.16)
 if(NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS version")
 endif()
-project(kult VERSION 1.2.0 LANGUAGES C)
+project(kult VERSION 1.2.1 LANGUAGES C)
 
 # Ruta a la SDL3 compartida que se empaqueta en Linux/macOS (se puede pasar con
 # -DKULT_SDL3_LIB=...). En Windows se usa third_party/SDL3-.../SDL3.dll.

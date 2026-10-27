@@ -28,8 +28,9 @@ está publicada como `v1.1.0` (2026-10-26) con macOS Universal 2 (T-136):
 `Kult.app` Intel + Apple Silicon, selector de STX, Application Support, ZIP que
 contiene el DMG, firma ad-hoc y sin notarizar; CI OK. La validación visual del
 DMG en Mac Intel queda pendiente. La **1.2.0** está publicada (2026-10-26) con
-el cursor a refresco nativo (T-138, validado en Windows/Linux/macOS). T-139
-descartada.
+el cursor a refresco nativo (T-138, validado en Windows/Linux/macOS); la
+**1.2.1** (QA Windows OK, tag local `v1.2.1`) corrige el pump que ralentizaba
+el pixel-reveal y los retratos; pendiente push/CI. T-139 descartada.
 Las incidencias de texto T-097 (cajas de objeto) y T-098 (La Horca) están
 corregidas y **validadas por el usuario (2026-10-25)**. Los tests de ingesta y
 packs (T-095) están integrados en `make test`. Los diagnósticos opcionales están
@@ -37,10 +38,11 @@ separados en `platform/diag.c` (T-100; guía `docs/DIAGNOSTICO.md`). T-101
 corrigió «DIE» (objeto) a **DADO**/**DAU** en los packs y dejó regresión de
 textos. T-106 usa la fuente original del juego para el OSD, T-107/T-108 dejan
 las ranuras en `slot-N.save` sin migración y T-109/T-110 añaden Estirar a
-pantalla. T-073 es opcional. Sin bloqueantes de código. Siguiente hito: T-136
-(QA DMG Mac Intel); después A1 (investigación Amiga). Detalle:
-`notes/0053`–`notes/0096`. Ver
-`notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`notes/0096`.
+pantalla. T-073 es opcional. Sin bloqueantes de código. Tras cerrar 1.2.1, el
+siguiente hito es T-136 (QA visual del DMG de macOS Universal 2 en Mac Intel);
+después A1 (investigación Amiga). Detalle:
+`notes/0053`–`notes/0097`. Ver
+`notes/0011`–`notes/0014`, `notes/0041`, `notes/0042`, `notes/0049`–`notes/0097`.
 
 ## T-073c — reglas duras (pantalla C del Maestro)
 - **Input (modelo original)**: **izquierdo / teclado** = acción normal, **sin**
